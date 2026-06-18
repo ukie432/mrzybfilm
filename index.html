@@ -813,6 +813,11 @@
           block:"center"
         });
 
+
+          window.addEventListener("pageshow", function(){
+    alert("PAGESHOW");
+});
+
         posters[lastPoster].focus();
 
         lastFocus = posters[lastPoster];
