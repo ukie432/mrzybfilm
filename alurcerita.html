@@ -184,44 +184,49 @@ body {
 <center><h1 style="color:#00BFFF;font-size:50px;">M R Z Y B</h1></center>
 
 <script>
-// DETEKSI NAVIGASI BARU: Jika masuk dari Home/Link baru, hapus semua sisa memori lama
-if (window.performance && window.performance.navigation) {
-    if (window.performance.navigation.type === 0 || window.performance.navigation.type === 1) {
-        // type 0 = navigasi klik link dari home, type 1 = reload halaman baru
-        sessionStorage.removeItem("activeAlurFilmIndex");
-        localStorage.removeItem("activeAlurFilmIndex");
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function() {
     const cards = document.querySelectorAll('.card-film');
     
-    // 1. KEMBALIKAN FOKUS KETIKA KEMBALI DARI EXOPLAYER
-    const lastIndex = sessionStorage.getItem("activeAlurFilmIndex");
-    if (lastIndex !== null && cards[lastIndex]) {
+    // Periksa apakah halaman ini dimuat karena efek BACK dari Player
+    const isReturningFromVideo = localStorage.getItem("isWatchingVideo");
+    const lastIndex = localStorage.getItem("activeAlurFilmIndex");
+
+    if (isReturningFromVideo === "true" && lastIndex !== null && cards[lastIndex]) {
+        // JIKA KEMBALI DARI PLAYER: Kembalikan fokus remote ke posisi poster terakhir yang diklik
         setTimeout(() => {
             cards[lastIndex].focus();
             cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
         }, 300);
-    } else if (cards[0]) {
-        cards[0].focus(); // Default fokus ke poster teratas jika baru dibuka dari home
+        
+        // Hapus penanda nonton setelah fokus sukses dikembalikan
+        localStorage.removeItem("isWatchingVideo");
+    } else {
+        // JIKA BARU MASUK DARI HOME / INDEX: Paksa fokus selalu mulai dari poster pertama paling atas
+        if (cards[0]) {
+            cards[0].focus();
+        }
+        // Bersihkan data lama agar bersih dari awal
+        localStorage.removeItem("activeAlurFilmIndex");
+        localStorage.removeItem("isWatchingVideo");
     }
 
-    // 2. DETEKSI KLIK & LOCK POSISI DI SESSION STORAGE
+    // LOGIKA KLIK DAN PENANDAAN VIDEO
     cards.forEach((card, index) => {
         const handler = function(e) {
-            sessionStorage.setItem("activeAlurFilmIndex", index);
+            // Simpan indeks poster dan pasang flag tanda sedang menonton video
+            localStorage.setItem("activeAlurFilmIndex", index);
+            localStorage.setItem("isWatchingVideo", "true");
 
             if (typeof Android !== "undefined" && Android.playVideo) {
                 e.preventDefault();
                 const videoUrl = card.getAttribute("href");
-                Android.playVideo(videoUrl); // Panggil ExoPlayer internal STB
+                Android.playVideo(videoUrl); // Putar video via STB ExoPlayer
             }
         };
 
         card.addEventListener("click", handler);
 
-        // Dukungan penuh klik via Remote D-Pad Enter
+        // Dukungan penuh tombol OK / Enter pada remote STB
         card.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
                 handler(e);
