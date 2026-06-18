@@ -171,7 +171,7 @@ body {
     margin: 0 0 55px 0;
 }
 
-/* Garis penyorot biru neon ketika remote menunjuk poster */
+/* Penanda garis tepi biru saat remote menyorot poster */
 .card-film:focus {
     outline: 4px solid #00BFFF;
     transform: scale(1.08);
@@ -187,37 +187,35 @@ body {
 document.addEventListener("DOMContentLoaded", function() {
     const cards = document.querySelectorAll('.card-film');
     
-    // 1. KEMBALIKAN FOKUS REMOT KE POSTER SEBELUMNYA SAAT KEMBALI DARI PLAYER
-    const lastIndex = localStorage.getItem("lastClickedFilmIndex");
+    // 1. KEMBALIKAN FOKUS KETIKA KEMBALI DARI EXOPLAYER
+    const lastIndex = sessionStorage.getItem("activeAlurFilmIndex");
     if (lastIndex !== null && cards[lastIndex]) {
         setTimeout(() => {
             cards[lastIndex].focus();
             cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
         }, 300);
     } else if (cards[0]) {
-        cards[0].focus(); // Fokus ke poster paling pertama jika baru dibuka
+        cards[0].focus(); // Default fokus ke poster teratas jika halaman baru dibuka dari menu home
     }
 
-    // 2. LOGIKA KLIK DAN MEMORI SIMPAN POSISI
+    // 2. DETEKSI KLIK & LOCK POSISI DI SESSION STORAGE
     cards.forEach((card, index) => {
-        const playVideoHandler = function(e) {
-            // Catat urutan film ke dalam memori STB sebelum membuka ExoPlayer
-            localStorage.setItem("lastClickedFilmIndex", index);
+        const handler = function(e) {
+            sessionStorage.setItem("activeAlurFilmIndex", index);
 
             if (typeof Android !== "undefined" && Android.playVideo) {
                 e.preventDefault();
                 const videoUrl = card.getAttribute("href");
-                Android.playVideo(videoUrl); // Putar di ExoPlayer Internal STB
+                Android.playVideo(videoUrl); // Panggil ExoPlayer internal STB
             }
         };
 
-        // Ketika diklik biasa atau disentuh
-        card.addEventListener("click", playVideoHandler);
+        card.addEventListener("click", handler);
 
-        // Ketika ditekan tombol Enter/OK pada remote STB
+        // Dukungan penuh klik via Remote D-Pad Enter
         card.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
-                playVideoHandler(e);
+                handler(e);
             }
         });
     });
