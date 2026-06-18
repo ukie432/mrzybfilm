@@ -186,46 +186,47 @@ body {
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const cards = document.querySelectorAll('.card-film');
-    const ref = document.referrer.toLowerCase();
+    
+    // Periksa apakah halaman ini dimuat karena efek BACK dari Player
+    const isReturningFromVideo = localStorage.getItem("isWatchingVideo");
+    const lastIndex = localStorage.getItem("activeAlurFilmIndex");
 
-    // Cek apakah user datang dari halaman index / home luar
-    // (Sesuaikan kata "index" atau "home" dengan nama file utama Anda jika berbeda)
-    const dariHome = ref.includes("index") || ref.includes("home") || ref === "";
-
-    if (dariHome) {
-        // JIKA MASUK DARI HOME: Reset total memori, paksa ke poster pertama
-        localStorage.removeItem("activeAlurFilmIndex");
+    if (isReturningFromVideo === "true" && lastIndex !== null && cards[lastIndex]) {
+        // JIKA KEMBALI DARI PLAYER: Kembalikan fokus remote ke posisi poster terakhir yang diklik
+        setTimeout(() => {
+            cards[lastIndex].focus();
+            cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 300);
+        
+        // Hapus penanda nonton setelah fokus sukses dikembalikan
+        localStorage.removeItem("isWatchingVideo");
+    } else {
+        // JIKA BARU MASUK DARI HOME / INDEX: Paksa fokus selalu mulai dari poster pertama paling atas
         if (cards[0]) {
             cards[0].focus();
         }
-    } else {
-        // JIKA BUKAN DARI HOME (Alias keluar dari player video/refresh internal): Kembalikan fokus terakhir
-        const lastIndex = localStorage.getItem("activeAlurFilmIndex");
-        if (lastIndex !== null && cards[lastIndex]) {
-            setTimeout(() => {
-                cards[lastIndex].focus();
-                cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
-            }, 300);
-        } else if (cards[0]) {
-            cards[0].focus();
-        }
+        // Bersihkan data lama agar bersih dari awal
+        localStorage.removeItem("activeAlurFilmIndex");
+        localStorage.removeItem("isWatchingVideo");
     }
 
-    // SIMPAN INDEKS SAAT POSTER DIKLIK
+    // LOGIKA KLIK DAN PENANDAAN VIDEO
     cards.forEach((card, index) => {
         const handler = function(e) {
+            // Simpan indeks poster dan pasang flag tanda sedang menonton video
             localStorage.setItem("activeAlurFilmIndex", index);
+            localStorage.setItem("isWatchingVideo", "true");
 
             if (typeof Android !== "undefined" && Android.playVideo) {
                 e.preventDefault();
                 const videoUrl = card.getAttribute("href");
-                Android.playVideo(videoUrl); 
+                Android.playVideo(videoUrl); // Putar video via STB ExoPlayer
             }
         };
 
         card.addEventListener("click", handler);
 
-        // Dukungan Remote STB (Tombol D-Pad OK/Enter)
+        // Dukungan penuh tombol OK / Enter pada remote STB
         card.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
                 handler(e);
