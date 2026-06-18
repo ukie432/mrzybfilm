@@ -187,46 +187,41 @@ body {
 document.addEventListener("DOMContentLoaded", function() {
     const cards = document.querySelectorAll('.card-film');
     
-    // Periksa apakah halaman ini dimuat karena efek BACK dari Player
-    const isReturningFromVideo = localStorage.getItem("isWatchingVideo");
-    const lastIndex = localStorage.getItem("activeAlurFilmIndex");
+    // Mengecek flag penanda di sessionStorage (Hanya hidup selama berada di halaman alurcerita ini)
+    const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
+    const indexTerakhir = localStorage.getItem("alurFilmTerakhirIndex");
 
-    if (isReturningFromVideo === "true" && lastIndex !== null && cards[lastIndex]) {
-        // JIKA KEMBALI DARI PLAYER: Kembalikan fokus remote ke posisi poster terakhir yang diklik
+    if (baruSelesaiNonton === "ya" && indexTerakhir !== null && cards[indexTerakhir]) {
+        // JIKA KEMBALI KARENA TOMBOL BACK DARI PLAYER (sessionStorage masih menyimpan data):
         setTimeout(() => {
-            cards[lastIndex].focus();
-            cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 300);
-        
-        // Hapus penanda nonton setelah fokus sukses dikembalikan
-        localStorage.removeItem("isWatchingVideo");
+            cards[indexTerakhir].focus();
+            cards[indexTerakhir].scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 350);
     } else {
-        // JIKA BARU MASUK DARI HOME / INDEX: Paksa fokus selalu mulai dari poster pertama paling atas
+        // JIKA MASUK BARU DARI INDEX/HOME LAUNCHER UTAMA (sessionStorage kosong otomatis):
         if (cards[0]) {
             cards[0].focus();
         }
-        // Bersihkan data lama agar bersih dari awal
-        localStorage.removeItem("activeAlurFilmIndex");
-        localStorage.removeItem("isWatchingVideo");
+        // Bersihkan data sampah lama di localStorage agar segar kembali
+        localStorage.removeItem("alurFilmTerakhirIndex");
     }
 
-    // LOGIKA KLIK DAN PENANDAAN VIDEO
+    // KIRIM INDEKS & AKTIFKAN PENANDA SEBELUM MASUK PLAYER
     cards.forEach((card, index) => {
         const handler = function(e) {
-            // Simpan indeks poster dan pasang flag tanda sedang menonton video
-            localStorage.setItem("activeAlurFilmIndex", index);
-            localStorage.setItem("isWatchingVideo", "true");
+            localStorage.setItem("alurFilmTerakhirIndex", index);
+            sessionStorage.setItem("sedangNontonVideo", "ya"); // Flag pengunci sesi aktif
 
             if (typeof Android !== "undefined" && Android.playVideo) {
                 e.preventDefault();
                 const videoUrl = card.getAttribute("href");
-                Android.playVideo(videoUrl); // Putar video via STB ExoPlayer
+                Android.playVideo(videoUrl); 
             }
         };
 
         card.addEventListener("click", handler);
 
-        // Dukungan penuh tombol OK / Enter pada remote STB
+        // Dukungan D-Pad Remote STB (Tombol OK/Enter)
         card.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
                 handler(e);
