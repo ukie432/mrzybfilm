@@ -184,6 +184,15 @@ body {
 <center><h1 style="color:#00BFFF;font-size:50px;">M R Z Y B</h1></center>
 
 <script>
+// DETEKSI NAVIGASI BARU: Jika masuk dari Home/Link baru, hapus semua sisa memori lama
+if (window.performance && window.performance.navigation) {
+    if (window.performance.navigation.type === 0 || window.performance.navigation.type === 1) {
+        // type 0 = navigasi klik link dari home, type 1 = reload halaman baru
+        sessionStorage.removeItem("activeAlurFilmIndex");
+        localStorage.removeItem("activeAlurFilmIndex");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const cards = document.querySelectorAll('.card-film');
     
@@ -195,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
             cards[lastIndex].scrollIntoView({ behavior: "smooth", block: "center" });
         }, 300);
     } else if (cards[0]) {
-        cards[0].focus(); // Default fokus ke poster teratas jika halaman baru dibuka dari menu home
+        cards[0].focus(); // Default fokus ke poster teratas jika baru dibuka dari home
     }
 
     // 2. DETEKSI KLIK & LOCK POSISI DI SESSION STORAGE
