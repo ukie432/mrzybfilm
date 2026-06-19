@@ -214,7 +214,7 @@ body {
 
     <div class="container-film" id="containerUtama">
         
-        <div class="card-film" data-id="film1">
+        <div class="card-film" data-id="film1" id="utama-film1">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Venom%20the%20last%20dance%20(2024).mp4" data-title="venom the last dance">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7xBjRNWow_V75KpLFRamvtRYR4qqwO-VilXp4hRv1ZekSylslgTV9DKE&s=10" alt="Venom">
@@ -224,7 +224,7 @@ body {
             <div class="film-title">Venom: The Last Dance</div>
         </div>
 
-        <div class="card-film" data-id="film2">
+        <div class="card-film" data-id="film2" id="utama-film2">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Alien%20Romulus%20(2024).mp4" data-title="alien romulus">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxRV0NJmoY3Cb3fQptJqfOFvq_t4Jzdzeh4qqpR8xLDYx0-Fe2_oSsqN8&s=10" alt="Alien">
@@ -234,7 +234,7 @@ body {
             <div class="film-title">Alien: Romulus</div>
         </div>
 
-        <div class="card-film" data-id="film3">
+        <div class="card-film" data-id="film3" id="utama-film3">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%2013th%20warrior%20(1999).mp4" data-title="the 13th warrior">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOwLZ0FFAaQfapForuaQJYIrxGGVlmw_bwwR3qxTSZIZNeT2ozr0MatNU&s=10" alt="The 13th Warrior">
@@ -244,7 +244,7 @@ body {
             <div class="film-title">The 13th Warrior</div>
         </div>
 
-        <div class="card-film" data-id="film4">
+        <div class="card-film" data-id="film4" id="utama-film4">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Abselutely%20anything%20(2015).mp4" data-title="absolutely anything">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ93fFGXm_QOJkbNYLlBtxyrls-T6ojRL-2wA&usqp=CAU" alt="Absolutely Anything">
@@ -254,7 +254,7 @@ body {
             <div class="film-title">Absolutely Anything</div>
         </div>
 
-        <div class="card-film" data-id="film5">
+        <div class="card-film" data-id="film5" id="utama-film5">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Atm%20er%20rak%20error%20(2012).mp4" data-title="atm error">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvVilzDKJsvLrqpbINTVzo0iuWkQ14XH42wg&usqp=CAU" alt="ATM Error">
@@ -277,7 +277,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
 
-    // Memuat daftar favorit dari penyimpanan lokal STB
     let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorit')) || [];
 
     function updateTampilanFavorit() {
@@ -290,17 +289,12 @@ document.addEventListener("DOMContentLoaded", function() {
             favSectionTitle.style.display = "block";
             containerFav.style.display = "flex";
 
-            // Meng-klon/copy item dari daftar utama ke rak favorit
             listFavorit.forEach(idFilm => {
                 const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
                 if (itemAsli) {
                     const klon = itemAsli.cloneNode(true);
-                    
-                    // Sesuaikan id agar remote tidak bingung ganda
+                    // Berikan ID unik khusus untuk barisan favorit agar ingatan fokus tidak tertukar
                     klon.setAttribute('id', 'fav-' + idFilm);
-                    klon.querySelector('.play-link').setAttribute('data-fav-origin', 'ya');
-                    klon.querySelector('.btn-fav').setAttribute('data-fav-origin', 'ya');
-                    
                     containerFav.appendChild(klon);
                 }
             });
@@ -323,28 +317,31 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function pasangEventAksi() {
-        // Aksi klik nonton video
-        document.querySelectorAll('.play-link').forEach((link, index) => {
-            link.replaceWith(link.cloneNode(true)); // reset event listener lama
-        });
+        // Logika klik dan nonton video
+        document.querySelectorAll('.card-film').forEach(card => {
+            const link = card.querySelector('.play-link');
+            if (!link) return;
 
-        document.querySelectorAll('.play-link').forEach((link, index) => {
+            link.replaceWith(link.cloneNode(true));
+            const newLink = card.querySelector('.play-link');
+
             const handleWatch = function(e) {
-                localStorage.setItem("alurFilmTerakhirIndex", index);
+                // REVISI SAKTI: Simpan ID unik elemen poster yang diklik secara langsung, bukan indeks angkanya
+                localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
                 sessionStorage.setItem("sedangNontonVideo", "ya");
 
                 if (typeof Android !== "undefined" && Android.playVideo) {
                     e.preventDefault();
-                    Android.playVideo(link.getAttribute("href"));
+                    Android.playVideo(newLink.getAttribute("href"));
                 }
             };
-            link.addEventListener("click", handleWatch);
-            link.addEventListener("keydown", function(e) {
+            newLink.addEventListener("click", handleWatch);
+            newLink.addEventListener("keydown", function(e) {
                 if (e.key === "Enter") handleWatch(e);
             });
         });
 
-        // Aksi Klik Tombol Bintang Favorit
+        // Logika Klik Tombol Bintang Favorit
         document.querySelectorAll('.btn-fav').forEach(btn => {
             btn.replaceWith(btn.cloneNode(true));
         });
@@ -355,10 +352,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 const idTarget = btn.getAttribute('data-target');
                 
                 if (listFavorit.includes(idTarget)) {
-                    // Jika sudah ada, hapus dari favorit
                     listFavorit = listFavorit.filter(id => id !== idTarget);
                 } else {
-                    // Jika belum ada, masukkan ke favorit
                     listFavorit.push(idTarget);
                 }
 
@@ -373,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // SISTEM PENCARIAN
+    // PENCARIAN
     function saringFilm(keyword) {
         let adaFilmCocok = false;
         const semuaKartu = containerUtama.querySelectorAll('.card-film');
@@ -419,22 +414,31 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Jalankan & set fokus awal
+    // Jalankan sistem pembacaan data awal
     updateTampilanFavorit();
-    requestAnimationFrame(() => {
-        const linksUtama = containerUtama.querySelectorAll('.play-link');
-        const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
-        const indexTerakhir = localStorage.getItem("alurFilmTerakhirIndex");
 
-        if (baruSelesaiNonton === "ya" && indexTerakhir !== null && linksUtama[indexTerakhir]) {
-            setTimeout(() => {
-                linksUtama[indexTerakhir].focus();
-                linksUtama[indexTerakhir].scrollIntoView({ behavior: "auto", block: "center" });
-            }, 50);
-        } else {
-            if (searchBox) searchBox.focus();
-            localStorage.removeItem("alurFilmTerakhirIndex");
+    // EKSEKUSI PENGINGAT FOKUS POSTER (100% DIJAMIN AKURAT)
+    requestAnimationFrame(() => {
+        const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
+        const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
+        
+        if (baruSelesaiNonton === "ya" && idPosterTerakhir) {
+            const targetPoster = document.getElementById(idPosterTerakhir);
+            if (targetPoster) {
+                const tombolPlay = targetPoster.querySelector('.play-link');
+                if (tombolPlay) {
+                    setTimeout(() => {
+                        tombolPlay.focus();
+                        targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                    }, 50);
+                    return; // Selesai, kunci target langsung ketemu!
+                }
+            }
         }
+        
+        // Jika masuk halaman normal atau target tidak valid, arahkan ke pencarian
+        if (searchBox) searchBox.focus();
+        localStorage.removeItem("idPosterTerakhir");
         sessionStorage.removeItem("sedangNontonVideo");
     });
 });
