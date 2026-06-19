@@ -267,7 +267,7 @@ body {
         <div id="noResultsText" class="no-results">Film tidak ditemukan...</div>
 
     </div>
-
+    
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchBox = document.getElementById('searchBox');
@@ -293,7 +293,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
                 if (itemAsli) {
                     const klon = itemAsli.cloneNode(true);
-                    // Berikan ID unik khusus untuk barisan favorit agar ingatan fokus tidak tertukar
                     klon.setAttribute('id', 'fav-' + idFilm);
                     containerFav.appendChild(klon);
                 }
@@ -317,7 +316,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function pasangEventAksi() {
-        // Logika klik dan nonton video
         document.querySelectorAll('.card-film').forEach(card => {
             const link = card.querySelector('.play-link');
             if (!link) return;
@@ -326,9 +324,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const newLink = card.querySelector('.play-link');
 
             const handleWatch = function(e) {
-                // REVISI SAKTI: Simpan ID unik elemen poster yang diklik secara langsung, bukan indeks angkanya
+                // MODIFIKASI STB: Gunakan localStorage untuk semua penanda agar tahan banting dari refresh otomatis
                 localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
-                sessionStorage.setItem("sedangNontonVideo", "ya");
+                localStorage.setItem("sedangNontonVideoSTB", "ya");
 
                 if (typeof Android !== "undefined" && Android.playVideo) {
                     e.preventDefault();
@@ -341,7 +339,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        // Logika Klik Tombol Bintang Favorit
         document.querySelectorAll('.btn-fav').forEach(btn => {
             btn.replaceWith(btn.cloneNode(true));
         });
@@ -368,7 +365,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // PENCARIAN
     function saringFilm(keyword) {
         let adaFilmCocok = false;
         const semuaKartu = containerUtama.querySelectorAll('.card-film');
@@ -414,33 +410,32 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Jalankan sistem pembacaan data awal
     updateTampilanFavorit();
 
-    // EKSEKUSI PENGINGAT FOKUS POSTER (100% DIJAMIN AKURAT)
-    requestAnimationFrame(() => {
-        const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
+    // EKSEKUSI PENGINGAT FOKUS KHUSUS HARDWARE STB (ANTI RAMPAS RAM)
+    setTimeout(() => {
+        const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
         const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
         
-        if (baruSelesaiNonton === "ya" && idPosterTerakhir) {
+        if (statusNontonSTB === "ya" && idPosterTerakhir) {
             const targetPoster = document.getElementById(idPosterTerakhir);
             if (targetPoster) {
                 const tombolPlay = targetPoster.querySelector('.play-link');
                 if (tombolPlay) {
-                    setTimeout(() => {
-                        tombolPlay.focus();
-                        targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                    }, 50);
-                    return; // Selesai, kunci target langsung ketemu!
+                    tombolPlay.focus();
+                    targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                    
+                    // Bersihkan penanda SETELAH fokus berhasil dikembalikan
+                    localStorage.removeItem("sedangNontonVideoSTB");
+                    localStorage.removeItem("idPosterTerakhir");
+                    return;
                 }
             }
         }
         
-        // Jika masuk halaman normal atau target tidak valid, arahkan ke pencarian
+        // Default jika halaman baru dibuka murni
         if (searchBox) searchBox.focus();
-        localStorage.removeItem("idPosterTerakhir");
-        sessionStorage.removeItem("sedangNontonVideo");
-    });
+    }, 180); // Menggunakan jeda 180ms agar mesin Webview STB selesai merender layout film seutuhnya
 });
 </script>
 
