@@ -22,10 +22,50 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .section-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: left; margin: 20px 0 15px 40px; }
 #favSectionTitle, #containerFav { display: none; }
 .container-film { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 20px; padding: 0 40px; max-width: 1400px; margin: 0 auto; }
-.card-film { display: block; width: 140px; text-decoration: none; cursor: pointer; outline: none; will-change: transform; transition: transform 0.1s ease-out; position: relative; }
+.card-film { 
+    display: block; 
+    width: 140px; 
+    text-decoration: none; 
+    cursor: pointer; 
+    outline: none; 
+    will-change: transform; 
+    transition: transform 0.1s ease-out; 
+    position: relative; 
+    
+    /* TAMBAHKAN KODE INI DI BAWAHNYA */
+    content-visibility: auto; 
+    contain-intrinsic-size: 140px 270px; 
+}
 .poster-wrapper { width: 140px; height: 210px; background-color: #141414; border-radius: 6px; overflow: hidden; border: 3px solid transparent; transition: border-color 0.1s ease-out; }
-.poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-.btn-fav { width: 100%; background-color: #1f1f1f; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 4px 0; margin-top: 5px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; outline: none; }
+.poster-wrapper img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    
+    /* TAMBAHKAN INI */
+    image-rendering: -webkit-optimize-contrast;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.btn-fav { 
+    width: 100%; 
+    background-color: #1f1f1f; 
+    border: 1px solid #333; 
+    color: #aaa; 
+    font-size: 11px; 
+    padding: 4px 0; 
+    margin-top: 5px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 3px; 
+    outline: none; 
+    
+    /* TAMBAHKAN INI */
+    will-change: transform; 
+}
 .btn-fav:focus { border-color: #FFD700; color: #FFD700; background-color: rgba(255, 215, 0, 0.1); }
 .btn-fav.active { color: #FFD700; }
 .film-title { color: #e0e0e0; font-size: 13px; font-weight: bold; text-align: center; margin-top: 6px; padding: 0 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
