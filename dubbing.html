@@ -107,15 +107,19 @@ body {
     max-width: 1400px;
     margin: 0 auto;
 }
-.card-film {
-    display: block;
-    width: 140px;
-    text-decoration: none;
-    cursor: pointer;
+.card-film { 
+    display: block; 
+    width: 140px; 
+    text-decoration: none; 
+    cursor: pointer; 
     outline: none; 
-    will-change: transform;
-    transition: transform 0.1s ease-out;
-    position: relative;
+    will-change: transform; 
+    transition: transform 0.1s ease-out; 
+    position: relative; 
+    
+    /* TAMBAHKAN KODE INI DI BAWAHNYA */
+    content-visibility: auto; 
+    contain-intrinsic-size: 140px 270px; 
 }
 .poster-wrapper {
     width: 140px;
@@ -126,26 +130,34 @@ body {
     border: 3px solid transparent; 
     transition: border-color 0.1s ease-out;
 }
-.poster-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.poster-wrapper img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    
+    /* TAMBAHKAN INI */
+    image-rendering: -webkit-optimize-contrast;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
-.btn-fav {
-    width: 100%;
-    background-color: #1f1f1f;
-    border: 1px solid #333;
-    color: #aaa;
-    font-size: 11px;
-    padding: 4px 0;
-    margin-top: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    outline: none;
+.btn-fav { 
+    width: 100%; 
+    background-color: #1f1f1f; 
+    border: 1px solid #333; 
+    color: #aaa; 
+    font-size: 11px; 
+    padding: 4px 0; 
+    margin-top: 5px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 3px; 
+    outline: none; 
+    
+    /* TAMBAHKAN INI */
+    will-change: transform; 
 }
 .btn-fav:focus {
     border-color: #FFD700;
