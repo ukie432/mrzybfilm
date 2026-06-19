@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>MRZYB TV</title>
@@ -16,7 +19,7 @@
 }
 body {
     font-family: 'PT Sans', sans-serif;
-    background-color: #000000; /* Hitam pekat ala Netflix */
+    background-color: #000000; 
     color: #ffffff;
     overflow-x: hidden;
     padding-bottom: 40px; 
@@ -92,12 +95,11 @@ body {
     margin: 20px 0 15px 40px;
 }
 
-/* Sembunyikan kategori favorit jika belum ada isinya */
 #favSectionTitle, #containerFav {
     display: none;
 }
 
-/* --- GRID POSTER FILM (ALA NETFLIX) --- */
+/* --- GRID POSTER FILM --- */
 .container-film {
     display: flex;
     flex-wrap: wrap;
@@ -108,7 +110,6 @@ body {
     margin: 0 auto;
 }
 
-/* Item Kartu Film */
 .card-film {
     display: block;
     width: 140px;
@@ -120,7 +121,6 @@ body {
     position: relative;
 }
 
-/* Wadah Gambar Poster (Rasio 2:3) */
 .poster-wrapper {
     width: 140px;
     height: 210px;
@@ -138,7 +138,6 @@ body {
     object-fit: cover;
 }
 
-/* Tombol Bintang Favorit Kecil di Bawah Poster */
 .btn-fav {
     width: 100%;
     background-color: #1f1f1f;
@@ -177,7 +176,6 @@ body {
     overflow: hidden;
 }
 
-/* EFFECT FOKUS REMOTE STB */
 .card-film:focus {
     transform: scale(1.06);
     z-index: 10;
@@ -250,33 +248,11 @@ body {
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ93fFGXm_QOJkbNYLlBtxyrls-T6ojRL-2wA&usqp=CAU" alt="Absolutely Anything">
                 </div>
             </a>
-            
             <button class="btn-fav" tabindex="0" data-target="film4"><span>☆</span> Favorit</button>
             <div class="film-title">Absolutely Anything</div>
         </div>
-        
-                <div class="card-film" data-id="film5" id="utama-film5">
-            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%2013th%20warrior%20(1999).mp4" data-title="then 13th warrior">
-                <div class="poster-wrapper">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOwLZ0FFAaQfapForuaQJYIrxGGVlmw_bwwR3qxTSZIZNeT2ozr0MatNU&s=10" alt="The 13th Warrior">
-                </div>
-            </a>
-            <button class="btn-fav" tabindex="0" data-target="film5"><span>☆</span> Favorit</button>
-            <div class="film-title">Then 13th Warrior</div>
-        </div>
 
-        <div class="card-film" data-id="film6" id="utama-film6">
-            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Abselutely%20anything%20(2015).mp4" data-title="absoluiitely anything">
-                <div class="poster-wrapper">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ93fFGXm_QOJkbNYLlBtxyrls-T6ojRL-2wA&usqp=CAU" alt="Absolutely Anything">
-                </div>
-            </a>
-            
-            <button class="btn-fav" tabindex="0" data-target="film6"><span>☆</span> Favorit</button>
-            <div class="film-title">Absoluiitely Anything</div>
-        </div>
-
-        <div class="card-film" data-id="film7" id="utama-film7">
+        <div class="card-film" data-id="film5" id="utama-film5">
             <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Atm%20er%20rak%20error%20(2012).mp4" data-title="atm error">
                 <div class="poster-wrapper">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvVilzDKJsvLrqpbINTVzo0iuWkQ14XH42wg&usqp=CAU" alt="ATM Error">
@@ -286,10 +262,40 @@ body {
             <div class="film-title">ATM: Er Rak Error</div>
         </div>
 
+        <div class="card-film" data-id="film6" id="utama-film6">
+            <a tabindex="0" class="play-link" href="#" data-title="film baru enam">
+                <div class="poster-wrapper">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200" alt="Film 6">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film6"><span>☆</span> Favorit</button>
+            <div class="film-title">Film Baru Kustom 6</div>
+        </div>
+        
+                <div class="card-film" data-id="film7" id="utama-film7">
+            <a tabindex="0" class="play-link" href="#" data-title="film baru enam">
+                <div class="poster-wrapper">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200" alt="Film 7">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film7"><span>☆</span> Favorit</button>
+            <div class="film-title">Film Baru Kustom 67</div>
+        </div>
+
+        <div class="card-film" data-id="film8" id="utama-film8">
+            <a tabindex="0" class="play-link" href="#" data-title="film baru tujuh">
+                <div class="poster-wrapper">
+                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200" alt="Film 8">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film8"><span>☆</span> Favorit</button>
+            <div class="film-title">Film Baru Kustom 7</div>
+        </div>
+
         <div id="noResultsText" class="no-results">Film tidak ditemukan...</div>
 
     </div>
-    
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchBox = document.getElementById('searchBox');
@@ -298,6 +304,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerUtama = document.getElementById('containerUtama');
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
+
+    // FORCE RELOAD DATA JIKA DETEKSI PERUBAHAN STRUKTUR FILM
+    const VERSI_KODE = "17_FILM_V10";
+    if(localStorage.getItem("app_version") !== VERSI_KODE){
+        localStorage.setItem("app_version", VERSI_KODE);
+        // Hapus sisa-sisa cache fokus lama agar tidak macet
+        localStorage.removeItem("idPosterTerakhir");
+        localStorage.removeItem("sedangNontonVideoSTB");
+    }
 
     let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorit')) || [];
 
@@ -317,6 +332,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     const klon = itemAsli.cloneNode(true);
                     klon.setAttribute('id', 'fav-' + idFilm);
                     containerFav.appendChild(klon);
+                } else {
+                    // Jika film favorit lama tidak ditemukan di daftar utama baru, bersihkan datanya
+                    listFavorit = listFavorit.filter(id => id !== idFilm);
+                    localStorage.setItem('mrzyb_favorit', JSON.stringify(listFavorit));
                 }
             });
         }
@@ -346,7 +365,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const newLink = card.querySelector('.play-link');
 
             const handleWatch = function(e) {
-                // MODIFIKASI STB: Gunakan localStorage untuk semua penanda agar tahan banting dari refresh otomatis
                 localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
                 localStorage.setItem("sedangNontonVideoSTB", "ya");
 
@@ -434,7 +452,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     updateTampilanFavorit();
 
-    // EKSEKUSI PENGINGAT FOKUS KHUSUS HARDWARE STB (ANTI RAMPAS RAM)
     setTimeout(() => {
         const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
         const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
@@ -446,18 +463,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (tombolPlay) {
                     tombolPlay.focus();
                     targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                    
-                    // Bersihkan penanda SETELAH fokus berhasil dikembalikan
                     localStorage.removeItem("sedangNontonVideoSTB");
                     localStorage.removeItem("idPosterTerakhir");
                     return;
                 }
             }
         }
-        
-        // Default jika halaman baru dibuka murni
         if (searchBox) searchBox.focus();
-    }, 180); // Menggunakan jeda 180ms agar mesin Webview STB selesai merender layout film seutuhnya
+    }, 180); 
 });
 </script>
 
