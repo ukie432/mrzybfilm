@@ -2,138 +2,63 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-<title>MRZYB TV - Koleksi Film Animasi</title>
-<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+<title>MRZYB TV - Koleksi Film Jadul</title>
 <style>
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
-    .header-banner { text-align: center; padding: 20px 0 10px 0; }
-    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
-    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 25px auto; padding: 0 10px; position: relative; }
-    .search-input { width: 100%; padding: 12px 50px 12px 20px; font-size: 16px; background-color: #141414; border: 2px solid #262626; border-radius: 8px; color: #ffffff; outline: none; }
-    .search-input:focus { border-color: #E50914; background-color: #1f1f1f; }
-    .btn-clear { position: absolute; right: 20px; background: none; border: 2px solid transparent; color: #808080; font-size: 20px; font-weight: bold; cursor: pointer; width: 32px; height: 32px; display: none; align-items: center; justify-content: center; border-radius: 50%; outline: none; }
-    .section-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: left; margin: 20px 0 15px 40px; }
-    .container-film { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 0 40px; max-width: 1400px; margin: 0 auto; }
-    .card-film { display: block; width: 140px; text-decoration: none; cursor: pointer; outline: none; transition: transform 0.1s ease-out; position: relative; content-visibility: auto; contain-intrinsic-size: 140px 270px; }
-    .poster-wrapper { width: 140px; height: 210px; background-color: #141414; border-radius: 6px; overflow: hidden; border: 3px solid transparent; }
+    body { font-family: sans-serif; background-color: #000; color: #fff; padding-bottom: 50px; }
+    .header-banner { text-align: center; padding: 20px 0; }
+    .container-film { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 0 40px; }
+    .card-film { width: 140px; cursor: pointer; position: relative; }
+    .poster-wrapper { width: 140px; height: 210px; background: #141414; border-radius: 6px; overflow: hidden; border: 3px solid transparent; }
     .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-    .btn-fav { width: 100%; background-color: #1f1f1f; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 4px 0; margin-top: 5px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
-    .btn-fav.active { color: #FFD700; }
-    .film-title { color: #e0e0e0; font-size: 13px; font-weight: bold; text-align: center; margin-top: 6px; padding: 0 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .card-film:focus { transform: scale(1.06); z-index: 10; }
-    .card-film:focus .poster-wrapper { border-color: #E50914; }
-    .no-results { display: none; width: 100%; text-align: center; color: #808080; font-size: 16px; margin-top: 30px; }
+    .film-title { font-size: 13px; text-align: center; margin-top: 6px; }
+    .card-film:focus .poster-wrapper { border-color: #E50914; transform: scale(1.05); }
 </style>
 </head>
 <body>
 
 <div class="header-banner"><h1>MRZYB TV</h1></div>
-
-<div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-input" placeholder="Cari judul film..." tabindex="0">
-    <button id="btnClear" class="btn-clear" tabindex="0">×</button>
-</div>
-
-<div class="section-title" id="favSectionTitle">Daftar Favorit Saya ⭐</div>
-<div class="container-film" id="containerFav"></div>
-
-<div class="section-title" id="categoryTitle">Koleksi Film Animasi</div>
-<div class="container-film" id="containerUtama">
-    </div>
-<div id="noResultsText" class="no-results">Film tidak ditemukan...</div>
+<div class="container-film" id="containerUtama"></div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const containerUtama = document.getElementById('containerUtama');
-    const searchBox = document.getElementById('searchBox');
-    const continueBox = document.getElementById('continueWatching');
-    
-    // 1. Load Data JSON
+    // MENCEGAH REFRESH SAAT TOMBOL BACK DITEKAN
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+        window.history.pushState(null, "", window.location.href);
+    };
+
+    // FUNGSI PEMUTAR FILM
+    function handleWatch(e, element) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const url = element.getAttribute("href");
+        const id = element.parentElement.getAttribute("id");
+        
+        localStorage.setItem("idPosterTerakhir", id);
+        localStorage.setItem("sedangNontonVideoSTB", "ya");
+        
+        if (typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(url);
+        }
+        return false;
+    }
+
+    // LOAD DATA
     fetch('data/animasi.json')
     .then(response => response.json())
     .then(data => {
-        containerUtama.innerHTML = data.map(film => `
+        const container = document.getElementById('containerUtama');
+        container.innerHTML = data.map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                <a class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                <a class="play-link" href="${film.url}" onclick="handleWatch(event, this)">
                     <div class="poster-wrapper"><img src="${film.img}" loading="lazy"></div>
                 </a>
-                <button class="btn-fav" data-target="${film.id}">☆ Favorit</button>
                 <div class="film-title">${film.title}</div>
             </div>
         `).join('');
-
-        // 2. Inisialisasi Fungsi Setelah Data Muncul
-        pasangEventAksi();
-        updateTampilanFavorit();
-
-
-
-        // 4. Fokus Terakhir Setelah Kembali dari Player
-        setTimeout(() => {
-            const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
-            if (statusNontonSTB === "ya" && lastId) {
-                const target = document.getElementById(lastId);
-                if (target) {
-                    target.querySelector('.play-link').focus();
-                    target.scrollIntoView({block: "center"});
-                    localStorage.removeItem("sedangNontonVideoSTB");
-                    localStorage.removeItem("idPosterTerakhir");
-                }
-            } else {
-                searchBox.focus();
-            }
-        }, 300);
     });
-
-    // --- Fungsi Pendukung (Favorit & Pencarian) ---
-    function pasangEventAksi() {
-        document.querySelectorAll('.play-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                localStorage.setItem("idPosterTerakhir", link.parentElement.getAttribute("id"));
-                localStorage.setItem("sedangNontonVideoSTB", "ya");
-                if (typeof Android !== "undefined") { e.preventDefault(); Android.playVideo(link.getAttribute("href")); }
-            });
-        });
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            btn.addEventListener('click', () => {
-                let favs = JSON.parse(localStorage.getItem('mrzyb_favorit') || '[]');
-                const id = btn.getAttribute('data-target');
-                if(favs.includes(id)) favs = favs.filter(i => i !== id);
-                else favs.push(id);
-                localStorage.setItem('mrzyb_favorit', JSON.stringify(favs));
-                updateTampilanFavorit();
-            });
-        });
-    }
-
-    function updateTampilanFavorit() {
-        const listFav = JSON.parse(localStorage.getItem('mrzyb_favorit') || '[]');
-        document.getElementById('containerFav').innerHTML = "";
-        listFav.forEach(id => {
-            const el = document.getElementById('utama-' + id);
-            if(el) {
-                const clone = el.cloneNode(true);
-                clone.id = 'fav-' + id;
-                document.getElementById('containerFav').appendChild(clone);
-            }
-        });
-        document.getElementById('favSectionTitle').style.display = listFav.length ? 'block' : 'none';
-        pasangEventAksi();
-    }
-
-    searchBox.addEventListener('input', function() {
-        const val = this.value.toLowerCase();
-        document.querySelectorAll('.card-film').forEach(c => {
-            c.style.display = c.querySelector('.play-link').dataset.title.includes(val) ? 'block' : 'none';
-        });
-    });
-});
 </script>
 </body>
 </html>
