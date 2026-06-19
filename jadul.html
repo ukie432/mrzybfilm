@@ -1,1236 +1,1136 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8"/>
-    <title>MRZYB Netflix STB</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body { margin:0; background:#121212; font-family:Arial; color:white; overflow-x: hidden; }
-
-        /* BANNER HERO */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: clamp(220px, 30vh, 420px);
-            overflow: hidden;
-            border-bottom: 3px solid rgba(255,255,255,0.2);
-            outline: none;
-        }
-        .hero:focus {
-            box-shadow: inset 0 0 0 4px #e50914;
-        }
-        .hero img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(80%);
-        }
-        .heroText {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: white;
-            text-shadow: 0 0 10px black;
-        }
-        .heroText h1 {
-            margin: 0;
-            font-size: 26px;
-            font-weight: bold;
-        }
-
-        /* NAVBAR KATEGORI & PENCARIAN */
-        .kategori-top {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          background: rgba(0,0,0,0.4);
-          padding: 8px 12px;
-          border-radius: 10px;
-        }
-        .kategori-list {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        .search-box {
-          display: flex;
-          align-items: center;
-          position: relative;
-          flex-shrink: 0;
-        }
-        #search {
-            width: 0;
-            opacity: 0;
-            padding: 6px;
-            padding-right: 30px;
-            border-radius: 8px;
-            border: none;
-            transition: 0.3s;
-            background: #222;
-            color: white;
-            outline: none;
-        }
-        #search:focus, #search.active {
-            width: 160px;
-            opacity: 1;
-            border: 1px solid #e50914;
-        }
-        #searchIcon {
-            position: absolute;
-            right: 8px;
-            cursor: pointer;
-            padding: 4px;
-            outline: none;
-            border-radius: 4px;
-        }
-        #searchIcon:focus {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* KATEGORI WRAPPER */
-        .kategori-wrapper {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          padding: 10px;
-        }
-        .kategori {
-            cursor: pointer;
-            color: #ccc;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: 0.2s;
-            outline: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .kategori:focus, .kategori:hover {
-            color: white;
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 0 8px rgba(255,255,255,0.2);
-        }
-        .kategori.active {
-            background: red;
-            color: white;
-        }
-
-        /* ALFABET A-Z */
-        .kategori-az {
-          display: flex;
-          gap: 8px;
-          overflow-x: auto;
-          padding: 4px 2px 8px;
-          outline: none !important;
-        }
-        .kategori-az button {
-          min-width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.08);
-          color: #ccc;
-          border: 1px solid rgba(255,255,255,0.18);
-          font-size: 11px;
-          font-weight: 600;
-          cursor: pointer;
-          backdrop-filter: blur(6px);
-          transition: transform .2s ease, background .25s ease, box-shadow .25s ease, color .25s ease;
-          outline: none;
-        }
-        .kategori-az button:focus {
-          background: #e50914;
-          color: #fff;
-          transform: scale(1.15);
-          box-shadow: 0 0 12px rgba(229,9,20,.85);
-        }
-        .kategori-az button.active {
-          background: #e50914;
-          color: #fff;
-          box-shadow: 0 0 14px rgba(229,9,20,.75);
-        }
-
-        /* GRID POSTER PROPORSI PRO-RATIO SEJAJAR RAPI */
-        .poster-grid {
-          margin-top: 15px;
-          position: relative;
-        }
-        section {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-          gap: 16px;
-          padding: 10px;
-        }
-        .card {
-          position: relative;
-          outline: none;
-          cursor: pointer;
-          background: transparent;
-          border-radius: 10px;
-          transition: transform .25s;
-        }
-        .card img {
-          width: 100%;
-          aspect-ratio: 2/3;
-          object-fit: cover;
-          border-radius: 10px;
-          display: block;
-          transition: transform .25s, box-shadow .25s;
-          box-shadow: 0 6px 16px rgba(0,0,0,0.6);
-          will-change: transform;
-          transform-origin: center bottom;
-        }
-        .card span {
-          display: block;
-          text-align: center;
-          margin-top: 8px;
-          font-size: 13px;
-          color: #ccc;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .card:focus img {
-          transform: scale(1.12);
-          box-shadow: 0 0 25px rgba(229, 9, 20, 0.85);
-          border: 2px solid #fff;
-        }
-        .card:focus span {
-          color: #fff;
-          font-weight: bold;
-        }
-
-        /* POPUP DETAIL MODAL FILM */
-        .popup {
-            display: none;
-            position: fixed;
-            z-index: 20000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            justify-content: center;
-            align-items: center;
-        }
-        .popup-content {
-            background: #161616;
-            padding: 24px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 0 30px rgba(229,9,20,0.3);
-        }
-        .popup-content img {
-            width: 100%;
-            max-height: 35vh;
-            object-fit: contain;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        .popup-content h2 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .popup-content button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 8px;
-            cursor: pointer;
-            outline: none;
-        }
-        #popupPlay { background: #e50914; }
-        #popupPlay:focus { background: #fff; color: #000; box-shadow: 0 0 15px #fff; }
-        #popupFav { background: #222; border: 1px solid #444; }
-        #popupFav:focus { background: #fff; color: #000; box-shadow: 0 0 15px #fff; }
-        #popupClose { background: #444; }
-        #popupClose:focus { background: #fff; color: #000; box-shadow: 0 0 15px #fff; }
-
-        /* THEME BTN */
-        .theme-btn {
-          position: fixed;
-          top: 15px;
-          right: 15px;
-          z-index: 9999;
-          background: rgba(0,0,0,.6);
-          border: none;
-          border-radius: 50%;
-          width: 42px;
-          height: 42px;
-          font-size: 20px;
-          cursor: pointer;
-          color: white;
-          outline: none;
-        }
-        .theme-btn:focus { background: #e50914; }
-
-        /* LIGHT MODE TEMA */
-        body.light { background:#f2f2f2 !important; color:#111 !important; }
-        body.light .card span { color: #111 !important; }
-        body.light .kategori { color: #333; }
-        body.light .popup-content { background: #ffffff !important; color: #111 !important; }
-
-        .card.hide { display:none; }
-    </style>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MRZYB TV - Koleksi Film Jadul</title>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
+.header-banner { text-align: center; padding: 20px 0 10px 0; }
+.header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+.search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 25px auto; padding: 0 10px; position: relative; }
+.search-input { width: 100%; padding: 12px 50px 12px 20px; font-size: 16px; background-color: #141414; border: 2px solid #262626; border-radius: 8px; color: #ffffff; outline: none; }
+.search-input:focus { border-color: #E50914; background-color: #1f1f1f; }
+.btn-clear { position: absolute; right: 20px; background: none; border: 2px solid transparent; color: #808080; font-size: 20px; font-weight: bold; cursor: pointer; width: 32px; height: 32px; display: none; align-items: center; justify-content: center; border-radius: 50%; outline: none; }
+.btn-clear:focus { color: #E50914; border-color: #E50914; background-color: rgba(229, 9, 20, 0.1); }
+.section-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: left; margin: 20px 0 15px 40px; }
+#favSectionTitle, #containerFav { display: none; }
+.container-film { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 20px; padding: 0 40px; max-width: 1400px; margin: 0 auto; }
+.card-film { display: block; width: 140px; text-decoration: none; cursor: pointer; outline: none; will-change: transform; transition: transform 0.1s ease-out; position: relative; }
+.poster-wrapper { width: 140px; height: 210px; background-color: #141414; border-radius: 6px; overflow: hidden; border: 3px solid transparent; transition: border-color 0.1s ease-out; }
+.poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.btn-fav { width: 100%; background-color: #1f1f1f; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 4px 0; margin-top: 5px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; outline: none; }
+.btn-fav:focus { border-color: #FFD700; color: #FFD700; background-color: rgba(255, 215, 0, 0.1); }
+.btn-fav.active { color: #FFD700; }
+.film-title { color: #e0e0e0; font-size: 13px; font-weight: bold; text-align: center; margin-top: 6px; padding: 0 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-film:focus { transform: scale(1.06); z-index: 10; }
+.card-film:focus .poster-wrapper { border-color: #E50914; }
+.no-results { display: none; width: 100%; text-align: center; color: #808080; font-size: 16px; margin-top: 30px; }
+</style>
 </head>
 <body>
-
-<button id="themeToggle" class="theme-btn">🌙</button>
-
-<div class="hero" tabindex="0">
-    <img src="https://raw.githubusercontent.com/Ukie4321/Mrzybposter/refs/heads/main/AddText_02-25-04.55.04.png" alt="Banner MRZYB">
-    <div class="heroText">
+    <div class="header-banner">
         <h1>MRZYB TV</h1>
-        <p>Streaming Koleksi Dubbing Indonesia Terbaik</p>
     </div>
-</div>
-
-<div id="kategoriMenu" class="kategori-wrapper">
-    <div class="kategori-top">
-        <div class="kategori-list">
-            <span class="kategori active" data-kategori="all" tabindex="0">Semua</span>
-            <span class="kategori" data-kategori="favorite" tabindex="0">❤️ Favorit</span>
-        </div>
-
-        <div class="search-box">
-            <input id="search" placeholder="Search..." />
-            <div id="searchIcon" tabindex="0">
-                <i id="searchToggleIcon" class="fas fa-search" style="color: red; font-size: 18px;"></i>
-            </div>
-        </div>
+    <div class="search-wrapper">
+        <input type="text" id="searchBox" class="search-input" placeholder="Cari judul film..." tabindex="0">
+        <button id="btnClear" class="btn-clear" tabindex="0" title="Hapus pencarian">×</button>
     </div>
+    <div class="section-title" id="favSectionTitle">Daftar Favorit Saya ⭐</div>
+    <div class="container-film" id="containerFav"></div>
+    <div class="section-title" id="categoryTitle">Koleksi Film Jadul</div>
+    <div class="container-film" id="containerUtama">
 
-    <div class="kategori-az"></div>
-
-    <div class="poster-grid">
-
-        <div id="moviePopup" class="popup">
-            <div class="popup-content">
-                <img id="popupImg" src="" alt="Poster" />
-                <h2 id="popupTitle">Judul Film</h2>
-                <p id="popupSinopsis"></p>
-                <button id="popupPlay"><i class="fas fa-play"></i> Play (ExoPlayer)</button>
-                <button id="popupFav">❤️ Tambah Favorit</button></button>
-                <button id="popupClose">Tutup</button>
-            </div>
+        <div class="card-film" data-id="film1" id="utama-film1">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Pengabdi%20Setan%20(1980).mp4" data-title="pengabdi setan (1980)">
+                <div class="poster-wrapper">
+                    <img src="https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/PicRetouch_20251209_191006338.webp" alt="Pengabdi Setan (1980)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film1"><span>☆</span> Favorit</button>
+            <div class="film-title">Pengabdi Setan (1980)</div>
         </div>
-
-        <section id="movieSection">
-
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Pengabdi%20Setan%20(1980).mp4" data-title="pengabdi setan (1980)">
-                <img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/PicRetouch_20251209_191006338.webp" />
-                <span>Pengabdi Setan (1980)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Bayi.Ajaib.1982.mp4" data-title="bayi ajaib 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/62/83/e5/6283e508c875be8e07928bad5abcd96f.jpg" />
-                <span>bayi ajaib 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Barang%20Terlarang%20(1987).mp4" data-title="barang terlarang (1987)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/66/a5/3e/66a53edafa1ad78bab0d81dd3ed60742.jpg" />
-                <span>Barang terlarang (1987)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BUAYE%20GILE.%20Kualitas%20HD.%20Full%20Movie.webm" data-title="benyamin buaye gile">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/24/c1/a2/24c1a23116391a15959d98d49bb16412.jpg" />
-                <span>Benyamin buaye gile</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/lukisan%20berlumur%20darah%201988.mp4" data-title="lukisan berlumur darah (1988)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/d9/0c/82/d90c82d319f004b59836f7647f274fa9.jpg" />
-                <span>Lukisan berlumur darah (1988)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Gengsi.Dooong.1980.1080p.mp4" data-title="warkop dki gengsi dong (1980)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/95/48/88/95488811395bfbf00edbdf41f3b4bf1b.jpg" />
-                <span>Warkop dki Gengsi dong (1980)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/djakarta%201966.mp4" data-title="djakarta 1966 (1966)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a1/b9/e0/a1b9e09b95bfd84a2c078e252aad29df.jpg" />
-                <span>Djakarta 1966 (1966)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/operasi%20trisula%20(1987).mp4" data-title="operasi trisula (1987)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/0b/85/0f/0b850ff53a193b440e6ca019e34c36f1.jpg" />
-                <span>operasi trisula (1987)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/SI%20DOEL%20ANAK%20MODERN%20(1976)%20FULL%20MOVIE%20HD%20-%20BENYAMIN%20SUEB,%20CHRISTINE%20HAKIM,%20S.%20BONO_7760.mp4" data-title="benyamin si doel anak moderen (1976)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/09/6e/cd/096ecd2effa8e04138cd121e912df41a.jpg" />
-                <span>Benyamin Si doel anak moderen (1976)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/PINANGAN%20(1976)%20FULL%20MOVIE%20HD%20-%20BENYAMIN%20SUEB,%20RIMA%20MELATI,%20SUROTO_4335.mp4" data-title="benyamin pinangan (1976)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/81/51/29/815129e5db22763b58ae008937649355.jpg" />
-                <span>Benyamin pinangan (1976)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/SI%20BUTA%20DARI%20GOA%20HANTU%20(1970)%20FULL%20MOVIE%20HD%20-%20RATNO%20TIMOER,%20SRI%20REDJEKI,%20KUSNO%20SUDJARWADI.mp4" data-title="si buta dari gua hantu(1970)">
-                <img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/PicRetouch_20251209_190939690.webp" />
-                <span>Si buta dari gua hantu(1970)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/ANAK%20EMAS%20(1976)%20FULL%20MOVIE%20HD%20-%20ADI%20BING%20SLAMET,%20YATNI%20ARDI,%20EDDY%20SUD,%20ALAM%20SURAWIJAYA.mp4" data-title="anak emas(1976)">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/13/14/a9/1314a901bd4871f0e29f9996468cd4c1.jpg" />
-                <span>Anak emas(1976)</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/NIKMATNYA%20CINTA%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno nikmatnya cinta 1980">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/7e/e4/00/7ee400de8d49ed87933bf27f26348005.jpg" />
-                <span>Rano karno Nikmatnya cinta 1980</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PELANGI%20DI%20LANGIT%20SINGOSARI%20(KEN%20DEDES)%20(1972)%20FULL%20MOVIE%20HD%20-%20EMILIA%20CONTESSA_%20PONG%20HARJATMO(720P_HD).mp4" data-title="pelangi dilangit singosari 1972">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/7b/49/a9/7b49a99e8f8acea847a83b3c867f1fb1.jpg" />
-                <span>pelangi dilangit singosari 1972</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PENANGKAL%20ILMU%20TELUH%20(1979)%20FULL%20MOVIE%20HD%20-%20DEBBIE%20CYNTHIA%20DEWI_%20HENDRA%20CIPTA_%20MUNI%20CADER(720P_60FPS).mp4" data-title="penangkal ilmu teluh 1979">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/03/c7/61/03c76124ebd13502416b00c19c52b9d8.jpg" />
-                <span>penangkal ilmu teluh 1979</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PENDEKAR%20SUMUR%20TUDJUH%20(1971)%20FULL%20MOVIE%20HD%20-%20WAHAB%20ABDI_%20MILA%20KARMILA_%20AGUS%20RAMLAN(720P_60FPS).mp4" data-title="pendekar sumur tujuh 1971">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/3f/6f/af/3f6faffeec559f60d72c25bff073e9b8.jpg" />
-                <span>pendekar sumur tujuh 1971</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PERAWAN%20LEMBAH%20WILIS%20(1993)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20AYU%20YOHANA_%20BARON%20HERMANTO(720P_HD).mp4" data-title="perawan lembah wilis 1993">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/ed/58/7a/ed587ad394841492190ccbe250cdcf63.jpg" />
-                <span>perawan lembah wilis 1993</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PRABU%20ANGLINGDARMA%20III%20(PEMBURU%20DI%20NERAKA)%20(1994)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20FENDY%20PRADANA(720P_HD).mp4" data-title="barry prima prabu anglingdarma 1994">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/33/34/f4/3334f4d5408998fa31b08d1e8aa12238.jpg" />
-                <span>Barry prima prabu anglingdarma 1994</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20DAN%20ANAK%20JIN%20__%20NIKE%20ARDILA%20__%20MABAK%20VERSI%20__%20FULL%20HD%201080p(720P_HD).mp4" data-title="si kabayan dana anak jin">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/02/79/3b/02793bb1d6106fe6e32c85bbd1a60fb9.jpg" />
-                <span>si kabayan dana anak jin</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20MENCARI%20JODOH%20__%20DESI%20RATNASARI%20__%20HD%20720p(720P_HD).mp4" data-title="si kabayan mencari jodoh">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/40/0a/08/400a08257f800a047c4c2e4b55b4d237.jpg" />
-                <span>si kabayan mencari jodoh</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20SABA%20KOTA%20__%20PARAMITA%20RUSADY%20__%20FULL%20HD%201080p(720P_HD).mp4" data-title="si kabayan saba kota">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/74/85/bf/7485bf222c52c9b41ddfb9be4d2c005c.jpg" />
-                <span>si kabayan saba kota</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20RANO%20(1973)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno si rano 1973">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/db/0a/90/db0a90a24999a01c2e98f0f3264ef5f9.jpg" />
-                <span>Rano karno si rano 1973</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TABAH%20SAMPAI%20AKHIR%20(1973)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno tabah sampai akhir 1973">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f3/00/d4/f300d46564e9dd29391d55a36cb9ff17.jpg" />
-                <span>Rano karno tabah sampai akhir 1973</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TAHU%20BERES%20(1993)%20FULL%20MOVIE%20HD(720P_60FPS).mp4" data-title="kadir doyok tahu beres 1993">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a1/bc/00/a1bc0030fbd6f0ebdbe9ea19c36cffad.jpg" />
-                <span>Kadir doyok tahu beres 1993</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TEMPATMU%20DI%20SISIKU%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno tempatmu di sisiku 1980">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a4/1e/4a/a41e4a3d34cb0a72da53fce3a95c0ffd.jpg" />
-                <span>Rano karno tempatmu di sisiku 1980</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TITISAN%20SI%20PITUNG%20(1989)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="titisan si pitung 1989">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a7/17/ce/a717ce2a393528856c01f27d69ed30e0.jpg" />
-                <span>titisan si pitung 1989</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/WALET%20MERAH%20(1993)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20DEVI%20PERMATASARI_%20YOSEPH%20HUNGAN(720P_HD).mp4" data-title="barry prima walet merah 1993">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/45/c0/e8/45c0e8e1f886e6a2c4161cd722480a96.jpg" />
-                <span>Barry prima walet merah 1993</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/WAROK%20SINGO%20KOBRA%20(1982)%20FULL%20MOVIE%20HD(720P_60FPS).mp4" data-title="warok singo kobra 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/22/b7/c8/22b7c8ce55d4ee969588dabfec6528d8.jpg" />
-                <span>warok singo kobra 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/ADIKKU%20KEKASIHKU%20(1989)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno adikku kekasihku">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/94/da/0c/94da0c8c5c48c11ea1aa3c7e300e69a7.jpg" />
-                <span>Rano karno adikku kekasihku</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BERGOLA%20IJO%20(1983)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima bergola ijo 1983">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a2/a8/65/a2a8656cb4477cae8a9c107dd4ae0dd0.jpg" />
-                <span>Barry prima bergola ijo 1983</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BUNGA%20CINTA%20KASIH%20(1981)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno bunga cinta kasih 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/63/a7/5d/63a75d69ed7528010fc215b5a7a40282.jpg" />
-                <span>Rano karno bunga cinta kasih 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/DETIK-DETIK%20CINTA%20MENYENTUH%20(1981)%20FULL%20MOVIE%20HD%20-%20TANTY%20YOSEPHA_%20ROBBY%20SUGARA_%20RANO%20KARNO(720P_HD).mp4" data-title="rano karno detik cinta menyentuh 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/01/f8/87/01f8874ece6b016a218e02a651546dab.jpg" />
-                <span>Rano karno detik cinta menyentuh 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/GITA%20CINTA%20DARI%20SMA%20(1979)%20FULL%20MOVIE%20HD%20-%20RANO%20KARNO_%20YESSI%20GUSMAN_%20SHIRLEY%20MALINTON_%20JUNAEDY%20SALAT(720P_HD).mp4" data-title="rano karno gita cinta dari sma 1979">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/05/52/5a/05525aceab0e4c45ee99c7a55730a6d7.jpg" />
-                <span>Rano karno gita cinta dari sma 1979</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/MERANGKUL%20LANGIT%20(1986)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno merangkul langit 1986">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/b7/06/b3/b706b3a6b80145936625031624b572c4.jpg" />
-                <span>Rano karno merangkul langit 1986</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/MEMBAKAR%20MATAHARI%20(1981)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima membakar matahari 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/d4/b3/83/d4b3833bd0e7347ac1c3cca645fc605d.jpg" />
-                <span>Barry prima membakar matahari 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KEN%20AROK%20_%20KEN%20DEDES%20(1983)%20FULL%20MOVIE%20HD%20-%20ADVENT%20BANGUN_%20GEORGE%20RUDY_%20EVA%20ARNAZ(720P_HD).mp4" data-title="ken arok ken dedes 1983">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9b/91/2a/9b912a5ec3166f73cdf5f85034a7b91e.jpg" />
-                <span>ken arok ken dedes 1983</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KESAN%20PERTAMA%20(1985)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima kesan pertama 1985">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/19/f4/ac/19f4ac8c22ec296f6c4e60c77a063282.jpg" />
-                <span>Barry prima kesan pertama 1985</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/%20Warkop.DKI.Atas.Boleh.Bawah.Boleh.1986.1080p.NF.WEB-DL.DDP2.0.H.264-UKIELAKI.mp4" data-title="warkop dki atas boleh bawah boleh">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f1/e1/5d/f1e15dec8d174c5388d13f512ab61905.jpg" />
-                <span>warkop dki Atas boleh bawah boleh</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/AKU%20BENCI%20KAMU%201987%20FULL%20MOVIE%20HD%20-%20PARAMITHA%20RUSADY,%20ADI%20BING%20SLAMET,%20NIA%20ZULKARNAEN.mp4" data-title="aku benci kamu">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/53/99/7f/53997f80f361bff4506d44a511972229.jpg" />
-                <span>aku benci kamu</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Bajing.Ireng.Dan.Jaka.Sembung.1985.NF.WEB-DL.720p.mp4" data-title="barry prima bajing ireng dan jaka sembung">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/43/e3/57/43e3570cd5f1a9537410852c4443af55.jpg" />
-                <span>Barry prima bajing ireng dan jaka sembung</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/BARANG%20ANTIK%201983%20FULL%20MOVIE%20HD%20-%20TETTY%20LIZ%20INDRIATI,%20CAHYONO,%20JOJON,%20UUK.mp4" data-title="jojon barang antik">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/d6/49/01/d649017ead5fbc6b9c7d8a4086b56223.jpg" />
-                <span>Jojon barang antik</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Benyamin%20koboi%20insyaf(ukielaki).mp4" data-title="benyamin koboi insyaf">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/e8/fb/c1/e8fbc11f6c2188d23229e4dddbc54046.jpg" />
-                <span>benyamin koboi insyaf</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/BUJANG%20JELIHIN%201991%20FULL%20MOVIE%20HD%20-%20CHAIRIL%20J.M.,%20YENNY%20FARIDA,%20HENDRA%20CIPTA.mp4" data-title="bujang jelihin 1991">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/55/80/23/558023ac5246e5f1c2956c561559222c.jpg" />
-                <span>bujang jelihin 1991</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KAU%20TERCIPTA%20UNTUKKU%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno kau tercipta untukku 1980">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/b0/9e/2f/b09e2f7dd8ab0f172e6921e35c566b3a.jpg" />
-                <span>Rano karno kau tercipta untukku 1980</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/FILM%20PENGKHIANATAN%20G30SPKI%20HD%20Version.mp4" data-title="pengkhianatan g30s pki">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/73/b4/54/73b45400d07e0f863ec9df54b0a53324.jpg" />
-                <span>pengkhianatan g30s pki</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Jaka%20sembung%20dan%20dewi%20samudra.mp4" data-title="barry prima jaka sembung dan dewi samudra">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a6/54/3a/a6543a6affab97106711b31b540a6b46.jpg" />
-                <span>Barry prima jaka sembung dan dewi samudra</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://storage.googleapis.com/fca4362c817caf9107.appspot.com/3271af93f1d5d810dac46bf55459121a_1622960562.mp4?sumber=awal_storage" data-title="ateng minta kawin">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/d5/ba/38/d5ba387284bed45ecf38fab4c4ffd626.jpg" />
-                <span>ateng minta kawin</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/KAPAN%20DIDALAM%20KAPAN%20DILUAR%201994%20FULL%20MOVIE%20HD%20-%20KADIR,%20DOYOK,%20CUT%20KEKE,%20DORCE%20GAMALAMA.mp4" data-title="kadir doyok kapan di luar kapan di dalam doyok kadir">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/8e/26/80/8e2680640cd99c41f13189fe12ede838.jpg" />
-                <span>Kadir doyok kapan di luar kapan di dalam doyok kadir</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BILA%20HATI%20PEREMPUAN%20MENJERIT%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="bila hati perempuan menjerit">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/ef/3f/8c/ef3f8c0a40cdbc3dcad29504c710ea31.jpg" />
-                <span>bila hati perempuan menjerit</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BISIKAN%20SETAN%20(1985)%20FULL%20MOVIE%20HD.webm" data-title="bisikan setan 1985">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/de/d7/12/ded712a5f1344cb275e510aff33c3fb9.jpg" />
-                <span>bisikan setan 1985</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/CEWEK%20JAGOAN%20BERAKSI%20KEMBALI%20(1981)%20FULL%20MOVIE%20HD.webm" data-title="barry prima cewek jagoan beraksi kembali 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/8c/15/be/8c15be89102020f0b8ed40ba0e611918.jpg" />
-                <span>Barry prima cewek jagoan beraksi kembali 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/DORCE%20SOK%20AKRAB%20(1989)%20FULL%20MOVIE%20HD.webm" data-title="kadir doyok dorce sok akrab">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/4e/64/f1/4e64f15a8eee87cac1d3fc0a2710e3dc.jpg" />
-                <span>Kadir doyok dorce sok akrab</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/JANUR%20KUNING%20(1979)%20FULL%20MOVIE.webm" data-title="janur kuning 1979">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/1c/c0/4f/1cc04f2a50cac7553f432315d3d4f076.jpg" />
-                <span>janur kuning 1979</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/KARMILA%20(1974)%20FULL%20MOVIE%20HD.webm" data-title="karmila 1974">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/b9/8e/8b/b98e8beb5905b606734aac57adb1458a.jpg" />
-                <span>karmila 1974</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MAMA%20(1972)%20FULL%20MOVIE%20HD.webm" data-title="mama 1972">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/56/e0/52/56e05271098ddb7453f1784ba75daf1b.jpg" />
-                <span>mama 1972</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MARINA%20(1977)%20FULL%20MOVIE.webm" data-title="marina 1977">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/24/89/3a/24893a3750968af1ba27aada15bcd541.jpg" />
-                <span>marina 1977</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MEMBURU%20MAKELAR%20MAYAT%20(1986)%20FULL%20MOVIE%20HD.webm" data-title="memburu makelar mayat 1986">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/4a/f2/94/4af294c8e6fb926ee2e44dfdc335fa32.jpg" />
-                <span>memburu makelar mayat 1986</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PEMBALASAN%20RAMBU%20(1985)%20FULL%20MOVIE%20HD.webm" data-title="pembalasan rambu 1985">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/76/fb/dc/76fbdcda2d0127f3e98f9f852a506119.jpg" />
-                <span>pembalasan rambu 1985</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PENCURI%20CINTA%20(1984)%20FULL%20MOVIE%20HD.webm" data-title="pencuri cinta 1984">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a8/11/95/a81195e0d887616300144d60712a0e50.jpg" />
-                <span>pencuri cinta 1984</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PENGANTIN%20BARU%20(1986)%20FULL%20MOVIE%20HD.webm" data-title="pengantin baru 1986">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/14/e8/23/14e82317a54528fc8e2623ffd50182e6.jpg" />
-                <span>pengantin baru 1986</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PEREMPUAN%20BERGAIRAH%20(1982)%20FULL%20MOVIE.webm" data-title="barry prima perempuan bergairah 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f0/fe/2a/f0fe2a67ead668fc2c27a9de77ad9664.jpg" />
-                <span>Barry prima perempuan bergairah 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PERHITUNGAN%20TERAKHIR%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="barry prima perhitungan terakhir 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/e2/52/6f/e2526fbdc9385f15c01fe2eca6c5a478.jpg" />
-                <span>Barry prima perhitungan terakhir 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/SERBUAN%20HALILINTAR%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="barry prima serbuan halilintar 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/e5/92/4b/e5924b63533f303ff72a6fb2e589f190.jpg" />
-                <span>Barry prima serbuan halilintar 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/SI%20GENIT%20POPPY%20(1978)%20FULL%20MOVIE%20HD.webm" data-title="si genit poppy 1978">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/45/91/c5/4591c5a9ba17506c8ac60e00072dda89.jpg" />
-                <span>si genit poppy 1978</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/MISTIK%20PUNAHNYA%20RAHASIA%20ILMU%20IBLIS%20LEAK%201981%20FULL%20MOVIE%20HD%20-%20ILONA%20AGATHE%20BASTIAN,%20YOS%20SANTO.mp4" data-title="mistik punahnya rahasia ilmu iblis leak 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/51/1e/7d/511e7d2efcee52bd889a789f89c7374e.jpg" />
-                <span>mistik punahnya rahasia ilmu iblis leak 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Malam%20Satu%20Suro%20(1988).mp4" data-title="suzzana malam satu suro 1988">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/2d/1c/ec/2d1cec7d43fd82a49f94bec39f937d10.jpg" />
-                <span>Suzzana malam satu suro 1988</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/benyamin%20spion%20025.mp4" data-title="benyamin spion 025 1974">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/09/f7/80/09f7806bc07a96e1b85c5219514210fe.jpg" />
-                <span>benyamin spion 025 1974</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/elang%20putih.mp4" data-title="elang laut 1984">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/31/66/d2/3166d2f68224c941bf71d17ae4a93fdc.jpg" />
-                <span>Elang laut 1984</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/gawang%20gawat.mp4" data-title="gawang gawat 1984">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/d7/99/1b/d7991bff4e790acdf62c3c0407a85a8c.jpg" />
-                <span>gawang gawat 1984</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/jaka%20tingkir.mp4" data-title="jaka tingkir 1983">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/da/42/eb/da42eb76a7ba041a3dc3d7dbcb4d74c0.jpg" />
-                <span>jaka tingkir 1983</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/kidung%20cinta.mp4" data-title="rano karno kidung cinta 1985">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/eb/3f/d1/eb3fd1b224e03f231c9e013b40a61784.jpg" />
-                <span>Rano karno kidung cinta 1985</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/pertarungan%20iblis%20merah.mp4" data-title="barry prima pertarungan iblis merah 1988">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a1/f5/dd/a1f5dded01b8168820ed8c14ad501650.jpg" />
-                <span>Barry prima pertarungan iblis merah 1988</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/sama%20gilanya.mp4" data-title="benyamin sama gila nya 1983">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/b1/7b/be/b17bbe3285f8070b5d008c9e43e400e5.jpg" />
-                <span>Benyamin sama gila nya 1983</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/sesepuh%20majapahit.mp4" data-title="sesepuh majapahit 1995">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9b/f5/69/9bf569e1f48736f3f2569b5a5dc35d33.jpg" />
-                <span>sesepuh majapahit 1995</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/siluman%20buaya%20putih.mp4" data-title="siluman buaya putih 1987">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/95/f6/13/95f613baf86b06d2a495d03386956e17.jpg" />
-                <span>Siluman Buaya putih 1987</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/srigala.mp4" data-title="srigala 1981">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/8a/48/63/8a486304345c7b8ad5739aac1d17cb89.jpg" />
-                <span>srigala 1981</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/SI%20JALU%20DUA%20PENDEKAR%20PUTIH%201990%20FULL%20MOVIE%20HD%20-%20SONNY%20DEWANTARA,%20YURIKE%20PRASTICA,%20LINA%20BUDIARTI.mp4" data-title="si jalu pendekar dua pendekar putih 1990">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/76/7f/9b/767f9b200a704a3616dfd7d0200b2fee.jpg" />
-                <span>si jalu pendekar dua pendekar putih 1990</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Sundel%20bolong%20(1982).mp4" data-title="suzzana sundel bolong 1982">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/14/ba/b4/14bab4ed12bf6d2033f7e489feadb150.jpg" />
-                <span>Suzzana sundel bolong 1982</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20%20%20PINTAR%20PINTAR%20B0D0H%201980%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki pintar-pintar bodoh">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/59/05/aa/5905aa6ad137bdc74b10e36787985795.jpg" />
-                <span>warkop dki pintar-pintar bodoh</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20DONGKRAK%20ANTIK%201982%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki dongkrak antik">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/5a/36/d2/5a36d2c640b1184b9de4ba42a62c31ae.jpg" />
-                <span>warkop dki dongkrak antik</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20GANTIAN%20DONG%201985%20FULL%20%20MOVIE%20HD.mp4" data-title="warkop dki gantian dong">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/bf/a9/7c/bfa97ce5b1fdb6f9e32cab9bb7f89a72.jpg" />
-                <span>warkop dki gantian dong</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20ITU%20BISA%20DIATUR%201984%20FULL%20MOVIE%20HD-ukielaki.mp4" data-title="warkop dki itu bisa di atur">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/48/8a/ea/488aea93e0d205d8f4608396eda5f813.jpg" />
-                <span>warkop dki itu bisa di atur</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20KESEMPATAN%20DALAM%20KESEMPITAN%201985%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki kesempatan dalam kesempitan">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/39/fa/d2/39fad2d76e9b1b141a2567bd99341073.jpg" />
-                <span>warkop dki kesempatan dalam kesempitan</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Bebas.Aturan.Main.1993.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki bebas aturan main">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/52/4c/8f/524c8f9e6f436a7c0dab508230b6697e.jpg" />
-                <span>warkop dki bebas aturan main</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Depan.Bisa.Belakang.Bisa.1987.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki depan bisa belakang bisa">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f9/94/d9/f994d9e22a1ef12c2ebf383714ddbc80.jpg" />
-                <span>warkop dki depan bisa belakang bisa</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Bisa.Naik.Bisa.Turun.1991.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki bisa naik bisa turun">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9d/bc/c3/9dbcc35758e3518b21a644bdcde8fc71.jpg" />
-                <span>warkop dki bisa naik bisa turun</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://storage.googleapis.com/b90c80434edf473051.appspot.com/86f08d65f5139cff2d9eecd680a962de_1666237832.mp4?sumber=awal_storage" data-title="warkop dki manusia enam juta dollar">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/bf/7d/c4/bf7dc410ae7464b2f2bc11d5f6ad4d18.jpg" />
-                <span>Warkop dki manusia enam juta dollar</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/%20Ateng%20Kejamnya%20Ibu%20Tiri%20tak%20Sekejam%20Ibu%20Kota.mp4" data-title="ateng kejamnya ibu tiri tak sekejam ibu kota">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/b9/e2/0d/b9e20dbfbb5908d23ae96b095f2a2aa4.jpg" />
-                <span>ateng kejamnya ibu tiri tak sekejam ibu kota</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://download.fileku.eu.org/0:/INDONESIAN/%23Film%20Indo-Malay/%23Film%20Indonesia/Ateng%20Pendekar%20Aneh/Ateng.Pendekar.Aneh.1977.720p.MOLA.WEB-DL.mkv" data-title="ateng pendekar aneh 1977">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/54/79/49/54794918ab933b5634e6e320e6a98152.jpg" />
-                <span>ateng pendekar aneh 1977</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/ATENG%20RAJA%20PENYAMUN%20%281974%29%20.mp4" data-title="ateng raja penyamun">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/04/75/75/0475759d37af169c94876694bffed9bb.jpg" />
-                <span>ateng raja penyamun</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Si%20Pitung%20Banteng%20Betawi%20-%20Si%20Pitung%201.ia.mp4" data-title="si pitung banteng betawi">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/92/94/2e/92942edce1fc7be7142f68672f387b26.jpg" />
-                <span>si pitung banteng betawi</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Banteng%20Betawi%202%20-%20Si%20Pitung%20-%202.mp4" data-title="si pitung">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/3d/9a/5f/3d9a5f0ee8cd7907b5862416708b26da.jpg" />
-                <span>si pitung</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Ateng%20Dang%20Ding%20Dong.mp4" data-title="ateng dang ding dong">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/fc/a7/31/fca7310a066aa44923eb14c50f8c177d.jpg" />
-                <span>ateng dang ding dong</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/film%20indonesia%20jadul%20-%20ketemu%20jodoh%20%281973%29.mp4" data-title="bagio ketemu jodoh 1973">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9d/7f/90/9d7f902b165c4a6da1a48ed6dcbd196b.jpg" />
-                <span>Bagio Ketemu jodoh 1973</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia601506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/BAGITO%20Grup%26%20WARKOP%20Lebaran%2089%20Eps1.ia.mp4" data-title="warkop dki bagito">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f7/22/54/f722545935719f3622fef92fa923f3d2.jpg" />
-                <span>Warkop dki bagito</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/BAGITO%20Grup%26%20WARKOP%20Lebaran%2089%20Eps2.ia.mp4" data-title="warkop dki bagito">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/f7/22/54/f722545935719f3622fef92fa923f3d2.jpg" />
-                <span>warkop dki bagito</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Musuh%20Bebuyutan%20Part%201%20%28Benyamin%20Sueb%29.mp4" data-title="benyamin musuh bebuyutan">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9a/cb/26/9acb2666647bef24eab7150608015ad9.jpg" />
-                <span>Benyamin musuh bebuyutan</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia601506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Musuh%20Bebuyutan%20Part%202%20%28%20Benyamin%20sueb%29.mp4" data-title="benyamin musuh bebuyutan 2">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/9a/cb/26/9acb2666647bef24eab7150608015ad9.jpg" />
-                <span>Benyamin musuh bebuyutan 2</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia803203.us.archive.org/34/items/film_indo_tahun_1980-1989/Legenda%20Roro%20Mendut%20%281982%29%20720p%20filmgrewal.blogspot.com.mp4" data-title="legenda roro mendut 1989">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/ec/46/de/ec46de8941980526818720425f6153f0.jpg" />
-                <span>legenda roro mendut 1989</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia903203.us.archive.org/34/items/film_indo_tahun_1980-1989/Malaikat%20Bayangan%20%281988%29%20%28360p%29%20filmgrewal.blogspot.com.mp4" data-title="barry prima malaikat bayangan 1989">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/64/81/00/648100beba97f34fbe1f997fd1a4ad7c.jpg" />
-                <span>barry prima malaikat bayangan 1989</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia804600.us.archive.org/2/items/y-2-mate.is-primitive-a.-k.-a-savage-terror-1980-indonesian-dub-1-rrx-9aa-3wmo-720p-1637822852457/Y2Mate.is%20-%20Primitive%20A.K.A%20Savage%20Terror%20(1980)%20Indonesian%20Dub-1Rrx9aa3wmo-720p-1637822852457.mp4" data-title="barry prima primitif">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/2e/35/de/2e35de42a5f20b41c3ec7ac864c17e92.jpg" />
-                <span>barry prima primitif</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia904506.us.archive.org/30/items/naga-sakti-1986/Naga%20Sakti%20%281986%29.ia.mp4?cnt=0" data-title="pembalasan naga sakti 1986">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/0a/71/b6/0a71b6dacf3c4827313eee4d9e12ac48.jpg" />
-                <span>pembalasan naga sakti 1986</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia904503.us.archive.org/19/items/ali-topan-anak-jalanan-1977/Ali%20Topan%20Anak%20Jalanan%20%281977%29.avi" data-title="ali topan anak jalanan 1977">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/81/c3/73/81c373d14027d9401916a97c687e74cb.jpg" />
-                <span>Ali topan anak jalanan 1977</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Bing%20Slamet%20Koboi%20Cengeng%20%281974%29%20Upscale%20to%20HD.ia.mp4" data-title="koboi cengeng adi bing slamet">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/a0/26/51/a02651875d96819458b07ce9b2d93cc5.jpg" />
-                <span>koboi cengeng adi bing slamet</span>
-            </div>
-
-
-            <div class="card" tabindex="0" data-url="https://storage.googleapis.com/d196e82636de45b.appspot.com/d5950d11b8ed3c07be04376e03a2293b_1664110415.mp4?sumber=awal_storage" data-title="djago">
-                <img loading="lazy" decoding="async" src="https://i.pinimg.com/736x/dd/49/82/dd4982507debf8f55cb01a95b40b6a4f.jpg" />
-                <span>djago</span>
-            </div>
-
-        </section>
+        <div class="card-film" data-id="film2" id="utama-film2">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Bayi.Ajaib.1982.mp4" data-title="bayi ajaib 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/62/83/e5/6283e508c875be8e07928bad5abcd96f.jpg" alt="bayi ajaib 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film2"><span>☆</span> Favorit</button>
+            <div class="film-title">bayi ajaib 1982</div>
+        </div>
+        <div class="card-film" data-id="film3" id="utama-film3">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Barang%20Terlarang%20(1987).mp4" data-title="barang terlarang (1987)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/66/a5/3e/66a53edafa1ad78bab0d81dd3ed60742.jpg" alt="Barang terlarang (1987)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film3"><span>☆</span> Favorit</button>
+            <div class="film-title">Barang terlarang (1987)</div>
+        </div>
+        <div class="card-film" data-id="film4" id="utama-film4">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BUAYE%20GILE.%20Kualitas%20HD.%20Full%20Movie.webm" data-title="benyamin buaye gile">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/24/c1/a2/24c1a23116391a15959d98d49bb16412.jpg" alt="Benyamin buaye gile" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film4"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin buaye gile</div>
+        </div>
+        <div class="card-film" data-id="film5" id="utama-film5">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/lukisan%20berlumur%20darah%201988.mp4" data-title="lukisan berlumur darah (1988)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/d9/0c/82/d90c82d319f004b59836f7647f274fa9.jpg" alt="Lukisan berlumur darah (1988)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film5"><span>☆</span> Favorit</button>
+            <div class="film-title">Lukisan berlumur darah (1988)</div>
+        </div>
+        <div class="card-film" data-id="film6" id="utama-film6">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Gengsi.Dooong.1980.1080p.mp4" data-title="warkop dki gengsi dong (1980)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/95/48/88/95488811395bfbf00edbdf41f3b4bf1b.jpg" alt="Warkop dki Gengsi dong (1980)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film6"><span>☆</span> Favorit</button>
+            <div class="film-title">Warkop dki Gengsi dong (1980)</div>
+        </div>
+        <div class="card-film" data-id="film7" id="utama-film7">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/djakarta%201966.mp4" data-title="djakarta 1966 (1966)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a1/b9/e0/a1b9e09b95bfd84a2c078e252aad29df.jpg" alt="Djakarta 1966 (1966)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film7"><span>☆</span> Favorit</button>
+            <div class="film-title">Djakarta 1966 (1966)</div>
+        </div>
+        <div class="card-film" data-id="film8" id="utama-film8">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/operasi%20trisula%20(1987).mp4" data-title="operasi trisula (1987)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/0b/85/0f/0b850ff53a193b440e6ca019e34c36f1.jpg" alt="operasi trisula (1987)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film8"><span>☆</span> Favorit</button>
+            <div class="film-title">operasi trisula (1987)</div>
+        </div>
+        <div class="card-film" data-id="film9" id="utama-film9">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/SI%20DOEL%20ANAK%20MODERN%20(1976)%20FULL%20MOVIE%20HD%20-%20BENYAMIN%20SUEB,%20CHRISTINE%20HAKIM,%20S.%20BONO_7760.mp4" data-title="benyamin si doel anak moderen (1976)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/09/6e/cd/096ecd2effa8e04138cd121e912df41a.jpg" alt="Benyamin Si doel anak moderen (1976)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film9"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin Si doel anak moderen (1976)</div>
+        </div>
+        <div class="card-film" data-id="film10" id="utama-film10">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/PINANGAN%20(1976)%20FULL%20MOVIE%20HD%20-%20BENYAMIN%20SUEB,%20RIMA%20MELATI,%20SUROTO_4335.mp4" data-title="benyamin pinangan (1976)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/81/51/29/815129e5db22763b58ae008937649355.jpg" alt="Benyamin pinangan (1976)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film10"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin pinangan (1976)</div>
+        </div>
+        <div class="card-film" data-id="film11" id="utama-film11">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/SI%20BUTA%20DARI%20GOA%20HANTU%20(1970)%20FULL%20MOVIE%20HD%20-%20RATNO%20TIMOER,%20SRI%20REDJEKI,%20KUSNO%20SUDJARWADI.mp4" data-title="si buta dari gua hantu(1970)">
+                <div class="poster-wrapper">
+                    <img src="https://cdn.jsdelivr.net/gh/Ukie4321/Mrzybposter@main/PicRetouch_20251209_190939690.webp" alt="Si buta dari gua hantu(1970)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film11"><span>☆</span> Favorit</button>
+            <div class="film-title">Si buta dari gua hantu(1970)</div>
+        </div>
+        <div class="card-film" data-id="film12" id="utama-film12">
+            <a tabindex="0" class="play-link" href="https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/ANAK%20EMAS%20(1976)%20FULL%20MOVIE%20HD%20-%20ADI%20BING%20SLAMET,%20YATNI%20ARDI,%20EDDY%20SUD,%20ALAM%20SURAWIJAYA.mp4" data-title="anak emas(1976)">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/13/14/a9/1314a901bd4871f0e29f9996468cd4c1.jpg" alt="Anak emas(1976)" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film12"><span>☆</span> Favorit</button>
+            <div class="film-title">Anak emas(1976)</div>
+        </div>
+        <div class="card-film" data-id="film13" id="utama-film13">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/NIKMATNYA%20CINTA%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno nikmatnya cinta 1980">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/7e/e4/00/7ee400de8d49ed87933bf27f26348005.jpg" alt="Rano karno Nikmatnya cinta 1980" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film13"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno Nikmatnya cinta 1980</div>
+        </div>
+        <div class="card-film" data-id="film14" id="utama-film14">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PELANGI%20DI%20LANGIT%20SINGOSARI%20(KEN%20DEDES)%20(1972)%20FULL%20MOVIE%20HD%20-%20EMILIA%20CONTESSA_%20PONG%20HARJATMO(720P_HD).mp4" data-title="pelangi dilangit singosari 1972">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/7b/49/a9/7b49a99e8f8acea847a83b3c867f1fb1.jpg" alt="pelangi dilangit singosari 1972" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film14"><span>☆</span> Favorit</button>
+            <div class="film-title">pelangi dilangit singosari 1972</div>
+        </div>
+        <div class="card-film" data-id="film15" id="utama-film15">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PENANGKAL%20ILMU%20TELUH%20(1979)%20FULL%20MOVIE%20HD%20-%20DEBBIE%20CYNTHIA%20DEWI_%20HENDRA%20CIPTA_%20MUNI%20CADER(720P_60FPS).mp4" data-title="penangkal ilmu teluh 1979">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/03/c7/61/03c76124ebd13502416b00c19c52b9d8.jpg" alt="penangkal ilmu teluh 1979" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film15"><span>☆</span> Favorit</button>
+            <div class="film-title">penangkal ilmu teluh 1979</div>
+        </div>
+        <div class="card-film" data-id="film16" id="utama-film16">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PENDEKAR%20SUMUR%20TUDJUH%20(1971)%20FULL%20MOVIE%20HD%20-%20WAHAB%20ABDI_%20MILA%20KARMILA_%20AGUS%20RAMLAN(720P_60FPS).mp4" data-title="pendekar sumur tujuh 1971">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/3f/6f/af/3f6faffeec559f60d72c25bff073e9b8.jpg" alt="pendekar sumur tujuh 1971" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film16"><span>☆</span> Favorit</button>
+            <div class="film-title">pendekar sumur tujuh 1971</div>
+        </div>
+        <div class="card-film" data-id="film17" id="utama-film17">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PERAWAN%20LEMBAH%20WILIS%20(1993)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20AYU%20YOHANA_%20BARON%20HERMANTO(720P_HD).mp4" data-title="perawan lembah wilis 1993">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/ed/58/7a/ed587ad394841492190ccbe250cdcf63.jpg" alt="perawan lembah wilis 1993" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film17"><span>☆</span> Favorit</button>
+            <div class="film-title">perawan lembah wilis 1993</div>
+        </div>
+        <div class="card-film" data-id="film18" id="utama-film18">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/PRABU%20ANGLINGDARMA%20III%20(PEMBURU%20DI%20NERAKA)%20(1994)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20FENDY%20PRADANA(720P_HD).mp4" data-title="barry prima prabu anglingdarma 1994">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/33/34/f4/3334f4d5408998fa31b08d1e8aa12238.jpg" alt="Barry prima prabu anglingdarma 1994" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film18"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima prabu anglingdarma 1994</div>
+        </div>
+        <div class="card-film" data-id="film19" id="utama-film19">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20DAN%20ANAK%20JIN%20__%20NIKE%20ARDILA%20__%20MABAK%20VERSI%20__%20FULL%20HD%201080p(720P_HD).mp4" data-title="si kabayan dana anak jin">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/02/79/3b/02793bb1d6106fe6e32c85bbd1a60fb9.jpg" alt="si kabayan dana anak jin" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film19"><span>☆</span> Favorit</button>
+            <div class="film-title">si kabayan dana anak jin</div>
+        </div>
+        <div class="card-film" data-id="film20" id="utama-film20">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20MENCARI%20JODOH%20__%20DESI%20RATNASARI%20__%20HD%20720p(720P_HD).mp4" data-title="si kabayan mencari jodoh">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/40/0a/08/400a08257f800a047c4c2e4b55b4d237.jpg" alt="si kabayan mencari jodoh" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film20"><span>☆</span> Favorit</button>
+            <div class="film-title">si kabayan mencari jodoh</div>
+        </div>
+        <div class="card-film" data-id="film21" id="utama-film21">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20KABAYAN%20SABA%20KOTA%20__%20PARAMITA%20RUSADY%20__%20FULL%20HD%201080p(720P_HD).mp4" data-title="si kabayan saba kota">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/74/85/bf/7485bf222c52c9b41ddfb9be4d2c005c.jpg" alt="si kabayan saba kota" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film21"><span>☆</span> Favorit</button>
+            <div class="film-title">si kabayan saba kota</div>
+        </div>
+        <div class="card-film" data-id="film22" id="utama-film22">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/SI%20RANO%20(1973)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno si rano 1973">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/db/0a/90/db0a90a24999a01c2e98f0f3264ef5f9.jpg" alt="Rano karno si rano 1973" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film22"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno si rano 1973</div>
+        </div>
+        <div class="card-film" data-id="film23" id="utama-film23">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TABAH%20SAMPAI%20AKHIR%20(1973)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno tabah sampai akhir 1973">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f3/00/d4/f300d46564e9dd29391d55a36cb9ff17.jpg" alt="Rano karno tabah sampai akhir 1973" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film23"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno tabah sampai akhir 1973</div>
+        </div>
+        <div class="card-film" data-id="film24" id="utama-film24">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TAHU%20BERES%20(1993)%20FULL%20MOVIE%20HD(720P_60FPS).mp4" data-title="kadir doyok tahu beres 1993">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a1/bc/00/a1bc0030fbd6f0ebdbe9ea19c36cffad.jpg" alt="Kadir doyok tahu beres 1993" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film24"><span>☆</span> Favorit</button>
+            <div class="film-title">Kadir doyok tahu beres 1993</div>
+        </div>
+        <div class="card-film" data-id="film25" id="utama-film25">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TEMPATMU%20DI%20SISIKU%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno tempatmu di sisiku 1980">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a4/1e/4a/a41e4a3d34cb0a72da53fce3a95c0ffd.jpg" alt="Rano karno tempatmu di sisiku 1980" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film25"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno tempatmu di sisiku 1980</div>
+        </div>
+        <div class="card-film" data-id="film26" id="utama-film26">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/TITISAN%20SI%20PITUNG%20(1989)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="titisan si pitung 1989">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a7/17/ce/a717ce2a393528856c01f27d69ed30e0.jpg" alt="titisan si pitung 1989" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film26"><span>☆</span> Favorit</button>
+            <div class="film-title">titisan si pitung 1989</div>
+        </div>
+        <div class="card-film" data-id="film27" id="utama-film27">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/WALET%20MERAH%20(1993)%20FULL%20MOVIE%20HD%20-%20BARRY%20PRIMA_%20DEVI%20PERMATASARI_%20YOSEPH%20HUNGAN(720P_HD).mp4" data-title="barry prima walet merah 1993">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/45/c0/e8/45c0e8e1f886e6a2c4161cd722480a96.jpg" alt="Barry prima walet merah 1993" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film27"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima walet merah 1993</div>
+        </div>
+        <div class="card-film" data-id="film28" id="utama-film28">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/WAROK%20SINGO%20KOBRA%20(1982)%20FULL%20MOVIE%20HD(720P_60FPS).mp4" data-title="warok singo kobra 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/22/b7/c8/22b7c8ce55d4ee969588dabfec6528d8.jpg" alt="warok singo kobra 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film28"><span>☆</span> Favorit</button>
+            <div class="film-title">warok singo kobra 1982</div>
+        </div>
+        <div class="card-film" data-id="film29" id="utama-film29">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/ADIKKU%20KEKASIHKU%20(1989)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno adikku kekasihku">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/94/da/0c/94da0c8c5c48c11ea1aa3c7e300e69a7.jpg" alt="Rano karno adikku kekasihku" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film29"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno adikku kekasihku</div>
+        </div>
+        <div class="card-film" data-id="film30" id="utama-film30">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BERGOLA%20IJO%20(1983)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima bergola ijo 1983">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a2/a8/65/a2a8656cb4477cae8a9c107dd4ae0dd0.jpg" alt="Barry prima bergola ijo 1983" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film30"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima bergola ijo 1983</div>
+        </div>
+        <div class="card-film" data-id="film31" id="utama-film31">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BUNGA%20CINTA%20KASIH%20(1981)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno bunga cinta kasih 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/63/a7/5d/63a75d69ed7528010fc215b5a7a40282.jpg" alt="Rano karno bunga cinta kasih 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film31"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno bunga cinta kasih 1981</div>
+        </div>
+        <div class="card-film" data-id="film32" id="utama-film32">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/DETIK-DETIK%20CINTA%20MENYENTUH%20(1981)%20FULL%20MOVIE%20HD%20-%20TANTY%20YOSEPHA_%20ROBBY%20SUGARA_%20RANO%20KARNO(720P_HD).mp4" data-title="rano karno detik cinta menyentuh 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/01/f8/87/01f8874ece6b016a218e02a651546dab.jpg" alt="Rano karno detik cinta menyentuh 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film32"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno detik cinta menyentuh 1981</div>
+        </div>
+        <div class="card-film" data-id="film33" id="utama-film33">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/GITA%20CINTA%20DARI%20SMA%20(1979)%20FULL%20MOVIE%20HD%20-%20RANO%20KARNO_%20YESSI%20GUSMAN_%20SHIRLEY%20MALINTON_%20JUNAEDY%20SALAT(720P_HD).mp4" data-title="rano karno gita cinta dari sma 1979">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/05/52/5a/05525aceab0e4c45ee99c7a55730a6d7.jpg" alt="Rano karno gita cinta dari sma 1979" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film33"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno gita cinta dari sma 1979</div>
+        </div>
+        <div class="card-film" data-id="film34" id="utama-film34">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/MERANGKUL%20LANGIT%20(1986)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno merangkul langit 1986">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/b7/06/b3/b706b3a6b80145936625031624b572c4.jpg" alt="Rano karno merangkul langit 1986" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film34"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno merangkul langit 1986</div>
+        </div>
+        <div class="card-film" data-id="film35" id="utama-film35">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/MEMBAKAR%20MATAHARI%20(1981)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima membakar matahari 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/d4/b3/83/d4b3833bd0e7347ac1c3cca645fc605d.jpg" alt="Barry prima membakar matahari 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film35"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima membakar matahari 1981</div>
+        </div>
+        <div class="card-film" data-id="film36" id="utama-film36">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KEN%20AROK%20_%20KEN%20DEDES%20(1983)%20FULL%20MOVIE%20HD%20-%20ADVENT%20BANGUN_%20GEORGE%20RUDY_%20EVA%20ARNAZ(720P_HD).mp4" data-title="ken arok ken dedes 1983">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9b/91/2a/9b912a5ec3166f73cdf5f85034a7b91e.jpg" alt="ken arok ken dedes 1983" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film36"><span>☆</span> Favorit</button>
+            <div class="film-title">ken arok ken dedes 1983</div>
+        </div>
+        <div class="card-film" data-id="film37" id="utama-film37">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KESAN%20PERTAMA%20(1985)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="barry prima kesan pertama 1985">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/19/f4/ac/19f4ac8c22ec296f6c4e60c77a063282.jpg" alt="Barry prima kesan pertama 1985" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film37"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima kesan pertama 1985</div>
+        </div>
+        <div class="card-film" data-id="film38" id="utama-film38">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/%20Warkop.DKI.Atas.Boleh.Bawah.Boleh.1986.1080p.NF.WEB-DL.DDP2.0.H.264-UKIELAKI.mp4" data-title="warkop dki atas boleh bawah boleh">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f1/e1/5d/f1e15dec8d174c5388d13f512ab61905.jpg" alt="warkop dki Atas boleh bawah boleh" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film38"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki Atas boleh bawah boleh</div>
+        </div>
+        <div class="card-film" data-id="film39" id="utama-film39">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/AKU%20BENCI%20KAMU%201987%20FULL%20MOVIE%20HD%20-%20PARAMITHA%20RUSADY,%20ADI%20BING%20SLAMET,%20NIA%20ZULKARNAEN.mp4" data-title="aku benci kamu">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/53/99/7f/53997f80f361bff4506d44a511972229.jpg" alt="aku benci kamu" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film39"><span>☆</span> Favorit</button>
+            <div class="film-title">aku benci kamu</div>
+        </div>
+        <div class="card-film" data-id="film40" id="utama-film40">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Bajing.Ireng.Dan.Jaka.Sembung.1985.NF.WEB-DL.720p.mp4" data-title="barry prima bajing ireng dan jaka sembung">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/43/e3/57/43e3570cd5f1a9537410852c4443af55.jpg" alt="Barry prima bajing ireng dan jaka sembung" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film40"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima bajing ireng dan jaka sembung</div>
+        </div>
+        <div class="card-film" data-id="film41" id="utama-film41">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/BARANG%20ANTIK%201983%20FULL%20MOVIE%20HD%20-%20TETTY%20LIZ%20INDRIATI,%20CAHYONO,%20JOJON,%20UUK.mp4" data-title="jojon barang antik">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/d6/49/01/d649017ead5fbc6b9c7d8a4086b56223.jpg" alt="Jojon barang antik" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film41"><span>☆</span> Favorit</button>
+            <div class="film-title">Jojon barang antik</div>
+        </div>
+        <div class="card-film" data-id="film42" id="utama-film42">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Benyamin%20koboi%20insyaf(ukielaki).mp4" data-title="benyamin koboi insyaf">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/e8/fb/c1/e8fbc11f6c2188d23229e4dddbc54046.jpg" alt="benyamin koboi insyaf" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film42"><span>☆</span> Favorit</button>
+            <div class="film-title">benyamin koboi insyaf</div>
+        </div>
+        <div class="card-film" data-id="film43" id="utama-film43">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/BUJANG%20JELIHIN%201991%20FULL%20MOVIE%20HD%20-%20CHAIRIL%20J.M.,%20YENNY%20FARIDA,%20HENDRA%20CIPTA.mp4" data-title="bujang jelihin 1991">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/55/80/23/558023ac5246e5f1c2956c561559222c.jpg" alt="bujang jelihin 1991" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film43"><span>☆</span> Favorit</button>
+            <div class="film-title">bujang jelihin 1991</div>
+        </div>
+        <div class="card-film" data-id="film44" id="utama-film44">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/KAU%20TERCIPTA%20UNTUKKU%20(1980)%20FULL%20MOVIE%20HD(720P_HD).mp4" data-title="rano karno kau tercipta untukku 1980">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/b0/9e/2f/b09e2f7dd8ab0f172e6921e35c566b3a.jpg" alt="Rano karno kau tercipta untukku 1980" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film44"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno kau tercipta untukku 1980</div>
+        </div>
+        <div class="card-film" data-id="film45" id="utama-film45">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/FILM%20PENGKHIANATAN%20G30SPKI%20HD%20Version.mp4" data-title="pengkhianatan g30s pki">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/73/b4/54/73b45400d07e0f863ec9df54b0a53324.jpg" alt="pengkhianatan g30s pki" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film45"><span>☆</span> Favorit</button>
+            <div class="film-title">pengkhianatan g30s pki</div>
+        </div>
+        <div class="card-film" data-id="film46" id="utama-film46">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Jaka%20sembung%20dan%20dewi%20samudra.mp4" data-title="barry prima jaka sembung dan dewi samudra">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a6/54/3a/a6543a6affab97106711b31b540a6b46.jpg" alt="Barry prima jaka sembung dan dewi samudra" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film46"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima jaka sembung dan dewi samudra</div>
+        </div>
+        <div class="card-film" data-id="film47" id="utama-film47">
+            <a tabindex="0" class="play-link" href="https://storage.googleapis.com/fca4362c817caf9107.appspot.com/3271af93f1d5d810dac46bf55459121a_1622960562.mp4?sumber=awal_storage" data-title="ateng minta kawin">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/d5/ba/38/d5ba387284bed45ecf38fab4c4ffd626.jpg" alt="ateng minta kawin" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film47"><span>☆</span> Favorit</button>
+            <div class="film-title">ateng minta kawin</div>
+        </div>
+        <div class="card-film" data-id="film48" id="utama-film48">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/KAPAN%20DIDALAM%20KAPAN%20DILUAR%201994%20FULL%20MOVIE%20HD%20-%20KADIR,%20DOYOK,%20CUT%20KEKE,%20DORCE%20GAMALAMA.mp4" data-title="kadir doyok kapan di luar kapan di dalam doyok kadir">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/8e/26/80/8e2680640cd99c41f13189fe12ede838.jpg" alt="Kadir doyok kapan di luar kapan di dalam doyok kadir" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film48"><span>☆</span> Favorit</button>
+            <div class="film-title">Kadir doyok kapan di luar kapan di dalam doyok kadir</div>
+        </div>
+        <div class="card-film" data-id="film49" id="utama-film49">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BILA%20HATI%20PEREMPUAN%20MENJERIT%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="bila hati perempuan menjerit">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/ef/3f/8c/ef3f8c0a40cdbc3dcad29504c710ea31.jpg" alt="bila hati perempuan menjerit" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film49"><span>☆</span> Favorit</button>
+            <div class="film-title">bila hati perempuan menjerit</div>
+        </div>
+        <div class="card-film" data-id="film50" id="utama-film50">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/BISIKAN%20SETAN%20(1985)%20FULL%20MOVIE%20HD.webm" data-title="bisikan setan 1985">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/de/d7/12/ded712a5f1344cb275e510aff33c3fb9.jpg" alt="bisikan setan 1985" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film50"><span>☆</span> Favorit</button>
+            <div class="film-title">bisikan setan 1985</div>
+        </div>
+        <div class="card-film" data-id="film51" id="utama-film51">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/CEWEK%20JAGOAN%20BERAKSI%20KEMBALI%20(1981)%20FULL%20MOVIE%20HD.webm" data-title="barry prima cewek jagoan beraksi kembali 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/8c/15/be/8c15be89102020f0b8ed40ba0e611918.jpg" alt="Barry prima cewek jagoan beraksi kembali 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film51"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima cewek jagoan beraksi kembali 1981</div>
+        </div>
+        <div class="card-film" data-id="film52" id="utama-film52">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/DORCE%20SOK%20AKRAB%20(1989)%20FULL%20MOVIE%20HD.webm" data-title="kadir doyok dorce sok akrab">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/4e/64/f1/4e64f15a8eee87cac1d3fc0a2710e3dc.jpg" alt="Kadir doyok dorce sok akrab" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film52"><span>☆</span> Favorit</button>
+            <div class="film-title">Kadir doyok dorce sok akrab</div>
+        </div>
+        <div class="card-film" data-id="film53" id="utama-film53">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/JANUR%20KUNING%20(1979)%20FULL%20MOVIE.webm" data-title="janur kuning 1979">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/1c/c0/4f/1cc04f2a50cac7553f432315d3d4f076.jpg" alt="janur kuning 1979" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film53"><span>☆</span> Favorit</button>
+            <div class="film-title">janur kuning 1979</div>
+        </div>
+        <div class="card-film" data-id="film54" id="utama-film54">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/KARMILA%20(1974)%20FULL%20MOVIE%20HD.webm" data-title="karmila 1974">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/b9/8e/8b/b98e8beb5905b606734aac57adb1458a.jpg" alt="karmila 1974" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film54"><span>☆</span> Favorit</button>
+            <div class="film-title">karmila 1974</div>
+        </div>
+        <div class="card-film" data-id="film55" id="utama-film55">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MAMA%20(1972)%20FULL%20MOVIE%20HD.webm" data-title="mama 1972">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/56/e0/52/56e05271098ddb7453f1784ba75daf1b.jpg" alt="mama 1972" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film55"><span>☆</span> Favorit</button>
+            <div class="film-title">mama 1972</div>
+        </div>
+        <div class="card-film" data-id="film56" id="utama-film56">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MARINA%20(1977)%20FULL%20MOVIE.webm" data-title="marina 1977">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/24/89/3a/24893a3750968af1ba27aada15bcd541.jpg" alt="marina 1977" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film56"><span>☆</span> Favorit</button>
+            <div class="film-title">marina 1977</div>
+        </div>
+        <div class="card-film" data-id="film57" id="utama-film57">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/MEMBURU%20MAKELAR%20MAYAT%20(1986)%20FULL%20MOVIE%20HD.webm" data-title="memburu makelar mayat 1986">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/4a/f2/94/4af294c8e6fb926ee2e44dfdc335fa32.jpg" alt="memburu makelar mayat 1986" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film57"><span>☆</span> Favorit</button>
+            <div class="film-title">memburu makelar mayat 1986</div>
+        </div>
+        <div class="card-film" data-id="film58" id="utama-film58">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PEMBALASAN%20RAMBU%20(1985)%20FULL%20MOVIE%20HD.webm" data-title="pembalasan rambu 1985">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/76/fb/dc/76fbdcda2d0127f3e98f9f852a506119.jpg" alt="pembalasan rambu 1985" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film58"><span>☆</span> Favorit</button>
+            <div class="film-title">pembalasan rambu 1985</div>
+        </div>
+        <div class="card-film" data-id="film59" id="utama-film59">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PENCURI%20CINTA%20(1984)%20FULL%20MOVIE%20HD.webm" data-title="pencuri cinta 1984">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a8/11/95/a81195e0d887616300144d60712a0e50.jpg" alt="pencuri cinta 1984" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film59"><span>☆</span> Favorit</button>
+            <div class="film-title">pencuri cinta 1984</div>
+        </div>
+        <div class="card-film" data-id="film60" id="utama-film60">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PENGANTIN%20BARU%20(1986)%20FULL%20MOVIE%20HD.webm" data-title="pengantin baru 1986">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/14/e8/23/14e82317a54528fc8e2623ffd50182e6.jpg" alt="pengantin baru 1986" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film60"><span>☆</span> Favorit</button>
+            <div class="film-title">pengantin baru 1986</div>
+        </div>
+        <div class="card-film" data-id="film61" id="utama-film61">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PEREMPUAN%20BERGAIRAH%20(1982)%20FULL%20MOVIE.webm" data-title="barry prima perempuan bergairah 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f0/fe/2a/f0fe2a67ead668fc2c27a9de77ad9664.jpg" alt="Barry prima perempuan bergairah 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film61"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima perempuan bergairah 1982</div>
+        </div>
+        <div class="card-film" data-id="film62" id="utama-film62">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/PERHITUNGAN%20TERAKHIR%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="barry prima perhitungan terakhir 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/e2/52/6f/e2526fbdc9385f15c01fe2eca6c5a478.jpg" alt="Barry prima perhitungan terakhir 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film62"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima perhitungan terakhir 1982</div>
+        </div>
+        <div class="card-film" data-id="film63" id="utama-film63">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/SERBUAN%20HALILINTAR%20(1982)%20FULL%20MOVIE%20HD.webm" data-title="barry prima serbuan halilintar 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/e5/92/4b/e5924b63533f303ff72a6fb2e589f190.jpg" alt="Barry prima serbuan halilintar 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film63"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima serbuan halilintar 1982</div>
+        </div>
+        <div class="card-film" data-id="film64" id="utama-film64">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/SI%20GENIT%20POPPY%20(1978)%20FULL%20MOVIE%20HD.webm" data-title="si genit poppy 1978">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/45/91/c5/4591c5a9ba17506c8ac60e00072dda89.jpg" alt="si genit poppy 1978" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film64"><span>☆</span> Favorit</button>
+            <div class="film-title">si genit poppy 1978</div>
+        </div>
+        <div class="card-film" data-id="film65" id="utama-film65">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/MISTIK%20PUNAHNYA%20RAHASIA%20ILMU%20IBLIS%20LEAK%201981%20FULL%20MOVIE%20HD%20-%20ILONA%20AGATHE%20BASTIAN,%20YOS%20SANTO.mp4" data-title="mistik punahnya rahasia ilmu iblis leak 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/51/1e/7d/511e7d2efcee52bd889a789f89c7374e.jpg" alt="mistik punahnya rahasia ilmu iblis leak 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film65"><span>☆</span> Favorit</button>
+            <div class="film-title">mistik punahnya rahasia ilmu iblis leak 1981</div>
+        </div>
+        <div class="card-film" data-id="film66" id="utama-film66">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Malam%20Satu%20Suro%20(1988).mp4" data-title="suzzana malam satu suro 1988">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/2d/1c/ec/2d1cec7d43fd82a49f94bec39f937d10.jpg" alt="Suzzana malam satu suro 1988" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film66"><span>☆</span> Favorit</button>
+            <div class="film-title">Suzzana malam satu suro 1988</div>
+        </div>
+        <div class="card-film" data-id="film67" id="utama-film67">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/benyamin%20spion%20025.mp4" data-title="benyamin spion 025 1974">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/09/f7/80/09f7806bc07a96e1b85c5219514210fe.jpg" alt="benyamin spion 025 1974" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film67"><span>☆</span> Favorit</button>
+            <div class="film-title">benyamin spion 025 1974</div>
+        </div>
+        <div class="card-film" data-id="film68" id="utama-film68">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/elang%20putih.mp4" data-title="elang laut 1984">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/31/66/d2/3166d2f68224c941bf71d17ae4a93fdc.jpg" alt="Elang laut 1984" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film68"><span>☆</span> Favorit</button>
+            <div class="film-title">Elang laut 1984</div>
+        </div>
+        <div class="card-film" data-id="film69" id="utama-film69">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/gawang%20gawat.mp4" data-title="gawang gawat 1984">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/d7/99/1b/d7991bff4e790acdf62c3c0407a85a8c.jpg" alt="gawang gawat 1984" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film69"><span>☆</span> Favorit</button>
+            <div class="film-title">gawang gawat 1984</div>
+        </div>
+        <div class="card-film" data-id="film70" id="utama-film70">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/jaka%20tingkir.mp4" data-title="jaka tingkir 1983">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/da/42/eb/da42eb76a7ba041a3dc3d7dbcb4d74c0.jpg" alt="jaka tingkir 1983" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film70"><span>☆</span> Favorit</button>
+            <div class="film-title">jaka tingkir 1983</div>
+        </div>
+        <div class="card-film" data-id="film71" id="utama-film71">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/kidung%20cinta.mp4" data-title="rano karno kidung cinta 1985">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/eb/3f/d1/eb3fd1b224e03f231c9e013b40a61784.jpg" alt="Rano karno kidung cinta 1985" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film71"><span>☆</span> Favorit</button>
+            <div class="film-title">Rano karno kidung cinta 1985</div>
+        </div>
+        <div class="card-film" data-id="film72" id="utama-film72">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/pertarungan%20iblis%20merah.mp4" data-title="barry prima pertarungan iblis merah 1988">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a1/f5/dd/a1f5dded01b8168820ed8c14ad501650.jpg" alt="Barry prima pertarungan iblis merah 1988" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film72"><span>☆</span> Favorit</button>
+            <div class="film-title">Barry prima pertarungan iblis merah 1988</div>
+        </div>
+        <div class="card-film" data-id="film73" id="utama-film73">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/sama%20gilanya.mp4" data-title="benyamin sama gila nya 1983">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/b1/7b/be/b17bbe3285f8070b5d008c9e43e400e5.jpg" alt="Benyamin sama gila nya 1983" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film73"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin sama gila nya 1983</div>
+        </div>
+        <div class="card-film" data-id="film74" id="utama-film74">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/sesepuh%20majapahit.mp4" data-title="sesepuh majapahit 1995">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9b/f5/69/9bf569e1f48736f3f2569b5a5dc35d33.jpg" alt="sesepuh majapahit 1995" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film74"><span>☆</span> Favorit</button>
+            <div class="film-title">sesepuh majapahit 1995</div>
+        </div>
+        <div class="card-film" data-id="film75" id="utama-film75">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/siluman%20buaya%20putih.mp4" data-title="siluman buaya putih 1987">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/95/f6/13/95f613baf86b06d2a495d03386956e17.jpg" alt="Siluman Buaya putih 1987" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film75"><span>☆</span> Favorit</button>
+            <div class="film-title">Siluman Buaya putih 1987</div>
+        </div>
+        <div class="card-film" data-id="film76" id="utama-film76">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/srigala.mp4" data-title="srigala 1981">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/8a/48/63/8a486304345c7b8ad5739aac1d17cb89.jpg" alt="srigala 1981" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film76"><span>☆</span> Favorit</button>
+            <div class="film-title">srigala 1981</div>
+        </div>
+        <div class="card-film" data-id="film77" id="utama-film77">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/SI%20JALU%20DUA%20PENDEKAR%20PUTIH%201990%20FULL%20MOVIE%20HD%20-%20SONNY%20DEWANTARA,%20YURIKE%20PRASTICA,%20LINA%20BUDIARTI.mp4" data-title="si jalu pendekar dua pendekar putih 1990">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/76/7f/9b/767f9b200a704a3616dfd7d0200b2fee.jpg" alt="si jalu pendekar dua pendekar putih 1990" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film77"><span>☆</span> Favorit</button>
+            <div class="film-title">si jalu pendekar dua pendekar putih 1990</div>
+        </div>
+        <div class="card-film" data-id="film78" id="utama-film78">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Sundel%20bolong%20(1982).mp4" data-title="suzzana sundel bolong 1982">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/14/ba/b4/14bab4ed12bf6d2033f7e489feadb150.jpg" alt="Suzzana sundel bolong 1982" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film78"><span>☆</span> Favorit</button>
+            <div class="film-title">Suzzana sundel bolong 1982</div>
+        </div>
+        <div class="card-film" data-id="film79" id="utama-film79">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20%20%20PINTAR%20PINTAR%20B0D0H%201980%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki pintar-pintar bodoh">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/59/05/aa/5905aa6ad137bdc74b10e36787985795.jpg" alt="warkop dki pintar-pintar bodoh" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film79"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki pintar-pintar bodoh</div>
+        </div>
+        <div class="card-film" data-id="film80" id="utama-film80">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20DONGKRAK%20ANTIK%201982%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki dongkrak antik">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/5a/36/d2/5a36d2c640b1184b9de4ba42a62c31ae.jpg" alt="warkop dki dongkrak antik" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film80"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki dongkrak antik</div>
+        </div>
+        <div class="card-film" data-id="film81" id="utama-film81">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20GANTIAN%20DONG%201985%20FULL%20%20MOVIE%20HD.mp4" data-title="warkop dki gantian dong">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/bf/a9/7c/bfa97ce5b1fdb6f9e32cab9bb7f89a72.jpg" alt="warkop dki gantian dong" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film81"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki gantian dong</div>
+        </div>
+        <div class="card-film" data-id="film82" id="utama-film82">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20ITU%20BISA%20DIATUR%201984%20FULL%20MOVIE%20HD-ukielaki.mp4" data-title="warkop dki itu bisa di atur">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/48/8a/ea/488aea93e0d205d8f4608396eda5f813.jpg" alt="warkop dki itu bisa di atur" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film82"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki itu bisa di atur</div>
+        </div>
+        <div class="card-film" data-id="film83" id="utama-film83">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20KESEMPATAN%20DALAM%20KESEMPITAN%201985%20FULL%20MOVIE%20HD.mp4" data-title="warkop dki kesempatan dalam kesempitan">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/39/fa/d2/39fad2d76e9b1b141a2567bd99341073.jpg" alt="warkop dki kesempatan dalam kesempitan" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film83"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki kesempatan dalam kesempitan</div>
+        </div>
+        <div class="card-film" data-id="film84" id="utama-film84">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Bebas.Aturan.Main.1993.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki bebas aturan main">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/52/4c/8f/524c8f9e6f436a7c0dab508230b6697e.jpg" alt="warkop dki bebas aturan main" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film84"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki bebas aturan main</div>
+        </div>
+        <div class="card-film" data-id="film85" id="utama-film85">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Depan.Bisa.Belakang.Bisa.1987.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki depan bisa belakang bisa">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f9/94/d9/f994d9e22a1ef12c2ebf383714ddbc80.jpg" alt="warkop dki depan bisa belakang bisa" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film85"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki depan bisa belakang bisa</div>
+        </div>
+        <div class="card-film" data-id="film86" id="utama-film86">
+            <a tabindex="0" class="play-link" href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Warkop.DKI.Bisa.Naik.Bisa.Turun.1991.1080p.NF.WEB-DL.DDP2.0.H.264-ukielaki.mp4" data-title="warkop dki bisa naik bisa turun">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9d/bc/c3/9dbcc35758e3518b21a644bdcde8fc71.jpg" alt="warkop dki bisa naik bisa turun" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film86"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki bisa naik bisa turun</div>
+        </div>
+        <div class="card-film" data-id="film87" id="utama-film87">
+            <a tabindex="0" class="play-link" href="https://storage.googleapis.com/b90c80434edf473051.appspot.com/86f08d65f5139cff2d9eecd680a962de_1666237832.mp4?sumber=awal_storage" data-title="warkop dki manusia enam juta dollar">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/bf/7d/c4/bf7dc410ae7464b2f2bc11d5f6ad4d18.jpg" alt="Warkop dki manusia enam juta dollar" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film87"><span>☆</span> Favorit</button>
+            <div class="film-title">Warkop dki manusia enam juta dollar</div>
+        </div>
+        <div class="card-film" data-id="film88" id="utama-film88">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/%20Ateng%20Kejamnya%20Ibu%20Tiri%20tak%20Sekejam%20Ibu%20Kota.mp4" data-title="ateng kejamnya ibu tiri tak sekejam ibu kota">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/b9/e2/0d/b9e20dbfbb5908d23ae96b095f2a2aa4.jpg" alt="ateng kejamnya ibu tiri tak sekejam ibu kota" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film88"><span>☆</span> Favorit</button>
+            <div class="film-title">ateng kejamnya ibu tiri tak sekejam ibu kota</div>
+        </div>
+        <div class="card-film" data-id="film89" id="utama-film89">
+            <a tabindex="0" class="play-link" href="https://download.fileku.eu.org/0:/INDONESIAN/%23Film%20Indo-Malay/%23Film%20Indonesia/Ateng%20Pendekar%20Aneh/Ateng.Pendekar.Aneh.1977.720p.MOLA.WEB-DL.mkv" data-title="ateng pendekar aneh 1977">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/54/79/49/54794918ab933b5634e6e320e6a98152.jpg" alt="ateng pendekar aneh 1977" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film89"><span>☆</span> Favorit</button>
+            <div class="film-title">ateng pendekar aneh 1977</div>
+        </div>
+        <div class="card-film" data-id="film90" id="utama-film90">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/ATENG%20RAJA%20PENYAMUN%20%281974%29%20.mp4" data-title="ateng raja penyamun">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/04/75/75/0475759d37af169c94876694bffed9bb.jpg" alt="ateng raja penyamun" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film90"><span>☆</span> Favorit</button>
+            <div class="film-title">ateng raja penyamun</div>
+        </div>
+        <div class="card-film" data-id="film91" id="utama-film91">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Si%20Pitung%20Banteng%20Betawi%20-%20Si%20Pitung%201.ia.mp4" data-title="si pitung banteng betawi">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/92/94/2e/92942edce1fc7be7142f68672f387b26.jpg" alt="si pitung banteng betawi" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film91"><span>☆</span> Favorit</button>
+            <div class="film-title">si pitung banteng betawi</div>
+        </div>
+        <div class="card-film" data-id="film92" id="utama-film92">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Banteng%20Betawi%202%20-%20Si%20Pitung%20-%202.mp4" data-title="si pitung">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/3d/9a/5f/3d9a5f0ee8cd7907b5862416708b26da.jpg" alt="si pitung" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film92"><span>☆</span> Favorit</button>
+            <div class="film-title">si pitung</div>
+        </div>
+        <div class="card-film" data-id="film93" id="utama-film93">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Ateng%20Dang%20Ding%20Dong.mp4" data-title="ateng dang ding dong">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/fc/a7/31/fca7310a066aa44923eb14c50f8c177d.jpg" alt="ateng dang ding dong" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film93"><span>☆</span> Favorit</button>
+            <div class="film-title">ateng dang ding dong</div>
+        </div>
+        <div class="card-film" data-id="film94" id="utama-film94">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/film%20indonesia%20jadul%20-%20ketemu%20jodoh%20%281973%29.mp4" data-title="bagio ketemu jodoh 1973">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9d/7f/90/9d7f902b165c4a6da1a48ed6dcbd196b.jpg" alt="Bagio Ketemu jodoh 1973" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film94"><span>☆</span> Favorit</button>
+            <div class="film-title">Bagio Ketemu jodoh 1973</div>
+        </div>
+        <div class="card-film" data-id="film95" id="utama-film95">
+            <a tabindex="0" class="play-link" href="https://ia601506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/BAGITO%20Grup%26%20WARKOP%20Lebaran%2089%20Eps1.ia.mp4" data-title="warkop dki bagito">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f7/22/54/f722545935719f3622fef92fa923f3d2.jpg" alt="Warkop dki bagito" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film95"><span>☆</span> Favorit</button>
+            <div class="film-title">Warkop dki bagito</div>
+        </div>
+        <div class="card-film" data-id="film96" id="utama-film96">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/BAGITO%20Grup%26%20WARKOP%20Lebaran%2089%20Eps2.ia.mp4" data-title="warkop dki bagito">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/f7/22/54/f722545935719f3622fef92fa923f3d2.jpg" alt="warkop dki bagito" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film96"><span>☆</span> Favorit</button>
+            <div class="film-title">warkop dki bagito</div>
+        </div>
+        <div class="card-film" data-id="film97" id="utama-film97">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Musuh%20Bebuyutan%20Part%201%20%28Benyamin%20Sueb%29.mp4" data-title="benyamin musuh bebuyutan">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9a/cb/26/9acb2666647bef24eab7150608015ad9.jpg" alt="Benyamin musuh bebuyutan" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film97"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin musuh bebuyutan</div>
+        </div>
+        <div class="card-film" data-id="film98" id="utama-film98">
+            <a tabindex="0" class="play-link" href="https://ia601506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Musuh%20Bebuyutan%20Part%202%20%28%20Benyamin%20sueb%29.mp4" data-title="benyamin musuh bebuyutan 2">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/9a/cb/26/9acb2666647bef24eab7150608015ad9.jpg" alt="Benyamin musuh bebuyutan 2" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film98"><span>☆</span> Favorit</button>
+            <div class="film-title">Benyamin musuh bebuyutan 2</div>
+        </div>
+        <div class="card-film" data-id="film99" id="utama-film99">
+            <a tabindex="0" class="play-link" href="https://ia803203.us.archive.org/34/items/film_indo_tahun_1980-1989/Legenda%20Roro%20Mendut%20%281982%29%20720p%20filmgrewal.blogspot.com.mp4" data-title="legenda roro mendut 1989">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/ec/46/de/ec46de8941980526818720425f6153f0.jpg" alt="legenda roro mendut 1989" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film99"><span>☆</span> Favorit</button>
+            <div class="film-title">legenda roro mendut 1989</div>
+        </div>
+        <div class="card-film" data-id="film100" id="utama-film100">
+            <a tabindex="0" class="play-link" href="https://ia903203.us.archive.org/34/items/film_indo_tahun_1980-1989/Malaikat%20Bayangan%20%281988%29%20%28360p%29%20filmgrewal.blogspot.com.mp4" data-title="barry prima malaikat bayangan 1989">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/64/81/00/648100beba97f34fbe1f997fd1a4ad7c.jpg" alt="barry prima malaikat bayangan 1989" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film100"><span>☆</span> Favorit</button>
+            <div class="film-title">barry prima malaikat bayangan 1989</div>
+        </div>
+        <div class="card-film" data-id="film101" id="utama-film101">
+            <a tabindex="0" class="play-link" href="https://ia804600.us.archive.org/2/items/y-2-mate.is-primitive-a.-k.-a-savage-terror-1980-indonesian-dub-1-rrx-9aa-3wmo-720p-1637822852457/Y2Mate.is%20-%20Primitive%20A.K.A%20Savage%20Terror%20(1980)%20Indonesian%20Dub-1Rrx9aa3wmo-720p-1637822852457.mp4" data-title="barry prima primitif">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/2e/35/de/2e35de42a5f20b41c3ec7ac864c17e92.jpg" alt="barry prima primitif" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film101"><span>☆</span> Favorit</button>
+            <div class="film-title">barry prima primitif</div>
+        </div>
+        <div class="card-film" data-id="film102" id="utama-film102">
+            <a tabindex="0" class="play-link" href="https://ia904506.us.archive.org/30/items/naga-sakti-1986/Naga%20Sakti%20%281986%29.ia.mp4?cnt=0" data-title="pembalasan naga sakti 1986">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/0a/71/b6/0a71b6dacf3c4827313eee4d9e12ac48.jpg" alt="pembalasan naga sakti 1986" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film102"><span>☆</span> Favorit</button>
+            <div class="film-title">pembalasan naga sakti 1986</div>
+        </div>
+        <div class="card-film" data-id="film103" id="utama-film103">
+            <a tabindex="0" class="play-link" href="https://ia904503.us.archive.org/19/items/ali-topan-anak-jalanan-1977/Ali%20Topan%20Anak%20Jalanan%20%281977%29.avi" data-title="ali topan anak jalanan 1977">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/81/c3/73/81c373d14027d9401916a97c687e74cb.jpg" alt="Ali topan anak jalanan 1977" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film103"><span>☆</span> Favorit</button>
+            <div class="film-title">Ali topan anak jalanan 1977</div>
+        </div>
+        <div class="card-film" data-id="film104" id="utama-film104">
+            <a tabindex="0" class="play-link" href="https://ia801506.us.archive.org/9/items/ateng-kaya-mendadak-1975-hd/Bing%20Slamet%20Koboi%20Cengeng%20%281974%29%20Upscale%20to%20HD.ia.mp4" data-title="koboi cengeng adi bing slamet">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/a0/26/51/a02651875d96819458b07ce9b2d93cc5.jpg" alt="koboi cengeng adi bing slamet" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film104"><span>☆</span> Favorit</button>
+            <div class="film-title">koboi cengeng adi bing slamet</div>
+        </div>
+        <div class="card-film" data-id="film105" id="utama-film105">
+            <a tabindex="0" class="play-link" href="https://storage.googleapis.com/d196e82636de45b.appspot.com/d5950d11b8ed3c07be04376e03a2293b_1664110415.mp4?sumber=awal_storage" data-title="djago">
+                <div class="poster-wrapper">
+                    <img src="https://i.pinimg.com/736x/dd/49/82/dd4982507debf8f55cb01a95b40b6a4f.jpg" alt="djago" loading="lazy" decoding="async">
+                </div>
+            </a>
+            <button class="btn-fav" tabindex="0" data-target="film105"><span>☆</span> Favorit</button>
+            <div class="film-title">djago</div>
+        </div>        <div id="noResultsText" class="no-results">Film tidak ditemukan...</div>
     </div>
-</div>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const moviePopup = document.getElementById("moviePopup");
-        const searchInput = document.getElementById("search");
-        const searchIcon = document.getElementById("searchIcon");
-        const searchToggleIcon = document.getElementById("searchToggleIcon");
-        let activePopup = null;
+document.addEventListener("DOMContentLoaded", function() {
+    const searchBox = document.getElementById('searchBox');
+    const btnClear = document.getElementById('btnClear');
+    const noResultsText = document.getElementById('noResultsText');
+    const containerUtama = document.getElementById('containerUtama');
+    const containerFav = document.getElementById('containerFav');
+    const favSectionTitle = document.getElementById('favSectionTitle');
 
-        // --- 1. FILTER ABJAD A-Z ---
-        const azContainer = document.querySelector(".kategori-az");
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-        let azHtml = `<button class="active" data-letter="all">ALL</button>`;
-        alphabet.forEach(l => { azHtml += `<button data-letter="${l}">${l}</button>`; });
-        azContainer.innerHTML = azHtml;
+    let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorit')) || [];
 
-        azContainer.addEventListener("click", function(e) {
-            if(e.target.tagName === "BUTTON") {
-                document.querySelectorAll(".kategori-az button").forEach(b => b.classList.remove("active"));
-                e.target.classList.add("active");
-                filterMovies();
-            }
-        });
-
-        document.querySelectorAll(".kategori").forEach(kat => {
-            kat.addEventListener("click", function() {
-                document.querySelectorAll(".kategori").forEach(k => k.classList.remove("active"));
-                this.classList.add("active");
-                filterMovies();
-            });
-        });
-
-        searchInput.addEventListener("input", filterMovies);
-
-        searchIcon.addEventListener("click", function(e) {
-            e.stopPropagation();
-            searchInput.classList.toggle("active");
-            if (searchInput.classList.contains("active")) {
-                searchInput.focus();
-                if(searchToggleIcon) searchToggleIcon.className = "fas fa-times";
-            } else {
-                searchInput.value = "";
-                filterMovies();
-                if(searchToggleIcon) searchToggleIcon.className = "fas fa-search";
-                document.querySelector(".card:not(.hide)")?.focus();
-            }
-        });
-
-        searchInput.addEventListener("keydown", function(e) {
-            if (e.key === "Escape" || e.keyCode === 4) {
-                e.preventDefault();
-                searchInput.classList.remove("active");
-                searchInput.value = "";
-                filterMovies();
-                if(searchToggleIcon) searchToggleIcon.className = "fas fa-search";
-                document.querySelector(".card:not(.hide)")?.focus();
-            }
-        });
-
-        function filterMovies() {
-            const letter = document.querySelector(".kategori-az button.active").dataset.letter;
-            const kat = document.querySelector(".kategori.active").dataset.kategori;
-            const query = searchInput.value.toLowerCase().trim();
-            const cards = document.querySelectorAll(".card");
-
-            cards.forEach(card => {
-                const title = card.querySelector("span").textContent.trim();
-                const matchLetter = (letter === "all" || title.toUpperCase().startsWith(letter));
-                const matchQuery = (query === "" || title.toLowerCase().includes(query));
-
-                let isFav = true;
-                if(kat === "favorite") {
-                    isFav = card.classList.contains("is-favorite");
-                }
-
-                if(matchLetter && matchQuery && isFav) {
-                    card.classList.remove("hide");
-                } else {
-                    card.classList.add("hide");
+    function updateTampilanFavorit() {
+        containerFav.innerHTML = "";
+        if (listFavorit.length === 0) {
+            favSectionTitle.style.display = "none";
+            containerFav.style.display = "none";
+        } else {
+            favSectionTitle.style.display = "block";
+            containerFav.style.display = "flex";
+            listFavorit.forEach(idFilm => {
+                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
+                if (itemAsli) {
+                    const klon = itemAsli.cloneNode(true);
+                    klon.setAttribute('id', 'fav-' + idFilm);
+                    containerFav.appendChild(klon);
                 }
             });
         }
-
-        // --- 2. POPUP DETAIL FILM ---
-        const cards = document.querySelectorAll(".card");
-let currentCard = null;
-
-// LOAD FAVORIT TERSIMPAN
-let favs =
-    JSON.parse(localStorage.getItem("favorites") || "[]");
-
-cards.forEach(card => {
-
-    const title =
-        card.querySelector("span").textContent;
-
-    if(favs.includes(title)){
-        card.classList.add("is-favorite");
+        pasangEventAksi();
+        perbaruiStatusTombolBintang();
     }
 
-});
-
-cards.forEach((card, index) => {
-    card.addEventListener("click", function() {
-
-        currentCard = this;
-
-        // Simpan poster terakhir yang dipilih
-        localStorage.setItem("lastPosterIndex", index);
-                const title = this.querySelector("span").textContent;
-                const sinopsis = this.dataset.sinopsis || "Sinopsis film belum ditambahkan oleh Admin.";
-                const img = this.querySelector("img").src;
-
-                document.getElementById("popupImg").src = img;
-                document.getElementById("popupTitle").textContent = title;
-                document.getElementById("popupSinopsis").textContent = sinopsis;
-
-                const favBtn = document.getElementById("popupFav");
-                if(card.classList.contains("is-favorite")) {
-                    favBtn.textContent = "❤️ Hapus Favorit";
-                } else {
-                    favBtn.textContent = "🖤 Tambah Favorit";
-                }
-
-                moviePopup.style.display = "flex";
-                activePopup = moviePopup;
-                document.getElementById("popupPlay").focus();
-
-                // Lapor ke Android kalau popup terbuka agar tombol back terkunci di popup
-                if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                    Android.setPopUpStatus(true);
-                }
-            });
-        });
-
-        document.getElementById("popupClose").addEventListener("click", closeMoviePopup);
-
-        function closeMoviePopup() {
-            moviePopup.style.display = "none";
-            activePopup = null;
-            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                Android.setPopUpStatus(false);
-            }
-            if(currentCard) currentCard.focus();
-        }
-
-        // --- PEMICU EXOPLAYER NATIVE STB (ANTI MENTAL) ---
-        document.getElementById("popupPlay").addEventListener("click", function() {
-
-    if(!currentCard) return;
-
-    const cards = document.querySelectorAll(".card");
-    const index = Array.from(cards).indexOf(currentCard);
-
-    localStorage.setItem("lastPosterIndex", index);
-
-    const videoUrl = currentCard.dataset.url;
-
-            // KUNCI: Tetap katakan kepada Android bahwa status popup aktif (true) sebelum memutar video,
-            // agar saat user memencet tombol 'Back' dari ExoPlayer, dia tidak me-refresh/melempar halaman web ke index.html
-            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                Android.setPopUpStatus(true);
-            }
-
-            // Tembak url video ke Native ExoPlayer Android STB
-            if (typeof Android !== "undefined" && Android.playVideo) {
-                Android.playVideo(videoUrl);
+    function perbaruiStatusTombolBintang() {
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            const idTarget = btn.getAttribute('data-target');
+            if (listFavorit.includes(idTarget)) {
+                btn.classList.add('active');
+                btn.innerHTML = "<span>★</span> Favorit";
             } else {
-                window.open(videoUrl, "_blank");
+                btn.classList.remove('active');
+                btn.innerHTML = "<span>☆</span> Favorit";
             }
         });
-
-        document.getElementById("popupFav").addEventListener("click", function() {
-
-    if(!currentCard) return;
-
-    const title =
-        currentCard.querySelector("span").textContent;
-
-    let favs =
-        JSON.parse(localStorage.getItem("favorites") || "[]");
-
-    if(currentCard.classList.contains("is-favorite")){
-
-        favs = favs.filter(f => f !== title);
-
-        currentCard.classList.remove("is-favorite");
-
-    }else{
-
-        favs.push(title);
-
-        currentCard.classList.add("is-favorite");
-
     }
 
-    localStorage.setItem(
-        "favorites",
-        JSON.stringify(favs)
-    );
-
-    closeMoviePopup();
-    filterMovies();
-
-});
-
-        // --- 3. NAVIGASI BACK REMOTE STB ---
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "Escape" || e.keyCode === 4) {
-                if (activePopup === moviePopup) {
+    function pasangEventAksi() {
+        document.querySelectorAll('.card-film').forEach(card => {
+            const link = card.querySelector('.play-link');
+            if (!link) return;
+            link.replaceWith(link.cloneNode(true));
+            const newLink = card.querySelector('.play-link');
+            const handleWatch = function(e) {
+                localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
+                localStorage.setItem("sedangNontonVideoSTB", "ya");
+                if (typeof Android !== "undefined" && Android.playVideo) {
                     e.preventDefault();
-                    closeMoviePopup();
+                    Android.playVideo(newLink.getAttribute("href"));
                 }
-            }
+            };
+            newLink.addEventListener("click", handleWatch);
+            newLink.addEventListener("keydown", function(e) { if (e.key === "Enter") handleWatch(e); });
         });
 
-        // Jalur global penjinak tombol back dari Android WebView
-        window.tutupPopUpPoster = function() {
-            if (activePopup === moviePopup) {
-                closeMoviePopup();
-            } else {
-                // Jika ExoPlayer ditutup dan kembali ke halaman ini, pastikan status dinormalisasi aman kembali
-                if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                    Android.setPopUpStatus(false);
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            const handleFavClick = function(e) {
+                e.preventDefault();
+                const idTarget = btn.getAttribute('data-target');
+                if (listFavorit.includes(idTarget)) {
+                    listFavorit = listFavorit.filter(id => id !== idTarget);
+                } else {
+                    listFavorit.push(idTarget);
                 }
-                if(currentCard) currentCard.focus();
-            }
-        };
+                localStorage.setItem('mrzyb_favorit', JSON.stringify(listFavorit));
+                updateTampilanFavorit();
+            };
+            btn.addEventListener('click', handleFavClick);
+            btn.addEventListener('keydown', function(e) { if (e.key === "Enter") handleFavClick(e); });
+        });
+    }
 
-        // --- 4. THEME TOGGLE HANDLER ---
-        const themeToggle = document.getElementById("themeToggle");
-        themeToggle.addEventListener("click", () => {
-            document.body.classList.toggle("light");
-            if(document.body.classList.contains("light")) {
-                themeToggle.textContent = "☀️";
+    function saringFilm(keyword) {
+        let adaFilmCocok = false;
+        const semuaKartu = containerUtama.querySelectorAll('.card-film');
+        semuaKartu.forEach(card => {
+            const link = card.querySelector('.play-link');
+            const namaFilm = link.getAttribute('data-title');
+            const btnFav = card.querySelector('.btn-fav');
+            if (namaFilm.includes(keyword)) {
+                card.style.display = "block";
+                link.setAttribute("tabindex", "0");
+                btnFav.setAttribute("tabindex", "0");
+                adaFilmCocok = true;
             } else {
-                themeToggle.textContent = "🌙";
+                card.style.display = "none";
+                link.setAttribute("tabindex", "-1");
+                btnFav.setAttribute("tabindex", "-1");
             }
         });
+        noResultsText.style.display = adaFilmCocok ? "none" : "block";
+    }
 
-        const lastPoster = localStorage.getItem("lastPosterIndex");
+    searchBox.addEventListener('input', function() {
+        const filterText = searchBox.value.toLowerCase().trim();
+        btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+        saringFilm(filterText);
+    });
 
-if (lastPoster !== null) {
+    btnClear.addEventListener('click', function() {
+        searchBox.value = "";
+        btnClear.style.display = "none";
+        saringFilm("");
+        searchBox.focus();
+    });
 
-    const cards = document.querySelectorAll(".card");
+    updateTampilanFavorit();
 
     setTimeout(() => {
-
-        if (cards[lastPoster]) {
-
-            cards[lastPoster].scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-            cards[lastPoster].focus();
-
-            currentCard = cards[lastPoster];
+        const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
+        const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
+        if (statusNontonSTB === "ya" && idPosterTerakhir) {
+            const targetPoster = document.getElementById(idPosterTerakhir);
+            if (targetPoster) {
+                const tombolPlay = targetPoster.querySelector('.play-link');
+                if (tombolPlay) {
+                    tombolPlay.focus();
+                    targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                    localStorage.removeItem("sedangNontonVideoSTB");
+                    localStorage.removeItem("idPosterTerakhir");
+                    return;
+                }
+            }
         }
-
-    }, 300);
-
-} else {
-
-    document.querySelector(".card:not(.hide)")?.focus();
-
-}
-    });
+        if (searchBox) searchBox.focus();
+    }, 180); 
+});
 </script>
-
-
 </body>
 </html>
