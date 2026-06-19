@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MRZYB TV</title>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* --- RESET & BASE STYLE --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'PT Sans', sans-serif;
+    background-color: #000000; /* Hitam pekat ala Netflix */
+    color: #ffffff;
+    overflow-x: hidden;
+    padding-bottom: 90px; 
+}
+
+/* --- LOGO / HEADER --- */
+.header-banner {
+    text-align: center;
+    padding: 20px 0 5px 0;
+}
+.header-banner h1 {
+    color: #E50914; /* Merah Khas Netflix */
+    font-size: 38px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+.section-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin: 15px 0 15px 40px;
+}
+
+/* --- GRID POSTER FILM (ALA NETFLIX) --- */
+.container-film {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 0 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Item Kartu Film (Dibuat Tegak Lurus Rasio 2:3) */
+.card-film {
+    display: block;
+    width: 140px;
+    height: 210px; /* Diubah agar tegak seperti poster bioskop asli */
+    background-color: #141414;
+    border-radius: 6px;
+    overflow: hidden;
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    /* Gunakan outline tipis default agar rendering awal ringan */
+    outline: 2px solid transparent; 
+    will-change: transform; /* Optimasi hardware akselerasi STB */
+}
+
+/* Gambar di dalam Kartu */
+.card-film img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* EFFECT FOKUS REMOTE STB (SUPER RINGAN & ANTI-LAG) */
+.card-film:focus, .nav-item:focus {
+    outline: 3px solid #E50914; /* Sorot merah tajam tanpa blur shadow */
+    transform: scale(1.06); /* Membesar sedikit dengan sangat enteng */
+    z-index: 10;
+}
+
+/* Durasi transisi dipercepat agar pergeseran remote terasa instan */
+.card-film, .nav-item {
+    transition: transform 0.1s ease-out;
+}
+
+/* --- MENU NAVIGASI BAWAH (FIXED) --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background: #141414;
+    border-top: 1px solid #262626;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #808080;
+    text-decoration: none;
+    width: 30%;
+    height: 100%;
+    font-size: 13px;
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    fill: currentColor;
+}
+
+.nav-item.active {
+    color: #E50914; /* Menu aktif berwarna merah */
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+    <div class="header-banner">
+        <h1>MRZYB TV</h1>
+    </div>
+
+    <div class="section-title">Alur Cerita Populer</div>
+
+    <div class="container-film">
+        
+        <a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Venom%20the%20last%20dance%20(2024).mp4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7xBjRNWow_V75KpLFRamvtRYR4qqwO-VilXp4hRv1ZekSylslgTV9DKE&s=10" alt="Venom">
+        </a>
+
+        <a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Alien%20Romulus%20(2024).mp4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxRV0NJmoY3Cb3fQptJqfOFvq_t4Jzdzeh4qqpR8xLDYx0-Fe2_oSsqN8&s=10" alt="Alien">
+        </a>
+
+        <a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%2013th%20warrior%20(1999).mp4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOwLZ0FFAaQfapForuaQJYIrxGGVlmw_bwwR3qxTSZIZNeT2ozr0MatNU&s=10" alt="The 13th Warrior">
+        </a>
+
+        <a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Abselutely%20anything%20(2015).mp4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ93fFGXm_QOJkbNYLlBtxyrls-T6ojRL-2wA&usqp=CAU" alt="Absolutely Anything">
+        </a>
+
+        <a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Atm%20er%20rak%20error%20(2012).mp4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvVilzDKJsvLrqpbINTVzo0iuWkQ14XH42wg&usqp=CAU" alt="ATM Error">
+        </a>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="dubbing.html" class="nav-item" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+            <span>Dubbing</span>
+        </a>
+        <a href="alurcerita.html" class="nav-item" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+            <span>Alur Cerita</span>
+        </a>
+    </nav>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.querySelectorAll('.card-film');
+    
+    const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
+    const indexTerakhir = localStorage.getItem("alurFilmTerakhirIndex");
+
+    requestAnimationFrame(() => {
+        if (baruSelesaiNonton === "ya" && indexTerakhir !== null && cards[indexTerakhir]) {
+            setTimeout(() => {
+                cards[indexTerakhir].focus();
+                cards[indexTerakhir].scrollIntoView({ behavior: "auto", block: "center" });
+            }, 50); // Dipercepat dari 150ms ke 50ms biar terasa instan
+        } else {
+            if (cards[0]) cards[0].focus();
+            localStorage.removeItem("alurFilmTerakhirIndex");
+        }
+        sessionStorage.removeItem("sedangNontonVideo");
+    });
+
+    cards.forEach((card, index) => {
+        const handleWatch = function(e) {
+            localStorage.setItem("alurFilmTerakhirIndex", index);
+            sessionStorage.setItem("sedangNontonVideo", "ya");
+
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                e.preventDefault();
+                Android.playVideo(card.getAttribute("href"));
+            }
+        };
+
+        card.addEventListener("click", handleWatch);
+        card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handleWatch(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>ow%20strays%20(2024).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaqynFCRywKSsEdla3lRGtzgnyuTaOoQybPQ&usqp=CAU" class="img">
+</a>
+
+<a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%20terminal%20(2004).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJioGviU81Pi7bCsvuOBdtWzshEcNSGJRCEQ&usqp=CAU" class="img">
+</a>
+
+<a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%20thing%20(2011).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZDpxho3HCK66fid4IJuPBcpdlYX3-zG5Hfw&usqp=CAU" class="img">
+</a>
+
+<a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/The%20unwavering%20brothehood%20(2024).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZSimple26vW4dDJEr7jrEI7Gjr97ClFVjo69rw&usqp=CAU" class="img">
+</a>
+
+<a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Wake%20up%20(2024).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRax7L-olkh9M-uysba4UX3iIfuZXTTVRabw&usqp=CAU" class="img">
+</a>
+
+<a class="card-film" tabindex="0" href="https://movieku.ukielaki8387.workers.dev/0:/Alur%20cerita/Wolf%20man%20(2025).mp4">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoHIP-JSJJOH3fgA8Py59GhiGTnbdEL0-wRA&usqp=CAU" class="img">
+</a>
+
+</div>
+
+
+<style>
+body {background-color:black;}
+
+.img {
+	border-radius:13px;
+	float:left;
+	display:flex;
+	justify-content:space-between;
+	width:120px;
+	margin:07px;
+	height:70px;
+}
+
+img {border-radius:15px;}
+
+body {
+    margin: 0 0 55px 0;
+}
+
+/* Penanda garis tepi biru saat remote menyorot poster */
+.card-film:focus {
+    outline: 4px solid #00BFFF;
+    transform: scale(1.08);
+    transition: all 0.2s ease-in-out;
+    z-index: 99;
+}
+</style>
+
+
+<center><h1 style="color:#00BFFF;font-size:50px;">M R Z Y B</h1></center>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.querySelectorAll('.card-film');
+    
+    // Mengecek flag penanda di sessionStorage (Hanya hidup selama berada di halaman alurcerita ini)
+    const baruSelesaiNonton = sessionStorage.getItem("sedangNontonVideo");
+    const indexTerakhir = localStorage.getItem("alurFilmTerakhirIndex");
+
+    if (baruSelesaiNonton === "ya" && indexTerakhir !== null && cards[indexTerakhir]) {
+        // JIKA KEMBALI KARENA TOMBOL BACK DARI PLAYER (sessionStorage masih menyimpan data):
+        setTimeout(() => {
+            cards[indexTerakhir].focus();
+            cards[indexTerakhir].scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 350);
+    } else {
+        // JIKA MASUK BARU DARI INDEX/HOME LAUNCHER UTAMA (sessionStorage kosong otomatis):
+        if (cards[0]) {
+            cards[0].focus();
+        }
+        // Bersihkan data sampah lama di localStorage agar segar kembali
+        localStorage.removeItem("alurFilmTerakhirIndex");
+    }
+
+    // KIRIM INDEKS & AKTIFKAN PENANDA SEBELUM MASUK PLAYER
+    cards.forEach((card, index) => {
+        const handler = function(e) {
+            localStorage.setItem("alurFilmTerakhirIndex", index);
+            sessionStorage.setItem("sedangNontonVideo", "ya"); // Flag pengunci sesi aktif
+
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                e.preventDefault();
+                const videoUrl = card.getAttribute("href");
+                Android.playVideo(videoUrl); 
+            }
+        };
+
+        card.addEventListener("click", handler);
+
+        // Dukungan D-Pad Remote STB (Tombol OK/Enter)
+        card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+bol OK/Enter)
+        card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+bol OK/Enter)
+        card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+      card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+      card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+     card.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                handler(e);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
