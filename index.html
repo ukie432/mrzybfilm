@@ -437,20 +437,20 @@
             </div>
 
             <ul class="siderbar_menu">
-                <li class="active"><a href="go:Traktir">
-                    <div class="icon"><i class="fas fa-coffee"></i></div>
-                    <div class="title">Traktir</div>
-                </a>
-                </li>
-                <li><a href="#" target="_blank">
-                    <div class="icon"><i class="fas fa-envelope"></i></div>
-                    <div class="title">mrzybtv@gmail.com</div>
-                </a>
-                </li>
+<li><a href="go:Traktir" data-menu="traktir" onclick="localStorage.setItem('sidebarOpen', 'true'); localStorage.setItem('lastMenu', 'traktir');">
+    <div class="icon"><i class="fas fa-coffee"></i></div>
+    <div class="title">Traktir</div>
+</a>
+</li>
+                <li><a href="javascript:void(0);">
+    <div class="icon"><i class="fas fa-envelope"></i></div>
+    <div class="title">mrzybtv@gmail.com</div>
+</a>
+</li>
             </ul>
-            <div class="logout_btn">
-                <a href="http://action_exit">Logout</a>
-            </div>
+<div class="logout_btn">
+    <a href="javascript:void(0);" onclick="if(typeof Android !== 'undefined' && Android.closeApp){ Android.closeApp(); } else { window.close(); if(window.AndroidInside){ window.AndroidInside.close(); } }">Logout</a>
+</div>
         </div>
     </div>
 
@@ -554,7 +554,7 @@
    onclick="
       localStorage.removeItem('lastPosterIndex');
       localStorage.setItem('lastMenu','animasi');
-   "><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/a5306cc34dcb55045b78255a32e9f1d8.webp" style="width: 175px; height: 100px; margin: 5px; border-width: 2px; border-style: solid;" /></span></a>
+   "><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/a5306cc34dcb55045b78255a32e9f1d8.webp" /></span></a>
             
 
 
@@ -829,14 +829,41 @@
 
 <script>
 window.addEventListener("load", function(){
+    const sidebarOpen = localStorage.getItem("sidebarOpen");
+    const lastMenu = localStorage.getItem("lastMenu");
 
-   const firstMenu =
-      document.querySelector(".siderbar_menu a");
+    // Bersihkan semua class active bawaan terlebih dahulu
+    $(".siderbar_menu li").removeClass("active");
 
-   if(firstMenu){
-      firstMenu.focus();
-   }
+    if (sidebarOpen === "true") {
+        // 1. Buka kembali sidebar otomatis
+        $(".wrapper").addClass("active");
+        localStorage.removeItem("sidebarOpen"); // Hapus tanda agar tidak terbuka terus-terusan
 
+        // 2. Cari menu terakhir yang diklik
+        if (lastMenu) {
+            const activeMenu = document.querySelector('[data-menu="' + lastMenu + '"]');
+            if (activeMenu) {
+                // Berikan class active ke LI induknya
+                activeMenu.closest('li').classList.add("active");
+                
+                // Fokuskan ke item menu tersebut
+                setTimeout(() => {
+                    activeMenu.focus();
+                }, 300);
+                
+                localStorage.removeItem("lastMenu");
+                return;
+            }
+        }
+    }
+
+    // Jika tidak ada riwayat kembali dari menu, fokus ke menu pertama secara default
+    const firstMenu = document.querySelector(".siderbar_menu a");
+    if(firstMenu){
+        firstMenu.closest('li').classList.add("active");
+        firstMenu.focus();
+    }
 });
 </script>
 
