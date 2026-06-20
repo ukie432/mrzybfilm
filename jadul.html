@@ -123,8 +123,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
-                localStorage.setItem("sedangNontonVideoSTB", "ya");
+                localStorage.setItem("jadul_idPosterTerakhir", card.getAttribute("id"));
+                localStorage.setItem("jadul_sedangNontonVideoSTB", "ya");
                 
                 if (typeof Android !== "undefined" && Android.playVideo) {
                     Android.playVideo(newLink.getAttribute("href"));
@@ -209,8 +209,8 @@ document.addEventListener("DOMContentLoaded", function() {
         updateTampilanFavorit();
 
         setTimeout(() => {
-            const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
-            const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
+            const statusNontonSTB = localStorage.getItem("jadul_sedangNontonVideoSTB");
+            const idPosterTerakhir = localStorage.getItem("jadul_idPosterTerakhir");
             if (statusNontonSTB === "ya" && idPosterTerakhir) {
                 const targetPoster = document.getElementById(idPosterTerakhir);
                 if (targetPoster) {
@@ -218,8 +218,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (tombolPlay) {
                         tombolPlay.focus();
                         targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                        localStorage.removeItem("sedangNontonVideoSTB");
-                        localStorage.removeItem("idPosterTerakhir");
+                        localStorage.removeItem("jadul_sedangNontonVideoSTB");
+                        localStorage.removeItem("jadul_idPosterTerakhir");
                         return;
                     }
                 }
