@@ -1,4 +1,86 @@
-<script>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MRZYB TV - Koleksi Film Jadul</title>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
+.header-banner { text-align: center; padding: 20px 0 10px 0; }
+.header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+.search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 25px auto; padding: 0 10px; position: relative; }
+.search-input { width: 100%; padding: 12px 50px 12px 20px; font-size: 16px; background-color: #141414; border: 2px solid #262626; border-radius: 8px; color: #ffffff; outline: none; }
+.search-input:focus { border-color: #E50914; background-color: #1f1f1f; }
+.btn-clear { position: absolute; right: 20px; background: none; border: 2px solid transparent; color: #808080; font-size: 20px; font-weight: bold; cursor: pointer; width: 32px; height: 32px; display: none; align-items: center; justify-content: center; border-radius: 50%; outline: none; }
+.btn-clear:focus { color: #E50914; border-color: #E50914; background-color: rgba(229, 9, 20, 0.1); }
+.section-title { color: #ffffff; font-size: 18px; font-weight: bold; text-align: left; margin: 20px 0 15px 40px; }
+#favSectionTitle, #containerFav { display: none; }
+.container-film { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 0 40px; max-width: 1400px; margin: 0 auto; }
+.card-film { display: block; width: 140px; text-decoration: none; cursor: pointer; outline: none; will-change: transform; transition: transform 0.1s ease-out; position: relative; }
+.poster-wrapper { width: 140px; height: 210px; background-color: #141414; border-radius: 6px; overflow: hidden; border: 3px solid transparent; transition: border-color 0.1s ease-out; }
+.poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.btn-fav { width: 100%; background-color: #1f1f1f; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 4px 0; margin-top: 5px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; outline: none; }
+.btn-fav:focus { border-color: #FFD700; color: #FFD700; background-color: rgba(255, 215, 0, 0.1); }
+.btn-fav.active { color: #FFD700; }
+.film-title { color: #e0e0e0; font-size: 13px; font-weight: bold; text-align: center; margin-top: 6px; padding: 0 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-film:focus { transform: scale(1.06); z-index: 10; }
+.card-film:focus .poster-wrapper { border-color: #E50914; }
+.no-results { display: none; width: 100%; text-align: center; color: #808080; font-size: 16px; margin-top: 30px; }
+</style>
+</head>
+<body>
+    <div class="header-banner">
+        <h1>MRZYB TV</h1>
+    </div>
+    <div class="search-wrapper">
+        <input type="text" id="searchBox" class="search-input" placeholder="Cari judul film..." tabindex="0">
+        <button id="btnClear" class="btn-clear" tabindex="0" title="Hapus pencarian">×</button>
+    </div>
+    <div class="section-title" id="favSectionTitle">Daftar Favorit Saya ⭐</div>
+    <div class="container-film" id="containerFav"></div>
+    
+    
+    <div class="section-title" id="categoryTitle">Koleksi Film Jadul</div>
+    <div class="container-film" id="containerUtama">
+    </div>
+
+    <div class="no-results" id="noResultsText">Film yang Anda cari tidak ditemukan.</div>
+
+   <script>
+    fetch('data/jadul.json')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('containerUtama');
+        container.innerHTML = data.map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                    <div class="poster-wrapper">
+                        <img src="${film.img}" loading="lazy" decoding="async">
+                    </div>
+                </a>
+                <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
+                <div class="film-title">${film.title}</div>
+            </div>
+        `).join('');
+        
+        // PENTING: Panggil fungsi ini di sini agar tombol ExoPlayer langsung terikat ke tombol film baru
+        if (typeof pasangEventAksi === 'function') {
+            pasangEventAksi(); 
+        }
+        
+        // Sinkronisasi ulang tampilan favorit
+        if (typeof updateTampilanFavorit === 'function') {
+            updateTampilanFavorit();
+        }
+    });
+    </script>
+    <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchBox = document.getElementById('searchBox');
     const btnClear = document.getElementById('btnClear');
@@ -8,49 +90,41 @@ document.addEventListener("DOMContentLoaded", function() {
     const favSectionTitle = document.getElementById('favSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
-    let databaseFilmGlobal = []; // Tempat menyimpan data film dari JSON agar bisa diakses kapan saja
 
-    // Kunci navigasi tombol back agar tidak keluar/refresh paksa
+    // Mengunci navigasi tombol back agar tidak keluar/refresh paksa STB
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = function () {
         window.history.pushState(null, "", window.location.href);
     };
 
-    // Fungsi untuk merender/menampilkan film di rak favorit (Langsung membaca dari memori JSON)
+    // 1. FUNGSI RENDER RAK FAVORIT (Menggunakan sistem Kloning murni agar kode HTML tidak dobel)
     function updateTampilanFavorit() {
-        containerFav.innerHTML = "";
+        containerFav.innerHTML = ""; 
         
         if (listFavorit.length === 0) {
             favSectionTitle.style.display = "none";
             containerFav.style.display = "none";
         } else {
             favSectionTitle.style.display = "block";
-            containerFav.style.display = "flex"; // Memaksa menu favorit tetap terbuka sejak awal
+            containerFav.style.display = "flex"; 
 
             listFavorit.forEach(idFilm => {
-                // Cari data film langsung dari database JSON, bukan dari element HTML lagi
-                const dataFilm = databaseFilmGlobal.find(f => f.id === idFilm);
-                if (dataFilm) {
-                    const cardHtml = `
-                        <div class="card-film" data-id="${dataFilm.id}" id="fav-card-${dataFilm.id}">
-                            <a tabindex="0" class="play-link" href="${dataFilm.url}" data-title="${dataFilm.title.toLowerCase()}">
-                                <div class="poster-wrapper">
-                                    <img src="${dataFilm.img}" loading="lazy">
-                                </div>
-                            </a>
-                            <button class="btn-fav" tabindex="0" data-target="${dataFilm.id}"><span>★</span> Favorit</button>
-                            <div class="film-title">${dataFilm.title}</div>
-                        </div>
-                    `;
-                    containerFav.insertAdjacentHTML('beforeend', cardHtml);
+                // Cari elemen film asli dari containerUtama yang sudah sukses dibuat oleh JSON
+                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
+                if (itemAsli) {
+                    const klon = itemAsli.cloneNode(true);
+                    klon.setAttribute('id', 'fav-' + idFilm); // Beri ID unik agar tidak bentrok dengan daftar utama
+                    containerFav.appendChild(klon);
                 }
             });
         }
         
+        // Pasang event klik remot setelah klon rapi
         pasangEventAksi();
         perbaruiStatusTombolBintang();
     }
 
+    // 2. SINKRONISASI TOMBOL BINTANG
     function perbaruiStatusTombolBintang() {
         document.querySelectorAll('.btn-fav').forEach(btn => {
             const idTarget = btn.getAttribute('data-target');
@@ -64,8 +138,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 3. PASANG EVENT AKSI (Bersih, aman, dan memisahkan logika kartu utama vs rak favorit)
     function pasangEventAksi() {
-        // Ikat event tombol play/nonton film (Berlaku untuk daftar utama dan rak favorit)
         document.querySelectorAll('.card-film').forEach(card => {
             const link = card.querySelector('.play-link');
             const btnFav = card.querySelector('.btn-fav');
@@ -78,7 +152,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
+                    // Simpan ID poster posisi terakhir hanya jika diklik di daftar utama
+                    if (card.parentNode === containerUtama) {
+                        localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
+                    }
                     localStorage.setItem("sedangNontonVideoSTB", "ya");
                     
                     if (typeof Android !== "undefined" && Android.playVideo) {
@@ -109,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     
                     localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
-                    updateTampilanFavorit();
+                    updateTampilanFavorit(); 
                 };
                 
                 newBtnFav.addEventListener('click', handleFavClick);
@@ -120,6 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 4. LOGIKA PENCARIAN FILM
     function saringFilm(keyword) {
         let adaFilmCocok = false;
         const semuaKartu = containerUtama.querySelectorAll('.card-film');
@@ -156,13 +234,11 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // MEMUAT DATA FILM DARI JSON
+    // 5. MEMUAT DATABASE FILM DARI FILE JSON
     fetch('film.json')
     .then(response => response.json())
     .then(data => {
-        databaseFilmGlobal = data; // Simpan ke memory global agar aman
-
-        // Render daftar film utama
+        // Render film ke daftar utama secara bersih
         containerUtama.innerHTML = data.map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                 <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
@@ -175,10 +251,10 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `).join('');
 
-        // Tampilkan rak favorit secara instan tanpa menunggu elemen HTML lain
+        // Setelah HTML utama terpasang sempurna, panggil rak favorit agar sistem cloneNode bekerja dengan mendeteksi element aslinya
         updateTampilanFavorit();
 
-        // Mengembalikan fokus remot STB ke posisi semula setelah keluar dari player film
+        // Mengembalikan ingatan fokus remote STB ke posisi poster semula setelah keluar dari ExoPlayer
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
@@ -199,8 +275,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 180);
     })
     .catch(err => {
-        console.error("Gagal load file film.json:", err);
+        console.error("Gagal memuat database JSON:", err);
         if (searchBox) searchBox.focus();
     });
 });
 </script>
+</body>
+</html>
