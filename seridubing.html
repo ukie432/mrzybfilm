@@ -41,41 +41,27 @@
     </div>
 
 <script>
-    const jsonUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/seridubing.json"; 
+    // Ganti bagian const jsonUrl menjadi relatif
+const jsonUrl = "seridubing.json"; // Atau "seridubing.json" tergantung posisi file Anda
 
-    $.getJSON(jsonUrl, function(data) {
-        $("#grid").empty();
+// Ganti $.getJSON menjadi fetch
+fetch(jsonUrl)
+    .then(response => response.json())
+    .then(data => {
         data.forEach(item => {
-            // Kita encode JSON agar aman masuk ke dalam atribut onclick
-            const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-            
+            const epJson = JSON.stringify(item.episodes);
             $("#grid").append(`
-                <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
+                <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", ${epJson})'>
                     <img src="${item.poster}">
                 </div>
             `);
         });
-    }).fail(function() {
-        console.error("Gagal memuat JSON!");
+    })
+    .catch(err => {
+        console.error("Gagal load:", err);
+        // Tambahkan alert ini untuk debugging di TV
+        alert("Gagal memuat data: " + err);
     });
-
-    // Fungsi Popup dengan decode
-    function openModal(title, epsEncoded) {
-        // Decode kembali data yang tadi kita encode
-        const eps = JSON.parse(decodeURIComponent(epsEncoded));
-        
-        $("#modal-title").text(title);
-        $("#eps-list").empty();
-        
-        eps.forEach(e => {
-            $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
-        });
-        
-        $("#popup").css("display", "flex");
-        $(".eps-btn").first().focus();
-    }
-
-    function closePopup() { $("#popup").hide(); }
 </script>
 </body>
 </html>
