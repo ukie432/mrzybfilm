@@ -305,14 +305,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
 
-    // FORCE RELOAD DATA JIKA DETEKSI PERUBAHAN STRUKTUR FILM
-    const VERSI_KODE = "17_FILM_V10";
-    if(localStorage.getItem("app_version") !== VERSI_KODE){
-        localStorage.setItem("app_version", VERSI_KODE);
-        // Hapus sisa-sisa cache fokus lama agar tidak macet
-        localStorage.removeItem("idPosterTerakhir");
-        localStorage.removeItem("sedangNontonVideoSTB");
-    }
+
 
     let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorit')) || [];
 
