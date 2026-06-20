@@ -40,41 +40,42 @@
         </div>
     </div>
 
-    <script>
-        // 1. Ambil data dari GitHub
-        const jsonUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/data/seridubing.json"; 
+<script>
+    const jsonUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/main/data/seridubing.json"; 
 
-        $.getJSON(jsonUrl, function(data) {
-            data.forEach(item => {
-                const epJson = JSON.stringify(item.episodes);
-                $("#grid").append(`
-                    <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", ${epJson})'>
-                        <img src="${item.poster}">
-                    </div>
-                `);
-            });
+    $.getJSON(jsonUrl, function(data) {
+        $("#grid").empty();
+        data.forEach(item => {
+            // Kita encode JSON agar aman masuk ke dalam atribut onclick
+            const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+            
+            $("#grid").append(`
+                <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
+                    <img src="${item.poster}">
+                </div>
+            `);
         });
+    }).fail(function() {
+        console.error("Gagal memuat JSON!");
+    });
 
-        // 2. Fungsi Pencarian (Search)
-        $("#search").on("keyup", function() {
-            let val = $(this).val().toLowerCase();
-            $(".poster").each(function() {
-                $(this).toggle($(this).data("title").toLowerCase().includes(val));
-            });
+    // Fungsi Popup dengan decode
+    function openModal(title, epsEncoded) {
+        // Decode kembali data yang tadi kita encode
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+        
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        
+        eps.forEach(e => {
+            $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
         });
+        
+        $("#popup").css("display", "flex");
+        $(".eps-btn").first().focus();
+    }
 
-        // 3. Fungsi Popup
-        function openModal(title, eps) {
-            $("#modal-title").text(title);
-            $("#eps-list").empty();
-            eps.forEach(e => {
-                $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
-            });
-            $("#popup").css("display", "flex");
-            $(".eps-btn").first().focus();
-        }
-
-        function closePopup() { $("#popup").hide(); }
-    </script>
+    function closePopup() { $("#popup").hide(); }
+</script>
 </body>
 </html>
