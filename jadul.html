@@ -81,8 +81,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
     });
     </script>
     
-    
-<script>
+    <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchBox = document.getElementById('searchBox');
     const btnClear = document.getElementById('btnClear');
@@ -99,18 +98,15 @@ document.addEventListener("DOMContentLoaded", function() {
         window.history.pushState(null, "", window.location.href);
     };
 
-    // 2. SOLUSI MUTLAK: Kunci container utama menggunakan Event Delegation.
-    // Tidak peduli JSON loading-nya lama, klik/enter akan langsung dicegat dan diputar di ExoPlayer!
+    // 2. KUNCI KLIK & ENTER UNTUK PEMUTAR VIDEO (EVENT DELEGATION)
     containerUtama.addEventListener('click', function(e) {
         const link = e.target.closest('.play-link');
         if (link) {
             e.preventDefault();
             e.stopPropagation();
-            
             const card = link.closest('.card-film');
             localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
             localStorage.setItem("sedangNontonVideoSTB", "ya");
-            
             if (typeof Android !== "undefined" && Android.playVideo) {
                 Android.playVideo(link.getAttribute("href"));
             }
@@ -118,18 +114,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Handle tombol Enter pada remote STB untuk memutar film
     containerUtama.addEventListener('keydown', function(e) {
         if (e.key === "Enter") {
             const link = e.target.closest('.play-link');
             if (link) {
                 e.preventDefault();
                 e.stopPropagation();
-                
                 const card = link.closest('.card-film');
                 localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
                 localStorage.setItem("sedangNontonVideoSTB", "ya");
-                
                 if (typeof Android !== "undefined" && Android.playVideo) {
                     Android.playVideo(link.getAttribute("href"));
                 }
@@ -137,6 +130,88 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
+
+    // REPLIKA PLAY UNTUK DI RAK FAVORIT
+    containerFav.addEventListener('click', function(e) {
+        const link = e.target.closest('.play-link');
+        if (link) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                Android.playVideo(link.getAttribute("href"));
+            }
+            return false;
+        }
+    });
+
+    containerFav.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const link = e.target.closest('.play-link');
+            if (link) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof Android !== "undefined" && Android.playVideo) {
+                    Android.playVideo(link.getAttribute("href"));
+                }
+                return false;
+            }
+        }
+    });
+
+    // 3. KUNCI INTERAKSI TOMBOL FAVORIT (DI KEDUA CONTAINER)
+    containerUtama.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-fav');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            eksekusiKlikFavorit(btn.getAttribute('data-target'));
+        }
+    });
+
+    containerUtama.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                eksekusiKlikFavorit(btn.getAttribute('data-target'));
+            }
+        }
+    });
+
+    containerFav.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-fav');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            eksekusiKlikFavorit(btn.getAttribute('data-target'));
+        }
+    });
+
+    containerFav.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                eksekusiKlikFavorit(btn.getAttribute('data-target'));
+            }
+        }
+    });
+
+    // FUNGSI UTAMA MENYIMPAN DATA
+    function eksekusiKlikFavorit(idTarget) {
+        if (!idTarget) return;
+        
+        if (listFavorit.includes(idTarget)) {
+            listFavorit = listFavorit.filter(id => id !== idTarget);
+        } else {
+            listFavorit.push(idTarget);
+        }
+        
+        localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
+        updateTampilanFavorit();
+    }
 
     function updateTampilanFavorit() {
         containerFav.innerHTML = "";
@@ -156,11 +231,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
-        pasangEventAksi();
         perbaruiStatusTombolBintang();
     }
 
     function perbaruiStatusTombolBintang() {
+        // Ambil seluruh tombol favorit baik di containerUtama maupun containerFav
         document.querySelectorAll('.btn-fav').forEach(btn => {
             const idTarget = btn.getAttribute('data-target');
             if (listFavorit.includes(idTarget)) {
@@ -170,34 +245,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 btn.classList.remove('active');
                 btn.innerHTML = "<span>☆</span> Favorit";
             }
-        });
-    }
-
-    function pasangEventAksi() {
-        // Tombol play tidak perlu di-looping lagi karena sudah dikunci secara mutlak oleh Event Delegation di atas.
-        
-        // Cukup looping untuk tombol Favorit saja agar responsif
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            btn.replaceWith(btn.cloneNode(true));
-        });
-        
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            const handleFavClick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const idTarget = btn.getAttribute('data-target');
-                if (listFavorit.includes(idTarget)) {
-                    listFavorit = listFavorit.filter(id => id !== idTarget);
-                } else {
-                    listFavorit.push(idTarget);
-                }
-                localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
-                updateTampilanFavorit();
-            };
-            btn.addEventListener('click', handleFavClick);
-            btn.addEventListener('keydown', function(e) { 
-                if (e.key === "Enter") handleFavClick(e); 
-            });
         });
     }
 
@@ -237,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // 3. PROSES AMBIL DATA FILM DARI JSON (Sembari nunggu loading, tombol play sudah dikunci aman)
+    // 4. PROSES AMBIL DATA FILM DARI JSON 
     fetch('film.json')
     .then(response => response.json())
     .then(data => {
@@ -253,9 +300,9 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `).join('');
 
+        // WAJIB DI SINI: Panggil fungsi favorit setelah HTML utama selesai dibangun oleh JSON
         updateTampilanFavorit();
 
-        // Mengatur kembalinya titik fokus remote STB setelah proses rendering beres
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
