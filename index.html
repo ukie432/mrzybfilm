@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html dir='ltr' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Side Accordion Navigation Bar</title>
     
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
         $(document).ready(function(){
@@ -33,7 +36,6 @@
           gap: 12px;
           padding: 12px 24px;
           box-sizing: border-box;
-
           /* KUNCI BARIS */
           grid-auto-rows: 1fr;
           align-items: stretch;
@@ -116,7 +118,7 @@
           overflow-wrap: break-word;
           word-break: break-word;
           word-wrap: break-word;
-          font-family: 'Lato', sans-serif;
+          font-family: 'Montserrat', sans-serif; /* Diubah ke Montserrat agar sesuai dengan import */
         }
 
         .wrapper{
@@ -124,23 +126,23 @@
           width: 100%;
         }
 
-.sidebar_inner .siderbar_menu a{
-    outline:none;
-    border-radius:8px;
-}
+        .sidebar_inner .siderbar_menu a{
+            outline:none;
+            border-radius:8px;
+        }
 
-.sidebar_inner .siderbar_menu a:focus{
-    background:#3d3d79;
-    color:#fff;
-    transform:scale(1.05);
-    box-shadow:0 0 0 3px #00e5ff;
-}
+        .sidebar_inner .siderbar_menu a:focus{
+            background:#3d3d79;
+            color:#fff;
+            transform:scale(1.05);
+            box-shadow:0 0 0 3px #00e5ff;
+        }
 
-.sidebar_inner .siderbar_menu a{
-    display:flex;
-    align-items:center;
-    nav-index:auto;
-}
+        .sidebar_inner .siderbar_menu a{
+            display:flex;
+            align-items:center;
+            nav-index:auto;
+        }
 
         .sidebar{
           position: relative;
@@ -281,18 +283,17 @@
           border-radius: 30px;
         }
 
-
-         .close:focus{
+        .close:focus{
           box-shadow:0 0 0 3px #00e5ff;
           border-radius:10px;
         }
 
         .navbar .hamburger{
-  font-size: 25px;
-  cursor: pointer;
-  color: #fff;
-  display: block;
-}
+          font-size: 25px;
+          cursor: pointer;
+          color: #fff;
+          display: block;
+        }
 
         .content{
           display: flex;
@@ -329,7 +330,8 @@
           margin: auto;
         }
         .mySlides {display: none;}
-        img {vertical-align: middle; border: 0;}
+        img {vertical-align: middle;
+        border: 0;}
         .dot {
           height: 15px;
           width: 15px;
@@ -339,7 +341,8 @@
           display: inline-block;
           transition: background-color 0.6s ease;
         }
-        .active { background-color: red; }
+        .active { background-color: red;
+        }
         .fade {
           animation-name: fade;
           animation-duration: 1.5s;
@@ -352,7 +355,8 @@
 
     <style>
         #popupOverlay{
-          position:fixed; inset:0;
+          position:fixed;
+          inset:0;
           background:rgba(0,0,0,.85);
           display:none;
           align-items:center;
@@ -391,7 +395,6 @@
         .trailerBtn{background:#ffca28;color:#000}
         .closeBtn{background:#ff5252;color:#000}
     </style>
-
 </head>
 <body>
 
@@ -428,7 +431,9 @@
             <div class="close" tabindex="0">❌</div>
             <div class="profile_info">
                 <div class="profile_img">
-                    <a href="#"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/PicRetouch_20250322_111354529.webp" style="width: 125px; height: 125px; border-width: 3px; border-style: solid; margin: 5px; color: #fff; border-radius: 60px; z-index: 1; background-color: #5558c9; border: 0px solid #000; animation: mymove 3s infinite;" /></span></a>
+                    <a href="#">
+                        <img alt="Profile" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/PicRetouch_20250322_111354529.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;" />
+                    </a>
                 </div>
                 <div class="profile_data">
                     <p class="name">MRZYBtv</p>
@@ -437,15 +442,17 @@
             </div>
 
             <ul class="siderbar_menu">
-                <li class="active"><a href="go:Traktir">
-                    <div class="icon"><i class="fas fa-coffee"></i></div>
-                    <div class="title">Traktir</div>
-                </a>
+                <li class="active">
+                    <a href="go:Traktir">
+                        <div class="icon"><i class="fas fa-coffee"></i></div>
+                        <div class="title">Traktir</div>
+                    </a>
                 </li>
-                <li><a href="#" target="_blank">
-                    <div class="icon"><i class="fas fa-envelope"></i></div>
-                    <div class="title">mrzybtv@gmail.com</div>
-                </a>
+                <li>
+                    <a href="#" target="_blank">
+                        <div class="icon"><i class="fas fa-envelope"></i></div>
+                        <div class="title">mrzybtv@gmail.com</div>
+                    </a>
                 </li>
             </ul>
             <div class="logout_btn">
@@ -456,18 +463,26 @@
 
     <div class="main_container">
         <div class="navbar">
-           <div class="hamburger">
-    ☰
-</div>
+            <div class="hamburger">☰</div>
         </div>
 
         <div class="content">
             <div class="force-5">
-                <a href="series.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/d951c34a57dbc74a5eb73b9414637c4c.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
-                <a href="home2.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/344fbc815c75add825b1c8fa97d3f175.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
-                <a href="traktir.html"><span style="color:#5c2d91;"><img alt="" id="10" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/ebf4b1740815995cb388540196123707.webp" style="width: 175px; height: 100px; margin: 5px; border-width: 2px; border-style: solid;" /></span></a>
-                <a href="telegram.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/94345968e9c09b69bf95f1a491379da3.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
-                <a href="alurcerita.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/41ffb8ee960a176b0942f5df5e2e5125.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
+                <a href="series.html">
+                    <img alt="Series" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/d951c34a57dbc74a5eb73b9414637c4c.webp" />
+                </a>
+                <a href="home2.html">
+                    <img alt="Home 2" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/344fbc815c75add825b1c8fa97d3f175.webp" />
+                </a>
+                <a href="traktir.html">
+                    <img alt="Traktir" id="10" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/ebf4b1740815995cb388540196123707.webp" />
+                </a>
+                <a href="telegram.html">
+                    <img alt="Telegram" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/94345968e9c09b69bf95f1a491379da3.webp" />
+                </a>
+                <a href="alurcerita.html">
+                    <img alt="Alur Cerita" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/41ffb8ee960a176b0942f5df5e2e5125.webp" />
+                </a>
 
                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/upris%202024.mp4" tabindex="0" data-popup="true" data-title="Uprising" data-sinopsis="(2024)" data-trailer="https://www.youtube.com/embed/TqfaCAA1UeE?si=1C8wV1-_E5PuXSdq">
                     <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/ce162b0f50e2d88aa25f336ca89edc36.webp">
@@ -481,16 +496,9 @@
                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Taken%203%20(2014)%20[Dub%20Indo].mp4" tabindex="0" data-popup="true" data-title="Taken" data-sinopsis="(2014)" data-trailer="https://www.youtube.com/embed/JuU0M2xBasc?si=Xg3eMUGF9RWdR__q">
                     <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(1).webp">
                 </a>
-               <a href="dubbing.html"
-   data-menu="dubbing"
-   onclick="
-      localStorage.removeItem('lastPosterIndex');
-      localStorage.setItem('lastMenu','dubbing');
-   ">
-    <span style="color:#5c2d91;">
-        <img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/6330cc44c05d14fbcf131960453f9857.webp" />
-    </span>
-</a>
+                <a href="dubbing.html" data-menu="dubbing" onclick="localStorage.removeItem('lastPosterIndex'); localStorage.setItem('lastMenu','dubbing');">
+                    <img alt="Dubbing" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/6330cc44c05d14fbcf131960453f9857.webp" />
+                </a>
                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indonesia/GUNDALA.2019.1080p.HS.WEB-DL.AAC2.0.H.264.mp4" tabindex="0" data-popup="true" data-title="Gundala" data-sinopsis="(2019)" data-trailer="https://www.youtube.com/embed/8rauD1vxMCw?si=bfMHufGd7TuESmR3">
                     <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(2).webp">
                 </a>
@@ -501,104 +509,41 @@
                     <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(3).webp">
                 </a>
                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indo%20lagi/Calon%20Bini%20(2019).mp4" tabindex="0" data-popup="true" data-title="Calon Bini" data-sinopsis="(2019)" data-trailer="https://www.youtube.com/embed/AyKdG2ylVzo?si=VTDpYZCbNbycEdCg">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/maxresdefault.webp">
-</a>
-
-
-<a href="indonesia.html"
-   data-menu="indonesia"
-   onclick="
-      localStorage.removeItem('lastPosterIndex');
-      localStorage.setItem('lastMenu','indonesia');
-   "><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/0af8dc95982ac9dc9f6ed0cee1365c2c.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
-     
-     
-                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Si%20Juki%20the%20Movie%20Panitia%20Hari%20Akhir%20(2017).mp4"tabindex="0"
-   data-popup="true"
-   data-title="Si Juki The Movie Panitia Hari Akhir"
-   data-sinopsis="(2017)"
-   data-trailer="https://www.youtube.com/embed/l0R7hzZTq3E?si=BS1acvpGFCYehPfq">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(4).webp">
-</a>
-     
-     
-                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20kartun/inside%20out%202(2024).mp4" tabindex="0"
-   data-popup="true"
-   data-title="Inside Out"
-   data-sinopsis="(2024)"
-   data-trailer="https://www.youtube.com/embed/LEjhY15eCx0?si=D_BAsBNFfThFhUYa">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(5).webp">
-</a>
-     
-                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20kartun/Ejen%20Ali%20The%20Movie%20(2019)%20Dubbing%20Indonesia.mp4"tabindex="0"
-   data-popup="true"
-   data-title="Ejen Ali The Movie"
-   data-sinopsis="(2019)"
-   data-trailer="https://www.youtube.com/embed/CD3J95uQzjA?si=a9c6fWXbU1XvIPXP">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(6).webp">
-</a>
-
-                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Nussa%20The%20Movie%20(2021)%20[Dub%20Indo].mp4"tabindex="0"
-   data-popup="true"
-   data-title="Nussa The Movie"
-   data-sinopsis="(2021)"
-   data-trailer="https://www.youtube.com/embed/ACT4tV5P59M?si=lnRgxPqWT9SY8sYE">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(7).webp">
-</a>
-
-           
-
-            
-<a href="animasi.html"
-   data-menu="animasi"
-   onclick="
-      localStorage.removeItem('lastPosterIndex');
-      localStorage.setItem('lastMenu','animasi');
-   "><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/a5306cc34dcb55045b78255a32e9f1d8.webp" style="width: 175px; height: 100px; margin: 5px; border-width: 2px; border-style: solid;" /></span></a>
-            
-
-
-                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Sundel%20bolong%20(1982).mp4"tabindex="0"
-   data-popup="true"
-   data-title="Sundel Bolong"
-   data-sinopsis="(1982)"
-   data-trailer="https://www.youtube.com/embed/IezZIlZq4z8?si=VdB6uXvi4QiNE-g5">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/8d5e53d9a84f8f61b6d494083f672a04.webp">
-</a>
-
-
-                             <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20ITU%20BISA%20DIATUR%201984%20FULL%20MOVIE%20HD-ukielaki.mp4"tabindex="0"
-   data-popup="true"
-   data-title="Warkop Dki Itu Bisa Di Atur"
-   data-sinopsis="(1984)"
-   data-trailer="https://www.youtube.com/embed/kMTBa7LBaOg?si=77bn0gLyYhc0Dty4">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(8).webp">
-</a>
-
-                                         <a href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BERGOLA%20IJO%20(1983)%20FULL%20MOVIE%20HD(720P_HD).mp4"tabindex="0"
-   data-popup="true"
-   data-title="Bergola Ijo"
-   data-sinopsis="(1983)"
-   data-trailer="https://www.youtube.com/embed/2pwbp7w6lzQ?si=rNg3A8KVp1VeZgqo">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/dc87be55cbe00209299799a38a5ecdd4.webp">
-</a>
-
-                                         <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/FILM%20PENGKHIANATAN%20G30SPKI%20HD%20Version.mp4"tabindex="0"
-   data-popup="true"
-   data-title="Penghianatan G30S PKI "
-   data-sinopsis=""
-   data-trailer="https://www.youtube.com/embed/7VrF6XM1y7c?si=3Y4ZfKn1PNfrjne0">
-  <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(9).webp">
-</a>
-
-            
-<a href="jadul.html"
-   data-menu="jadul"
-   onclick="
-      localStorage.removeItem('lastPosterIndex');
-      localStorage.setItem('lastMenu','jadul');
-   "><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/e404e8a52e18266d9da8184633b71c36.webp" style="width: 175px; height: 100px; border-width: 2px; border-style: solid; margin: 5px;" /></span></a>
-                
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/maxresdefault.webp">
+                </a>
+                <a href="indonesia.html" data-menu="indonesia" onclick="localStorage.removeItem('lastPosterIndex'); localStorage.setItem('lastMenu','indonesia');">
+                    <img alt="Indonesia" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/0af8dc95982ac9dc9f6ed0cee1365c2c.webp" />
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Si%20Juki%20the%20Movie%20Panitia%20Hari%20Akhir%20(2017).mp4" tabindex="0" data-popup="true" data-title="Si Juki The Movie Panitia Hari Akhir" data-sinopsis="(2017)" data-trailer="https://www.youtube.com/embed/l0R7hzZTq3E?si=BS1acvpGFCYehPfq">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(4).webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20kartun/inside%20out%202(2024).mp4" tabindex="0" data-popup="true" data-title="Inside Out" data-sinopsis="(2024)" data-trailer="https://www.youtube.com/embed/LEjhY15eCx0?si=D_BAsBNFfThFhUYa">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(5).webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20kartun/Ejen%20Ali%20The%20Movie%20(2019)%20Dubbing%20Indonesia.mp4" tabindex="0" data-popup="true" data-title="Ejen Ali The Movie" data-sinopsis="(2019)" data-trailer="https://www.youtube.com/embed/CD3J95uQzjA?si=a9c6fWXbU1XvIPXP">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(6).webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Nussa%20The%20Movie%20(2021)%20[Dub%20Indo].mp4" tabindex="0" data-popup="true" data-title="Nussa The Movie" data-sinopsis="(2021)" data-trailer="https://www.youtube.com/embed/ACT4tV5P59M?si=lnRgxPqWT9SY8sYE">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(7).webp">
+                </a>
+                <a href="animasi.html" data-menu="animasi" onclick="localStorage.removeItem('lastPosterIndex'); localStorage.setItem('lastMenu','animasi');">
+                    <img alt="Animasi" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/a5306cc34dcb55045b78255a32e9f1d8.webp" />
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Sundel%20bolong%20(1982).mp4" tabindex="0" data-popup="true" data-title="Sundel Bolong" data-sinopsis="(1982)" data-trailer="https://www.youtube.com/embed/IezZIlZq4z8?si=VdB6uXvi4QiNE-g5">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/8d5e53d9a84f8f61b6d494083f672a04.webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/WARKOP%20DKI%20-%20ITU%20BISA%20DIATUR%201984%20FULL%20MOVIE%20HD-ukielaki.mp4" tabindex="0" data-popup="true" data-title="Warkop Dki Itu Bisa Di Atur" data-sinopsis="(1984)" data-trailer="https://www.youtube.com/embed/kMTBa7LBaOg?si=77bn0gLyYhc0Dty4">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(8).webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Film%20jadul%20lagi/BERGOLA%20IJO%20(1983)%20FULL%20MOVIE%20HD(720P_HD).mp4" tabindex="0" data-popup="true" data-title="Bergola Ijo" data-sinopsis="(1983)" data-trailer="https://www.youtube.com/embed/2pwbp7w6lzQ?si=rNg3A8KVp1VeZgqo">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/dc87be55cbe00209299799a38a5ecdd4.webp">
+                </a>
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/FILM%20PENGKHIANATAN%20G30SPKI%20HD%20Version.mp4" tabindex="0" data-popup="true" data-title="Penghianatan G30S PKI " data-sinopsis="" data-trailer="https://www.youtube.com/embed/7VrF6XM1y7c?si=3Y4ZfKn1PNfrjne0">
+                    <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/images%20(9).webp">
+                </a>
+                <a href="jadul.html" data-menu="jadul" onclick="localStorage.removeItem('lastPosterIndex'); localStorage.setItem('lastMenu','jadul');">
+                    <img alt="Jadul" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/e404e8a52e18266d9da8184633b71c36.webp" />
+                </a>
             </div>
         </div>
     </div>
@@ -633,17 +578,16 @@
       slideIndex++;
       if (slideIndex > slides.length) {slideIndex = 1}
       for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
+        dots[i].classList.remove("active"); // Perbaikan manipulasi class yang aman
       }
       if(slides[slideIndex-1]) slides[slideIndex-1].style.display = "block";
-      if(dots[slideIndex-1]) dots[slideIndex-1].className += " active";
+      if(dots[slideIndex-1]) dots[slideIndex-1].classList.add("active"); // Perbaikan manipulasi class yang aman
       setTimeout(showSlides, 3000);
     }
 </script>
 
 <script>
 (function(){
-
   const overlay = document.getElementById("popupOverlay");
   const img = document.getElementById("popupImg");
   const title = document.getElementById("popupTitle");
@@ -654,21 +598,17 @@
   let iframe = null;
 
   document.addEventListener("click", function(e){
-
     const a = e.target.closest('a[tabindex="0"][data-popup="true"]');
     if(!a) return;
 
     e.preventDefault();
-
     lastFocus = a;
 
-    // SIMPAN POSTER TERAKHIR
     const allPoster = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
     const index = Array.from(allPoster).indexOf(a);
     localStorage.setItem("lastHomePoster", index);
 
     const im = a.querySelector("img");
-
     if(im) img.src = im.src;
 
     title.textContent = a.dataset.title || "Judul Film";
@@ -682,84 +622,54 @@
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
       Android.setPopUpStatus(true);
     }
-
   });
 
   window.popupTrailer = function(){
-
     if(!trailerLink) return;
 
     img.style.display = "none";
-
     if(!iframe){
-
       iframe = document.createElement("iframe");
-
       iframe.width = "100%";
       iframe.height = "315";
-
-      iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
       iframe.allowFullscreen = true;
-
       content.insertBefore(iframe, content.firstChild);
     }
 
-    iframe.src =
-      trailerLink +
-      (trailerLink.includes("?") ? "&" : "?") +
-      "autoplay=1&mute=1";
+    iframe.src = trailerLink + (trailerLink.includes("?") ? "&" : "?") + "autoplay=1&mute=1";
   };
 
   window.popupPlay = function(){
-
     if(!playLink){
       alert("Tautan film tidak ditemukan!");
       return;
     }
 
     if(lastFocus){
-
-      const posters =
-        document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-
-      const index =
-        Array.from(posters).indexOf(lastFocus);
-
+      const posters = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
+      const index = Array.from(posters).indexOf(lastFocus);
       localStorage.setItem("lastHomePoster", index);
     }
 
     if(typeof Android !== "undefined" && Android.playVideo){
-
       Android.playVideo(playLink);
-
     } else {
-
       window.open(playLink, "_blank");
     }
   };
 
   window.popupClose = function(){
-
     overlay.classList.remove("show");
-
     if(iframe){
-
       iframe.src = "";
       iframe.remove();
-
       iframe = null;
     }
 
     img.style.display = "";
-
     if(lastFocus){
-
-      lastFocus.scrollIntoView({
-        block:"center"
-      });
-
+      lastFocus.scrollIntoView({ block:"center" });
       setTimeout(() => lastFocus.focus(), 150);
     }
 
@@ -772,74 +682,42 @@
     window.popupClose();
   };
 
-  // RESTORE POSTER TERAKHIR SETELAH KEMBALI DARI PLAYER
   window.addEventListener("load", function(){
+    const lastMenu = localStorage.getItem("lastMenu");
 
-  const lastMenu = localStorage.getItem("lastMenu");
-
-  if(lastMenu){
-
-    const menu = document.querySelector(
-      '[data-menu="' + lastMenu + '"]'
-    );
-
-    if(menu){
-
-      menu.scrollIntoView({
-        block:"center"
-      });
-
-      menu.focus();
+    if(lastMenu){
+      const menu = document.querySelector('[data-menu="' + lastMenu + '"]');
+      if(menu){
+        menu.scrollIntoView({ block:"center" });
+        menu.focus();
+      }
+      localStorage.removeItem("lastMenu");
+      return;
     }
 
-    localStorage.removeItem("lastMenu");
-
-    return; // STOP, jangan restore poster film
-  }
-
-  const lastPoster =
-    localStorage.getItem("lastHomePoster");
-
-  if(lastPoster !== null){
-
-    const posters =
-      document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-
-    setTimeout(() => {
-
-      if(posters[lastPoster]){
-
-        posters[lastPoster].scrollIntoView({
-          block:"center"
-        });
-
-
-
-        posters[lastPoster].focus();
-
-        lastFocus = posters[lastPoster];
-      }
-
-    }, 300);
-  }
-});
-
+    const lastPoster = localStorage.getItem("lastHomePoster");
+    if(lastPoster !== null){
+      const posters = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
+      setTimeout(() => {
+        if(posters[lastPoster]){
+          posters[lastPoster].scrollIntoView({ block:"center" });
+          posters[lastPoster].focus();
+          lastFocus = posters[lastPoster];
+        }
+      }, 300);
+    }
+  });
 })();
 </script>
 
 <script>
 window.addEventListener("load", function(){
-
-   const firstMenu =
-      document.querySelector(".siderbar_menu a");
-
+   const firstMenu = document.querySelector(".siderbar_menu a");
    if(firstMenu){
       firstMenu.focus();
    }
-
 });
 </script>
 
 </body>
 </html>
-
