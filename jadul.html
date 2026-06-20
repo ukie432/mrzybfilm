@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>MRZYB TV - Koleksi Film Jadul</title>
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -20,9 +20,13 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
 .section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
-.card-film { width: calc(14.28% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; display: block; position: relative; }
+
+/* PERBAIKAN UKURAN: Mengurangi lebar poster agar pas di layar TV (Menampilkan lebih banyak poster per baris) */
+.card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; display: block; position: relative; }
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
 .play-link { display: block; text-decoration: none; outline: none; }
+
+/* Menjaga rasio poster 2:3 bioskop agar tidak melar panjang ke bawah */
 .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
 .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 .film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
@@ -31,8 +35,10 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-fav.active { color: #ffcc00; }
 .btn-fav span { font-size: 13px; }
 #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
-@media (max-width: 1200px) { .card-film { width: calc(16.66% - 14px); } }
-@media (max-width: 992px) { .card-film { width: calc(20% - 14px); } }
+
+/* Penyesuaian responsif layar alternatif */
+@media (max-width: 1400px) { .card-film { width: calc(14.28% - 14px); } }
+@media (max-width: 1000px) { .card-film { width: calc(16.66% - 14px); } }
 @media (max-width: 768px) { .card-film { width: calc(25% - 14px); } .header-banner h1 { font-size: 28px; } }
 @media (max-width: 480px) { .card-film { width: calc(33.33% - 10px); margin: 5px; } .container-film { padding: 0 5px; } .section-title { font-size: 18px; margin: 10px 10px 5px 10px; } }
 </style>
@@ -52,8 +58,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 <div class="container-film" id="containerFav"></div>
 
 <div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM JADUL</div>
-<div class="container-film" id="containerUtama">
-    </div>
+<div class="container-film" id="containerUtama"></div>
 
 <div id="noResultsText">Film tidak ditemukan...</div>
 
@@ -68,13 +73,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
 
-    // Kunci tombol back bawaan STB agar aman
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = function () {
         window.history.pushState(null, "", window.location.href);
     };
 
-    // Fungsi menggambar rak favorit
     function updateTampilanFavorit() {
         containerFav.innerHTML = "";
         if (listFavorit.length === 0) {
@@ -109,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Fungsi mengunci link video untuk diteruskan ke ExoPlayer Android STB
     function pasangEventAksi() {
         document.querySelectorAll('.card-film').forEach(card => {
             const link = card.querySelector('.play-link');
@@ -118,13 +120,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const newLink = card.querySelector('.play-link');
             
             const handleWatch = function(e) {
-                e.preventDefault(); // MENCEGAH PLAYER HTML BROWSER TERBUKA
+                e.preventDefault();
                 e.stopPropagation();
                 
                 localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
                 localStorage.setItem("sedangNontonVideoSTB", "ya");
                 
-                // MELEMPAR VIDEO INSTAN KE EXOPLAYER STB ANDROID
                 if (typeof Android !== "undefined" && Android.playVideo) {
                     Android.playVideo(newLink.getAttribute("href"));
                 }
@@ -189,8 +190,8 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // MEMBACA DATA DARI FILE JSON
-    fetch('data/jadul.json')
+    // AMBIL DATA DARI JSON & LOAD FAVORIT DI DALAMNYA (MENCEGAH RAK TERTUTUP/HILANG)
+    fetch('film.json')
     .then(response => response.json())
     .then(data => {
         containerUtama.innerHTML = data.map(film => `
@@ -205,8 +206,6 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `).join('');
 
-        // DI SINI PERUBAHANNYA: updateTampilanFavorit() ditaruh di dalam fetch agar
-        // daftar favorit langsung terbuka otomatis saat Anda kembali/back dari ExoPlayer!
         updateTampilanFavorit();
 
         setTimeout(() => {
@@ -229,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 180);
     })
     .catch(err => {
-        console.error("Gagal memuat JSON:", err);
+        console.error("Gagal load JSON:", err);
         if (searchBox) searchBox.focus();
     });
 });
