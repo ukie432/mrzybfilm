@@ -39,29 +39,44 @@
             <button onclick="closePopup()" style="width:100%; padding:10px; margin-top:10px; background:red; border:none; color:white;">Tutup</button>
         </div>
     </div>
-
 <script>
-    // Ganti bagian const jsonUrl menjadi relatif
-const jsonUrl = "seridubing.json"; // Atau "seridubing.json" tergantung posisi file Anda
+    const jsonUrl = "seridubing.json";
 
-// Ganti $.getJSON menjadi fetch
-fetch(jsonUrl)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(item => {
-            const epJson = JSON.stringify(item.episodes);
-            $("#grid").append(`
-                <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", ${epJson})'>
-                    <img src="${item.poster}">
-                </div>
-            `);
+    fetch(jsonUrl)
+        .then(response => {
+            if (!response.ok) throw new Error("File JSON tidak ditemukan (404)");
+            return response.json();
+        })
+        .then(data => {
+            data.forEach(item => {
+                // Encode agar tanda petik tidak merusak kode HTML
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                
+                $("#grid").append(`
+                    <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
+                        <img src="${item.poster}">
+                    </div>
+                `);
+            });
+        })
+        .catch(err => {
+            console.error("Gagal load:", err);
+            alert("Gagal memuat data: " + err);
         });
-    })
-    .catch(err => {
-        console.error("Gagal load:", err);
-        // Tambahkan alert ini untuk debugging di TV
-        alert("Gagal memuat data: " + err);
-    });
+
+    // Fungsi Popup yang sudah disesuaikan untuk decode
+    function openModal(title, epsEncoded) {
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        eps.forEach(e => {
+            $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
+        });
+        $("#popup").css("display", "flex");
+        $(".eps-btn").first().focus();
+    }
+
+    function closePopup() { $("#popup").hide(); }
 </script>
 </body>
 </html>
