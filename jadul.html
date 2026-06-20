@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // AMBIL DATA DARI JSON & LOAD FAVORIT DI DALAMNYA (MENCEGAH RAK TERTUTUP/HILANG)
-    fetch('film.json')
+    fetch('data/jadul.json')
     .then(response => response.json())
     .then(data => {
         containerUtama.innerHTML = data.map(film => `
