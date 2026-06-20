@@ -592,112 +592,94 @@
   const img = document.getElementById("popupImg");
   const title = document.getElementById("popupTitle");
   const text = document.getElementById("popupText");
-  const content = document.getElementById("popupContent");
 
   let playLink = "", trailerLink = "", lastFocus = null;
-  let iframe = null;
 
-  document.addEventListener("click", function(e){
-    const a = e.target.closest('a[tabindex="0"][data-popup="true"]');
-    if(!a) return;
+  // === PERBAIKAN UTAMA: LOGIKA MEMBUKA POPUP SAAT POSTER DIKLIK ===
+  const posters = document.querySelectorAll('a[data-popup="true"]');
+  
+  posters.forEach((poster, index) => {
+    poster.addEventListener("click", function(e) {
+      e.preventDefault(); // Mencegah film langsung berputar otomatis
+      
+      lastFocus = this;
+      // Simpan index poster terakhir untuk fitur remote TV Anda
+      localStorage.setItem("lastHomePoster", index);
 
-    e.preventDefault();
-    lastFocus = a;
+      // Ambil data dari atribut HTML poster
+      playLink = this.getAttribute("href");
+      trailerLink = this.getAttribute("data-trailer");
+      
+      // Masukkan data ke dalam elemen popup
+      title.innerText = this.getAttribute("data-title") || "Judul Film";
+      text.innerText = this.getAttribute("data-sinopsis") || "";
+      img.src = this.querySelector("img").src;
 
-    const allPoster = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-    const index = Array.from(allPoster).indexOf(a);
-    localStorage.setItem("lastHomePoster", index);
+      // Tampilkan popup
+      overlay.classList.add("show");
 
-    const im = a.querySelector("img");
-    if(im) img.src = im.src;
+      // Otomatis fokus ke tombol Play (sangat berguna untuk Remote TV)
+      setTimeout(() => {
+        const playBtn = overlay.querySelector(".playBtn");
+        if(playBtn) playBtn.focus();
+      }, 50);
+    });
+  });
 
-    title.textContent = a.dataset.title || "Judul Film";
-    text.textContent = a.dataset.sinopsis || "Sinopsis belum diisi";
+  // === FUNGSI TOMBOL DI DALAM POPUP ===
+  window.popupPlay = function() {
+    if(playLink) {
+      window.location.href = playLink; // Menjalankan film saat tombol Play diklik
+    }
+  };
 
-    playLink = a.href;
-    trailerLink = a.dataset.trailer || "";
+  window.popupTrailer = function() {
+    if(trailerLink) {
+      // Membuka trailer di tab baru atau bisa disesuaikan dengan iframe penonton
+      window.open(trailerLink, "_blank"); 
+    }
+  };
 
-    overlay.classList.add("show");
+  window.popupClose = function() {
+    overlay.classList.remove("show");
+    if(lastFocus) lastFocus.focus(); // Mengembalikan fokus ke poster semula
+  };
 
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-      Android.setPopUpStatus(true);
+  // Navigasi Remote TV: Menutup popup dengan tombol Back / ESC
+  window.addEventListener("keydown", function(e) {
+    if (overlay.classList.contains("show") && (e.key === "Escape" || e.keyCode === 8)) {
+      e.preventDefault();
+      popupClose();
     }
   });
 
-  window.popupTrailer = function(){
-    if(!trailerLink) return;
-
-    img.style.display = "none";
-    if(!iframe){
-      iframe = document.createElement("iframe");
-      iframe.width = "100%";
-      iframe.height = "315";
-      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-      iframe.allowFullscreen = true;
-      content.insertBefore(iframe, content.firstChild);
-    }
-
-    iframe.src = trailerLink + (trailerLink.includes("?") ? "&" : "?") + "autoplay=1&mute=1";
-  };
-
-  window.popupPlay = function(){
-    if(!playLink){
-      alert("Tautan film tidak ditemukan!");
-      return;
-    }
-
-    if(lastFocus){
-      const posters = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-      const index = Array.from(posters).indexOf(lastFocus);
-      localStorage.setItem("lastHomePoster", index);
-    }
-
-    if(typeof Android !== "undefined" && Android.playVideo){
-      Android.playVideo(playLink);
-    } else {
-      window.open(playLink, "_blank");
-    }
-  };
-
-  window.popupClose = function(){
-    overlay.classList.remove("show");
-    if(iframe){
-      iframe.src = "";
-      iframe.remove();
-      iframe = null;
-    }
-
-    img.style.display = "";
-    if(lastFocus){
-      lastFocus.scrollIntoView({ block:"center" });
-      setTimeout(() => lastFocus.focus(), 150);
-    }
-
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-      Android.setPopUpStatus(false);
-    }
-  };
-
-  window.tutupPopUpPoster = function() {
-    window.popupClose();
-  };
-
+  // === LOGIKA STATE KEMBALI / LOAD HALAMAN ===
   window.addEventListener("load", function(){
+    if (!sessionStorage.getItem("is_session_active")) {
+      localStorage.removeItem("lastHomePoster");
+      localStorage.removeItem("lastMenu");
+      sessionStorage.setItem("is_session_active", "true");
+    }
+
     const lastMenu = localStorage.getItem("lastMenu");
 
     if(lastMenu){
-      const menu = document.querySelector('[data-menu="' + lastMenu + '"]');
-      if(menu){
-        menu.scrollIntoView({ block:"center" });
-        menu.focus();
-      }
+      setTimeout(() => {
+        const menu = document.querySelector('[data-menu="' + lastMenu + '"]');
+        if(menu){
+          menu.scrollIntoView({ block:"center", inline:"center" });
+          menu.focus();
+        } else {
+          const firstPoster = document.querySelector('a[tabindex="0"][data-popup="true"]');
+          if(firstPoster) firstPoster.focus();
+        }
+      }, 250);
       localStorage.removeItem("lastMenu");
-      return;
+      return; 
     }
 
     const lastPoster = localStorage.getItem("lastHomePoster");
     if(lastPoster !== null){
-      const posters = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
       setTimeout(() => {
         if(posters[lastPoster]){
           posters[lastPoster].scrollIntoView({ block:"center" });
@@ -705,6 +687,11 @@
           lastFocus = posters[lastPoster];
         }
       }, 300);
+    } else {
+      setTimeout(() => {
+        const firstMenu = document.querySelector(".siderbar_menu a") || document.querySelector('a[tabindex="0"]');
+        if(firstMenu) firstMenu.focus();
+      }, 400);
     }
   });
 })();
