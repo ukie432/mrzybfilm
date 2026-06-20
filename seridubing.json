@@ -3,14 +3,28 @@
     "title": "Terror Tuesday",
     "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAvKO8q9imCc8jCtJZz2lqV72yV1IRgABUk6ZcH2Ef8g&s=10",
     "episodes": [
-      {"ep":"Episode 1","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E01.mp4"},
-      {"ep":"Episode 2","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E02.mp4"},
-      {"ep":"Episode 3","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E03.mp4"},
-      {"ep":"Episode 4","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E04.mp4"},
-      {"ep":"Episode 5","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E05.mp4"},
-      {"ep":"Episode 6","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E06.mp4"},
-      {"ep":"Episode 7","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E07.mp4"},
-      {"ep":"Episode 8","url":"https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E08.mp4"}
+      {"ep": "Episode 1", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E01.mp4"},
+      {"ep": "Episode 2", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E02.mp4"},
+      {"ep": "Episode 3", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E03.mp4"},
+      {"ep": "Episode 4", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E04.mp4"},
+      {"ep": "Episode 5", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E05.mp4"},
+      {"ep": "Episode 6", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E06.mp4"},
+      {"ep": "Episode 7", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E07.mp4"},
+      {"ep": "Episode 8", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Terror%20tuesday/terror%20tuesday%20S01E08.mp4"}
+    ]
+  },
+  {
+    "title": "Chastity High",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvAxfBWt14vz5HS9v_RCfR3_LZ3Jzk3XSUpDT_pHvtjQ&s=10",
+    "episodes": [
+      {"ep": "Episode 1", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E01.mp4"},
+      {"ep": "Episode 2", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E02.mp4"},
+      {"ep": "Episode 3", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E03.mp4"},
+      {"ep": "Episode 4", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E04.mp4"},
+      {"ep": "Episode 5", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E05.mp4"},
+      {"ep": "Episode 6", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E06.mp4"},
+      {"ep": "Episode 7", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E07.mp4"},
+      {"ep": "Episode 8", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seri%20lagi/Chastity%20high/chastity%20high%20S01E08.mp4"}
     ]
   }
 ]
