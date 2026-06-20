@@ -348,6 +348,20 @@
           from {opacity: .4}
           to {opacity: 1}
         }
+        
+        
+        /* Sembunyikan outline kuning/merah bawaan Android untuk semua elemen di sidebar */
+.siderbar_menu, .siderbar_menu li, .siderbar_menu div, .siderbar_menu i {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Pastikan hanya tag <a> yang boleh menerima fokus remote */
+.siderbar_menu a {
+    outline: none !important;
+}
+        
+        
     </style>
 
     <style>
