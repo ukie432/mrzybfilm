@@ -80,6 +80,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
         }
     });
     </script>
+    
     <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchBox = document.getElementById('searchBox');
@@ -91,41 +92,150 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
 
-    // Mengunci navigasi tombol back agar tidak keluar/refresh paksa STB
+    // 1. KUNCI NAVIGASI BACK AGAR TIDAK REFRESH / KELUAR APLIKASI
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = function () {
         window.history.pushState(null, "", window.location.href);
     };
 
-    // 1. FUNGSI RENDER RAK FAVORIT (Menggunakan sistem Kloning murni agar kode HTML tidak dobel)
-    function updateTampilanFavorit() {
-        containerFav.innerHTML = ""; 
+    // 2. KUNCI KLIK & ENTER UNTUK PEMUTAR VIDEO (EVENT DELEGATION)
+    containerUtama.addEventListener('click', function(e) {
+        const link = e.target.closest('.play-link');
+        if (link) {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = link.closest('.card-film');
+            localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
+            localStorage.setItem("sedangNontonVideoSTB", "ya");
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                Android.playVideo(link.getAttribute("href"));
+            }
+            return false;
+        }
+    });
+
+    containerUtama.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const link = e.target.closest('.play-link');
+            if (link) {
+                e.preventDefault();
+                e.stopPropagation();
+                const card = link.closest('.card-film');
+                localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
+                localStorage.setItem("sedangNontonVideoSTB", "ya");
+                if (typeof Android !== "undefined" && Android.playVideo) {
+                    Android.playVideo(link.getAttribute("href"));
+                }
+                return false;
+            }
+        }
+    });
+
+    // REPLIKA PLAY UNTUK DI RAK FAVORIT
+    containerFav.addEventListener('click', function(e) {
+        const link = e.target.closest('.play-link');
+        if (link) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                Android.playVideo(link.getAttribute("href"));
+            }
+            return false;
+        }
+    });
+
+    containerFav.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const link = e.target.closest('.play-link');
+            if (link) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof Android !== "undefined" && Android.playVideo) {
+                    Android.playVideo(link.getAttribute("href"));
+                }
+                return false;
+            }
+        }
+    });
+
+    // 3. KUNCI INTERAKSI TOMBOL FAVORIT (DI KEDUA CONTAINER)
+    containerUtama.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-fav');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            eksekusiKlikFavorit(btn.getAttribute('data-target'));
+        }
+    });
+
+    containerUtama.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                eksekusiKlikFavorit(btn.getAttribute('data-target'));
+            }
+        }
+    });
+
+    containerFav.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-fav');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            eksekusiKlikFavorit(btn.getAttribute('data-target'));
+        }
+    });
+
+    containerFav.addEventListener('keydown', function(e) {
+        if (e.key === "Enter") {
+            const btn = e.target.closest('.btn-fav');
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                eksekusiKlikFavorit(btn.getAttribute('data-target'));
+            }
+        }
+    });
+
+    // FUNGSI UTAMA MENYIMPAN DATA
+    function eksekusiKlikFavorit(idTarget) {
+        if (!idTarget) return;
         
+        if (listFavorit.includes(idTarget)) {
+            listFavorit = listFavorit.filter(id => id !== idTarget);
+        } else {
+            listFavorit.push(idTarget);
+        }
+        
+        localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
+        updateTampilanFavorit();
+    }
+
+    function updateTampilanFavorit() {
+        containerFav.innerHTML = "";
         if (listFavorit.length === 0) {
             favSectionTitle.style.display = "none";
             containerFav.style.display = "none";
         } else {
             favSectionTitle.style.display = "block";
-            containerFav.style.display = "flex"; 
-
+            containerFav.style.display = "flex";
+            
             listFavorit.forEach(idFilm => {
-                // Cari elemen film asli dari containerUtama yang sudah sukses dibuat oleh JSON
                 const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
                 if (itemAsli) {
                     const klon = itemAsli.cloneNode(true);
-                    klon.setAttribute('id', 'fav-' + idFilm); // Beri ID unik agar tidak bentrok dengan daftar utama
+                    klon.setAttribute('id', 'fav-' + idFilm);
                     containerFav.appendChild(klon);
                 }
             });
         }
-        
-        // Pasang event klik remot setelah klon rapi
-        pasangEventAksi();
         perbaruiStatusTombolBintang();
     }
 
-    // 2. SINKRONISASI TOMBOL BINTANG
     function perbaruiStatusTombolBintang() {
+        // Ambil seluruh tombol favorit baik di containerUtama maupun containerFav
         document.querySelectorAll('.btn-fav').forEach(btn => {
             const idTarget = btn.getAttribute('data-target');
             if (listFavorit.includes(idTarget)) {
@@ -138,66 +248,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 3. PASANG EVENT AKSI (Bersih, aman, dan memisahkan logika kartu utama vs rak favorit)
-    function pasangEventAksi() {
-        document.querySelectorAll('.card-film').forEach(card => {
-            const link = card.querySelector('.play-link');
-            const btnFav = card.querySelector('.btn-fav');
-            
-            if (link) {
-                link.replaceWith(link.cloneNode(true));
-                const newLink = card.querySelector('.play-link');
-                
-                const handleWatch = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Simpan ID poster posisi terakhir hanya jika diklik di daftar utama
-                    if (card.parentNode === containerUtama) {
-                        localStorage.setItem("idPosterTerakhir", card.getAttribute("id"));
-                    }
-                    localStorage.setItem("sedangNontonVideoSTB", "ya");
-                    
-                    if (typeof Android !== "undefined" && Android.playVideo) {
-                        Android.playVideo(newLink.getAttribute("href"));
-                    }
-                    return false;
-                };
-                
-                newLink.addEventListener("click", handleWatch);
-                newLink.addEventListener("keydown", function(e) { 
-                    if (e.key === "Enter") handleWatch(e); 
-                });
-            }
-
-            if (btnFav) {
-                btnFav.replaceWith(btnFav.cloneNode(true));
-                const newBtnFav = card.querySelector('.btn-fav');
-                
-                const handleFavClick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const idTarget = newBtnFav.getAttribute('data-target');
-                    
-                    if (listFavorit.includes(idTarget)) {
-                        listFavorit = listFavorit.filter(id => id !== idTarget);
-                    } else {
-                        listFavorit.push(idTarget);
-                    }
-                    
-                    localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
-                    updateTampilanFavorit(); 
-                };
-                
-                newBtnFav.addEventListener('click', handleFavClick);
-                newBtnFav.addEventListener('keydown', function(e) { 
-                    if (e.key === "Enter") handleFavClick(e); 
-                });
-            }
-        });
-    }
-
-    // 4. LOGIKA PENCARIAN FILM
     function saringFilm(keyword) {
         let adaFilmCocok = false;
         const semuaKartu = containerUtama.querySelectorAll('.card-film');
@@ -234,11 +284,10 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // 5. MEMUAT DATABASE FILM DARI FILE JSON
+    // 4. PROSES AMBIL DATA FILM DARI JSON 
     fetch('film.json')
     .then(response => response.json())
     .then(data => {
-        // Render film ke daftar utama secara bersih
         containerUtama.innerHTML = data.map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                 <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
@@ -251,10 +300,9 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `).join('');
 
-        // Setelah HTML utama terpasang sempurna, panggil rak favorit agar sistem cloneNode bekerja dengan mendeteksi element aslinya
+        // WAJIB DI SINI: Panggil fungsi favorit setelah HTML utama selesai dibangun oleh JSON
         updateTampilanFavorit();
 
-        // Mengembalikan ingatan fokus remote STB ke posisi poster semula setelah keluar dari ExoPlayer
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("idPosterTerakhir");
@@ -275,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 180);
     })
     .catch(err => {
-        console.error("Gagal memuat database JSON:", err);
+        console.error("Gagal load JSON:", err);
         if (searchBox) searchBox.focus();
     });
 });
