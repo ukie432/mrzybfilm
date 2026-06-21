@@ -6,18 +6,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
-        
-        /* Navbar & Pencarian */
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
         #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; }
-
-        /* Grid */
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
-
-        /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; }
@@ -39,31 +33,34 @@
             <button onclick="closePopup()" style="width:100%; padding:10px; margin-top:10px; background:red; border:none; color:white;">Tutup</button>
         </div>
     </div>
+
 <script>
     const jsonUrl = "seridubing.json";
 
+    // 1. Memuat Data
     fetch(jsonUrl)
-        .then(response => {
-            if (!response.ok) throw new Error("File JSON tidak ditemukan (404)");
-            return response.json();
-        })
+        .then(response => { if (!response.ok) throw new Error("404"); return response.json(); })
         .then(data => {
             data.forEach(item => {
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                
                 $("#grid").append(`
                     <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
                         <img src="${item.poster}">
                     </div>
                 `);
             });
+            // Cek localStorage setelah data selesai dimuat
+            checkLastSession();
         })
-        .catch(err => {
-            console.error("Gagal load:", err);
-            alert("Gagal memuat data: " + err);
-        });
+        .catch(err => console.error("Gagal load:", err));
 
+    // 2. Fungsi Modal
     function openModal(title, epsEncoded) {
+        // Simpan ke localStorage agar diingat saat kembali dari player
+        localStorage.setItem("status_popup", "open");
+        localStorage.setItem("judul_film", title);
+        localStorage.setItem("eps_data", epsEncoded);
+        
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
@@ -74,22 +71,30 @@
         $(".eps-btn").first().focus();
     }
 
-    function closePopup() { $("#popup").hide(); }
+    function closePopup() { 
+        $("#popup").hide(); 
+        localStorage.setItem("status_popup", "closed");
+    }
 
-    // --- TAMBAHKAN LOGIKA PENCARIAN DI SINI ---
+    // 3. Logika "Anti-Gagal" (Auto-Resume)
+    function checkLastSession() {
+        setTimeout(function() {
+            if (localStorage.getItem("status_popup") === "open") {
+                const title = localStorage.getItem("judul_film");
+                const eps = localStorage.getItem("eps_data");
+                if(title && eps) openModal(title, eps);
+            }
+        }, 300);
+    }
+
+    // 4. Logika Pencarian
     $("#search").on("input", function() {
         const keyword = $(this).val().toLowerCase();
         $(".poster").each(function() {
             const title = $(this).data("title").toLowerCase();
-            if (title.includes(keyword)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+            $(this).toggle(title.includes(keyword));
         });
     });
-    // --- AKHIR LOGIKA PENCARIAN ---
-
 </script>
 </body>
 </html>
