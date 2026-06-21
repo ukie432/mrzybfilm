@@ -55,13 +55,39 @@
     const jsonUrl = "seridubing.json";
 
     $(document).on('keydown', function(e) {
-        if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
+        const activeEl = document.activeElement;
+
+        // 1. Mencegah fokus otomatis ke #search saat tekan tombol ATAS
+        if (e.keyCode == 38) { 
+            if (activeEl.classList.contains('poster')) {
+                const index = $('.poster').index(activeEl);
+                if (index < 5) { // Jika berada di baris pertama, kunci fokus
+                    e.preventDefault(); 
+                    return false;
+                }
+            }
+            if (activeEl.classList.contains('close-x')) {
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        // 2. Navigasi Remote
+        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
             $('.close-x').focus();
         }
-        else if (e.keyCode == 37 && document.activeElement.classList.contains('close-x')) {
+        else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
             const currentTitle = $("#modal-title").text();
             const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
+        }
+    });
+
+    // 3. Mengunci Search agar tidak bisa difokuskan panah, kecuali diarahkan manual
+    $("#search").on('keydown', function(e) {
+        if (e.keyCode == 40) { // Jika tekan bawah, paksa ke poster pertama
+            e.preventDefault();
+            $(".poster:visible").first().focus();
         }
     });
 
@@ -93,7 +119,7 @@
         
         eps.forEach((e, index) => {
             $("#eps-list").append(`
-                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title}')">
+                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">
                     ${e.ep}
                 </button>
             `);
@@ -101,7 +127,6 @@
         
         $("#popup").css("display", "flex");
         
-        // Ambil indeks berdasarkan judul film spesifik
         const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
         setTimeout(() => {
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
@@ -109,7 +134,6 @@
     }
 
     function playAndSave(url, index, title) {
-        // Simpan indeks dengan key unik per film
         localStorage.setItem("last_eps_" + title, index);
         Android.playVideo(url);
     }
