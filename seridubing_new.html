@@ -54,10 +54,15 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // Navigasi Kanan untuk ke tombol X
+    // Navigasi Remote: Kanan ke X, Kiri kembali ke List
     $(document).on('keydown', function(e) {
+        // Jika Kanan (39) ditekan pada tombol episode
         if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
             $('.close-x').focus();
+        }
+        // Jika Kiri (37) ditekan pada tombol X
+        else if (e.keyCode == 37 && document.activeElement.classList.contains('close-x')) {
+            $('.eps-btn').first().focus();
         }
     });
 
@@ -87,11 +92,9 @@
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach(e => {
-            // TAMBAHKAN tabindex="0" DI SINI agar tombol episode bisa dipilih remote
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        // Kita fokus ke tombol pertama di list episode agar user bisa langsung scroll
         $(".eps-btn").first().focus(); 
     }
 
