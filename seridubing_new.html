@@ -22,16 +22,16 @@
         
         .close-x {
             position: absolute; top: -15px; right: -15px;
-            width: 40px; height: 40px; background: red; color: white;
-            border-radius: 50%; border: 2px solid white; font-weight: bold;
+            width: 45px; height: 45px; background: red; color: white;
+            border-radius: 50%; border: 3px solid white; font-weight: bold;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
             z-index: 101;
         }
         .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
         
-        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
-        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; }
-        .eps-btn:focus { background:#00c54f; color:black; }
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
     </style>
 </head>
 <body>
@@ -46,7 +46,7 @@
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
             
-            <h2 id="modal-title" style="margin-top:0;"></h2>
+            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
             <div id="eps-list"></div>
         </div>
     </div>
@@ -54,7 +54,7 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // Fokus Otomatis ke tombol X jika navigasi kanan ditekan pada episode
+    // Navigasi Kanan untuk ke tombol X
     $(document).on('keydown', function(e) {
         if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
             $('.close-x').focus();
@@ -87,10 +87,12 @@
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach(e => {
-            $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
+            // TAMBAHKAN tabindex="0" DI SINI agar tombol episode bisa dipilih remote
+            $("#eps-list").append(`<button class="eps-btn" tabindex="0" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        $(".close-x").focus(); // Fokus awal ke tombol X saat popup buka
+        // Kita fokus ke tombol pertama di list episode agar user bisa langsung scroll
+        $(".eps-btn").first().focus(); 
     }
 
     function closePopup() { 
