@@ -7,8 +7,7 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        /* Input dibuat agar tidak mudah terfokus */
-        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; cursor: pointer; }
+        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; cursor: pointer; transition: 0.3s; }
         #search:focus { outline: 2px solid #00c54f; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
@@ -27,7 +26,7 @@
 <body>
 
     <div class="navbar">
-        <input type="text" id="search" placeholder="Cari judul film..." readonly onclick="this.readOnly=false; this.focus();">
+        <input type="text" id="search" placeholder="Cari judul film..." readonly onclick="this.readOnly=false; this.focus();" onblur="this.readOnly=true;">
     </div>
 
     <div class="grid" id="grid"></div>
@@ -43,11 +42,10 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // Navigasi Remote Global
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Mencegah navigasi naik dari baris poster pertama agar tidak kena Search
+        // Navigasi Atas (Blokir agar tidak ke Search Bar)
         if (e.keyCode == 38) { 
             if (activeEl.classList.contains('poster')) {
                 const index = $('.poster').index(activeEl);
@@ -66,18 +64,18 @@
         }
     });
 
-    // Handle saat di Search
     $("#search").on('keydown', function(e) {
-        // Jika tekan bawah, paksa kembali ke grid poster
-        if (e.keyCode == 40) {
+        // Jika tekan Bawah atau Enter (OK), keluar dari mode search dan kembali ke grid
+        if (e.keyCode == 40 || e.keyCode == 13) {
             e.preventDefault();
-            this.readOnly = true; // Kunci lagi agar tidak memicu keyboard saat kembali ke bawah
+            this.blur(); // Menutup keyboard
+            this.readOnly = true;
             $(".poster:visible").first().focus();
         }
     });
 
     fetch(jsonUrl)
-        .then(response => { if (!response.ok) throw new Error("404"); return response.json(); })
+        .then(response => response.json())
         .then(data => {
             data.forEach(item => {
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
@@ -85,7 +83,7 @@
             });
             setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
             checkLastSession();
-        }).catch(err => console.error("Gagal load:", err));
+        });
 
     function openModal(title, epsEncoded) {
         localStorage.setItem("status_popup", "open");
@@ -116,13 +114,11 @@
     }
 
     function checkLastSession() {
-        setTimeout(function() {
-            if (localStorage.getItem("status_popup") === "open") {
-                const title = localStorage.getItem("judul_film");
-                const eps = localStorage.getItem("eps_data");
-                if(title && eps) openModal(title, eps);
-            }
-        }, 300);
+        if (localStorage.getItem("status_popup") === "open") {
+            const title = localStorage.getItem("judul_film");
+            const eps = localStorage.getItem("eps_data");
+            if(title && eps) openModal(title, eps);
+        }
     }
 
     $("#search").on("input", function() {
