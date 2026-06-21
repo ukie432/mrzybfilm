@@ -56,13 +56,12 @@
 
     // Navigasi Remote: Kanan ke X, Kiri kembali ke List
     $(document).on('keydown', function(e) {
-        // Jika Kanan (39) ditekan pada tombol episode
         if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
             $('.close-x').focus();
         }
-        // Jika Kiri (37) ditekan pada tombol X
         else if (e.keyCode == 37 && document.activeElement.classList.contains('close-x')) {
-            $('.eps-btn').first().focus();
+            const lastIdx = localStorage.getItem("last_eps_index") || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
     });
 
@@ -91,11 +90,27 @@
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        eps.forEach(e => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
+        
+        eps.forEach((e, index) => {
+            $("#eps-list").append(`
+                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index})">
+                    ${e.ep}
+                </button>
+            `);
         });
+        
         $("#popup").css("display", "flex");
-        $(".eps-btn").first().focus(); 
+        
+        // Fokus ke episode terakhir yang disimpan
+        const lastIdx = localStorage.getItem("last_eps_index") || 0;
+        setTimeout(() => {
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
+        }, 200);
+    }
+
+    function playAndSave(url, index) {
+        localStorage.setItem("last_eps_index", index);
+        Android.playVideo(url);
     }
 
     function closePopup() { 
