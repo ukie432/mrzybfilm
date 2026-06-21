@@ -49,7 +49,6 @@
         })
         .then(data => {
             data.forEach(item => {
-                // Encode agar tanda petik tidak merusak kode HTML
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
                 
                 $("#grid").append(`
@@ -64,7 +63,6 @@
             alert("Gagal memuat data: " + err);
         });
 
-    // Fungsi Popup yang sudah disesuaikan untuk decode
     function openModal(title, epsEncoded) {
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
@@ -77,6 +75,21 @@
     }
 
     function closePopup() { $("#popup").hide(); }
+
+    // --- TAMBAHKAN LOGIKA PENCARIAN DI SINI ---
+    $("#search").on("input", function() {
+        const keyword = $(this).val().toLowerCase();
+        $(".poster").each(function() {
+            const title = $(this).data("title").toLowerCase();
+            if (title.includes(keyword)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+    // --- AKHIR LOGIKA PENCARIAN ---
+
 </script>
 </body>
 </html>
