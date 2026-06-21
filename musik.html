@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Premium Audio Player - Full Seekable Progress Bar</title>
+    <title>Premium Audio Player - Fixed Remote Navigation Flow</title>
     
-    <!-- FontAwesome untuk Icon Navigasi -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     
     <style>
@@ -165,10 +164,10 @@
             color: #fff;
         }
 
-        /* PERBAIKAN: BAR PROGRES INTERAKTIF UNTUK REMOTE TV */
+        /* BAR PROGRES INTERAKTIF */
         .progress-container {
             width: 100%;
-            height: 8px; /* Sedikit dipertebal agar mudah dilihat di TV */
+            height: 8px;
             background: #222;
             cursor: pointer;
             flex: 0 0 auto;
@@ -177,11 +176,10 @@
             transition: all 0.2s ease;
         }
 
-        /* Efek visual ketika Progress Bar dipilih/fokus oleh remote TV */
         .progress-container:focus {
             background: #333;
             box-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
-            height: 12px; /* Membesar saat difokuskan */
+            height: 12px;
         }
 
         .progress-bar {
@@ -261,15 +259,12 @@
 </head>
 <body>
 
-    <!-- LAYER EFEK AMBIENT BACKGROUND -->
     <div id="ambient-layer" class="ambient-bg"></div>
 
-    <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
     <div class="music-app-container">
         
-        <!-- ELEMENT BAR PENCARIAN -->
         <div class="search-zone">
             <div class="search-box-wrapper">
                 <i class="fas fa-search"></i>
@@ -277,7 +272,6 @@
             </div>
         </div>
         
-        <!-- ELEMENT BOX ATAS (PLAYER) -->
         <div class="neon-player">
             <img id="player-cover" class="now-playing-cover" src="" alt="Cover">
             
@@ -295,17 +289,14 @@
             </div>
         </div>
 
-        <!-- PROGRESS BAR (MENDUKUNG KLIK & NAVIGASI REMOTE TV) -->
         <div class="progress-container" id="progress-container" tabindex="0" onclick="setProgress(event)">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
 
-        <!-- ELEMENT PLAYLIST DAFTAR LAGU -->
         <div class="modern-playlist" id="playlist-container"></div>
 
     </div>
 
-    <!-- --- JAVASCRIPT ENGINE --- -->
     <script>
         // Database Lagu Internal
         const tracks = [
@@ -493,7 +484,6 @@
             }
         });
 
-        // Set Progres Menggunakan Mouse / Sentuhan (Klik Manual)
         function setProgress(e) {
             const width = progressContainer.clientWidth;
             const clickX = e.offsetX;
@@ -501,24 +491,29 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // FITUR BARU: NAVIGASI REMOTE TV UNTUK REWIND DAN FAST FORWARD
+        // --- SOLUSI PERBAIKAN NAVIGASI REMOTE TV ---
         progressContainer.addEventListener('keydown', function(e) {
-            if (!audio.duration || isNaN(audio.duration)) return;
-
-            const step = 10; // Durasi lompatan waktu (10 Detik)
-            
             if (e.key === 'ArrowRight') {
-                // Fast Forward (Maju 10 Detik)
+                // Maju 10 Detik
                 e.preventDefault();
-                let newTime = audio.currentTime + step;
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime + 10;
                 if (newTime > audio.duration) newTime = audio.duration;
                 audio.currentTime = newTime;
             } else if (e.key === 'ArrowLeft') {
-                // Rewind (Mundur 10 Detik)
+                // Mundur 10 Detik
                 e.preventDefault();
-                let newTime = audio.currentTime - step;
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime - 10;
                 if (newTime < 0) newTime = 0;
                 audio.currentTime = newTime;
+            } else if (e.key === 'ArrowDown') {
+                // KUNCI PERBAIKAN: Jika menekan Bawah, paksa fokus pindah ke playlist baris pertama
+                e.preventDefault();
+                const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
+                if (firstPlaylistItem) {
+                    firstPlaylistItem.focus();
+                }
             }
         });
 
