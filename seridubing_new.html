@@ -14,23 +14,22 @@
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
         
-        /* Popup Layout */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { 
             background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f;
-            display: flex; flex-direction: column; max-height: 80vh;
+            position: relative;
         }
         
-        /* Scrollable List */
-        #eps-list { overflow-y: auto; margin-bottom: 15px; flex-grow: 1; }
-        
-        /* Tombol Tutup Melayang (Sticky) */
-        .close-btn { 
-            width:100%; padding:15px; background:red; border:none; color:white; font-weight:bold; cursor:pointer;
-            position: sticky; bottom: 0;
+        .close-x {
+            position: absolute; top: -15px; right: -15px;
+            width: 40px; height: 40px; background: red; color: white;
+            border-radius: 50%; border: 2px solid white; font-weight: bold;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            z-index: 101;
         }
-        .close-btn:focus { outline: 2px solid #fff; }
-
+        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
+        
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; }
         .eps-btn:focus { background:#00c54f; color:black; }
     </style>
@@ -45,14 +44,22 @@
 
     <div id="popup" onclick="closePopup()">
         <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
+            
             <h2 id="modal-title" style="margin-top:0;"></h2>
             <div id="eps-list"></div>
-            <button class="close-btn" onclick="closePopup()">TUTUP</button>
         </div>
     </div>
 
 <script>
     const jsonUrl = "seridubing.json";
+
+    // Fokus Otomatis ke tombol X jika navigasi kanan ditekan pada episode
+    $(document).on('keydown', function(e) {
+        if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
+            $('.close-x').focus();
+        }
+    });
 
     fetch(jsonUrl)
         .then(response => { if (!response.ok) throw new Error("404"); return response.json(); })
@@ -65,13 +72,7 @@
                     </div>
                 `);
             });
-            
-            setTimeout(() => {
-                if (localStorage.getItem("status_popup") !== "open") {
-                    $(".poster").first().focus();
-                }
-            }, 600); 
-
+            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
             checkLastSession();
         })
         .catch(err => console.error("Gagal load:", err));
@@ -89,18 +90,15 @@
             $("#eps-list").append(`<button class="eps-btn" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        $(".eps-btn").first().focus();
+        $(".close-x").focus(); // Fokus awal ke tombol X saat popup buka
     }
 
     function closePopup() { 
         $("#popup").hide(); 
         localStorage.setItem("status_popup", "closed");
-        
         const lastTitle = localStorage.getItem("last_poster_title");
         if (lastTitle) {
-            setTimeout(() => {
-                $(`.poster[data-title="${lastTitle}"]`).focus();
-            }, 100);
+            setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
         }
     }
 
