@@ -3,12 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Premium Audio Player - Clean Version</title>
+    <title>Premium Audio Player - Remote Support</title>
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     
     <style>
-        /* --- RESET & KUNCI LAYOUT UTAMA --- */
         html, body {
             margin: 0;
             padding: 0;
@@ -16,17 +15,16 @@
             color: #ffffff;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100%;
-            overflow: hidden; /* Mengunci layar utama agar tidak ada scroll browser */
+            overflow: hidden;
         }
 
-        /* CONTAINER UTAMA (FIXED) */
         .music-app-container {
             position: fixed;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
-            max-width: 600px; /* Lebar maksimal agar terlihat rapi di HP maupun PC */
+            max-width: 600px;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -36,7 +34,6 @@
             border-right: 1px solid #222;
         }
 
-        /* --- TAMPILAN HEAD PLAYER (HITAM NEON) --- */
         .neon-player {
             display: flex;
             align-items: center;
@@ -85,11 +82,14 @@
             font-size: 18px;
             cursor: pointer;
             transition: all 0.2s ease;
+            outline: none; /* Hapus outline bawaan browser */
         }
 
-        .btn-control:hover {
+        /* EFEK KETIKA REMOTE MEMILIH TOMBOL ATAS */
+        .btn-control:focus, .btn-control:hover {
             color: #ff0055;
-            text-shadow: 0 0 8px #ff0055;
+            text-shadow: 0 0 12px #ff0055;
+            transform: scale(1.1);
         }
 
         .btn-play-pause {
@@ -97,7 +97,6 @@
             color: #fff;
         }
 
-        /* Progress Bar */
         .progress-container {
             width: 100%;
             height: 4px;
@@ -113,24 +112,19 @@
             box-shadow: 0 0 8px #ff0055;
         }
 
-        /* --- TAMPILAN DAFTAR LAGU (PLAYLIST) --- */
         .modern-playlist {
             flex: 1 1 auto;
-            overflow-y: auto; /* Scroll hanya terjadi di dalam daftar lagu ini saja */
+            overflow-y: auto;
             background: #141414;
             padding-bottom: 20px;
         }
 
-        /* Desain Scrollbar */
         .modern-playlist::-webkit-scrollbar {
             width: 6px;
         }
         .modern-playlist::-webkit-scrollbar-thumb {
             background: #2a2a2a;
             border-radius: 3px;
-        }
-        .modern-playlist::-webkit-scrollbar-thumb:hover {
-            background: #ff0055;
         }
 
         .playlist-item {
@@ -139,15 +133,23 @@
             padding: 12px 20px;
             border-bottom: 1px solid #1a1a1a;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            outline: none; /* Hilangkan garis biru bawaan browser */
         }
 
         .playlist-item:hover {
             background: #1a1a1a;
         }
 
+        /* KUNCI REMOTE TV: Efek visual saat remote menyorot/memilih lagu */
+        .playlist-item:focus {
+            background: #2a1118 !important;
+            box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.4);
+            border-left: 4px solid #ff0055;
+        }
+
         .playlist-item.active {
-            background: #221217;
+            background: #1f0f13;
             border-left: 4px solid #ff0055;
         }
 
@@ -164,7 +166,7 @@
             color: #cccccc;
         }
 
-        .playlist-item.active .item-title {
+        .playlist-item.active .item-title, .playlist-item:focus .item-title {
             color: #ff0055;
             font-weight: bold;
         }
@@ -200,7 +202,6 @@
     </div>
 
     <script>
-        // Data internal lagu Anda
         const tracks = [
             {
                 title: "Linkin park",
@@ -226,26 +227,6 @@
                 title: "The offspring",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg23Tes3hYfh0fzaG-E85qPyPFewEH7y2j1ugHTlAMs7ByrcfhyphenhyphentUsEZSEGdC9802mMlMjX8oFXLwyFNXw91uNEjjVJJ7EO4-9GqOGCOFjBqv3OdZ__Q7Qik2IbAZbo1dEzWSHGtDGpCR_bMZt4YDajz3P1pNUw7EBrdG2r-UEutg9ww_PipsI4KSHjUw6c/s1478/PicRetouch_20250321_212926901.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20of%20-%20Offspring%20~%20-%20The%20Offspring%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Bon jovi",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjGZDApyotIPLb-xk0zCgDq8kV9qqmoSAtFPD0PrUJPqcMYgeT4pQJnJZiL9FMWDHg_1tfTU-FSQaHWATQ6OKpYdkTUmimC9LjwiyV16pHzuK9WnK7WlZTW3AdiFd6PFlRo50WoDL04TtdZ74m8WFDnHHE5ZHgWUc_lQcGEee_h-YhLvA-3RW_Ll7w7ELUc/s1478/PicRetouch_20250321_212941289.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Bon%20Jovi%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Pearl jam",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqK8m49SYP5wxw4zAi4vYFyX3xTB4pPNIYFgJ7XK_Tqm03DMpZQlZ-I8GOVS7iEHswe96ekw4p77_TEC8-fd_JGoUt87KmE8CuC81XbmdlFfSl3yMWACfTpBtBSjatwxckDKZHHYoN3f980mUU7YfTHIS_WahmMlXActPDERKAa9c7xUOLcejWmtf559BJ/s1478/PicRetouch_20250321_212954998.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Pearl%20Jam%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Oasis",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYdyzvFUNQ7ILbSTSurGA9dU7T4bgERPv6j92bnzy8VFzH_lw-xvZ8gkVtYhUN2mlwmRZwiGIE4g_hdEaDNVziP_xjjX7fP5EgsrXGSPRzYDT52XUAu_onO3eBXW1eXLS9Bu8k-YAwkKzOTQEguslrtNg73qxGFzejhmXA-lj_4I8ny3ZAoaXVObZQryHp/s1478/PicRetouch_20250321_213010457.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Songs%20of%20Oasis%20-%20Oasis%20Greatest%20Hits%20Full%20Album%20-%20Oasis%20Collection%20New%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Scorpions",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhB0-kzwdaF-EuYDWEWKRQwhzK3ou9G6q_ByUHbEDU0TxRAyBjzC-efpqMsmX8u3-MctykTfb7LAtcQITQXV-5QYoMIIdhpoXDq3GtVRuAxs6OT15xKIWI1tfJFVTY6JeWVobNFVQqZwUy0m6RJpB55F6J3nFK4OGQH-piTzn14lpv0A48EZSeELiHmcgZX/s1478/PicRetouch_20250321_213028370.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/full%20album%20lagu%20scorpions%20enak%20di%20dengar%20buat%20pengantar%20tidur%20(%20240%20X%20426%20).mp4"
             }
         ];
 
@@ -257,13 +238,23 @@
         const progressBar = document.getElementById('progress-bar');
         const playlistContainer = document.getElementById('playlist-container');
 
-        // Render otomatis list ke dalam HTML
         function loadPlaylist() {
             playlistContainer.innerHTML = "";
             tracks.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
+                
+                // KUNCI COCOK UNTUK REMOTE: Menambahkan indeks tab dan event keyboard TV
+                item.setAttribute('tabindex', '0'); 
                 item.setAttribute('onclick', `selectTrack(${index})`);
+                
+                // Mendengarkan tombol "OK / ENTER" di remote TV
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        selectTrack(index);
+                    }
+                });
+                
                 item.innerHTML = `
                     <img class="item-cover" src="${track.cover}">
                     <div class="item-title">${track.title}</div>
@@ -272,7 +263,6 @@
             });
         }
 
-        // Set Trek Aktif
         function loadTrack(index) {
             currentTrackIndex = index;
             audio.src = tracks[index].url;
@@ -286,7 +276,6 @@
             });
         }
 
-        // Play dan Pause toggle
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
@@ -318,7 +307,6 @@
             selectTrack(prevIndex);
         }
 
-        // Animasi Progress Bar Durasi Musik
         audio.addEventListener('timeupdate', () => {
             const { duration, currentTime } = audio;
             if (duration) {
@@ -327,7 +315,6 @@
             }
         });
 
-        // Set manual durasi ketika progress bar diklik
         function setProgress(e) {
             const width = document.getElementById('progress-container').clientWidth;
             const clickX = e.offsetX;
@@ -337,10 +324,8 @@
             }
         }
 
-        // Autoplay lagu berikutnya jika trek habis
         audio.addEventListener('ended', playNext);
 
-        // Inisialisasi awal aplikasi
         window.onload = () => {
             loadPlaylist();
             loadTrack(0);
