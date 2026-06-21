@@ -53,7 +53,9 @@
         .catch(err => console.error("Gagal load:", err));
 
     function openModal(title, epsEncoded) {
+        // Simpan status dan judul untuk fokus nanti
         localStorage.setItem("status_popup", "open");
+        localStorage.setItem("last_poster_title", title);
         localStorage.setItem("judul_film", title);
         localStorage.setItem("eps_data", epsEncoded);
         
@@ -70,6 +72,14 @@
     function closePopup() { 
         $("#popup").hide(); 
         localStorage.setItem("status_popup", "closed");
+        
+        // Kembalikan fokus ke poster terakhir
+        const lastTitle = localStorage.getItem("last_poster_title");
+        if (lastTitle) {
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 100);
+        }
     }
 
     function checkLastSession() {
