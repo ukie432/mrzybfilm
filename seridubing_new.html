@@ -7,7 +7,8 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; }
+        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
+        #search:focus { outline: 2px solid #00c54f; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
@@ -49,12 +50,12 @@
                 `);
             });
             
-            // Fokus ke poster pertama jika tidak ada sesi yang terbuka
+            // Fokus ke poster pertama HANYA JIKA tidak sedang memulihkan popup
             setTimeout(() => {
                 if (localStorage.getItem("status_popup") !== "open") {
                     $(".poster").first().focus();
                 }
-            }, 500);
+            }, 600); 
 
             checkLastSession();
         })
