@@ -7,7 +7,8 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; cursor: pointer; transition: 0.3s; }
+        /* Search bar dikunci agar tidak bisa difokuskan navigasi */
+        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
         #search:focus { outline: 2px solid #00c54f; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
@@ -26,7 +27,7 @@
 <body>
 
     <div class="navbar">
-        <input type="text" id="search" placeholder="Cari judul film..." readonly onclick="this.readOnly=false; this.focus();" onblur="this.readOnly=true;">
+        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
     </div>
 
     <div class="grid" id="grid"></div>
@@ -42,16 +43,16 @@
 <script>
     const jsonUrl = "seridubing.json";
 
+    // 1. Logika Navigasi Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Navigasi Atas (Blokir agar tidak ke Search Bar)
+        // Jika user berada di poster baris pertama, kunci tombol ATAS agar tidak lari ke navbar
         if (e.keyCode == 38) { 
             if (activeEl.classList.contains('poster')) {
-                const index = $('.poster').index(activeEl);
+                const index = $('.grid .poster').index(activeEl);
                 if (index < 5) { e.preventDefault(); return false; }
             }
-            if (activeEl.classList.contains('close-x')) { e.preventDefault(); return false; }
         }
 
         // Navigasi Popup
@@ -64,15 +65,18 @@
         }
     });
 
-    $("#search").on('keydown', function(e) {
-        // Jika tekan Bawah atau Enter (OK), keluar dari mode search dan kembali ke grid
-        if (e.keyCode == 40 || e.keyCode == 13) {
-            e.preventDefault();
-            this.blur(); // Menutup keyboard
-            this.readOnly = true;
-            $(".poster:visible").first().focus();
+    // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
+    // Kita buat shortcut: Jika tekan tombol 'Menu' atau 'Search' di remote (misal e.keyCode 13 di grid)
+    // Tapi karena kita ingin tetap bisa cari, gunakan trik ini:
+    $(document).on('keydown', function(e) {
+        if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
+            // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
         }
     });
+
+    // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
+    // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
+    // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
 
     fetch(jsonUrl)
         .then(response => response.json())
@@ -85,6 +89,26 @@
             checkLastSession();
         });
 
+    // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
+    // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
+    $(document).on('keydown', function(e) {
+        if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
+            const index = $('.grid .poster').index(document.activeElement);
+            if (index < 5) {
+                $("#search").attr("tabindex", "0").focus(); // Search jadi bisa difokuskan
+            }
+        }
+    });
+
+    // Jika search sedang fokus dan tekan bawah, kunci lagi search-nya
+    $("#search").on('keydown', function(e) {
+        if (e.keyCode == 40) {
+            $(this).attr("tabindex", "-1").blur();
+            $(".poster").first().focus();
+        }
+    });
+
+    // ... (Fungsi openModal, closePopup, dsb sama seperti sebelumnya)
     function openModal(title, epsEncoded) {
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("last_poster_title", title);
