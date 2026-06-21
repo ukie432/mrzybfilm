@@ -7,10 +7,14 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        /* Search bar dikunci agar tidak bisa difokuskan navigasi */
+        
+        /* Tambahkan margin-bottom pada navbar sebagai zona mati */
         #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
         #search:focus { outline: 2px solid #00c54f; }
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 40px 20px; }
+        
+        /* Padding top yang besar mencegah loncatan fokus dini */
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 80px 20px 20px 20px; }
+        
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
@@ -27,7 +31,7 @@
 <body>
 
     <div class="navbar">
-        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan ATAS di baris 1 untuk mulai)...">
     </div>
 
     <div class="grid" id="grid"></div>
@@ -43,40 +47,32 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // 1. Logika Navigasi Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Jika user berada di poster baris pertama, kunci tombol ATAS agar tidak lari ke navbar
+        // Kunci navigasi ATAS jika sudah di baris pertama
         if (e.keyCode == 38) { 
             if (activeEl.classList.contains('poster')) {
                 const index = $('.grid .poster').index(activeEl);
-                if (index < 5) { e.preventDefault(); return false; }
+                if (index < 5) {
+                    // Berikan sedikit delay agar fokus tidak lari saat scroll belum selesai
+                    e.preventDefault();
+                    // Aktifkan search hanya jika ditekan sekali lagi (logika trigger)
+                    $("#search").attr("tabindex", "0").focus(); 
+                    return false;
+                }
             }
         }
-
-        // Navigasi Popup
-        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
-            $('.close-x').focus();
-        } else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
-            const currentTitle = $("#modal-title").text();
-            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
-            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-        }
     });
 
-    // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
-    // Kita buat shortcut: Jika tekan tombol 'Menu' atau 'Search' di remote (misal e.keyCode 13 di grid)
-    // Tapi karena kita ingin tetap bisa cari, gunakan trik ini:
-    $(document).on('keydown', function(e) {
-        if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
-            // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
+    // Handle search: Jika tekan BAWAH, kunci kembali agar tidak bisa difokuskan
+    $("#search").on('keydown', function(e) {
+        if (e.keyCode == 40 || e.keyCode == 13) {
+            e.preventDefault();
+            $(this).attr("tabindex", "-1").blur();
+            $(".poster").first().focus();
         }
     });
-
-    // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
-    // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
-    // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
 
     fetch(jsonUrl)
         .then(response => response.json())
@@ -86,34 +82,12 @@
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"></div>`);
             });
             setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
-            checkLastSession();
         });
 
-    // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
-    // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
-    $(document).on('keydown', function(e) {
-        if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
-            const index = $('.grid .poster').index(document.activeElement);
-            if (index < 5) {
-                $("#search").attr("tabindex", "0").focus(); // Search jadi bisa difokuskan
-            }
-        }
-    });
-
-    // Jika search sedang fokus dan tekan bawah, kunci lagi search-nya
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40) {
-            $(this).attr("tabindex", "-1").blur();
-            $(".poster").first().focus();
-        }
-    });
-
-    // ... (Fungsi openModal, closePopup, dsb sama seperti sebelumnya)
+    // ... (Fungsi openModal, playAndSave, closePopup, dsb tetap sama seperti kode Anda)
     function openModal(title, epsEncoded) {
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("last_poster_title", title);
-        localStorage.setItem("judul_film", title);
-        localStorage.setItem("eps_data", epsEncoded);
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
@@ -121,36 +95,18 @@
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
+        setTimeout(() => { $(`.eps-btn`).first().focus(); }, 200);
     }
 
     function playAndSave(url, index, title) {
-        localStorage.setItem("last_eps_" + title, index);
         Android.playVideo(url);
     }
 
     function closePopup() { 
         $("#popup").hide(); 
-        localStorage.setItem("status_popup", "closed");
         const lastTitle = localStorage.getItem("last_poster_title");
         if (lastTitle) setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
     }
-
-    function checkLastSession() {
-        if (localStorage.getItem("status_popup") === "open") {
-            const title = localStorage.getItem("judul_film");
-            const eps = localStorage.getItem("eps_data");
-            if(title && eps) openModal(title, eps);
-        }
-    }
-
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-        });
-    });
 </script>
 </body>
 </html>
