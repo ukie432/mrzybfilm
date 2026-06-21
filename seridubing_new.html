@@ -54,13 +54,13 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // Navigasi Remote: Kanan ke X, Kiri kembali ke List
     $(document).on('keydown', function(e) {
         if (e.keyCode == 39 && document.activeElement.classList.contains('eps-btn')) {
             $('.close-x').focus();
         }
         else if (e.keyCode == 37 && document.activeElement.classList.contains('close-x')) {
-            const lastIdx = localStorage.getItem("last_eps_index") || 0;
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
     });
@@ -93,7 +93,7 @@
         
         eps.forEach((e, index) => {
             $("#eps-list").append(`
-                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index})">
+                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title}')">
                     ${e.ep}
                 </button>
             `);
@@ -101,15 +101,16 @@
         
         $("#popup").css("display", "flex");
         
-        // Fokus ke episode terakhir yang disimpan
-        const lastIdx = localStorage.getItem("last_eps_index") || 0;
+        // Ambil indeks berdasarkan judul film spesifik
+        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
         setTimeout(() => {
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }, 200);
     }
 
-    function playAndSave(url, index) {
-        localStorage.setItem("last_eps_index", index);
+    function playAndSave(url, index, title) {
+        // Simpan indeks dengan key unik per film
+        localStorage.setItem("last_eps_" + title, index);
         Android.playVideo(url);
     }
 
