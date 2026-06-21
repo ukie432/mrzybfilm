@@ -37,7 +37,6 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // 1. Memuat Data
     fetch(jsonUrl)
         .then(response => { if (!response.ok) throw new Error("404"); return response.json(); })
         .then(data => {
@@ -49,14 +48,11 @@
                     </div>
                 `);
             });
-            // Cek localStorage setelah data selesai dimuat
             checkLastSession();
         })
         .catch(err => console.error("Gagal load:", err));
 
-    // 2. Fungsi Modal
     function openModal(title, epsEncoded) {
-        // Simpan ke localStorage agar diingat saat kembali dari player
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("judul_film", title);
         localStorage.setItem("eps_data", epsEncoded);
@@ -76,7 +72,6 @@
         localStorage.setItem("status_popup", "closed");
     }
 
-    // 3. Logika "Anti-Gagal" (Auto-Resume)
     function checkLastSession() {
         setTimeout(function() {
             if (localStorage.getItem("status_popup") === "open") {
@@ -87,7 +82,6 @@
         }, 300);
     }
 
-    // 4. Logika Pencarian
     $("#search").on("input", function() {
         const keyword = $(this).val().toLowerCase();
         $(".poster").each(function() {
