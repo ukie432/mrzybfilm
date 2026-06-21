@@ -6,15 +6,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
-        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
+        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; height: 60px; }
         
-        /* Tambahkan margin-bottom pada navbar sebagai zona mati */
-        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
-        #search:focus { outline: 2px solid #00c54f; }
+        /* Wadah untuk menampung input atau placeholder */
+        #search-wrapper { width: 80%; max-width: 400px; margin: 0 auto; }
+        #search-placeholder { display: block; padding: 12px; background: #222; border-radius: 20px; color: #666; }
+        #search { width: 100%; padding: 12px; border-radius: 20px; border: none; outline: 2px solid #00c54f; box-sizing: border-box; }
         
-        /* Padding top yang besar mencegah loncatan fokus dini */
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 80px 20px 20px 20px; }
-        
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 40px 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
@@ -23,7 +22,6 @@
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
         .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
-        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
         .eps-btn:focus { background:#00c54f; color:black; outline: none; }
     </style>
@@ -31,15 +29,15 @@
 <body>
 
     <div class="navbar">
-        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan ATAS di baris 1 untuk mulai)...">
+        <div id="search-wrapper"><span id="search-placeholder">Cari (Tekan ATAS di baris 1)...</span></div>
     </div>
 
     <div class="grid" id="grid"></div>
 
     <div id="popup" onclick="closePopup()">
         <div class="popup-content" onclick="event.stopPropagation()">
-            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
-            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
+            <button class="close-x" onclick="closePopup()">X</button>
+            <h2 id="modal-title"></h2>
             <div id="eps-list"></div>
         </div>
     </div>
@@ -47,65 +45,58 @@
 <script>
     const jsonUrl = "seridubing.json";
 
+    // Navigasi Global
     $(document).on('keydown', function(e) {
-        const activeEl = document.activeElement;
-
-        // Kunci navigasi ATAS jika sudah di baris pertama
-        if (e.keyCode == 38) { 
-            if (activeEl.classList.contains('poster')) {
-                const index = $('.grid .poster').index(activeEl);
-                if (index < 5) {
-                    // Berikan sedikit delay agar fokus tidak lari saat scroll belum selesai
-                    e.preventDefault();
-                    // Aktifkan search hanya jika ditekan sekali lagi (logika trigger)
-                    $("#search").attr("tabindex", "0").focus(); 
-                    return false;
-                }
+        // Blokir tombol ATAS di baris pertama agar tidak lompat liar
+        if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
+            const index = $('.grid .poster').index(document.activeElement);
+            if (index < 5) {
+                e.preventDefault();
+                // Ganti placeholder dengan input asli
+                $("#search-wrapper").html('<input type="text" id="search" placeholder="Ketik judul...">');
+                $("#search").focus();
+                
+                // Handle saat di dalam input
+                $("#search").on('keydown', function(ev) {
+                    if (ev.keyCode == 40 || ev.keyCode == 13) {
+                        ev.preventDefault();
+                        $("#search-wrapper").html('<span id="search-placeholder">Cari (Tekan ATAS di baris 1)...</span>');
+                        $(".poster").first().focus();
+                    }
+                });
+                
+                $("#search").on("input", function() {
+                    const k = $(this).val().toLowerCase();
+                    $(".poster").each(function() { $(this).toggle($(this).data("title").toLowerCase().includes(k)); });
+                });
             }
         }
     });
 
-    // Handle search: Jika tekan BAWAH, kunci kembali agar tidak bisa difokuskan
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40 || e.keyCode == 13) {
-            e.preventDefault();
-            $(this).attr("tabindex", "-1").blur();
-            $(".poster").first().focus();
-        }
-    });
-
     fetch(jsonUrl)
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             data.forEach(item => {
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"></div>`);
             });
-            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+            setTimeout(() => $(".poster").first().focus(), 600);
         });
 
-    // ... (Fungsi openModal, playAndSave, closePopup, dsb tetap sama seperti kode Anda)
     function openModal(title, epsEncoded) {
-        localStorage.setItem("status_popup", "open");
-        localStorage.setItem("last_poster_title", title);
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach((e, index) => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+            $("#eps-list").append(`<button class="eps-btn" tabindex="0" onclick="Android.playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        setTimeout(() => { $(`.eps-btn`).first().focus(); }, 200);
-    }
-
-    function playAndSave(url, index, title) {
-        Android.playVideo(url);
+        setTimeout(() => $(".eps-btn").first().focus(), 200);
     }
 
     function closePopup() { 
         $("#popup").hide(); 
-        const lastTitle = localStorage.getItem("last_poster_title");
-        if (lastTitle) setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
+        $(".poster").first().focus();
     }
 </script>
 </body>
