@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Premium Audio Player - Fixed Remote Navigation Flow</title>
+    <title>Premium Audio Player - Multi Category & Smart Navigation</title>
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     
@@ -52,11 +52,14 @@
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* AREA PENCARIAN (SEARCH BAR) */
+        /* AREA ATAS: PENCARIAN & KATEGORI */
         .search-zone {
             padding: 15px 20px 10px 20px;
             background: rgba(0, 0, 0, 0.4);
             flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .search-box-wrapper {
@@ -87,6 +90,44 @@
             border-color: #ff0055;
             box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
             background: #161616;
+        }
+
+        /* FITUR BARU: NAVIGASI KATEGORI / GENRE TAB */
+        .category-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .category-container::-webkit-scrollbar {
+            display: none; /* Sembunyikan scrollbar kategori agar rapi */
+        }
+
+        .category-btn {
+            background: #151515;
+            border: 1px solid #252525;
+            color: #aaa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .category-btn:focus, .category-btn:hover {
+            border-color: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 0, 85, 0.3);
+        }
+
+        .category-btn.active-cat {
+            background: #ff0055;
+            color: #fff;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            font-weight: bold;
         }
 
         /* --- HEAD PLAYER (NEON DESIGN) --- */
@@ -268,7 +309,15 @@
         <div class="search-zone">
             <div class="search-box-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-input" class="search-input" placeholder="Cari musik atau nama band..." oninput="filterPlaylist()">
+                <input type="text" id="search-input" class="search-input" placeholder="Cari musik atau nama band..." oninput="filterMusic()">
+            </div>
+            
+            <div class="category-container" id="category-bar">
+                <button class="category-btn active-cat" onclick="selectCategory('all')">Semua</button>
+                <button class="category-btn" onclick="selectCategory('barat')">Barat</button>
+                <button class="category-btn" onclick="selectCategory('indonesia')">Indonesia</button>
+                <button class="category-btn" onclick="selectCategory('dangdut')">Dangdut</button>
+                <button class="category-btn" onclick="selectCategory('malaysia')">Malaysia</button>
             </div>
         </div>
         
@@ -283,7 +332,7 @@
             <div class="player-controls">
                 <button class="btn-control" id="shuffle-btn" onclick="toggleShuffle()"><i class="fas fa-random"></i></button>
                 <button class="btn-control" onclick="playPrev()"><i class="fas fa-backward"></i></button>
-                <button class="btn-control btn-play-pause" id="play-btn" onclick="togglePlay()"><i class="fas fa-play-circle"></i></button>
+                <button class="btn-control btn-play-pause" id="play-btn" id="main-play-focus" tabindex="0" onclick="togglePlay()"><i class="fas fa-play-circle"></i></button>
                 <button class="btn-control" onclick="playNext()"><i class="fas fa-forward"></i></button>
                 <button class="btn-control" id="repeat-btn" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
             </div>
@@ -298,58 +347,57 @@
     </div>
 
     <script>
-        // Database Lagu Internal
+        // Database Lagu Internal yang sudah dikelompokkan berdasarkan kategori
         const tracks = [
             {
                 title: "Linkin park",
+                category: "barat",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjtgmN_rU4ewc56qSnb3FeKYqFdbuwc3M8cMHKELuOA0rj6sChH3LEg-PpoP2Vm0vAb6epf7k3fhfrVcB9nXBSqinPMv418UXdVFy1cTKlydZTOY06FynZldplcJXilxn8iNH8_X8TM2V5zros_o2J6oglux_UK8yEQOt8z9BEl6uMIofx4ruCHiutCZzip/s1478/PicRetouch_20250321_213315706.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/(TANPA%20IKLAN)%20Lagu%20Linkin%20Park%20Terbaik%20&%20Terpopuler%202023%20(%20360%20X%20640%20).mp4"
             },
             {
                 title: "Adele",
+                category: "barat",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmJPmL-x6EzToCsF0TKVX1IivqJha45s0Vmfu5kX7wwzwDYue0BR7TGHAdhXqZr-O_ShP8Nv8MD1z3Pc58b0yJuZvIK5r0WE_yudRFDHp_2-FMpUZZhlqCgYnXtPdOscIycToceSqAhQ1XdCqqb9mWvrNy0mVW-NZPhjxHL0Ukz0oPL56KkK1b9DM_uMSa/s1478/PicRetouch_20250321_213329828.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/adele%20songs%202021%20-%20Best%20Of%20Adele%20Greatest%20Hits%20Full%20Album%202021%20(%20720%20X%201280%20).mp4"
             },
             {
                 title: "Blink 182",
+                category: "barat",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJth5-0-ihIKQGFpxEHDuxErOeaXlhAmkFIa0jyQowE1OsYHNveN7YHa8BpWHKGM5KAdgCO-JcmrQoEoSS1DjGF_AbqBZtYYjBD3IBOb-3xjfzm0bxcMG6eErihCb260_tLWvgkXivHm1-kp0edxAc4fRaNvrbvqzXiGY6qy033Iw0z1ZFoiAtK-csHqJC/s1478/PicRetouch_20250321_212858772.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/b.l.i.n.k.-.1.8.2%20Greatest%20Hits,%20Full%20Album%20-%20Rock%20Music%20Playlist%202022%20(%20720%20X%201280%20).mp4"
             },
             {
                 title: "Greenday",
+                category: "barat",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4TBXraMnrTiZS53uVr-c_DIns35hRnPtUK9s_uDMJvi5sFeeE675MWUi5uuaMkXGoFwx8YsSvxq5uN7RtIrMOxFB66dXUz1fu3jXVYjrLW79h2Z33lisltjfx1Jf_ODQ0-9ge9VY7v1M7uQxnyr95n-kg8VxFXHaWtYPESaO_rk-FCRm0n94Y_n-KmM_F/s1478/PicRetouch_20250321_212913427.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Beest%20Songs%20Of%20G%20R%20E%20E%20N%20D%20A%20Y%F0%9F%8D%80%20G%20R%20E%20E%20N%20D%20A%20Y%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
             },
+            /* CONTOH PENEMPATAN KATEGORI BARU (Silakan ganti URL Cover & MP4 sesuai koleksi Anda) */
             {
-                title: "The offspring",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg23Tes3hYfh0fzaG-E85qPyPFewEH7y2j1ugHTlAMs7ByrcfhyphenhyphentUsEZSEGdC9802mMlMjX8oFXLwyFNXw91uNEjjVJJ7EO4-9GqOGCOFjBqv3OdZ__Q7Qik2IbAZbo1dEzWSHGtDGpCR_bMZt4YDajz3P1pNUw7EBrdG2r-UEutg9ww_PipsI4KSHjUw6c/s1478/PicRetouch_20250321_212926901.png",
+                title: "Peterpan / Noah Best Hits",
+                category: "indonesia",
+                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4TBXraMnrTiZS53uVr-c_DIns35hRnPtUK9s_uDMJvi5sFeeE675MWUi5uuaMkXGoFwx8YsSvxq5uN7RtIrMOxFB66dXUz1fu3jXVYjrLW79h2Z33lisltjfx1Jf_ODQ0-9ge9VY7v1M7uQxnyr95n-kg8VxFXHaWtYPESaO_rk-FCRm0n94Y_n-KmM_F/s1478/PicRetouch_20250321_212913427.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20of%20-%20Offspring%20~%20-%20The%20Offspring%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
             },
             {
-                title: "Bon jovi",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjGZDApyotIPLb-xk0zCgDq8kV9qqmoSAtFPD0PrUJPqcMYgeT4pQJnJZiL9FMWDHg_1tfTU-FSQaHWATQ6OKpYdkTUmimC9LjwiyV16pHzuK9WnK7WlZTW3AdiFd6PFlRo50WoDL04TtdZ74m8WFDnHHE5ZHgWUc_lQcGEee_h-YhLvA-3RW_Ll7w7ELUc/s1478/PicRetouch_20250321_212941289.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Bon%20Jovi%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Pearl jam",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqK8m49SYP5wxw4zAi4vYFyX3xTB4pPNIYFgJ7XK_Tqm03DMpZQlZ-I8GOVS7iEHswe96ekw4p77_TEC8-fd_JGoUt87KmE8CuC81XbmdlFfSl3yMWACfTpBtBSjatwxckDKZHHYoN3f980mUU7YfTHIS_WahmMlXActPDERKAa9c7xUOLcejWmtf559BJ/s1478/PicRetouch_20250321_212954998.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Pearl%20Jam%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Oasis",
-                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYdyzvFUNQ7ILbSTSurGA9dU7T4bgERPv6j92bnzy8VFzH_lw-xvZ8gkVtYhUN2mlwmRZwiGIE4g_hdEaDNVziP_xjjX7fP5EgsrXGSPRzYDT52XUAu_onO3eBXW1eXLS9Bu8k-YAwkKzOTQEguslrtNg73qxGFzejhmXA-lj_4I8ny3ZAoaXVObZQryHp/s1478/PicRetouch_20250321_213010457.png",
-                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Songs%20of%20Oasis%20-%20Oasis%20Greatest%20Hits%20Full%20Album%20-%20Oasis%20Collection%20New%20(%20720%20X%201280%20).mp4"
-            },
-            {
-                title: "Scorpions",
+                title: "Dangdut Koplo Terbaru",
+                category: "dangdut",
                 cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhB0-kzwdaF-EuYDWEWKRQwhzK3ou9G6q_ByUHbEDU0TxRAyBjzC-efpqMsmX8u3-MctykTfb7LAtcQITQXV-5QYoMIIdhpoXDq3GtVRuAxs6OT15xKIWI1tfJFVTY6JeWVobNFVQqZwUy0m6RJpB55F6J3nFK4OGQH-piTzn14lpv0A48EZSeELiHmcgZX/s1478/PicRetouch_20250321_213028370.png",
                 url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/full%20album%20lagu%20scorpions%20enak%20di%20dengar%20buat%20pengantar%20tidur%20(%20240%20X%20426%20).mp4"
+            },
+            {
+                title: "Exist & Slam Slow Rock",
+                category: "malaysia",
+                cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYdyzvFUNQ7ILbSTSurGA9dU7T4bgERPv6j92bnzy8VFzH_lw-xvZ8gkVtYhUN2mlwmRZwiGIE4g_hdEaDNVziP_xjjX7fP5EgsrXGSPRzYDT52XUAu_onO3eBXW1eXLS9Bu8k-YAwkKzOTQEguslrtNg73qxGFzejhmXA-lj_4I8ny3ZAoaXVObZQryHp/s1478/PicRetouch_20250321_213010457.png",
+                url: "https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Songs%20of%20Oasis%20-%20Oasis%20Greatest%20Hits%20Full%20Album%20-%20Oasis%20Collection%20New%20(%20720%20X%201280%20).mp4"
             }
         ];
 
         let currentTrackIndex = 0;
         let isShuffle = false;
         let isRepeat = false;
+        let selectedCategory = "all"; // Status Kategori Aktif
 
         const audio = document.getElementById('main-audio');
         const playBtn = document.getElementById('play-btn');
@@ -364,21 +412,50 @@
         const ambientLayer = document.getElementById('ambient-layer');
         const searchInput = document.getElementById('search-input');
 
-        // Render Playlist Utama
-        function loadPlaylist(filteredTracks = tracks) {
+        // Render Playlist Berdasarkan Filter Teks & Kategori Aktif
+        function filterMusic() {
+            const query = searchInput.value.toLowerCase().trim();
+            
+            const filtered = tracks.filter(track => {
+                const matchQuery = track.title.toLowerCase().includes(query);
+                const matchCategory = (selectedCategory === "all" || track.category === selectedCategory);
+                return matchQuery && matchCategory;
+            });
+
+            loadPlaylistView(filtered);
+        }
+
+        // Ganti Kategori & Update Visual Tab Aktif
+        function selectCategory(catName) {
+            selectedCategory = catName;
+            
+            // Atur gaya tombol aktif
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(`'${catName}'`)) {
+                    btn.classList.add('active-cat');
+                } else {
+                    btn.classList.remove('active-cat');
+                }
+            });
+
+            filterMusic();
+        }
+
+        // Tampilkan Komponen Lagu ke Layar TV
+        function loadPlaylistView(targetTracks) {
             playlistContainer.innerHTML = "";
             
-            if (filteredTracks.length === 0) {
-                playlistContainer.innerHTML = `<div class="no-result">Lagu tidak ditemukan...</div>`;
+            if (targetTracks.length === 0) {
+                playlistContainer.innerHTML = `<div class="no-result">Lagu tidak ditemukan di kategori ini...</div>`;
                 return;
             }
 
-            filteredTracks.forEach((track) => {
+            targetTracks.forEach((track) => {
                 const originalIndex = tracks.findIndex(t => t.url === track.url);
                 
                 const item = document.createElement('div');
                 item.className = `playlist-item ${originalIndex === currentTrackIndex ? 'active' : ''}`;
-                
                 item.setAttribute('tabindex', '0'); 
                 item.setAttribute('onclick', `selectTrack(${originalIndex})`);
                 
@@ -394,14 +471,6 @@
             });
         }
 
-        // Engine Filter Pencarian Lagu
-        function filterPlaylist() {
-            const query = searchInput.value.toLowerCase().trim();
-            const filtered = tracks.filter(track => track.title.toLowerCase().includes(query));
-            loadPlaylist(filtered);
-        }
-
-        // Memuat Lagu Terpilih & Sinkronisasi Ambient Latar Belakang
         function loadTrack(index) {
             currentTrackIndex = index;
             audio.src = tracks[index].url;
@@ -409,11 +478,10 @@
             playerCover.src = tracks[index].cover;
             
             ambientLayer.style.backgroundImage = `url('${tracks[index].cover}')`;
-            
             progressBar.style.width = "0%";
             playerTime.innerText = "00:00 / 00:00";
             
-            loadPlaylist(tracks.filter(track => track.title.toLowerCase().includes(searchInput.value.toLowerCase().trim())));
+            filterMusic();
         }
 
         function togglePlay() {
@@ -491,29 +559,31 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // --- SOLUSI PERBAIKAN NAVIGASI REMOTE TV ---
+        // --- SISTEM NAVIGASI TOMBOL REMOTE TV ANTI JURANG ---
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
-                // Maju 10 Detik
                 e.preventDefault();
                 if (!audio.duration || isNaN(audio.duration)) return;
                 let newTime = audio.currentTime + 10;
                 if (newTime > audio.duration) newTime = audio.duration;
                 audio.currentTime = newTime;
             } else if (e.key === 'ArrowLeft') {
-                // Mundur 10 Detik
                 e.preventDefault();
                 if (!audio.duration || isNaN(audio.duration)) return;
                 let newTime = audio.currentTime - 10;
                 if (newTime < 0) newTime = 0;
                 audio.currentTime = newTime;
             } else if (e.key === 'ArrowDown') {
-                // KUNCI PERBAIKAN: Jika menekan Bawah, paksa fokus pindah ke playlist baris pertama
+                // SANGAT PENTING: Jika pengguna menekan BAWAH di bar musik, loloskan langsung ke item lagu teratas
                 e.preventDefault();
                 const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
                 if (firstPlaylistItem) {
                     firstPlaylistItem.focus();
                 }
+            } else if (e.key === 'ArrowUp') {
+                // Navigasi ke atas kembali ke tombol Play utama
+                e.preventDefault();
+                document.getElementById('play-btn').focus();
             }
         });
 
@@ -527,7 +597,7 @@
         });
 
         window.onload = () => {
-            loadPlaylist();
+            filterMusic();
             loadTrack(0);
         };
     </script>
