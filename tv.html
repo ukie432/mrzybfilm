@@ -30,7 +30,6 @@
     </div>
 
     <script>
-        // Sesuaikan URL JSON Anda di sini
         const JSON_URL = "data/tv.json"; 
         let allChannels = [];
 
@@ -51,9 +50,9 @@
                 card.className = 'focusable';
                 card.tabIndex = 0;
                 
-                // MENYIMPAN DATA (Termasuk menangani jika 'drm' di JSON bernilai null)
-                card.setAttribute('data-url', channel.url || '');
-                card.setAttribute('data-name', channel.name || '');
+                // Menyimpan data ke attribute
+                card.setAttribute('data-url', channel.url || "");
+                card.setAttribute('data-name', channel.name || "");
                 card.setAttribute('data-drm-scheme', (channel.drm && channel.drm.scheme) ? channel.drm.scheme : "");
                 card.setAttribute('data-drm-keys', (channel.drm && channel.drm.keys) ? channel.drm.keys : "");
 
@@ -71,19 +70,17 @@
             });
         }
 
-        // FUNGSI INI WAJIB MENGIRIM 4 PARAMETER
+        // FUNGSI INI WAJIB MENGIRIM 4 PARAMETER KE ANDROID
         function playChannel(element) {
             const url = element.getAttribute('data-url');
             const name = element.getAttribute('data-name');
-            const drmScheme = element.getAttribute('data-drm-scheme');
-            const drmKeys = element.getAttribute('data-drm-keys');
+            const scheme = element.getAttribute('data-drm-scheme');
+            const keys = element.getAttribute('data-drm-keys');
 
-            if (window.Android && typeof window.Android.playVideo === "function") {
-                // Mengirim 4 parameter ke Java
-                window.Android.playVideo(url, name, drmScheme, drmKeys);
+            if (window.Android) {
+                window.Android.playVideo(url, name, scheme, keys);
             } else {
-                console.log("Mode Browser: Memutar " + name);
-                alert("Mode Browser: " + name);
+                console.log("Android Bridge tidak ditemukan.");
             }
         }
 
