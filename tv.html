@@ -172,20 +172,18 @@
         </div>
     </header>
 
-    <!-- Kategori Bar (Diisi Otomatis: Semua, Channel Lokal, Movies & Entertaiment, Channel Anak) -->
     <div class="category-bar" id="categoryBar">
         <button class="cat-btn active" data-category="all" tabindex="0">Semua</button>
     </div>
 
-    <!-- Grid Konten -->
     <div class="main-content" id="scrollContainer">
         <div class="status-msg" id="statusMsg">Memuat saluran...</div>
         <div class="poster-grid" id="posterGrid"></div>
     </div>
 
     <script>
-        // GANTI INI DENGAN LINK RAW GITHUB JSON ANDA
-        const JSON_URL = "data/tv.json"; 
+        // MASUKKAN URL RAW JSON GITHUB ANDA DI SINI
+        const JSON_URL = "https://ukie432.github.io/playlistmytv.json"; 
 
         let allChannels = [];
         let filteredChannels = [];
@@ -375,19 +373,29 @@
             });
         }
 
-        // 5. Integrasi Langsung ke Android Studio (Tanpa Pop-up Alert Browser)
+        // 5. Integrasi Penuh ke Android Studio (Mengirimkan 6 Parameter Wajib)
         function playChannel(element) {
-            const name = element.getAttribute('data-name');
-            const url = element.getAttribute('data-url');
-            const drmScheme = element.getAttribute('data-drm-scheme');
-            const drmKeys = element.getAttribute('data-drm-keys');
+            const name = element.getAttribute('data-name') || '';
+            const url = element.getAttribute('data-url') || '';
+            const drmScheme = element.getAttribute('data-drm-scheme') || '';
+            const drmKeys = element.getAttribute('data-drm-keys') || '';
+            
+            // Mencari data headers tambahan (User-Agent & Referer) secara otomatis dari JSON
+            const channelData = allChannels.find(c => c.url === url && c.name === name);
+            let userAgent = '';
+            let referer = '';
+            
+            if (channelData && channelData.headers) {
+                userAgent = channelData.headers['User-Agent'] || '';
+                referer = channelData.headers['Referer'] || '';
+            }
 
             try {
                 if (window.AndroidInterface) {
-                    // Melempar langsung ke Player Aplikasi Android Anda
-                    window.AndroidInterface.playVideo(url, name, drmScheme, drmKeys);
+                    // Wajib disamakan urutan parameternya di Android Studio
+                    window.AndroidInterface.playVideo(url, name, drmScheme, drmKeys, userAgent, referer);
                 } else {
-                    console.log(`Mode Browser - Memutar: ${name} | URL: ${url}`);
+                    console.log(`Mode Browser - Memutar: ${name}\nURL: ${url}\nUA: ${userAgent}\nRef: ${referer}`);
                 }
             } catch (e) {
                 console.error("Gagal memanggil AndroidInterface:", e);
