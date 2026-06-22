@@ -5,385 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern TV Online Dashboard</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: #0c0c0d;
-            color: #ffffff;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden; /* Kontrol scroll penuh via JavaScript remote */
-            padding: 30px 50px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* HEADER & SEARCH */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #e50914;
-            letter-spacing: 1px;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        .search-input {
-            background-color: #1a1a1c;
-            border: 2px solid transparent;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 30px;
-            width: 350px;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-
-        /* KATEGORI BAR */
-        .category-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            overflow-x: auto;
-            padding: 5px 0;
-        }
-
-        .category-bar::-webkit-scrollbar { display: none; }
-
-        .cat-btn {
-            background-color: #1a1a1c;
-            color: #aaa;
-            border: 2px solid transparent;
-            padding: 10px 25px;
-            border-radius: 20px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        /* POSTER GRID (Pasti 5 Kolom ke Samping) */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .main-content::-webkit-scrollbar { display: none; }
-
-        .poster-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); /* Tepat 5 kolom ke samping */
-            gap: 25px;
-            padding-bottom: 50px;
-        }
-
-        /* STYLING KARTU POSTER */
-        .focusable {
-            background-color: #161618;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 3px solid transparent;
-            transition: transform 0.25s cubic-bezier(0.2, 1, 0.2, 1), border-color 0.25s, box-shadow 0.25s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Aspek Rasio Poster Vertikal Modern (2:3) */
-        .poster-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 140%; /* Mengunci rasio vertikal */
-            background-color: #101012;
-        }
-
-        .focusable img {
-            position: absolute;
-            top: 5%;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            object-fit: contain; /* Agar logo TV tidak terpotong/gepeng meskipun rasio vertikal */
-        }
-
-        .channel-info {
-            padding: 12px;
-            background: linear-gradient(to top, #161618 80%, rgba(22, 22, 24, 0));
-        }
-
-        .channel-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: center;
-        }
-
-        .channel-cat {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 4px;
-            text-align: center;
-        }
-
-        /* EFEK FOKUS REMOTE */
-        .focusable:focus, .search-input:focus, .cat-btn:focus {
-            outline: none;
-            border-color: #e50914;
-            background-color: #222226;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(229, 9, 20, 0.5);
-        }
-        
-        .cat-btn:focus { transform: scale(1.08); background-color: #e50914; color: #fff; }
-        .cat-btn.active { background-color: #e50914; color: #fff; }
-
-        .status-msg {
-            text-align: center;
-            font-size: 1.3rem;
-            color: #666;
-            margin-top: 100px;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0c0c0d; color: #ffffff; font-family: 'Segoe UI', sans-serif; overflow: hidden; padding: 30px 50px; display: flex; flex-direction: column; height: 100vh; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .logo { font-size: 2rem; font-weight: 800; color: #e50914; }
+        .search-input { background-color: #1a1a1c; color: #fff; padding: 12px 20px; border-radius: 30px; width: 350px; border: 2px solid transparent; }
+        .poster-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 25px; padding-bottom: 50px; }
+        .focusable { background-color: #161618; border-radius: 12px; overflow: hidden; border: 3px solid transparent; cursor: pointer; transition: 0.2s; }
+        .poster-wrapper { position: relative; width: 100%; padding-top: 140%; }
+        .focusable img { position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; object-fit: contain; }
+        .channel-info { padding: 12px; text-align: center; }
+        .focusable:focus { border-color: #e50914; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">LIVE TV</div>
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchBox" placeholder="Cari saluran TV..." tabindex="0">
-        </div>
+        <input type="text" class="search-input" id="searchBox" placeholder="Cari saluran...">
     </header>
 
-    <div class="category-bar" id="categoryBar">
-        <button class="cat-btn active" data-category="all" tabindex="0">Semua</button>
-    </div>
-
     <div class="main-content" id="scrollContainer">
-        <div class="status-msg" id="statusMsg">Memuat saluran...</div>
         <div class="poster-grid" id="posterGrid"></div>
     </div>
 
     <script>
-        // Memakai URL playlistmytv Anda
-        const JSON_URL = "data/tv.json"; 
-
+        const JSON_URL = "data/tv.json"; // Pastikan path ini benar
         let allChannels = [];
-        let filteredChannels = [];
-        let currentCategory = "all";
-        let searchQuery = "";
-        
-        let focusableElements = [];
-        let activeIndex = 0;
 
         async function loadData() {
             try {
                 const response = await fetch(JSON_URL);
                 allChannels = await response.json();
-                filteredChannels = allChannels;
-
-                document.getElementById('statusMsg').style.display = 'none';
-                
-                buildCategories();
-                renderGrid();
-                initRemoteNavigation();
-            } catch (error) {
-                document.getElementById('statusMsg').innerText = "Gagal memuat data JSON.";
-                console.error(error);
-            }
+                renderGrid(allChannels);
+            } catch (error) { console.error(error); }
         }
 
-        // 1. Membuat Menu Kategori Otomatis dari properti "group" di JSON
-        function buildCategories() {
-            const catBar = document.getElementById('categoryBar');
-            const categories = [...new Set(allChannels.map(item => item.group).filter(Boolean))];
-            
-            categories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'cat-btn';
-                btn.tabIndex = 0;
-                btn.innerText = cat;
-                btn.setAttribute('data-category', cat);
-                
-                btn.addEventListener('click', () => selectCategory(cat, btn));
-                catBar.appendChild(btn);
-            });
-        }
-
-        // 2. Render Grid 5 Poster per Baris
-        function renderGrid() {
+        function renderGrid(channels) {
             const grid = document.getElementById('posterGrid');
             grid.innerHTML = "";
 
-            filteredChannels = allChannels.filter(channel => {
-                const matchCategory = (currentCategory === "all" || channel.group === currentCategory);
-                const matchSearch = channel.name.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchCategory && matchSearch;
-            });
-
-            if(filteredChannels.length === 0) {
-                document.getElementById('statusMsg').style.display = 'block';
-                document.getElementById('statusMsg').innerText = "Saluran tidak ditemukan.";
-                return;
-            } else {
-                document.getElementById('statusMsg').style.display = 'none';
-            }
-
-            filteredChannels.forEach((channel) => {
-                const logoUrl = channel.logo ? channel.logo : `https://via.placeholder.com/300x450/161618/ffffff?text=${encodeURIComponent(channel.name)}`;
-                
+            channels.forEach((channel) => {
                 const card = document.createElement('div');
                 card.className = 'focusable';
                 card.tabIndex = 0;
                 
-                // Menyimpan data URL asli ke attribute elemen HTML
+                // SIMPAN DATA KE ATTRIBUTE
                 card.setAttribute('data-url', channel.url || '');
+                card.setAttribute('data-name', channel.name || '');
+                card.setAttribute('data-drm-scheme', (channel.drm && channel.drm.scheme) ? channel.drm.scheme : "");
+                card.setAttribute('data-drm-keys', (channel.drm && channel.drm.keys) ? channel.drm.keys : "");
 
                 card.innerHTML = `
                     <div class="poster-wrapper">
-                        <img src="${logoUrl}" onerror="this.src='https://via.placeholder.com/300x450/161618/ffffff?text=TV'">
+                        <img src="${channel.logo}" onerror="this.src='https://via.placeholder.com/300x450/161618/ffffff?text=TV'">
                     </div>
                     <div class="channel-info">
                         <div class="channel-name">${channel.name}</div>
-                        <div class="channel-cat">${channel.group || 'Live TV'}</div>
                     </div>
                 `;
 
                 card.addEventListener('click', () => playChannel(card));
                 grid.appendChild(card);
             });
-
-            updateFocusableList();
         }
 
-        function selectCategory(cat, element) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            if(element) element.classList.add('active');
-            renderGrid();
-        }
-
-        // 3. Update Daftar Elemen Interaktif untuk Remote
-        function updateFocusableList() {
-            focusableElements = [
-                document.getElementById('searchBox'),
-                ...document.querySelectorAll('.cat-btn'),
-                ...document.querySelectorAll('.poster-grid .focusable')
-            ];
-        }
-
-        // 4. Sistem Navigasi D-Pad
-        function initRemoteNavigation() {
-            updateFocusableList();
-            if(focusableElements.length > 0) focusableElements[activeIndex].focus();
-
-            const searchBox = document.getElementById('searchBox');
-            searchBox.addEventListener('input', (e) => {
-                searchQuery = e.target.value;
-                renderGrid();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                updateFocusableList();
-                const currentEl = document.activeElement;
-                let index = focusableElements.indexOf(currentEl);
-                if (index === -1) index = activeIndex;
-
-                let nextIndex = index;
-                const columns = 5; 
-
-                const isSearchBar = currentEl.id === 'searchBox';
-                const isCategory = currentEl.classList.contains('cat-btn');
-                const isPoster = currentEl.classList.contains('focusable');
-
-                switch (e.key) {
-                    case 'ArrowRight':
-                        if (isSearchBar) return; 
-                        if (index < focusableElements.length - 1) nextIndex++;
-                        break;
-                    case 'ArrowLeft':
-                        if (isSearchBar) return;
-                        if (index > 0) nextIndex--;
-                        break;
-                    case 'ArrowDown':
-                        if (isSearchBar) {
-                            nextIndex = focusableElements.findIndex(el => el.classList.contains('cat-btn'));
-                        } else if (isCategory) {
-                            nextIndex = focusableElements.findIndex(el => el.classList.contains('focusable'));
-                        } else if (isPoster) {
-                            if (index + columns < focusableElements.length) {
-                                nextIndex = index + columns;
-                            } else {
-                                nextIndex = focusableElements.length - 1; 
-                            }
-                        }
-                        break;
-                    case 'ArrowUp':
-                        if (isPoster) {
-                            const firstPosterIndex = focusableElements.findIndex(el => el.classList.contains('focusable'));
-                            if (index - columns >= firstPosterIndex) {
-                                nextIndex = index - columns; 
-                            } else {
-                                nextIndex = focusableElements.findIndex(el => el.classList.contains('cat-btn'));
-                            }
-                        } else if (isCategory) {
-                            nextIndex = 0; 
-                        }
-                        break;
-                    case 'Enter':
-                        if (isCategory) {
-                            currentEl.click();
-                        } else if (isPoster) {
-                            playChannel(currentEl);
-                        }
-                        return;
-                    default:
-                        return;
-                }
-
-                if (focusableElements[nextIndex]) {
-                    activeIndex = nextIndex;
-                    focusableElements[activeIndex].focus();
-                    
-                    if(isPoster || isCategory) {
-                        focusableElements[activeIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                    }
-                    e.preventDefault();
-                }
-            });
-        }
-
-        // 5. PENYESUAIAN KHUSUS: Mengikuti struktur "Android.playVideo(url)" dari MainActivity Anda
+        // FUNGSI INI MENGIRIM 4 PARAMETER KE ANDROID STUDIO
         function playChannel(element) {
-            const url = element.getAttribute('data-url') || '';
+            const url = element.getAttribute('data-url');
+            const name = element.getAttribute('data-name');
+            const drmScheme = element.getAttribute('data-drm-scheme');
+            const drmKeys = element.getAttribute('data-drm-keys');
 
-            try {
-                // Menyesuaikan dengan: webView.addJavascriptInterface(..., "Android")
-                if (window.Android && typeof window.Android.playVideo === "function") {
-                    // Mengirimkan tepat 1 parameter String URL saja sesuai MainActivity Java Anda
-                    window.Android.playVideo(url);
-                } else {
-                    console.log(`Mode Browser - Memutar URL: ${url}`);
-                }
-            } catch (e) {
-                console.error("Kesalahan pengiriman ke Android Studio:", e);
+            if (window.Android && typeof window.Android.playVideo === "function") {
+                window.Android.playVideo(url, name, drmScheme, drmKeys);
+            } else {
+                console.log("Android bridge tidak ditemukan");
             }
         }
 
