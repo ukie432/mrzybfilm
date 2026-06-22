@@ -182,6 +182,7 @@
     </div>
 
     <script>
+        // Memakai URL playlistmytv Anda
         const JSON_URL = "data/tv.json"; 
 
         let allChannels = [];
@@ -245,14 +246,15 @@
                 document.getElementById('statusMsg').style.display = 'none';
             }
 
-            filteredChannels.forEach((channel, idx) => {
+            filteredChannels.forEach((channel) => {
                 const logoUrl = channel.logo ? channel.logo : `https://via.placeholder.com/300x450/161618/ffffff?text=${encodeURIComponent(channel.name)}`;
                 
                 const card = document.createElement('div');
                 card.className = 'focusable';
                 card.tabIndex = 0;
-                // Kita simpan indeks posisi data asli agar mudah ditarik saat diklik
-                card.setAttribute('data-index', allChannels.indexOf(channel));
+                
+                // Menyimpan data URL asli ke attribute elemen HTML
+                card.setAttribute('data-url', channel.url || '');
 
                 card.innerHTML = `
                     <div class="poster-wrapper">
@@ -368,25 +370,20 @@
             });
         }
 
-        // 5. Integrasi Menggunakan Format JSON String (Paling Aman & Anti Gagal)
+        // 5. PENYESUAIAN KHUSUS: Mengikuti struktur "Android.playVideo(url)" dari MainActivity Anda
         function playChannel(element) {
-            const dataIdx = element.getAttribute('data-index');
-            const targetChannel = allChannels[dataIdx];
-
-            if (!targetChannel) return;
-
-            // Memaketkan seluruh isi objek channel menjadi 1 baris teks JSON rapi
-            const jsonString = JSON.stringify(targetChannel);
+            const url = element.getAttribute('data-url') || '';
 
             try {
-                if (window.AndroidInterface && typeof window.AndroidInterface.playVideo === "function") {
-                    // Hanya mengirim 1 data teks ke Android Studio
-                    window.AndroidInterface.playVideo(jsonString);
+                // Menyesuaikan dengan: webView.addJavascriptInterface(..., "Android")
+                if (window.Android && typeof window.Android.playVideo === "function") {
+                    // Mengirimkan tepat 1 parameter String URL saja sesuai MainActivity Java Anda
+                    window.Android.playVideo(url);
                 } else {
-                    console.log("Mode Browser - Data Terkirim:", jsonString);
+                    console.log(`Mode Browser - Memutar URL: ${url}`);
                 }
             } catch (e) {
-                console.error("Gagal interaksi dengan Android Studio:", e);
+                console.error("Kesalahan pengiriman ke Android Studio:", e);
             }
         }
 
