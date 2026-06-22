@@ -172,10 +172,12 @@
         </div>
     </header>
 
+    <!-- Kategori Bar (Diisi Otomatis: Semua, Channel Lokal, Movies & Entertaiment, Channel Anak) -->
     <div class="category-bar" id="categoryBar">
         <button class="cat-btn active" data-category="all" tabindex="0">Semua</button>
     </div>
 
+    <!-- Grid Konten -->
     <div class="main-content" id="scrollContainer">
         <div class="status-msg" id="statusMsg">Memuat saluran...</div>
         <div class="poster-grid" id="posterGrid"></div>
@@ -183,7 +185,7 @@
 
     <script>
         // GANTI INI DENGAN LINK RAW GITHUB JSON ANDA
-        const JSON_URL = "data/tv.json"; 
+        const JSON_URL = "https://ukie432.github.io/playlistmytv.json"; 
 
         let allChannels = [];
         let filteredChannels = [];
@@ -205,7 +207,7 @@
                 renderGrid();
                 initRemoteNavigation();
             } catch (error) {
-                document.getElementById('statusMsg').innerText = "Gagal memuat data JSON. Pastikan URL sudah benar.";
+                document.getElementById('statusMsg').innerText = "Gagal memuat data JSON.";
                 console.error(error);
             }
         }
@@ -373,17 +375,22 @@
             });
         }
 
-        // 5. Integrasi ke Android Studio
+        // 5. Integrasi Langsung ke Android Studio (Tanpa Pop-up Alert Browser)
         function playChannel(element) {
             const name = element.getAttribute('data-name');
             const url = element.getAttribute('data-url');
             const drmScheme = element.getAttribute('data-drm-scheme');
             const drmKeys = element.getAttribute('data-drm-keys');
 
-            if (window.AndroidInterface) {
-                window.AndroidInterface.playVideo(url, name, drmScheme, drmKeys);
-            } else {
-                alert(`Memutar Saluran: ${name}\nURL: ${url}`);
+            try {
+                if (window.AndroidInterface) {
+                    // Melempar langsung ke Player Aplikasi Android Anda
+                    window.AndroidInterface.playVideo(url, name, drmScheme, drmKeys);
+                } else {
+                    console.log(`Mode Browser - Memutar: ${name} | URL: ${url}`);
+                }
+            } catch (e) {
+                console.error("Gagal memanggil AndroidInterface:", e);
             }
         }
 
