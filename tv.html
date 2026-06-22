@@ -182,7 +182,6 @@
     </div>
 
     <script>
-        // MASUKKAN URL RAW JSON GITHUB ANDA DI SINI
         const JSON_URL = "data/tv.json"; 
 
         let allChannels = [];
@@ -246,18 +245,14 @@
                 document.getElementById('statusMsg').style.display = 'none';
             }
 
-            filteredChannels.forEach((channel) => {
+            filteredChannels.forEach((channel, idx) => {
                 const logoUrl = channel.logo ? channel.logo : `https://via.placeholder.com/300x450/161618/ffffff?text=${encodeURIComponent(channel.name)}`;
                 
                 const card = document.createElement('div');
                 card.className = 'focusable';
                 card.tabIndex = 0;
-                card.setAttribute('data-url', channel.url);
-                card.setAttribute('data-name', channel.name);
-                if (channel.drm) {
-                    card.setAttribute('data-drm-scheme', channel.drm.scheme || '');
-                    if (channel.drm.keys) card.setAttribute('data-drm-keys', JSON.stringify(channel.drm.keys));
-                }
+                // Kita simpan indeks posisi data asli agar mudah ditarik saat diklik
+                card.setAttribute('data-index', allChannels.indexOf(channel));
 
                 card.innerHTML = `
                     <div class="poster-wrapper">
@@ -373,32 +368,25 @@
             });
         }
 
-        // 5. Integrasi Penuh ke Android Studio (Mengirimkan 6 Parameter Wajib)
+        // 5. Integrasi Menggunakan Format JSON String (Paling Aman & Anti Gagal)
         function playChannel(element) {
-            const name = element.getAttribute('data-name') || '';
-            const url = element.getAttribute('data-url') || '';
-            const drmScheme = element.getAttribute('data-drm-scheme') || '';
-            const drmKeys = element.getAttribute('data-drm-keys') || '';
-            
-            // Mencari data headers tambahan (User-Agent & Referer) secara otomatis dari JSON
-            const channelData = allChannels.find(c => c.url === url && c.name === name);
-            let userAgent = '';
-            let referer = '';
-            
-            if (channelData && channelData.headers) {
-                userAgent = channelData.headers['User-Agent'] || '';
-                referer = channelData.headers['Referer'] || '';
-            }
+            const dataIdx = element.getAttribute('data-index');
+            const targetChannel = allChannels[dataIdx];
+
+            if (!targetChannel) return;
+
+            // Memaketkan seluruh isi objek channel menjadi 1 baris teks JSON rapi
+            const jsonString = JSON.stringify(targetChannel);
 
             try {
-                if (window.AndroidInterface) {
-                    // Wajib disamakan urutan parameternya di Android Studio
-                    window.AndroidInterface.playVideo(url, name, drmScheme, drmKeys, userAgent, referer);
+                if (window.AndroidInterface && typeof window.AndroidInterface.playVideo === "function") {
+                    // Hanya mengirim 1 data teks ke Android Studio
+                    window.AndroidInterface.playVideo(jsonString);
                 } else {
-                    console.log(`Mode Browser - Memutar: ${name}\nURL: ${url}\nUA: ${userAgent}\nRef: ${referer}`);
+                    console.log("Mode Browser - Data Terkirim:", jsonString);
                 }
             } catch (e) {
-                console.error("Gagal memanggil AndroidInterface:", e);
+                console.error("Gagal interaksi dengan Android Studio:", e);
             }
         }
 
