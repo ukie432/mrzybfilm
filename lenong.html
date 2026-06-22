@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MRZYBlenong - Audio Player TV</title>
+    
+    <!-- FontAwesome untuk Icon Navigasi -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    
+    <style>
+        /* --- RESET & LAYOUT UTAMA --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0c10;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* CONTAINER UTAMA: LEBAR PENUH */
+        .music-app-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 12, 16, 0.95);
+        }
+
+        /* --- HEAD PLAYER (STEALTH DESIGN WITH CANVAS) --- */
+        .neon-player {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 30px 40px;
+            background: #06080b;
+            border-bottom: 1px solid #141923;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        /* CANVAS UNTUK EFEK SPECTRUM HIJAU */
+        #spectrum-canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .now-playing-cover, .track-info, .player-right-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        .now-playing-cover {
+            width: 90px;
+            height: 90px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #00cc66; /* WARNA HIJAU */
+            margin-right: 25px;
+        }
+
+        .track-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .time-display {
+            font-size: 14px;
+            color: #777;
+            font-family: monospace;
+        }
+
+        /* WRAPPER KANAN UNTUK MENYUSUN LOGO DI ATAS TOMBOL */
+        .player-right-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        /* LOGO WATERMARK MRZYBlenong */
+        .app-brand-logo {
+            font-size: 14px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            user-select: none;
+            border-right: 3px solid #00cc66; /* AKSEN JALUR HIJAU */
+            padding-right: 8px;
+            line-height: 1;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-control {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .btn-control:focus, .btn-control:hover {
+            color: #00cc66; /* WARNA HIJAU */
+            transform: scale(1.1);
+        }
+
+        .btn-control.active-mode {
+            color: #00cc66; /* WARNA HIJAU */
+        }
+
+        .btn-play-pause {
+            font-size: 46px;
+            color: #e0e0e0;
+        }
+        .btn-play-pause:focus, .btn-play-pause:hover {
+            color: #00cc66; /* WARNA HIJAU */
+        }
+
+        /* BAR PROGRES INTERAKTIF */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #141923;
+            cursor: pointer;
+            flex: 0 0 auto;
+            outline: none;
+            position: relative;
+            transition: all 0.2s ease;
+            z-index: 3;
+        }
+
+        .progress-container:focus {
+            background: #1a2230;
+            height: 10px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #00cc66; /* WARNA HIJAU */
+            transition: width 0.1s linear;
+        }
+
+        /* --- PLAYLIST DAFTAR LAGU MUROTTAL --- */
+        .modern-playlist {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            background: #0a0c10;
+            padding: 20px 40px 40px 40px;
+        }
+
+        .modern-playlist::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modern-playlist::-webkit-scrollbar-thumb {
+            background: #141923;
+            border-radius: 3px;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.01);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            outline: none;
+            border: 1px solid transparent;
+        }
+
+        .playlist-item:hover {
+            background: #10141d;
+        }
+
+        .playlist-item:focus {
+            background: #141a26 !important; 
+            border-color: #00cc66 !important; /* BORDER SELEKSI HIJAU */
+        }
+
+        .playlist-item.active {
+            background: rgba(0, 204, 102, 0.06);
+            border-left: 4px solid #00cc66; /* SELEKSI AKTIF HIJAU */
+        }
+
+        .item-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .item-title {
+            font-size: 18px;
+            color: #b0b5c0;
+        }
+
+        .playlist-item.active .item-title, .playlist-item:focus .item-title {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 50px 20px;
+            color: #444;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CORE AUDIO ELEMENT -->
+    <audio id="main-audio" src=""></audio>
+
+    <div class="music-app-container">
+        
+        <!-- ELEMENT BOX PLAYER (ZONA ATAS) -->
+        <div class="neon-player">
+            <canvas id="spectrum-canvas"></canvas>
+
+            <img id="player-cover" class="now-playing-cover" src="" alt="Cover">
+            
+            <div class="track-info">
+                <div id="player-title" class="track-title">Memuat data audio...</div>
+                <div id="player-time" class="time-display">00:00 / 00:00</div>
+            </div>
+
+            <div class="player-right-wrapper">
+                <div class="app-brand-logo">MRZYB.lenong</div>
+                
+                <div class="player-controls">
+                    <button class="btn-control" id="shuffle-btn" onclick="toggleShuffle()"><i class="fas fa-random"></i></button>
+                    <button class="btn-control" onclick="playPrev()"><i class="fas fa-backward"></i></button>
+                    <button class="btn-control btn-play-pause" id="play-btn" tabindex="0" onclick="togglePlay()"><i class="fas fa-play-circle"></i></button>
+                    <button class="btn-control" onclick="playNext()"><i class="fas fa-forward"></i></button>
+                    <button class="btn-control" id="repeat-btn" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container" id="progress-container" tabindex="0" onclick="setProgress(event)">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- ELEMENT PLAYLIST DAFTAR AUDIO MUROTTAL (ZONA BAWAH PENUH) -->
+        <div class="modern-playlist" id="playlist-container"></div>
+
+    </div>
+
+    <!-- --- JAVASCRIPT ENGINE --- -->
+    <script>
+        let tracks = []; 
+        let currentTrackIndex = 0;
+        let isShuffle = false;
+        let isRepeat = false;
+
+        let canvas, ctx;
+        let totalBars = 45; 
+        let barHeights = Array(totalBars).fill(0); 
+        let targetHeights = Array(totalBars).fill(0);
+
+        const audio = document.getElementById('main-audio');
+        const playBtn = document.getElementById('play-btn');
+        const playerCover = document.getElementById('player-cover');
+        const playerTitle = document.getElementById('player-title');
+        const playerTime = document.getElementById('player-time');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const playlistContainer = document.getElementById('playlist-container');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+
+        // Ambil data JSON dari URL GitHub
+        async function fetchPlaylistData() {
+            try {
+                // MASUKKAN LINK RAW GITHUB ANDA DI SINI
+                const response = await fetch('data/lenong.json');
+                if (!response.ok) {
+                    throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
+                }
+                tracks = await response.json();
+                
+                loadPlaylistView();
+                if(tracks.length > 0) {
+                    loadTrack(0);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                playerTitle.innerText = "Gagal memuat data audio";
+                playlistContainer.innerHTML = `<div class="no-result" style="color: #00cc66;">${error.message}</div>`;
+            }
+        }
+
+        // VIRTUAL SPECTRUM HIJAU ENGINE
+        function initVirtualSpectrum() {
+            canvas = document.getElementById('spectrum-canvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            animateSpectrum();
+        }
+
+        function animateSpectrum() {
+            requestAnimationFrame(animateSpectrum);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let barWidth = canvas.width / totalBars;
+            for (let i = 0; i < totalBars; i++) {
+                if (!audio.paused) {
+                    if (Math.random() > 0.88) {
+                        targetHeights[i] = Math.random() * (canvas.height - 10) + 3;
+                    }
+                } else {
+                    targetHeights[i] = 0;
+                }
+                barHeights[i] += (targetHeights[i] - barHeights[i]) * 0.15;
+                
+                // MENGGUNAKAN WARNA HIJAU TRANSPARAN ELEGAN (RGB: 0, 204, 102)
+                ctx.fillStyle = `rgba(0, 204, 102, ${barHeights[i] / (canvas.height * 1.5) + 0.15})`;
+                ctx.fillRect(i * barWidth, canvas.height - barHeights[i], barWidth - 4, barHeights[i]);
+            }
+        }
+
+        function loadPlaylistView() {
+            playlistContainer.innerHTML = "";
+            if (tracks.length === 0) {
+                playlistContainer.innerHTML = `<div class="no-result">Daftar surah tidak ditemukan...</div>`;
+                return;
+            }
+            tracks.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
+                item.setAttribute('tabindex', '0'); 
+                item.setAttribute('onclick', `selectTrack(${index})`);
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') selectTrack(index);
+                });
+                item.innerHTML = `
+                    <img class="item-cover" src="${track.cover}">
+                    <div class="item-title">${track.title}</div>
+                `;
+                playlistContainer.appendChild(item);
+            });
+        }
+
+        function loadTrack(index) {
+            if(tracks.length === 0) return;
+            currentTrackIndex = index;
+            audio.src = tracks[index].url;
+            playerTitle.innerText = tracks[index].title;
+            playerCover.src = tracks[index].cover;
+            progressBar.style.width = "0%";
+            playerTime.innerText = "00:00 / 00:00";
+            
+            // Perbarui status kelas aktif di list playlist
+            const items = playlistContainer.querySelectorAll('.playlist-item');
+            items.forEach((item, idx) => {
+                if (idx === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+                playBtn.style.color = '#00cc66';
+            } else {
+                audio.pause();
+                playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
+                playBtn.style.color = '#e0e0e0';
+            }
+        }
+
+        function selectTrack(index) {
+            loadTrack(index);
+            audio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+            playBtn.style.color = '#00cc66';
+        }
+
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            shuffleBtn.classList.toggle('active-mode', isShuffle);
+        }
+
+        function toggleRepeat() {
+            isRepeat = !isRepeat;
+            repeatBtn.classList.toggle('active-mode', isRepeat);
+        }
+
+        function playNext() {
+            if (tracks.length === 0) return;
+            if (isShuffle) {
+                let randomIndex = Math.floor(Math.random() * tracks.length);
+                selectTrack(randomIndex);
+            } else {
+                let nextIndex = currentTrackIndex + 1;
+                if (nextIndex >= tracks.length) nextIndex = 0;
+                selectTrack(nextIndex);
+            }
+        }
+
+        function playPrev() {
+            if (tracks.length === 0) return;
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = tracks.length - 1;
+            selectTrack(prevIndex);
+        }
+
+        function formatTime(secs) {
+            if (isNaN(secs) || secs === Infinity) return "00:00";
+            let min = Math.floor(secs / 60);
+            let sec = Math.floor(secs % 60);
+            if (min < 10) min = "0" + min;
+            if (sec < 10) sec = "0" + sec;
+            return min + ":" + sec;
+        }
+
+        audio.addEventListener('loadedmetadata', () => {
+            playerTime.innerText = `00:00 / ${formatTime(audio.duration)}`;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const { duration, currentTime } = audio;
+            if (duration && !isNaN(duration)) {
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                playerTime.innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+            }
+        });
+
+        function setProgress(e) {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            if(duration) audio.currentTime = (clickX / width) * duration;
+        }
+
+        progressContainer.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime + 10;
+                if (newTime > audio.duration) newTime = audio.duration;
+                audio.currentTime = newTime;
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime - 10;
+                if (newTime < 0) newTime = 0;
+                audio.currentTime = newTime;
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
+                if (firstPlaylistItem) firstPlaylistItem.focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                document.getElementById('play-btn').focus();
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            if (isRepeat) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                playNext();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+        });
+
+        window.onload = async () => {
+            await fetchPlaylistData();
+            initVirtualSpectrum(); 
+            
+            // Fokus otomatis langsung diarahkan ke daftar playlist murottal pertama kali dibuka
+            const firstItem = playlistContainer.querySelector('.playlist-item');
+            if (firstItem) firstItem.focus();
+        };
+    </script>
+</body>
+</html><img class="item-cover" src="${track.cover}">
+                    <div class="item-title">${track.title}</div>
+                `;
+                playlistContainer.appendChild(item);
+            });
+        }
+
+        function loadTrack(index) {
+            if(tracks.length === 0) return;
+            currentTrackIndex = index;
+            audio.src = tracks[index].url;
+            playerTitle.innerText = tracks[index].title;
+            playerCover.src = tracks[index].cover;
+            progressBar.style.width = "0%";
+            playerTime.innerText = "00:00 / 00:00";
+            filterMusic();
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+                playBtn.style.color = '#cc0044';
+            } else {
+                audio.pause();
+                playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
+                playBtn.style.color = '#e0e0e0';
+            }
+        }
+
+        function selectTrack(index) {
+            loadTrack(index);
+            audio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+            playBtn.style.color = '#cc0044';
+        }
+
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            shuffleBtn.classList.toggle('active-mode', isShuffle);
+        }
+
+        function toggleRepeat() {
+            isRepeat = !isRepeat;
+            repeatBtn.classList.toggle('active-mode', isRepeat);
+        }
+
+        function playNext() {
+            if (tracks.length === 0) return;
+            if (isShuffle) {
+                let randomIndex = Math.floor(Math.random() * tracks.length);
+                selectTrack(randomIndex);
+            } else {
+                let nextIndex = currentTrackIndex + 1;
+                if (nextIndex >= tracks.length) nextIndex = 0;
+                selectTrack(nextIndex);
+            }
+        }
+
+        function playPrev() {
+            if (tracks.length === 0) return;
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = tracks.length - 1;
+            selectTrack(prevIndex);
+        }
+
+        function formatTime(secs) {
+            if (isNaN(secs) || secs === Infinity) return "00:00";
+            let min = Math.floor(secs / 60);
+            let sec = Math.floor(secs % 60);
+            if (min < 10) min = "0" + min;
+            if (sec < 10) sec = "0" + sec;
+            return min + ":" + sec;
+        }
+
+        audio.addEventListener('loadedmetadata', () => {
+            playerTime.innerText = `00:00 / ${formatTime(audio.duration)}`;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const { duration, currentTime } = audio;
+            if (duration && !isNaN(duration)) {
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                playerTime.innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+            }
+        });
+
+        function setProgress(e) {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            if(duration) audio.currentTime = (clickX / width) * duration;
+        }
+
+        progressContainer.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime + 10;
+                if (newTime > audio.duration) newTime = audio.duration;
+                audio.currentTime = newTime;
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (!audio.duration || isNaN(audio.duration)) return;
+                let newTime = audio.currentTime - 10;
+                if (newTime < 0) newTime = 0;
+                audio.currentTime = newTime;
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
+                if (firstPlaylistItem) firstPlaylistItem.focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                document.getElementById('play-btn').focus();
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            if (isRepeat) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                playNext();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+        });
+
+        window.onload = async () => {
+            await fetchPlaylistData();
+            initVirtualSpectrum(); 
+            
+            const defaultCatBtn = document.getElementById('default-category');
+            if (defaultCatBtn) defaultCatBtn.focus();
+        };
+    </script>
+</body>
+</html>
