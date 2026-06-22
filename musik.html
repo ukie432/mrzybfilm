@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Premium Audio Player - JSON Powered</title>
+    <title>Premium Audio Player - Dark Stealth TV Edition</title>
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     
@@ -12,74 +12,72 @@
         html, body {
             margin: 0;
             padding: 0;
-            background-color: #0d0d0d;
-            color: #ffffff;
+            background-color: #0a0c10;
+            color: #e0e0e0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100%;
             overflow: hidden;
         }
 
-        /* CONTAINER UTAMA */
+        /* CONTAINER UTAMA: LEBAR PENUH */
         .music-app-container {
             position: fixed;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
             width: 100%;
-            max-width: 600px;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: #141414;
-            box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.9);
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 12, 16, 0.95);
         }
 
         /* AREA ATAS: PENCARIAN & KATEGORI */
         .search-zone {
-            padding: 15px 20px 10px 20px;
-            background: rgba(0, 0, 0, 0.4);
+            padding: 20px 40px 15px 40px;
+            background: #06080b;
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
+            border-bottom: 1px solid #141923;
         }
 
         .search-box-wrapper {
             position: relative;
             display: flex;
             align-items: center;
+            width: 100%;
         }
 
         .search-box-wrapper i {
             position: absolute;
-            left: 15px;
-            color: #666;
+            left: 20px;
+            color: #555;
+            font-size: 16px;
         }
 
         .search-input {
             width: 100%;
-            padding: 12px 15px 12px 40px;
-            background: #111;
-            border: 1px solid #222;
+            padding: 15px 20px 15px 55px;
+            background: #10141d;
+            border: 1px solid #1a2230;
             border-radius: 8px;
             color: #fff;
-            font-size: 14px;
+            font-size: 16px;
             outline: none;
             transition: all 0.2s ease;
         }
 
         .search-input:focus {
-            border-color: #ff0055;
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
-            background: #161616;
+            border-color: #cc0044;
+            background: #141a26;
+            box-shadow: 0 0 8px rgba(204, 0, 68, 0.3);
         }
 
         /* NAVIGASI KATEGORI / GENRE TAB */
         .category-container {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             overflow-x: auto;
             padding-bottom: 4px;
         }
@@ -88,12 +86,12 @@
         }
 
         .category-btn {
-            background: #151515;
-            border: 1px solid #252525;
-            color: #aaa;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
+            background: #10141d;
+            border: 1px solid #1a2230;
+            color: #888;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 15px;
             cursor: pointer;
             white-space: nowrap;
             outline: none;
@@ -101,37 +99,36 @@
         }
 
         .category-btn:focus, .category-btn:hover {
-            border-color: #ff0055;
+            border-color: #cc0044;
             color: #fff;
-            box-shadow: 0 0 8px rgba(255, 0, 85, 0.3);
+            background: #141a26;
         }
 
         .category-btn.active-cat {
-            background: #ff0055;
+            background: #cc0044;
             color: #fff;
-            border-color: #ff0055;
-            box-shadow: 0 0 10px #ff0055;
+            border-color: #cc0044;
             font-weight: bold;
+            box-shadow: 0 0 8px rgba(204, 0, 68, 0.4);
         }
 
-        /* --- HEAD PLAYER (NEON DESIGN) --- */
+        /* --- HEAD PLAYER (STEALTH DESIGN) --- */
         .neon-player {
             display: flex;
             align-items: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px 40px;
+            background: #080a0f;
+            border-bottom: 1px solid #141923;
             flex: 0 0 auto;
         }
 
         .now-playing-cover {
-            width: 65px;
-            height: 65px;
-            border-radius: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
             object-fit: cover;
-            border: 2px solid #ff0055;
-            box-shadow: 0 0 12px rgba(255, 0, 85, 0.4);
-            margin-right: 15px;
+            border: 1px solid #cc0044;
+            margin-right: 25px;
         }
 
         .track-info {
@@ -140,7 +137,7 @@
         }
 
         .track-title {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
             color: #fff;
             white-space: nowrap;
@@ -148,52 +145,53 @@
             text-overflow: ellipsis;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .time-display {
-            font-size: 12px;
-            color: #aaa;
+            font-size: 14px;
+            color: #777;
             font-family: monospace;
         }
 
         .player-controls {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 20px;
         }
 
         .btn-control {
             background: none;
             border: none;
-            color: #a0a0a0;
-            font-size: 16px;
+            color: #666;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             outline: none;
         }
 
         .btn-control:focus, .btn-control:hover {
-            color: #ff0055;
-            text-shadow: 0 0 12px #ff0055;
+            color: #cc0044;
             transform: scale(1.1);
         }
 
         .btn-control.active-mode {
-            color: #ff0055;
-            text-shadow: 0 0 10px #ff0055;
+            color: #cc0044;
         }
 
         .btn-play-pause {
-            font-size: 32px;
-            color: #fff;
+            font-size: 42px;
+            color: #e0e0e0;
+        }
+        .btn-play-pause:focus, .btn-play-pause:hover {
+            color: #cc0044;
         }
 
         /* BAR PROGRES INTERAKTIF */
         .progress-container {
             width: 100%;
-            height: 8px;
-            background: #222;
+            height: 6px;
+            background: #141923;
             cursor: pointer;
             flex: 0 0 auto;
             outline: none;
@@ -202,16 +200,14 @@
         }
 
         .progress-container:focus {
-            background: #333;
-            box-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
-            height: 12px;
+            background: #1a2230;
+            height: 10px;
         }
 
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #ff0055, #ff5500);
-            box-shadow: 0 0 8px #ff0055;
+            background: #cc0044;
             transition: width 0.1s linear;
         }
 
@@ -219,66 +215,69 @@
         .modern-playlist {
             flex: 1 1 auto;
             overflow-y: auto;
-            background: transparent;
-            padding-bottom: 20px;
+            background: #0a0c10;
+            padding: 10px 20px 30px 20px;
         }
 
         .modern-playlist::-webkit-scrollbar {
             width: 6px;
         }
         .modern-playlist::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+            background: #141923;
             border-radius: 3px;
         }
 
         .playlist-item {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 15px 20px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            background: transparent;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             outline: none;
+            border: 1px solid transparent;
         }
 
         .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: #10141d;
         }
 
         .playlist-item:focus {
-            background: rgba(255, 0, 85, 0.15) !important;
-            box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.3);
-            border-left: 4px solid #ff0055;
+            background: #141a26 !important; 
+            border-color: #cc0044 !important;
+            box-shadow: none;
         }
 
         .playlist-item.active {
-            background: rgba(255, 0, 85, 0.08);
-            border-left: 4px solid #ff0055;
+            background: rgba(204, 0, 68, 0.06);
+            border-left: 4px solid #cc0044;
         }
 
         .item-cover {
-            width: 45px;
-            height: 45px;
-            border-radius: 5px;
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
             object-fit: cover;
-            margin-right: 15px;
+            margin-right: 20px;
         }
 
         .item-title {
-            font-size: 15px;
-            color: #dddddd;
+            font-size: 16px;
+            color: #b0b5c0;
         }
 
         .playlist-item.active .item-title, .playlist-item:focus .item-title {
-            color: #ff0055;
+            color: #fff;
             font-weight: bold;
         }
 
         .no-result {
             text-align: center;
-            padding: 40px 20px;
-            color: #666;
-            font-size: 14px;
+            padding: 50px 20px;
+            color: #444;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -295,7 +294,7 @@
             </div>
             
             <div class="category-container" id="category-bar">
-                <button class="category-btn active-cat" onclick="selectCategory('all')">Semua</button>
+                <button id="default-category" class="category-btn active-cat" onclick="selectCategory('all')">Semua</button>
                 <button class="category-btn" onclick="selectCategory('barat')">Barat</button>
                 <button class="category-btn" onclick="selectCategory('indonesia')">Indonesia</button>
                 <button class="category-btn" onclick="selectCategory('dangdut')">Dangdut</button>
@@ -329,7 +328,7 @@
     </div>
 
     <script>
-        let tracks = []; // Database akan diisi dari file JSON otomatis
+        let tracks = []; 
         let currentTrackIndex = 0;
         let isShuffle = false;
         let isRepeat = false;
@@ -347,16 +346,16 @@
         const repeatBtn = document.getElementById('repeat-btn');
         const searchInput = document.getElementById('search-input');
 
-        // FITUR BARU: Mengambil data lagu dari file playlist.json secara internal
+        // Fungsi Load Data JSON dari URL GitHub
         async function fetchPlaylistData() {
             try {
+                // MASUKKAN LINK RAW GITHUB ANDA DI SINI
                 const response = await fetch('data/playlistmusik.json');
                 if (!response.ok) {
-                    throw new Error("Gagal memuat file JSON. Pastikan file playlist.json berada di folder yang sama.");
+                    throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
                 }
                 tracks = await response.json();
                 
-                // Jika data berhasil dimuat, inisialisasi player
                 filterMusic();
                 if(tracks.length > 0) {
                     loadTrack(0);
@@ -364,11 +363,10 @@
             } catch (error) {
                 console.error("Error:", error);
                 playerTitle.innerText = "Gagal memuat JSON";
-                playlistContainer.innerHTML = `<div class="no-result" style="color: #ff0055;">${error.message}</div>`;
+                playlistContainer.innerHTML = `<div class="no-result" style="color: #cc0044;">${error.message}</div>`;
             }
         }
 
-        // Render Playlist Berdasarkan Filter Teks & Kategori Aktif
         function filterMusic() {
             const query = searchInput.value.toLowerCase().trim();
             
@@ -381,7 +379,6 @@
             loadPlaylistView(filtered);
         }
 
-        // Ganti Kategori & Update Visual Tab Aktif
         function selectCategory(catName) {
             selectedCategory = catName;
             
@@ -397,7 +394,6 @@
             filterMusic();
         }
 
-        // Tampilkan Komponen Lagu ke Layar TV
         function loadPlaylistView(targetTracks) {
             playlistContainer.innerHTML = "";
             
@@ -443,11 +439,11 @@
             if (audio.paused) {
                 audio.play();
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
-                playBtn.style.color = '#ff0055';
+                playBtn.style.color = '#cc0044';
             } else {
                 audio.pause();
                 playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
-                playBtn.style.color = '#fff';
+                playBtn.style.color = '#e0e0e0';
             }
         }
 
@@ -455,7 +451,7 @@
             loadTrack(index);
             audio.play();
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
-            playBtn.style.color = '#ff0055';
+            playBtn.style.color = '#cc0044';
         }
 
         function toggleShuffle() {
@@ -516,7 +512,7 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // SISTEM NAVIGASI REMOTE TV ANTI MACET
+        // SISTEM NAVIGASI TOMBOL REMOTE TV
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
@@ -551,9 +547,16 @@
             }
         });
 
-        // Jalankan fetch JSON saat window selesai dimuat
-        window.onload = () => {
-            fetchPlaylistData();
+        // SISTEM AUTO-FOCUS KATEGORI "SEMUA" SAAT START
+        window.onload = async () => {
+            // Tunggu data dari GitHub selesai ditarik sepenuhnya
+            await fetchPlaylistData();
+            
+            // Berikan fokus ke kategori default "Semua"
+            const defaultCatBtn = document.getElementById('default-category');
+            if (defaultCatBtn) {
+                defaultCatBtn.focus();
+            }
         };
     </script>
 </body>
