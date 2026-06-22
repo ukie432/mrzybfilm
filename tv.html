@@ -25,12 +25,13 @@
         <input type="text" class="search-input" id="searchBox" placeholder="Cari saluran...">
     </header>
 
-    <div class="main-content" id="scrollContainer">
+    <div class="main-content">
         <div class="poster-grid" id="posterGrid"></div>
     </div>
 
     <script>
-        const JSON_URL = "data/tv.json"; // Pastikan path ini benar
+        // Sesuaikan URL JSON Anda di sini
+        const JSON_URL = "data/tv.json"; 
         let allChannels = [];
 
         async function loadData() {
@@ -38,7 +39,7 @@
                 const response = await fetch(JSON_URL);
                 allChannels = await response.json();
                 renderGrid(allChannels);
-            } catch (error) { console.error(error); }
+            } catch (error) { console.error("Error loading JSON:", error); }
         }
 
         function renderGrid(channels) {
@@ -50,7 +51,7 @@
                 card.className = 'focusable';
                 card.tabIndex = 0;
                 
-                // SIMPAN DATA KE ATTRIBUTE
+                // MENYIMPAN DATA (Termasuk menangani jika 'drm' di JSON bernilai null)
                 card.setAttribute('data-url', channel.url || '');
                 card.setAttribute('data-name', channel.name || '');
                 card.setAttribute('data-drm-scheme', (channel.drm && channel.drm.scheme) ? channel.drm.scheme : "");
@@ -70,7 +71,7 @@
             });
         }
 
-        // FUNGSI INI MENGIRIM 4 PARAMETER KE ANDROID STUDIO
+        // FUNGSI INI WAJIB MENGIRIM 4 PARAMETER
         function playChannel(element) {
             const url = element.getAttribute('data-url');
             const name = element.getAttribute('data-name');
@@ -78,9 +79,11 @@
             const drmKeys = element.getAttribute('data-drm-keys');
 
             if (window.Android && typeof window.Android.playVideo === "function") {
+                // Mengirim 4 parameter ke Java
                 window.Android.playVideo(url, name, drmScheme, drmKeys);
             } else {
-                console.log("Android bridge tidak ditemukan");
+                console.log("Mode Browser: Memutar " + name);
+                alert("Mode Browser: " + name);
             }
         }
 
