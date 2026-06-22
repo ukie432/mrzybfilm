@@ -1,0 +1,1022 @@
+[
+  {
+    "name": "INDOSIAR",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp",
+    "group": "Channel Lokal",
+    "url": "https://warningfm.github.io/v3/live/str/id/575eeb9f08dc8db.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "INDOSIAR",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp",
+    "group": "Channel Lokal",
+    "url": "http://op-group1-swiftservehd-1.dens.tv/h/h235/index.m3u8",
+    "headers": {
+      "User-Agent": "DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1",
+      "Referer": "http://dens.tv"
+    },
+    "drm": null
+  },
+  {
+    "name": "MNC TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/mnctv.webp",
+    "group": "Channel Lokal",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/mnctv/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "MNC TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/mnctv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/d6b026ad50f14b7f9af5ddd5450007d4/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+      "Referer": "https://www.visionplus.id/"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "c3004565365a42d08e3bde39a516d64e": "dbfdc0967cfbbed01dba730c99d9c14a"
+      }
+    }
+  },
+  {
+    "name": "MNC TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/mnctv.webp",
+    "group": "Channel Lokal",
+    "url": "",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "MNC TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/mnctv.webp",
+    "group": "Channel Lokal",
+    "url": "https://r-plus.sedotcw3.workers.dev/index.m3u8?id=mnctv",
+    "headers": {
+      "User-Agent": "android-R+",
+      "Referer": "https://www.rctiplus.com/"
+    },
+    "drm": null
+  },
+  {
+    "name": "ANTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Antv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/0a6c6b1534444ab4bd903af8761e6747/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+      "Referer": "https://www.visionplus.id/"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "251c384e846841abafa1f7c723d57e66": "e45b06a38cd261b74c5160f0912c042f"
+      }
+    }
+  },
+  {
+    "name": "RCTI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/rcti.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/997ce8767b604fae9fce05379b3b8b3a/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+      "Referer": "https://www.visionplus.id/"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "d386001215594043a8995db796ad9e9c": "3404792cb4c804902acdc6ca65c1a298"
+      }
+    }
+  },
+  {
+    "name": "RCTI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/rcti.webp",
+    "group": "Channel Lokal",
+    "url": "",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "RCTI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/rcti.webp",
+    "group": "Channel Lokal",
+    "url": "https://r-plus.sedotcw3.workers.dev/index.m3u8?id=rcti",
+    "headers": {
+      "User-Agent": "android-R+",
+      "Referer": "https://www.rctiplus.com/"
+    },
+    "drm": null
+  },
+  {
+    "name": "SCTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/sctv.webp",
+    "group": "Channel Lokal",
+    "url": "http://op-group1-swiftservehd-1.dens.tv/h/h217/index.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "SCTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/sctv.webp",
+    "group": "Channel Lokal",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/sctv/manifest.mpd",
+    "headers": {
+      "Referer": "https://www.indihometv.com/",
+      "User-Agent": "IndiHomeTV/8.7.12 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "drm": null
+  },
+  {
+    "name": "GTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/globaltv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/b8b9b1d5f80f45649b4a3619291551ab/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+      "Referer": "https://www.visionplus.id/"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "036e85de0bb448eeb21d39ab300da48e": "4c6f9b15dfab2a169b2b78a498c4d77d"
+      }
+    }
+  },
+  {
+    "name": "TRANS 7",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/trans7.webp",
+    "group": "Channel Lokal",
+    "url": "https://video.detik.com/trans7/smil:trans7.smil/chunklist.m3u8",
+    "headers": {
+      "User-Agent": "ExoPlayer/2.19.1 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "drm": null
+  },
+  {
+    "name": "TRANS 7",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/trans7.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/0fd7b7d368bc44bc9b4dece20acc3e33/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "78477d2156944b7cb35762a47973aa9c": "31805b3c0d03080f9ed33411258e5baf"
+      }
+    }
+  },
+  {
+    "name": "TRANS TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/transtv.webp",
+    "group": "Channel Lokal",
+    "url": "https://video.detik.com/transtv/smil:transtv.smil/chunklist.m3u8",
+    "headers": {
+      "User-Agent": "ExoPlayer/2.19.1 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "drm": null
+  },
+  {
+    "name": "TRANS TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/transtv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/7a69cfc9e135493f87ac4efd63000429/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "764e726a234a435c87a82e4a1da6a69b": "0de18199ebb3316e3aed8529e39542b7"
+      }
+    }
+  },
+  {
+    "name": "MDTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mdtv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/3aefa03d32954b678e5faab6daa04b58/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Linux; Android 13; SM-G9980) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "91dec6fd9fd84b879aacc027bf532790": "588a2214bfb91fc0150b9ac2a745cef8"
+      }
+    }
+  },
+  {
+    "name": "MDTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mdtv.webp",
+    "group": "Channel Lokal",
+    "url": "http://khano.nng.cloudns.us/live/m3u8/id/6cdb3402d11f58d.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "MDTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mdtv.webp",
+    "group": "Channel Lokal",
+    "url": "https://wahyu1ptv.pages.dev/MDTV-HD.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "RTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp",
+    "group": "Channel Lokal",
+    "url": "",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "87484c0b2a4c41b9b08249ef7817ad7f": "ff4f3f232f747e5e7f616b4741fa5c32"
+      }
+    }
+  },
+  {
+    "name": "RTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp",
+    "group": "Channel Lokal",
+    "url": "http://op-group1-swiftservehd-1.dens.tv/h/h10/index.m3u8",
+    "headers": {
+      "Referer": "http://www.dens.tv/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "RTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp",
+    "group": "Channel Lokal",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/RAJAWALI_TV/manifest.mpd",
+    "headers": {
+      "Referer": "https://www.indihometv.com/",
+      "User-Agent": "IndiHomeTV/8.7.12 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "drm": null
+  },
+  {
+    "name": "MENTARI TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mentaritv.webp",
+    "group": "Channel Lokal",
+    "url": "https://nextgenz.my.id/event/pidio/play.mpd?id=8237&type=dash",
+    "headers": {
+      "Referer": "https://www.vidio.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleCoreMedia/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "BTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp",
+    "group": "Channel Lokal",
+    "url": "https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "BTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/36d936f64cd2482ebc077567dbcf0919/index.mpd",
+    "headers": {
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "47d8c564b0eb4d6ba83f7b155c827024": "098f10e1734d00c0177bae1236db60fc"
+      }
+    }
+  },
+  {
+    "name": "MOJI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mojitv.webp",
+    "group": "Channel Lokal",
+    "url": "https://atemeshield1-voe.sysln.id/live/eds/MOJIOChannel/mediampd/MOJIOChannel.mpd",
+    "headers": {
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "drm": {
+      "scheme": "org.w3.clearkey",
+      "keys": {
+        "052861ebedab473089d0e7480d0c5b63": "4d51aa0304af98c449fdec1548a199f9"
+      }
+    }
+  },
+  {
+    "name": "MOJI",
+    "logo": "https://www.bevy.be/bevyfiles/indonesia.xml",
+    "group": "Channel Lokal",
+    "url": "https://op-group1-swiftservehd-1.dens.tv/h/h207/index.m3u8",
+    "headers": {
+      "Referer": "https://www.dens.tv/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0"
+    },
+    "drm": null
+  },
+  {
+    "name": "TVONE",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvone.webp",
+    "group": "Channel Lokal",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/f3df48faafaf4198a65b9763140fce30/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "eab667a8f7f14ff7bf00d790314a10f0": "1d6693bc942f036053fc1c3c3b3b5032"
+      }
+    }
+  },
+  {
+    "name": "TVONE",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvone.webp",
+    "group": "Channel Lokal",
+    "url": "http://op-group1-swiftservehd-1.dens.tv/h/h40/index.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TVONE",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvone.webp",
+    "group": "Channel Lokal",
+    "url": "https://flv.intechmedia.net/live/ch109.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"
+    },
+    "drm": null
+  },
+  {
+    "name": "METRO TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+    "group": "Channel Lokal",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/MetroTVHD/mediampd/MetroTVHD.mpd",
+    "headers": {
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "66744f2f3e774c339c4f812dc37737d8": "814398c6cb279eed14f1134d0ea31266"
+      }
+    }
+  },
+  {
+    "name": "METRO TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/fd4360b1c12c4375848c8f085fd51d41/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "c64493155d8b443c834a13d4970cf834": "509294911ac3c2d779ae2225a23460b4"
+      }
+    }
+  },
+  {
+    "name": "KOMPAS TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Kompastv.webp",
+    "group": "Channel Lokal",
+    "url": "http://op-group1-swiftservehd-1.dens.tv/h/h234/02.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0"
+    },
+    "drm": null
+  },
+  {
+    "name": "KOMPAS TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Kompastv.webp",
+    "group": "Channel Lokal",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/KOMPAS_TV/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "iNEWS",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Inews.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/7b0404cd6a8a4a908123f10774854e46/index.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
+      "Referer": "https://www.visionplus.id/"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "8ee7df15ff584967a3eb7b885bafc71e": "9a297bf2200eee7dee21b9ace9f57c77"
+      }
+    }
+  },
+  {
+    "name": "iNEWS",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Inews.webp",
+    "group": "Channel Lokal",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/inews/manifest.mpd",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0",
+      "Referer": "https://www.indihometv.com"
+    },
+    "drm": null
+  },
+  {
+    "name": "TVRI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp",
+    "group": "Channel Lokal",
+    "url": "https://ott-balancer.tvri.go.id/live/eds/Channel Lokal/hls/Channel Lokal.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "TVRI",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp",
+    "group": "Channel Lokal",
+    "url": "http://khano.nng.cloudns.us/live/m3u8/id/3f58825fe229a9f.m3u8",
+    "headers": {
+      "Referer": "https://www.dens.tv",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "CNN INDONESIA",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Cnnindonesia.webp",
+    "group": "Channel Lokal",
+    "url": "https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/chunklist_w528835010_b384000_sleng.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "CNBC INDONESIA",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Cnbcindonesia.webp",
+    "group": "Channel Lokal",
+    "url": "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/chunklist_w481242722_b384000_sleng.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "IDX CHANNEL",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Idx.webp",
+    "group": "Channel Lokal",
+    "url": "https://atemeshield1-voe.sysln.id/live/eds/IDXChannelHD/mediampd/IDXChannelHD.mpd",
+    "headers": {
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "1f12a0fe110248a6811faf8a0ddf19c6": "af565f760064594c755515cb6b4b6f1a"
+      }
+    }
+  },
+  {
+    "name": "IDX CHANNEL",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Idx.webp",
+    "group": "Channel Lokal",
+    "url": "https://d2xx73ro32cip.cloudfront.net/out/v1/db34a1b61f414d2181c29f1892bc8d0b/index.mpd",
+    "headers": {
+      "Referer": "https://visionplus.id"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "941717a97fe946069fd7ebc7afb48402": "305d9297ec5797e7fd8aca03142b3b7e"
+      }
+    }
+  },
+  {
+    "name": "DAAI TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Daaitv.webp",
+    "group": "Channel Lokal",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/DAAITV/mediampd/DAAITV.mpd",
+    "headers": {
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "drm": {
+      "scheme": "clearkey",
+      "keys": {
+        "dfd7c4f6420843ab9ffb1b8fdda1073a": "d99603a39c300373a2edaf4f048276be"
+      }
+    }
+  },
+  {
+    "name": "NUSANTARA TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Ntv.webp",
+    "group": "Channel Lokal",
+    "url": "https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "MAGNA CHANNEL",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Magna.webp",
+    "group": "Channel Lokal",
+    "url": "https://edge.medcom.id/live-edge/smil:magna.smil/chunklist_w657754957_b3884000_sleng.m3u8",
+    "headers": {
+      "User-Agent": "VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "drm": null
+  },
+  {
+    "name": "GARUDA TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Garudatv.webp",
+    "group": "Channel Lokal",
+    "url": "https://hgmtv.com:19360/garudatvlivestreaming/720p.m3u8",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"
+    },
+    "drm": null
+  },
+  {
+    "name": "Hits",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hits.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/333a9658ed6a4424a92e319114fb7111/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HitsMovies",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hits%20movies.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/HitsMoviesHD/mediampd/HitsMoviesHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HitsMovies",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hits%20movies.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/de93893d01e6446daaf052a7fec694fc/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "AXN",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Axn%20(1).webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/456143d3b12140e1a872b25f067ddb62/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "AXN",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Axn%20(1).webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/axn/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Galaxy",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Galaxy.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/751a0982779f4edd904205eb351e220d/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Galaxy Premium",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Galaxypremiun.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://live-channel4-cdn.visionplus.id/out/v1/45c0752c6b6b4397b80243ac9fed96fd/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "KIX",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Kix%20(1).webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/7a50d44c0a154dd29880c3728fb49a56/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Thriil",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/thrill.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/3c619ecc120b46e999d1eaa627cc544f/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Thriil",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/thrill.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/thrill/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Celestial Movies",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Celestial.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/fd25e662b7154c60a94f7c061573ba2d/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Celestial Classic Movies",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Celestialclasic.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/6bdbe6ce7f034807aba5f09bed048b05/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Zee Bioskop",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemeshield1-voe.sysln.id/live/eds/ZeeBioskop/mediampd/ZeeBioskop.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Zee Bioskop",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/81cb1af2ea4d4842a94f1c83957b4cd2/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Zee Bioskop",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/zbioskop/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TVN",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/tvn.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/6dc5412d26ea4e65961c825d866f2a34/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TvN movies HD",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/tvnmovies.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/096d5cf064294e7ea3a7f59ee2899669/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "K-Plus",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/K%2B%20(1).webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/kplus/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbo.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/hbo/hbo-avc1_2500000=7-3277707030000000.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbo.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/HBO.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO Hits",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbohits.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/HBOHits.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO Hits",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbohits.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/hbohits/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO Family",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbofamily.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/HBOFamily.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "HBO Signature",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Hbosignatur.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/HBOSignature.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Cinemax",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Cinemex.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/Cinemax.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Cinemax",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Cinemex.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/cinemax/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Warner TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/warnertv.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/warner/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Warner TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/warnertv.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/warner/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Rock Action",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Rockaction.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/010bb28c19b64975b318d3b00f58b18b/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Rock Action",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Rockaction.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/ROCK_ACTION/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Rock Entertainment",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Rockentertaen.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/RockEntertainmentHD/mediampd/RockEntertainmentHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Rock Entertainment",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Rockentertaen.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/4cae4723d4d54a7fb71020bd7939a202/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Hits Now",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/hitsnow.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemeshield1-voe.sysln.id/live/eds/HITSNowHD/mediampd/HITSNowHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Asian Food Network",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/afn.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/AFNHD/mediampd/AFNHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Asian Food Network",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/afn.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://raw.githubusercontent.com/Bluestraveller13/super-duper-spork/refs/heads/main/AFN.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TLC",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/tlc.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/TLCHD/mediampd/TLCHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Lifetime",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/lifetime.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/LifetimeHD/mediampd/LifetimeHD.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TV5 Monde Asie",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/tv5monde.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemeshield1-voe.sysln.id/live/eds/TV5Monde/mediampd/TV5Monde.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Fashion TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/fashiontv.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/FashionTV/mediampd/FashionTV.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Entertainment",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/ent.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/a90cb773466446b08595007bab12b920/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Food Travel",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/foodtravel.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/77d7eac1b90247ac9aa745bd2eb47fa8/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "CelebritiesTV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/celebritytv.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/8cf72e61626f4361a45c57ce6f2fdad8/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Hanacaraka TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/hanacaraka.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://d1vckova5fh9mt.cloudfront.net/out/v1/17c724036c5f4615bd0b8093126b5c44/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Channel Jowo",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/jowo.webp",
+    "group": "Movies & Entertaiment",
+    "url": "https://op-group1-swiftservehd-1.dens.tv/h/h77/index2.m3u8?app_type=web&userid=lite&chname=Channel_Jowo",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Cartoon Network",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Cartoon_network.jpg",
+    "group": "Channel Anak",
+    "url": "http://103.58.160.157:8278/720-CARTOONNETWORK/playlist.m3u8",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Kartoon Channel!",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Kartoon_chanel.jpg",
+    "group": "Channel Anak",
+    "url": "https://d29ecfnk3jwkp9.cloudfront.net/out/v1/f246ce87793444d9bbbc56f244ec3c2c/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "TG Junior",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Tg_junior.jpg",
+    "group": "Channel Anak",
+    "url": "https://tglmp03.akamaized.net/out/v1/a3992c3d704443c991a8586e01a4cc1c/manifest.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Nickelodeon",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Nickelodeon.jpg",
+    "group": "Channel Anak",
+    "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/3fe6d9eb97ed455c942eb8d3d1c2c2e8/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Nickelodeon Junior",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/nickelodeon_junior.jpg",
+    "group": "Channel Anak",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/27163af9499b4bcca2da96677b158efe/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "ZooMoo",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Zoomoo.jpg",
+    "group": "Channel Anak",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/8554b3cb938e44038093df2d65080932/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Moonbug",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Moonbug.jpg",
+    "group": "Channel Anak",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/198f7febb48c4c909d62977d88c195b0/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Dreamworks",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/dreamworks.jpg",
+    "group": "Channel Anak",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/7518da9041c4414d86f173daa719152e/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "FunPlanet",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Fun_planet.jpg",
+    "group": "Channel Anak",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/indikids/indikids-avc1_2500000=7-3277707030000000.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Kids TV",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Kids_tv.jpg",
+    "group": "Channel Anak",
+    "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/9041826689ae4f9c9619576d411fa989/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Cbeebies",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Cbeebies.jpg",
+    "group": "Channel Anak",
+    "url": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/2a5668fb3b9f4e34ab7c02cdc6ef56db/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "MyKidz",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Mkidz.jpg",
+    "group": "Channel Anak",
+    "url": "https://cdn10jtedge.indihometv.com/atm/DASH/mykids/mykids-avc1_2500000=7-3277707030000000.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Animax",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Animex.jpg",
+    "group": "Channel Anak",
+    "url": "https://d84q7nw4qf3j3.cloudfront.net/out/v1/ab3ef0f0e4144c3c8b7e60f1873a3bcc/index.mpd",
+    "headers": {},
+    "drm": null
+  },
+  {
+    "name": "Horee!",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/horee.jpg",
+    "group": "Channel Anak",
+    "url": "https://atemecdnbalancer-voe.sysln.id/live/eds/HoreeHD/mediampd/HoreeHD.mpd",
+    "headers": {},
+    "drm": null
+  }
+]
