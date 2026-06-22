@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Premium Audio Player - Dark Stealth TV Edition</title>
+    <title>Premium Audio Player - Dark Stealth TV Spectrum Edition</title>
     
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     
@@ -112,14 +112,34 @@
             box-shadow: 0 0 8px rgba(204, 0, 68, 0.4);
         }
 
-        /* --- HEAD PLAYER (STEALTH DESIGN) --- */
+        /* --- HEAD PLAYER (STEALTH DESIGN WITH CANVAS) --- */
         .neon-player {
+            position: relative; /* Diperlukan agar canvas spectrum bisa dipasang di background */
             display: flex;
             align-items: center;
             padding: 25px 40px;
             background: #080a0f;
             border-bottom: 1px solid #141923;
             flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        /* CANVAS UNTUK EFEK SPECTRUM */
+        #spectrum-canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px; /* Tinggi grafik spectrum */
+            z-index: 1;
+            pointer-events: none; /* Supaya tidak mengganggu klik remote */
+            opacity: 0.4; /* Redup agar tulisan di atasnya tetap terbaca dengan jelas */
+        }
+
+        /* Konten player dinaikkan layernya ke atas canvas */
+        .now-playing-cover, .track-info, .player-controls {
+            position: relative;
+            z-index: 2;
         }
 
         .now-playing-cover {
@@ -197,6 +217,7 @@
             outline: none;
             position: relative;
             transition: all 0.2s ease;
+            z-index: 3;
         }
 
         .progress-container:focus {
@@ -283,7 +304,7 @@
 </head>
 <body>
 
-    <audio id="main-audio" src=""></audio>
+    <audio id="main-audio" crossorigin="anonymous" src=""></audio>
 
     <div class="music-app-container">
         
@@ -303,6 +324,8 @@
         </div>
         
         <div class="neon-player">
+            <canvas id="spectrum-canvas"></canvas>
+
             <img id="player-cover" class="now-playing-cover" src="" alt="Cover">
             
             <div class="track-info">
@@ -334,6 +357,10 @@
         let isRepeat = false;
         let selectedCategory = "all"; 
 
+        // Variable khusus Audio Spectrum API
+        let audioContext, analyser, source, canvas, ctx, bufferLength, dataArray;
+        let isSpectrumInitialized = false;
+
         const audio = document.getElementById('main-audio');
         const playBtn = document.getElementById('play-btn');
         const playerCover = document.getElementById('player-cover');
@@ -349,7 +376,7 @@
         // Fungsi Load Data JSON dari URL GitHub
         async function fetchPlaylistData() {
             try {
-                // MASUKKAN LINK RAW GITHUB ANDA DI SINI
+                // GANTI DENGAN URL RAW GITHUB ANDA DI BAWAH INI
                 const response = await fetch('data/playlistmusik.json');
                 if (!response.ok) {
                     throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
@@ -367,6 +394,67 @@
             }
         }
 
+        // INISIALISASI AUDIO CONTEXT SPECTRUM (Harus dipicu oleh aksi interaksi user pertama kali seperti play)
+        function initSpectrum() {
+            if (isSpectrumInitialized) return;
+            
+            try {
+                canvas = document.getElementById('spectrum-canvas');
+                ctx = canvas.getContext('2d');
+                
+                // Set resolusi internal canvas sesuai ukuran layarnya
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                // Setup Web Audio API
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                // Menentukan sensitivitas & jumlah batang spectrum (64/128/256)
+                analyser.fftSize = 128; 
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                isSpectrumInitialized = true;
+                drawSpectrum(); // Jalankan loop animasi gambar spectrum
+            } catch (e) {
+                console.log("AudioContext diblokir atau gagal diinisialisasi: ", e);
+            }
+        }
+
+        // ANIMASI LOOP DRAW SPECTRUM KE CANVAS
+        function drawSpectrum() {
+            if (!isSpectrumInitialized) return;
+            
+            requestAnimationFrame(drawSpectrum);
+            
+            // Ambil data frekuensi audio real-time saat ini
+            analyser.getByteFrequencyData(dataArray);
+            
+            // Bersihkan canvas sebelum menggambar frame baru
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let barWidth = (canvas.width / bufferLength) * 1.2;
+            let barHeight;
+            let x = 0;
+            
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i] * 0.22; // Mengatur batas tinggi lompatan batang agar tidak terlalu menusuk ke atas
+                
+                // Warna spectrum menggunakan merah kalem disesuaikan dengan tema aplikasi
+                ctx.fillStyle = `rgba(204, 0, 68, ${barHeight / 40 + 0.15})`;
+                
+                // Gambar batangnya melompat dari bawah ke atas
+                ctx.fillRect(x, canvas.height - barHeight, barWidth - 4, barHeight);
+                
+                x += barWidth;
+            }
+        }
+
         function filterMusic() {
             const query = searchInput.value.toLowerCase().trim();
             
@@ -381,7 +469,6 @@
 
         function selectCategory(catName) {
             selectedCategory = catName;
-            
             const buttons = document.querySelectorAll('.category-btn');
             buttons.forEach(btn => {
                 if(btn.getAttribute('onclick').includes(`'${catName}'`)) {
@@ -390,30 +477,24 @@
                     btn.classList.remove('active-cat');
                 }
             });
-
             filterMusic();
         }
 
         function loadPlaylistView(targetTracks) {
             playlistContainer.innerHTML = "";
-            
             if (targetTracks.length === 0) {
                 playlistContainer.innerHTML = `<div class="no-result">Lagu tidak ditemukan di kategori ini...</div>`;
                 return;
             }
-
             targetTracks.forEach((track) => {
                 const originalIndex = tracks.findIndex(t => t.url === track.url);
-                
                 const item = document.createElement('div');
                 item.className = `playlist-item ${originalIndex === currentTrackIndex ? 'active' : ''}`;
                 item.setAttribute('tabindex', '0'); 
                 item.setAttribute('onclick', `selectTrack(${originalIndex})`);
-                
                 item.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') selectTrack(originalIndex);
                 });
-                
                 item.innerHTML = `
                     <img class="item-cover" src="${track.cover}">
                     <div class="item-title">${track.title}</div>
@@ -428,14 +509,18 @@
             audio.src = tracks[index].url;
             playerTitle.innerText = tracks[index].title;
             playerCover.src = tracks[index].cover;
-            
             progressBar.style.width = "0%";
             playerTime.innerText = "00:00 / 00:00";
-            
             filterMusic();
         }
 
         function togglePlay() {
+            // Aktifkan mesin spectrum saat tombol dioperasikan pertama kali
+            initSpectrum();
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             if (audio.paused) {
                 audio.play();
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
@@ -448,6 +533,10 @@
         }
 
         function selectTrack(index) {
+            initSpectrum();
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
             loadTrack(index);
             audio.play();
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
@@ -512,7 +601,6 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // SISTEM NAVIGASI TOMBOL REMOTE TV
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
@@ -529,9 +617,7 @@
             } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
-                if (firstPlaylistItem) {
-                    firstPlaylistItem.focus();
-                }
+                if (firstPlaylistItem) firstPlaylistItem.focus();
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 document.getElementById('play-btn').focus();
@@ -547,16 +633,18 @@
             }
         });
 
-        // SISTEM AUTO-FOCUS KATEGORI "SEMUA" SAAT START
-        window.onload = async () => {
-            // Tunggu data dari GitHub selesai ditarik sepenuhnya
-            await fetchPlaylistData();
-            
-            // Berikan fokus ke kategori default "Semua"
-            const defaultCatBtn = document.getElementById('default-category');
-            if (defaultCatBtn) {
-                defaultCatBtn.focus();
+        // Resize canvas otomatis jika ukuran jendela TV bergeser
+        window.addEventListener('resize', () => {
+            if (isSpectrumInitialized && canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
             }
+        });
+
+        window.onload = async () => {
+            await fetchPlaylistData();
+            const defaultCatBtn = document.getElementById('default-category');
+            if (defaultCatBtn) defaultCatBtn.focus();
         };
     </script>
 </body>
