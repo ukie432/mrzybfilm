@@ -462,8 +462,8 @@
 </a>
 </li>
             </ul>
-<div class="logout_btn">
-    <a href="javascript:void(0);" onclick="if(typeof Android !== 'undefined' && Android.closeApp){ Android.closeApp(); } else { window.close(); if(window.AndroidInside){ window.AndroidInside.close(); } }">Logout</a>
+            <div class="logout_btn">
+    <a href="javascript:void(0);" onclick="if(typeof Android !== 'undefined') { Android.confirmExit(); } else { window.close(); }">Logout</a>
 </div>
         </div>
     </div>
