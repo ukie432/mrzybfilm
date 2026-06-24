@@ -38,7 +38,7 @@
         
         .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
         
-        /* Efek Fokus */
+        /* Efek Fokus pada Poster */
         .item:focus {
             outline: none;
             border: 6px solid #FF0000 !important;
@@ -47,11 +47,20 @@
             z-index: 10;
         }
 
+        /* Label Nama Film */
         .label {
             position: absolute; bottom: -40px; width: 100%; text-align: center;
             font-weight: bold; opacity: 0; transition: 0.3s;
+            /* Warna default saat tidak fokus */
+            color: #eee; 
         }
-        .item:focus .label { opacity: 1; }
+
+        /* Warna Putih Saja saat Poster Difokuskan */
+        .item:focus .label { 
+            opacity: 1; 
+            color: #ffffff !important; /* Putih solid */
+            text-shadow: none !important; /* Menghapus bayangan agar bersih */
+        }
     </style>
 </head>
 <body>
