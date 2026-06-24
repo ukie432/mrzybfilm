@@ -5,111 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYB TV</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         
-        body { margin: 0; background-color: #000; color: #eee; font-family: 'Poppins', sans-serif; font-size: 12px; }
-        a { text-decoration: none; color: #eee; }
+        body { margin: 0; background-color: #000; color: #eee; font-family: 'Poppins', sans-serif; overflow: hidden; }
+        
+        /* Background Utama yang Sinkron */
+        .bg-container { position: absolute; inset: 0; z-index: 1; }
+        .bg-container img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: opacity 0.5s ease; opacity: 0.8;
+        }
+        .overlay { position: absolute; inset: 0; background: linear-gradient(to top, #000 10%, transparent); z-index: 2; }
 
-        .brand-logo { position: absolute; top: 20px; left: 40px; z-index: 200; pointer-events: none; }
-        .brand-logo img { height: 100px; width: auto; object-fit: contain; display: block; }
+        .brand-logo { position: absolute; top: 20px; left: 40px; z-index: 200; }
+        .brand-logo img { height: 80px; }
         
-        .carousel { height: 100vh; width: 100vw; overflow: hidden; position: relative; }
-        .carousel .list .item { position: absolute; inset: 0; }
-        .carousel .list .item img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .thumbnail { position: absolute; bottom: 50px; left: 50%; z-index: 100; display: flex; gap: 20px; }
-        
-        #digital-clock { position: absolute; top: 20px; right: 40px; z-index: 200; font-size: 15px; font-weight: 900; color: #ffffff; text-shadow: 2px 2px 0px rgba(0,0,0,0.8); letter-spacing: 2px; pointer-events: none; }
-        
-        .thumbnail .item { 
-            width: 150px; height: 225px; flex-shrink: 0; position: relative; cursor: pointer; 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 4px solid #FFFFFF; border-radius: 24px; background-color: #000;
+        #digital-clock { 
+            position: absolute; top: 20px; right: 40px; z-index: 200; 
+            font-size: 20px; font-weight: 900; text-shadow: 2px 2px 5px #000;
+        }
+
+        .thumbnail { 
+            position: absolute; bottom: 80px; width: 100%; z-index: 100; 
+            display: flex; justify-content: center; gap: 30px; 
         }
         
-        .thumbnail .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: block; }
+        .item { 
+            width: 160px; height: 240px; position: relative; cursor: pointer;
+            border: 4px solid #fff; border-radius: 20px; background: #000;
+            transition: transform 0.3s ease, border 0.3s;
+        }
         
-        /* Efek Fokus - Merah Menyala */
-        .thumbnail .item:focus {
-            outline: none; 
+        .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+        
+        /* Efek Fokus */
+        .item:focus {
+            outline: none;
             border: 6px solid #FF0000 !important;
-            box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.7); 
-            transform: scale(1.15);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+            transform: scale(1.2);
             z-index: 10;
         }
 
-        .thumbnail .item .label {
-            position: absolute; bottom: -35px; width: 100%; text-align: center; color: white;
-            font-size: 16px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            opacity: 0; transition: opacity 0.3s;
+        .label {
+            position: absolute; bottom: -40px; width: 100%; text-align: center;
+            font-weight: bold; opacity: 0; transition: 0.3s;
         }
-        .thumbnail .item:focus .label { opacity: 1; }
-
-        .arrows { position: absolute; top: 80%; left: 50%; z-index: 100; display: flex; gap: 10px; }
-        .arrows button { width: 40px; height: 40px; border-radius: 50%; background: #eee4; border: none; color: #fff; font-weight: bold; cursor: pointer; }
+        .item:focus .label { opacity: 1; }
     </style>
 </head>
 <body>
 
+    <div class="bg-container">
+        <img id="main-bg" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp">
+    </div>
+    <div class="overlay"></div>
+
     <div class="brand-logo">
-        <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="MRZYB TV">
+        <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png">
     </div>
     <div id="digital-clock">00:00</div>
 
-    <div class="carousel">
-        <div class="list">
-            <div class="item"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo2.webp"></div>
-            <div class="item"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime2.webp"></div>
-            <div class="item"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing2.webp"></div>
-        </div>
-
-        <div class="thumbnail">
-            <a href="seridubing_new.html" class="item" data-id="poster1" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp"><div class="label">Series Dubbing</div></a>   
-            <a href="seriindo.html" class="item" data-id="poster2" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo%201.webp"><div class="label">Series Indo</div></a>   
-            <a href="serianimasi.html" class="item" data-id="poster3" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp"><div class="label">Series Animasi</div></a>   
-        </div>
-
-        <div class="arrows">
-            <button id="prev">&lt;</button>
-            <button id="next">&gt;</button>
-        </div>
+    <div class="thumbnail">
+        <a href="seridubing_new.html" class="item" data-id="p1" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp" tabindex="0">
+            <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp">
+            <div class="label">Series Dubbing</div>
+        </a>   
+        <a href="seriindo.html" class="item" data-id="p2" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo%201.webp" tabindex="0">
+            <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo%201.webp">
+            <div class="label">Series Indo</div>
+        </a>   
+        <a href="serianimasi.html" class="item" data-id="p3" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp" tabindex="0">
+            <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp">
+            <div class="label">Series Animasi</div>
+        </a>   
     </div>
 
     <script>
-        // --- LOGIKA SLIDER & FOKUS ---
-        let nextDom = document.getElementById('next');
-        let prevDom = document.getElementById('prev');
-        let carouselDom = document.querySelector('.carousel');
-        let SliderDom = carouselDom.querySelector('.list');
-        let thumbnailBorderDom = document.querySelector('.thumbnail');
-
-        function showSlider(type){
-            let SliderItemsDom = SliderDom.querySelectorAll('.item');
-            let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
-            if(type === 'next'){
-                SliderDom.appendChild(SliderItemsDom[0]);
-                thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
-            } else {
-                SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
-                thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
-            }
-        }
-
-        nextDom.onclick = () => showSlider('next');
-        prevDom.onclick = () => showSlider('prev');
-
-        // --- AUDIO & FOKUS STABIL ---
+        // --- LOGIKA UTAMA ---
+        const bgImage = document.getElementById('main-bg');
         const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
-        
-        // Menggunakan Event Delegation agar fokus tetap terdengar suara meski poster berpindah
+
+        // 1. Sinkronisasi Background & Suara
         document.querySelector('.thumbnail').addEventListener('focusin', (e) => {
-            if (e.target.closest('.item')) {
+            const item = e.target.closest('.item');
+            if (item) {
+                // Ganti Background
+                const newBg = item.getAttribute('data-bg');
+                bgImage.style.opacity = 0;
+                setTimeout(() => {
+                    bgImage.src = newBg;
+                    bgImage.style.opacity = 0.8;
+                }, 200);
+
+                // Mainkan Suara
                 soundClick.currentTime = 0;
-                soundClick.play().catch(err => console.log("Menunggu interaksi remote..."));
+                soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+                
+                // Simpan posisi fokus agar ingat saat balik dari halaman lain
+                localStorage.setItem('lastFocusId', item.getAttribute('data-id'));
             }
         });
 
-        // --- JAM ---
+        // 2. Pulihkan Fokus saat kembali (tombol back)
+        window.addEventListener('load', () => {
+            const savedId = localStorage.getItem('lastFocusId');
+            if (savedId) {
+                setTimeout(() => {
+                    const el = document.querySelector(`.item[data-id="${savedId}"]`);
+                    if (el) el.focus();
+                }, 300);
+            }
+        });
+
+        // 3. Jam Digital
         setInterval(() => {
             const now = new Date();
             document.getElementById('digital-clock').innerText = 
