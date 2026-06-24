@@ -31,21 +31,71 @@
         
         .thumbnail { position: absolute; bottom: 50px; left: 50%; z-index: 100; display: flex; gap: 20px; }
         
+        #digital-clock {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    z-index: 200;
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8), 0px 0px 10px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+    pointer-events: none;
+}
+        
         /* Thumbnail Poster 150x225 (Rasio 2:3) */
+/* /* /* Thumbnail Item - Border Putih Solid (Tidak Abu-abu) */
         .thumbnail .item { 
-            width: 150px; height: 225px; flex-shrink: 0; position: relative; border: none; background: none; padding: 0; cursor: pointer; 
+            width: 150px; 
+            height: 225px; 
+            flex-shrink: 0; 
+            position: relative; 
+            padding: 0; 
+            cursor: pointer; 
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            
+            /* Ganti rgba dengan warna solid #FFFFFF */
+            border: 4px solid #FFFFFF; 
+            border-radius: 24px; 
+            background-color: #000;
         }
         
-        .thumbnail .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; display: block; }
+        .thumbnail .item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border-radius: 18px; 
+            display: block; 
+        }
         
-        /* Efek Fokus: Merah, Menyala, dan Membesar */
+        /* Efek Fokus - Merah Menyala */
         .thumbnail .item:focus {
-            outline: 4px solid #ff0000;
-            box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.8), 0 0 40px 10px rgba(255, 0, 0, 0.4);
+            outline: none; 
+            border: 6px solid #FF0000; /* Merah Solid */
+            box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.7); 
             transform: scale(1.15);
             z-index: 10;
         }
+
+/* Label Nama Film */
+.thumbnail .item .label {
+    position: absolute;
+    bottom: -35px; /* Posisikan di bawah poster */
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    opacity: 0; /* Sembunyikan saat tidak fokus */
+    transition: opacity 0.3s;
+}
+
+/* Munculkan label saat poster difokuskan */
+.thumbnail .item:focus .label {
+    opacity: 1;
+}
 
         .arrows { position: absolute; top: 80%; left: 50%; z-index: 100; display: flex; gap: 10px; }
         .arrows button { width: 40px; height: 40px; border-radius: 50%; background: #eee4; border: none; color: #fff; font-weight: bold; cursor: pointer; }
@@ -57,6 +107,7 @@
     <div class="brand-logo">
         <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo _mrzybtv_ dengan ikon Wi-Fi.png" alt="MRZYB TV Logo" alt="MRZYB TV Logo">
     </div>
+    <div id="digital-clock">00:00</div>
 
     <div class="carousel">
         <div class="list">
@@ -66,9 +117,12 @@
         </div>
 
         <div class="thumbnail">
-            <a href="seridubing_new.html" class="item" data-id="poster1" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp"></a>
-                        <a href="seriindo.html" class="item" data-id="poster2" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo 1.webp"></a>
-            <a href="serianimasi.html" class="item" data-id="poster3" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp"></a>
+            <a href="seridubing_new.html" class="item" data-id="poster1" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp">  <div class="label">Series Dubbing</div>
+</a>   
+                        <a href="seriindo.html" class="item" data-id="poster2" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo 1.webp">  <div class="label">Series Indo</div>
+</a>   
+            <a href="serianimasi.html" class="item" data-id="poster3" tabindex="0"><img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp">  <div class="label">Series Animasi</div>
+</a>   
         </div>
 
         <div class="arrows">
@@ -137,5 +191,38 @@
             }, 300); // Tunggu sebentar agar elemen siap
         });
     </script>
+    
+  <script>
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('digital-clock').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>  
+
+<script>
+    // 1. Memuat file suara ke dalam memori
+    const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
+
+    // 2. Memberi perintah ke semua poster
+    const allItems = document.querySelectorAll('.thumbnail .item');
+    
+    allItems.forEach(item => {
+        // Setiap kali poster mendapat fokus (sorotan remote)
+        item.addEventListener('focus', () => {
+            soundClick.currentTime = 0; // Mengulang suara dari awal agar cepat
+            soundClick.play().catch(error => {
+                // Browser butuh interaksi (klik/tombol) dulu baru suara boleh keluar
+                console.log("Menunggu interaksi pengguna...");
+            });
+        });
+    });
+</script>
+    
 </body>
 </html>
+
+
