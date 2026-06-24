@@ -5,338 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYBtv hiburan & religi</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: #fff;
-            background: url('https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif') no-repeat center center fixed;
-            background-size: cover;
-        }
+        body { margin: 0; font-family: Arial, sans-serif; color: #fff; background: url('https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif') no-repeat center center fixed; background-size: cover; }
+        .container { display: flex; flex-direction: column; height: 100vh; background: rgba(0, 0, 0, 0.5); }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro con transparencia para mejorar la visibilidad */
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: rgba(28, 28, 28, 0.8);
-        }
-
-        .logo {
-            font-size: 20px;
-        }
-
-        .version {
-            font-size: 10px;
-            color: #aaa;
-            margin-left: 5px;
-        }
-
-        .time-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .time, .date {
-            font-size: 14px;
-            margin-left: 10px; /* Espacio entre reloj y fecha */
-        }
-
-        .main {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
-            padding: 10px;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .main-item {
-            background-color: rgba(28, 28, 28, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .main-item video, .main-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 0.3s;
-        }
-
-        .main-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .main-item:hover img, .main-item:hover video {
-            opacity: 0.8;
-        }
-
-        .item1 {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .item2 {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-            background-color: rgba(28, 28, 28, 0.8);
-        }
-
-        .footer-button {
-            border: none;
-            padding: 15px 30px;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-            font-size: 14px;
-        }
-
-        .footer-button1 {
-            background-color: #8B0000;
-        }
-
-        .footer-button2 {
-            background-color: #008000;
-        }
-
-        .footer-button3 {
-            background-color: #0000FF;
-        }
-
-        .footer-button4 {
-            background-color: #800080;
-        }
-
-        .footer-button:hover {
-            filter: brightness(1.2);
-            transform: scale(1.05);
-        }
-
-        /* Estilo del anuncio */
-        .announcement {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            color: #fff;
-            z-index: 1000;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .announcement input {
-            padding: 10px;
-            margin-top: 20px;
-            font-size: 16px;
-        }
-
-        .announcement button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #008000;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .announcement button:hover {
-            background-color: #006400;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: rgba(28, 28, 28, 0.8); }
+        .logo { display: flex; align-items: center; }
+        .logo img { height: 40px; width: auto; display: block; } /* Tinggi logo diatur di sini */
         
-        
-        .main-item:focus {
-            outline: 3px solid #FF0000 !important;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-        }
-        
-        
-     .footer-button:focus {
-    outline: 3px solid #FFD700 !important; /* Border emas agar kontras */
-    transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}   
+        .time-container { display: flex; align-items: center; }
+        .time { font-size: 14px; margin-left: 10px; }
 
-/* INI BAGIAN CSS YANG DITAMBAHKAN */
-.logo img { 
-    height: 50px; /* Anda bisa mengubah angka 50px jika ingin logo lebih besar atau kecil */
-    width: auto;   /* Memastikan rasio gambar tidak berubah (tidak gepeng) */
-}
-        
-        
+        .main { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; flex-grow: 1; overflow-y: auto; }
+
+        .main-item { background-color: rgba(28, 28, 28, 0.8); border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; border: 3px solid transparent; }
+        .main-item video, .main-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+
+        /* Efek saat fokus */
+        .main-item:focus, .footer-button:focus { outline: none; border: 3px solid #FF0000 !important; transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+
+        .item1 { grid-column: span 2; grid-row: span 2; }
+        .item2 { grid-column: span 2; grid-row: span 2; }
+
+        .footer { display: flex; justify-content: space-around; padding: 10px; background-color: rgba(28, 28, 28, 0.8); }
+        .footer-button { border: none; padding: 15px 30px; color: #fff; cursor: pointer; border-radius: 5px; transition: 0.3s; font-size: 14px; }
+        .footer-button1 { background-color: #8B0000; }
+        .footer-button2 { background-color: #008000; }
+        .footer-button3 { background-color: #0000FF; }
+        .footer-button4 { background-color: #800080; }
     </style>
 </head>
 <body>
 
-
     <div class="container">
         <header class="header">
-    <div class="logo">
-        <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo">
-    </div>
-    <div class="time-container" id="currentTime">00:00:00</div>
-</header>
+            <div class="logo">
+                <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="MRZYBtv">
+            </div>
+            <div class="time-container"><div id="currentTime" class="time"></div></div>
+        </header>
+
         <main class="main">
-        
-        
-                  <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif')">
-                 <img src="https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif" alt="">
-            </div>  
-            
-                        <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'go:Telegram')">
+            <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif')">
+                 <img src="https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif" alt="P1">
+            </div>
+            <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'go:Telegram')">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqy6k16WC0GocGRyp90gW37XhtU60BLU1rffnse4_Lr-dWgabI9DazzuYq-RiPNIKYqf6CNKuy9_bnHJcEUQkgwplCHFEpIv661RCbBMIy_jwNWagys6-0SeOHVmwIiAqG5ggQ0Ljc5onroztIDYYEVV9PfWyNHj67zQXxGkHMp1T6cBOe2CodPBE2SmEa/s4080/telegramm.png" alt="Telegram">
             </div>
-            <div class="main-item item1" id="p3" tabindex="0" onclick="go('p3', 'murottal.html')">
+            <div class="main-item" id="p3" tabindex="0" onclick="go('p3', 'murottal.html')">
                 <img src="https://i.pinimg.com/736x/5f/56/c6/5f56c672884e1b7dd2fec7c185f7c8e8.jpg" alt="Murottal">
             </div>
-            
-            
-                              <div class="main-item item2" id="p4" tabindex="0" onclick="go('p4', 'ceramah.html')">
-                 <img src="https://i.pinimg.com/736x/06/82/00/068200ada680e5cdb41bb1b00137dbb8.jpg" alt="Ceramah">
-            </div>  
-            
-                        <div class="main-item item1" id="p5" tabindex="0" onclick="go('p5', 'go:musik.html')">
+            <div class="main-item" id="p4" tabindex="0" onclick="go('p4', 'ceramah.html')">
+                <img src="https://i.pinimg.com/736x/06/82/00/068200ada680e5cdb41bb1b00137dbb8.jpg" alt="Ceramah">
+            </div>
+            <div class="main-item" id="p5" tabindex="0" onclick="go('p5', 'musik.html')">
                 <img src="https://i.pinimg.com/736x/e7/59/50/e75950a4e7b12100e121d7895e7ea7e8.jpg" alt="Musik">
             </div>
-            <div class="main-item item2" id="p6" tabindex="0" onclick="go('p6', 'lenong.html')">
+            <div class="main-item" id="p6" tabindex="0" onclick="go('p6', 'lenong.html')">
                 <img src="https://i.pinimg.com/736x/b7/b4/8d/b7b48df629416d45e6e9083706f8c679.jpg" alt="Lenong">
             </div>
-            </main>
-        
-        </div>
+        </main>
 
-<footer class="footer">
-
-    <button class="footer-button footer-button1" id="btn-radio" tabindex="0" onclick="go('btn-radio', 'radio.html')">RADIO ONLINE</button>
-    <button class="footer-button footer-button2" id="btn-misteri" tabindex="0" onclick="go('btn-misteri', 'misteri.html')">HORROR STORY</button>
-    <button class="footer-button footer-button3" id="btn-support" tabindex="0" onclick="go('btn-support', 'support.html')">SUPPORT</button>
-</footer>
+        <footer class="footer">
+            
+            <button class="footer-button footer-button1" id="b1" tabindex="0" onclick="go('b1', 'radio.html')">RADIO ONLINE</button>
+            <button class="footer-button footer-button2" id="b2" tabindex="0" onclick="go('b2', 'misteri.html')">HORROR STORY</button>
+            <button class="footer-button footer-button3" id="b3" tabindex="0" onclick="go('b3', 'support.html')">SUPPORT</button>
+        </footer>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
     
-            // Fungsi navigasi yang menyimpan ID ke localStorage
+    <script>
         function go(id, url) {
             localStorage.setItem('lastFocus', id);
             window.location.href = url;
         }
 
-        // Pulihkan fokus saat halaman dimuat
         window.addEventListener('load', () => {
             const lastFocus = localStorage.getItem('lastFocus');
             if (lastFocus) {
                 const el = document.getElementById(lastFocus);
-                if (el) {
-                    el.focus();
-                    el.scrollIntoView({ block: 'center' });
-                }
+                if (el) { el.focus(); el.scrollIntoView({ block: 'center' }); }
             }
         });
-    
-    
-        document.addEventListener("DOMContentLoaded", function() {
-            var video = document.getElementById('videoPlayer');
-            var videoSrc = 'https://i.pinimg.com/originals/bd/c0/bd/bdc0bd0d5d9c733cec0ff590de044de5.gif'; // URL del video .m3u8 o .mp4
 
-            if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(videoSrc);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = videoSrc;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
-            } else {
-                video.src = 'your-video-url.mp4'; // URL alternativa del video .mp4
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
-            }
-
-            // Función para actualizar la hora y la fecha
-            function updateTimeAndDate() {
-                var now = new Date();
-                var timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-                var dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-
-                var formattedTime = now.toLocaleTimeString('es-ES', timeOptions);
-                var formattedDate = now.toLocaleDateString('es-ES', dateOptions);
-
-                document.getElementById('currentTime').textContent = formattedTime;
-                document.getElementById('currentDate').textContent = formattedDate;
-            }
-
-            // Actualizar la hora y la fecha cada segundo
-            setInterval(updateTimeAndDate, 1000);
-            updateTimeAndDate(); // Llamar una vez para inicializar
-
-            var key = 'Bloostv'; 
-            var xorKey = 123; // Clave para el cifrado
-
-            // Cifrar la clave usando XOR
-            var encryptedKey = xorEncryptDecrypt(key, xorKey);
-            console.log("7848bf0574d72c009b34ed:", encryptedKey); // Para verificar el valor cifrado
-
-            // Función para cifrar y descifrar una cadena usando XOR
-            function xorEncryptDecrypt(input, key) {
-                var output = '';
-                for (var i = 0; i < input.length; i++) {
-                    output += String.fromCharCode(input.charCodeAt(i) ^ key);
-                }
-                return output;
-            }
-
-            // Función para desencriptar la clave
-            function decryptKey(encryptedKey) {
-                return xorEncryptDecrypt(encryptedKey, xorKey);
-            }
-
-            // Función para comprobar la clave
-            function checkKey() {
-                var keyInput = document.getElementById('keyInput').value;
-                var correctKey = decryptKey(encryptedKey);
-                if (keyInput === correctKey) {
-                    document.getElementById('creditsAnnouncement').style.display = 'none';
-                } else {
-                    alert('Clave incorrecta. Debe comprar la clave para tener acceso completo al contenido.');
-                }
-            }
-
-            window.checkKey = checkKey; // Hacer que la función sea accesible globalmente
-        });
+        function updateTime() {
+            var now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-ES', { hour12: false });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>
-
-
