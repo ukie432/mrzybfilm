@@ -3,70 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRZYB TV</title>
+    <title>MRZYB TV - High Quality Background</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         
         body { margin: 0; background-color: #000; color: #eee; font-family: 'Poppins', sans-serif; overflow: hidden; }
         
-        /* Background Utama yang Sinkron */
-        .bg-container { position: absolute; inset: 0; z-index: 1; }
-        .bg-container img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            transition: opacity 0.5s ease; opacity: 0.8;
+        /* === CONTAINER BACKGROUND (FIX LANSKAP 16:9) === */
+        .bg-container { 
+            position: absolute; 
+            inset: 0; 
+            z-index: 1; 
+            background-color: #000; /* Warna dasar saat loading */
         }
-        .overlay { position: absolute; inset: 0; background: linear-gradient(to top, #000 10%, transparent); z-index: 2; }
+        
+        .bg-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* Memastikan gambar Lanskap memenuhi layar tanpa distorsi */
+            transition: opacity 0.6s ease-in-out; /* Transisi halus saat ganti gambar */
+            opacity: 0; /* Mulai dari transparan */
+        }
+        
+        /* Overlay gradasi agar teks atas tetap terbaca dan fokus ke poster bawah */
+        .overlay { 
+            position: absolute; 
+            inset: 0; 
+            background: linear-gradient(to top, rgba(0,0,0,1) 5%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%); 
+            z-index: 2; 
+        }
 
-        .brand-logo { position: absolute; top: 20px; left: 40px; z-index: 200; }
-        .brand-logo img { height: 80px; }
+        /* === BRANDING & CLOCK === */
+        .brand-logo { position: absolute; top: 30px; left: 50px; z-index: 200; }
+        .brand-logo img { height: 70px; width: auto; }
         
         #digital-clock { 
-            position: absolute; top: 20px; right: 40px; z-index: 200; 
-            font-size: 20px; font-weight: 900; text-shadow: 2px 2px 5px #000;
+            position: absolute; top: 35px; right: 50px; z-index: 200; 
+            font-size: 24px; font-weight: 900; color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         }
 
+        /* === CONTAINER THUMBNAIL (POSTER VERTIKAL) === */
         .thumbnail { 
-            position: absolute; bottom: 80px; width: 100%; z-index: 100; 
-            display: flex; justify-content: center; gap: 30px; 
+            position: absolute; 
+            bottom: 100px; /* Jarak dari bawah layar */
+            width: 100%; 
+            z-index: 100; 
+            display: flex; 
+            justify-content: center; 
+            gap: 35px; /* Jarak antar poster */
+            padding: 0 50px;
+            box-sizing: border-box;
         }
         
         .item { 
-            width: 160px; height: 240px; position: relative; cursor: pointer;
-            border: 4px solid #fff; border-radius: 20px; background: #000;
-            transition: transform 0.3s ease, border 0.3s;
+            width: 160px; /* Lebar poster vertikal */
+            height: 240px; /* Tinggi poster vertikal (Rasio 2:3) */
+            position: relative; 
+            cursor: pointer;
+            border: 4px solid rgba(255,255,255,0.5); /* Border default agak transparan */
+            border-radius: 20px; 
+            background: #111;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
         }
         
         .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
         
-        /* Efek Fokus pada Poster */
+        /* === EFEK FOKUS (SELECTION) === */
         .item:focus {
             outline: none;
-            border: 6px solid #FF0000 !important;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
-            transform: scale(1.2);
+            border: 6px solid #FF0000 !important; /* Border Merah Menyala */
+            box-shadow: 0 0 50px rgba(255, 0, 0, 1); /* Glow Merah Kuat */
+            transform: scale(1.25) translateY(-10px); /* Membesar dan naik sedikit */
             z-index: 10;
         }
 
         /* Label Nama Film */
         .label {
-            position: absolute; bottom: -40px; width: 100%; text-align: center;
-            font-weight: bold; opacity: 0; transition: 0.3s;
-            /* Warna default saat tidak fokus */
-            color: #eee; 
+            position: absolute; 
+            bottom: -45px; /* Posisi di bawah poster */
+            width: 100%; 
+            text-align: center;
+            font-weight: 700; 
+            font-size: 16px;
+            opacity: 0; /* Sembunyikan default */
+            transition: 0.3s;
+            color: #eee;
+            text-shadow: 2px 2px 5px rgba(0,0,0,1);
         }
 
-        /* Warna Putih Saja saat Poster Difokuskan */
+        /* Warna Putih & Muncul saat Poster Difokuskan */
         .item:focus .label { 
             opacity: 1; 
-            color: #ffffff !important; /* Putih solid */
-            text-shadow: none !important; /* Menghapus bayangan agar bersih */
+            color: #ffffff !important; 
         }
     </style>
 </head>
 <body>
 
     <div class="bg-container">
-        <img id="main-bg" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp">
+        <img id="main-bg" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/ChatGPTImage23Jun2026,19.45.53_copy_800x308.png
+" style="opacity: 0.7;">
     </div>
     <div class="overlay"></div>
 
@@ -76,63 +114,94 @@
     <div id="digital-clock">00:00</div>
 
     <div class="thumbnail">
-        <a href="seridubing_new.html" class="item" data-id="p1" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp" tabindex="0">
+        <a href="seridubing_new.html" class="item" data-id="p1" 
+           data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing2.webp" tabindex="0">
             <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Dubbing1.webp">
             <div class="label">Series Dubbing</div>
         </a>   
-        <a href="seriindo.html" class="item" data-id="p2" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo%201.webp" tabindex="0">
+
+        <a href="seriindo.html" class="item" data-id="p2" 
+           data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo2.webp" tabindex="0">
             <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Indo%201.webp">
             <div class="label">Series Indo</div>
         </a>   
-        <a href="serianimasi.html" class="item" data-id="p3" data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp" tabindex="0">
+
+        <a href="serianimasi.html" class="item" data-id="p3" 
+           data-bg="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime2.webp" tabindex="0">
             <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Anime1.webp">
             <div class="label">Series Animasi</div>
         </a>   
     </div>
 
     <script>
-        // --- LOGIKA UTAMA ---
+        // --- LOGIKA UTAMA (SINKRONISASI BEDA GAMBAR) ---
         const bgImage = document.getElementById('main-bg');
+        // Suara klik navigasi
         const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
 
-        // 1. Sinkronisasi Background & Suara
+        // Gunakan Event Delegation pada container .thumbnail
         document.querySelector('.thumbnail').addEventListener('focusin', (e) => {
             const item = e.target.closest('.item');
             if (item) {
-                // Ganti Background
-                const newBg = item.getAttribute('data-bg');
-                bgImage.style.opacity = 0;
-                setTimeout(() => {
-                    bgImage.src = newBg;
-                    bgImage.style.opacity = 0.8;
-                }, 200);
-
-                // Mainkan Suara
-                soundClick.currentTime = 0;
-                soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+                // 1. Ambil link gambar LANSKAP dari atribut data-bg
+                const newBgUrl = item.getAttribute('data-bg');
                 
-                // Simpan posisi fokus agar ingat saat balik dari halaman lain
+                // 2. Logika ganti background dengan transisi halus (Fade Out - Change - Fade In)
+                if (newBgUrl && bgImage.src !== newBgUrl) {
+                    bgImage.style.opacity = 0; // Mulai memudar (Fade Out)
+                    
+                    // Jeda sebentar saat gambar transparan untuk mengganti link sumber
+                    setTimeout(() => {
+                        bgImage.src = newBgUrl;
+                        // Gambar akan otomatis memudar masuk (Fade In) melalui CSS transition
+                        bgImage.style.opacity = 0.7; // Atur kecerahan background (0.0 - 1.0)
+                    }, 300); // Jeda 300ms sesuai setengah waktu transisi CSS
+                }
+
+                // 3. Mainkan Suara Klik
+                soundClick.currentTime = 0;
+                soundClick.play().catch(err => console.log("Menunggu interaksi remote..."));
+                
+                // 4. Simpan posisi fokus (Fitur Back Button Memory)
                 localStorage.setItem('lastFocusId', item.getAttribute('data-id'));
             }
         });
 
-        // 2. Pulihkan Fokus saat kembali (tombol back)
+        // --- PULIHKAN FOKUS TERAKHIR (BACK BUTTON) ---
         window.addEventListener('load', () => {
             const savedId = localStorage.getItem('lastFocusId');
             if (savedId) {
+                // Beri jeda sedikit agar halaman selesai dimuat sempurna di TV
                 setTimeout(() => {
                     const el = document.querySelector(`.item[data-id="${savedId}"]`);
-                    if (el) el.focus();
-                }, 300);
+                    if (el) {
+                        el.focus();
+                        // Pastikan background juga langsung berubah sesuai item yang dipulihkan
+                        const savedBg = el.getAttribute('data-bg');
+                        if(savedBg) {
+                            bgImage.src = savedBg;
+                            bgImage.style.opacity = 0.7;
+                        }
+                    }
+                }, 400);
+            } else {
+                // Jika tidak ada memori, fokus ke item pertama secara default
+                setTimeout(() => {
+                    const firstItem = document.querySelector('.item');
+                    if(firstItem) firstItem.focus();
+                }, 400);
             }
         });
 
-        // 3. Jam Digital
-        setInterval(() => {
+        // --- JAM DIGITAL ---
+        function updateClock() {
             const now = new Date();
-            document.getElementById('digital-clock').innerText = 
-                String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
-        }, 1000);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('digital-clock').innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Jalankan langsung saat muat
     </script>
 </body>
 </html>
