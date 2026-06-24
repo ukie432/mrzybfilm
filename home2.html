@@ -169,6 +169,28 @@
         .announcement button:hover {
             background-color: #006400;
         }
+        
+        
+        .main-item:focus {
+            outline: 3px solid #FF0000 !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+        }
+        
+        
+     .footer-button:focus {
+    outline: 3px solid #FFD700 !important; /* Border emas agar kontras */
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}   
+
+/* INI BAGIAN CSS YANG DITAMBAHKAN */
+.logo img { 
+    height: 50px; /* Anda bisa mengubah angka 50px jika ingin logo lebih besar atau kecil */
+    width: auto;   /* Memastikan rasio gambar tidak berubah (tidak gepeng) */
+}
+        
+        
     </style>
 </head>
 <body>
@@ -176,40 +198,69 @@
 
     <div class="container">
         <header class="header">
-            <div class="logo">MRZYBtv ( Hiburan & Religi )<span class="version"></span></div>
-            <div class="time-container">
-                <div id="currentTime" class="time"></div>
-            </div>
-        </header>
+    <div class="logo">
+        <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo">
+    </div>
+    <div class="time-container" id="currentTime">00:00:00</div>
+</header>
         <main class="main">
-            <div class="main-item item1" onclick="window.location.href='href='https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif'">
+        
+        
+                  <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif')">
                  <img src="https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif" alt="">
-            </div>
-            <div class="main-item item2" onclick="window.location.href='go:Telegram'">
+            </div>  
+            
+                        <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'go:Telegram')">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqy6k16WC0GocGRyp90gW37XhtU60BLU1rffnse4_Lr-dWgabI9DazzuYq-RiPNIKYqf6CNKuy9_bnHJcEUQkgwplCHFEpIv661RCbBMIy_jwNWagys6-0SeOHVmwIiAqG5ggQ0Ljc5onroztIDYYEVV9PfWyNHj67zQXxGkHMp1T6cBOe2CodPBE2SmEa/s4080/telegramm.png" alt="Telegram">
             </div>
-            <div class="main-item" onclick="window.location.href='murottal.html'">
+            <div class="main-item item1" id="p3" tabindex="0" onclick="go('p3', 'murottal.html')">
                 <img src="https://i.pinimg.com/736x/5f/56/c6/5f56c672884e1b7dd2fec7c185f7c8e8.jpg" alt="Murottal">
             </div>
-            <div class="main-item" onclick="window.location.href='ceramah.html'">
-                <img src="https://i.pinimg.com/736x/06/82/00/068200ada680e5cdb41bb1b00137dbb8.jpg" alt="KH Zainuddin">
+            
+            
+                              <div class="main-item item2" id="p4" tabindex="0" onclick="go('p4', 'ceramah.html')">
+                 <img src="https://i.pinimg.com/736x/06/82/00/068200ada680e5cdb41bb1b00137dbb8.jpg" alt="Ceramah">
+            </div>  
+            
+                        <div class="main-item item1" id="p5" tabindex="0" onclick="go('p5', 'go:musik.html')">
+                <img src="https://i.pinimg.com/736x/e7/59/50/e75950a4e7b12100e121d7895e7ea7e8.jpg" alt="Musik">
             </div>
-            <div class="main-item" onclick="window.location.href='musik.html'">
-            <img src="https://i.pinimg.com/736x/e7/59/50/e75950a4e7b12100e121d7895e7ea7e8.jpg" alt="Musik">
-            </div>
-            <div class="main-item" onclick="window.location.href='lenong.html'">
+            <div class="main-item item2" id="p6" tabindex="0" onclick="go('p6', 'lenong.html')">
                 <img src="https://i.pinimg.com/736x/b7/b4/8d/b7b48df629416d45e6e9083706f8c679.jpg" alt="Lenong">
             </div>
-        </main>
-        <footer class="footer">
-            <button class="footer-button footer-button1" onclick="window.location.href='tv.html'">TV STREAM</button>
-            <button class="footer-button footer-button2" onclick="window.location.href='radio.html'">RADIO ONLINE</button>
-            <button class="footer-button footer-button3" onclick="window.location.href='misteri.html'">HORROR STORY</button>
-            <button class="footer-button footer-button4" onclick="window.location.href='support.html'">SUPPORT</button>
-        </footer>
+            </main>
+        
+        </div>
+
+<footer class="footer">
+
+    <button class="footer-button footer-button1" id="btn-radio" tabindex="0" onclick="go('btn-radio', 'radio.html')">RADIO ONLINE</button>
+    <button class="footer-button footer-button2" id="btn-misteri" tabindex="0" onclick="go('btn-misteri', 'misteri.html')">HORROR STORY</button>
+    <button class="footer-button footer-button3" id="btn-support" tabindex="0" onclick="go('btn-support', 'support.html')">SUPPORT</button>
+</footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
+    
+            // Fungsi navigasi yang menyimpan ID ke localStorage
+        function go(id, url) {
+            localStorage.setItem('lastFocus', id);
+            window.location.href = url;
+        }
+
+        // Pulihkan fokus saat halaman dimuat
+        window.addEventListener('load', () => {
+            const lastFocus = localStorage.getItem('lastFocus');
+            if (lastFocus) {
+                const el = document.getElementById(lastFocus);
+                if (el) {
+                    el.focus();
+                    el.scrollIntoView({ block: 'center' });
+                }
+            }
+        });
+    
+    
         document.addEventListener("DOMContentLoaded", function() {
             var video = document.getElementById('videoPlayer');
             var videoSrc = 'https://i.pinimg.com/originals/bd/c0/bd/bdc0bd0d5d9c733cec0ff590de044de5.gif'; // URL del video .m3u8 o .mp4
