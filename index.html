@@ -882,23 +882,22 @@ window.addEventListener("load", function(){
 </script>
 
     <script>
-    // 1. Memuat file suara ke dalam memori
+    // 1. Memuat file suara
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
-    // 2. Memberi perintah ke semua poster
-    const allItems = document.querySelectorAll('.thumbnail .item');
+    // 2. Targetkan semua link di dalam grid force-5
+    const allItems = document.querySelectorAll('.force-5 a');
     
     allItems.forEach(item => {
         // Setiap kali poster mendapat fokus (sorotan remote)
         item.addEventListener('focus', () => {
-            soundClick.currentTime = 0; // Mengulang suara dari awal agar cepat
+            soundClick.currentTime = 0; // Mengulang suara dari awal
             soundClick.play().catch(error => {
-                // Browser butuh interaksi (klik/tombol) dulu baru suara boleh keluar
                 console.log("Menunggu interaksi pengguna...");
             });
         });
     });
-</script>
+    </script>
 
 </body>
 </html>
