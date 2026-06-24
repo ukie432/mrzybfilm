@@ -3,83 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://dl.dropbox.com/scl/fi/vkctqle17ukwlpedxdfqf/slider3.css?rlkey=djketnabs5n0npmc5w6temvh8&st=2yzhvjvs&">
+    <title>Manual Slider Remote Control</title>
     <style>
-        /* Tambahkan CSS ini agar tombol berfungsi dengan remote */
-        .thumbnail .item {
-            background: transparent;
-            border: 2px solid transparent;
-            padding: 0;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.3s, border 0.3s;
-            outline: none;
-            display: block;
-        }
+        /* --- CSS LENGKAP --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap');
+        body { margin: 0; background-color: #000; color: #eee; font-family: Poppins; font-size: 12px; }
+        a { text-decoration: none; color: #eee; }
+        
+        .carousel { height: 100vh; width: 100vw; overflow: hidden; position: relative; }
+        .carousel .list .item { position: absolute; inset: 0; }
+        .carousel .list .item img { width: 100%; height: 100%; object-fit: cover; }
+        .carousel .list .item .content { position: absolute; top: 10%; width: 80%; left: 50%; transform: translateX(-50%); color: #fff; }
 
-        .thumbnail .item:focus {
-            border: 3px solid #ffcc00;
-            transform: scale(1.05);
-            z-index: 10;
-        }
+        .thumbnail { position: absolute; bottom: 50px; left: 50%; z-index: 100; display: flex; gap: 20px; }
+        .thumbnail .item { width: 150px; height: 220px; flex-shrink: 0; position: relative; border: none; background: none; padding: 0; cursor: pointer; transition: 0.3s; }
+        .thumbnail .item img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; }
+        
+        /* Efek Fokus Remote */
+        .thumbnail .item:focus { outline: 4px solid #f1683a; transform: scale(1.1); z-index: 10; }
+
+        .arrows { position: absolute; top: 80%; left: 50%; z-index: 100; display: flex; gap: 10px; }
+        .arrows button { width: 40px; height: 40px; border-radius: 50%; background: #eee4; border: none; color: #fff; font-weight: bold; cursor: pointer; }
+        .arrows button:hover { background: #fff; color: #000; }
+
+        /* Animasi bawaan */
+        .carousel.next .list .item img { width: 150px; height: 220px; position: absolute; bottom: 50px; left: 50%; animation: showImage .5s linear 1 forwards; }
+        @keyframes showImage { to { bottom: 0; left: 0; width: 100%; height: 100%; border-radius: 0; } }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="#">Home</a>
-            <a href="#">Contacts</a>
-            <a href="#">Info</a>
-        </nav>
-    </header>
 
     <div class="carousel">
         <div class="list">
             <div class="item">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjwLSUDwzE-Kx11cfU1Np5tqLAU31_yQLEa7yJ9cjaxeTfoEedNLC-2uE&s=10">
-                <div class="content">
-                    <div class="author">LUNDEV</div>
-                    <div class="title">DESIGN SLIDER</div>
-                    <div class="topic">ANIMAL</div>
-                    <div class="des">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</div>
-                    <div class="buttons">
-                        <button>SEE MORE</button>
-                        <button>SUBSCRIBE</button>
-                    </div>
-                </div>
+                <div class="content"><h2>LUNDEV</h2><p>SLIDER MANUAL</p></div>
             </div>
+                        <div class="item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjwLSUDwzE-Kx11cfU1Np5tqLAU31_yQLEa7yJ9cjaxeTfoEedNLC-2uE&s=10">
+                <div class="content"><h2>LUNDEV</h2><p>SLIDER MANUAL</p></div>
             </div>
+            <div class="item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjwLSUDwzE-Kx11cfU1Np5tqLAU31_yQLEa7yJ9cjaxeTfoEedNLC-2uE&s=10">
+                <div class="content"><h2>LUNDEV</h2><p>SLIDER MANUAL</p></div>
+            </div>
+            <div class="item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBe4qBlVai1sC3sYWt-tcV41mVUDnx9Qtn9Lm9H8LWGhjudsPXN0DWtBNm&s=10">
+                <div class="content"><h2>LUNDEV</h2><p>SLIDER MANUAL</p></div>
+            </div>
+        </div>
 
         <div class="thumbnail">
-            <button class="item">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkRW_T_oivO4jr6pc1wG2ZBm1RUnTuO5Bvnz5RxBY5SQsFmOvj5PVprUc&s=10">
-                <div class="content">
-                    <div class="title">Name Slider</div>
-                    <div class="description">Description</div>
-                </div>
-            </button>
-            <button class="item">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_rhAkUYCNO2YQnKRVDrewlLiZlJbGEoXkTuKaJ7gNOOjO19DO5Osq0z7W&s=10">
-                <div class="content">
-                    <div class="title">Name Slider</div>
-                    <div class="description">Description</div>
-                </div>
-            </button>
-            <button class="item">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMYkfbCkIgdE4YVhfr6m-14hMga3SiCL0-Ex_SjAk4Mst9JjlARkksW16-&s=10">
-                <div class="content">
-                    <div class="title">Name Slider</div>
-                    <div class="description">Description</div>
-                </div>
-            </button>
-            <button class="item">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGvGqB9stlFYNtYNsFgAR2G5kLMmuMoRXTcd-P-hLT3hznb7tidR1hiJI1&s=10">
-                <div class="content">
-                    <div class="title">Name Slider</div>
-                    <div class="description">Description</div>
-                </div>
-            </button>
+            <button class="item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkRW_T_oivO4jr6pc1wG2ZBm1RUnTuO5Bvnz5RxBY5SQsFmOvj5PVprUc&s=10"></button>
+            <button class="item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkRW_T_oivO4jr6pc1wG2ZBm1RUnTuO5Bvnz5RxBY5SQsFmOvj5PVprUc&s=10"></button>
+                    <button class="item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkRW_T_oivO4jr6pc1wG2ZBm1RUnTuO5Bvnz5RxBY5SQsFmOvj5PVprUc&s=10"></button>
+            <button class="item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkRW_T_oivO4jr6pc1wG2ZBm1RUnTuO5Bvnz5RxBY5SQsFmOvj5PVprUc&s=10"></button>
+            <button class="item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_rhAkUYCNO2YQnKRVDrewlLiZlJbGEoXkTuKaJ7gNOOjO19DO5Osq0z7W&s=10"></button>
         </div>
 
         <div class="arrows">
@@ -89,6 +68,54 @@
         <div class="time"></div>
     </div>
 
-    <script src="https://dl.dropbox.com/scl/fi/4gfdq48dchl97n5v3jrgx/slider.js?rlkey=56tjkr92z0bfwq0y7103h9saq&st=gjwocxp2&"></script>
+    <script>
+        // --- JAVASCRIPT LENGKAP ---
+        let nextDom = document.getElementById('next');
+        let prevDom = document.getElementById('prev');
+        let carouselDom = document.querySelector('.carousel');
+        let SliderDom = carouselDom.querySelector('.list');
+        let thumbnailBorderDom = document.querySelector('.thumbnail');
+        
+        let isManual = false; 
+
+        // Fungsi untuk menghentikan otomatis
+        function stopAutoRun() {
+            isManual = true;
+            clearTimeout(runNextAuto);
+        }
+
+        // Kontrol Remote (Tombol Kiri/Kanan)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { stopAutoRun(); nextDom.click(); }
+            else if (e.key === 'ArrowLeft') { stopAutoRun(); prevDom.click(); }
+        });
+
+        nextDom.onclick = function(){ stopAutoRun(); showSlider('next'); }
+        prevDom.onclick = function(){ stopAutoRun(); showSlider('prev'); }
+
+        let runNextAuto = setTimeout(() => { nextDom.click(); }, 7000);
+
+        function showSlider(type){
+            let SliderItemsDom = SliderDom.querySelectorAll('.item');
+            let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
+            
+            if(type === 'next'){
+                SliderDom.appendChild(SliderItemsDom[0]);
+                thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
+                carouselDom.classList.add('next');
+            }else{
+                SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
+                thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
+                carouselDom.classList.add('prev');
+            }
+            
+            setTimeout(() => { carouselDom.classList.remove('next', 'prev'); }, 3000);
+            
+            if (!isManual) {
+                clearTimeout(runNextAuto);
+                runNextAuto = setTimeout(() => { nextDom.click(); }, 7000);
+            }
+        }
+    </script>
 </body>
 </html>
