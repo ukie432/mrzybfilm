@@ -360,7 +360,22 @@
 .siderbar_menu a {
     outline: none !important;
 }
-        
+       
+       
+       .sidebar_inner .siderbar_menu a .title {
+    pointer-events: none; /* Penting: Div di dalam link tidak boleh menangkap fokus */
+}
+
+.siderbar_menu li a {
+    outline: none !important;
+}
+
+/* Beri efek visual jelas saat fokus agar Anda tahu apakah sudah pindah atau belum */
+.siderbar_menu li a:focus {
+    background: #3d3d79 !important;
+    border: 2px solid #00e5ff !important;
+    transform: scale(1.02);
+} 
         
     </style>
 
@@ -450,18 +465,19 @@
                 </div>
             </div>
 
-            <ul class="siderbar_menu">
-<li><a href="dubing.html" data-menu="traktir" onclick="localStorage.setItem('sidebarOpen', 'true'); localStorage.setItem('lastMenu', 'traktir');">
-
-    <div class="title">Traktir</div>
-</a>
-</li>
-                <li><a href="javascript:void(0);" tabindek="-1">
-   
-    <div class="title">mrzybtv@gmail.com</div>
-</a>
-</li>
+<ul class="siderbar_menu">
+                <li>
+                    <a href="dubing.html" data-menu="traktir" tabindex="0" onclick="localStorage.setItem('sidebarOpen', 'true'); localStorage.setItem('lastMenu', 'traktir');">
+                        <div class="title">Traktir</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" tabindex="-1" style="pointer-events: none;">
+                        <div class="title">mrzybtv@gmail.com</div>
+                    </a>
+                </li>
             </ul>
+
             <div class="logout_btn">
     <a href="javascript:void(0);" onclick="if(typeof Android !== 'undefined') { Android.confirmExit(); } else { window.close(); }">Logout</a>
 </div>
@@ -691,17 +707,36 @@
         window.popupClose();
     };
 
-    // EVENT LISTENER BACK: Mencegah aplikasi keluar saat popup terbuka
-    window.addEventListener('keydown', function(event) {
-        // Kode 27 (Escape) atau 10009 (Back Remote TV)
-        if (event.keyCode === 27 || event.keyCode === 10009) {
-            if (overlay.classList.contains("show")) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                window.popupClose();
-            }
+// EVENT LISTENER BACK: Mencegah aplikasi keluar secara paksa
+window.addEventListener('keydown', function(event) {
+    // 27 (Escape) atau 10009 (Back Remote TV)
+    if (event.keyCode === 27 || event.keyCode === 10009) {
+        
+        // 1. Prioritas Pertama: Jika Popup terbuka, tutup popup
+        const overlay = document.getElementById("popupOverlay");
+        if (overlay && overlay.classList.contains("show")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            window.tutupPopUpPoster();
+            return;
         }
-    });
+
+        // 2. Prioritas Kedua: Jika Hamburger Menu terbuka, tutup menu
+        const wrapper = document.querySelector(".wrapper");
+        if (wrapper && wrapper.classList.contains("active")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            // Menutup menu dengan cara yang sama seperti tombol 'close'
+            wrapper.classList.remove("active");
+            // Kembalikan fokus ke tombol hamburger agar navigasi tidak hilang
+            const hamburger = document.querySelector(".hamburger");
+            if (hamburger) hamburger.focus();
+            return;
+        }
+        
+        // 3. Jika tidak ada yang terbuka, biarkan event berlanjut (untuk goBack atau Exit)
+    }
+});
 
     // EVENT KLIK POSTER
     document.addEventListener("click", function(e){
