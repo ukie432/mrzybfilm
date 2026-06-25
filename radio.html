@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Radio TV Player</title>
+    <style>
+        body { 
+            background: #000; color: #fff; font-family: sans-serif; 
+            display: flex; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; gap: 50px;
+        }
+        #poster { width: 450px; height: 450px; border: 4px solid #fff; background-size: cover; background-position: center; }
+        #controls-area { display: flex; flex-direction: column; gap: 20px; }
+        #radioname { font-size: 3.5rem; margin: 0; }
+        
+        .btn-round {
+            width: 90px; height: 90px; border-radius: 50%; border: none; 
+            background: #dc143c; color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* Ikon menggunakan SVG murni */
+        svg { fill: white; }
+    </style>
+</head>
+<body>
+
+    <div id="poster"></div>
+    
+    <div id="controls-area">
+        <h1 id="radioname">Loading...</h1>
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <button class="btn-round" onclick="changeStation(-1)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M19 20L9 12l10-8v16zM5 4h2v16H5z"/></svg></button>
+            
+            <button class="btn-round" style="width: 110px; height: 110px;" onclick="togglePlay()" id="playPauseBtn">
+                <div id="iconContainer">
+                    <svg id="playIcon" width="50" height="50" viewBox="0 0 24 24" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="pauseIcon" width="50" height="50" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </div>
+            </button>
+            
+            <button class="btn-round" onclick="changeStation(1)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M5 4l10 8-10 8V4zM17 4h2v16h-2z"/></svg></button>
+        </div>
+    </div>
+    
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        const stations = [
+            { name: "I radio", src: "https://n08.radiojar.com/7csmg90fuqruv.mp3?1673348819=&rj-tok=AAABhZtmUCUAwkYyBBgriH-X9g&rj-ttl=5", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeDOroeSfy_NxAESg96U6CUq59yKGY243-VBhPQs1E1Q&s=10" },
+            { name: "Ben radio", src: "https://n0a.radiojar.com/4ywdgup3bnzuv?1673348637=&rj-tok=AAABhZtjYesAbqf2VnMskbfVxQ&rj-ttl=5", img: "https://images.unsplash.com/photo-1514525253161-7a46d1958b99?w=500" }
+        ];
+
+        let index = 0;
+        const player = document.getElementById("audioPlayer");
+        const playIcon = document.getElementById("playIcon");
+        const pauseIcon = document.getElementById("pauseIcon");
+
+        function updateUI() {
+            document.getElementById("radioname").innerText = stations[index].name;
+            document.getElementById("poster").style.backgroundImage = `url('${stations[index].img}')`;
+            player.src = stations[index].src;
+            player.play();
+            // Tampilkan ikon Pause karena sedang main
+            playIcon.style.display = "none";
+            pauseIcon.style.display = "block";
+        }
+
+        function togglePlay() {
+            if (player.paused) {
+                player.play();
+                playIcon.style.display = "none";
+                pauseIcon.style.display = "block";
+            } else {
+                player.pause();
+                playIcon.style.display = "block";
+                pauseIcon.style.display = "none";
+            }
+        }
+
+        function changeStation(direction) {
+            index = (index + direction + stations.length) % stations.length;
+            updateUI();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowLeft") changeStation(-1);
+            if (e.key === "ArrowRight") changeStation(1);
+            if (e.key === "Enter") togglePlay();
+        });
+
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
