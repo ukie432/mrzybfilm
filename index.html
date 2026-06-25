@@ -657,187 +657,105 @@
 
 <script>
 (function(){
+    // Mencegah browser scroll otomatis saat Back
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  const overlay = document.getElementById("popupOverlay");
-  const img = document.getElementById("popupImg");
-  const title = document.getElementById("popupTitle");
-  const text = document.getElementById("popupText");
-  const content = document.getElementById("popupContent");
+    const overlay = document.getElementById("popupOverlay");
+    const img = document.getElementById("popupImg");
+    const title = document.getElementById("popupTitle");
+    const text = document.getElementById("popupText");
+    const content = document.getElementById("popupContent");
+    
+    let playLink = "", trailerLink = "", lastFocus = null, iframe = null;
 
-  let playLink = "", trailerLink = "", lastFocus = null;
-  let iframe = null;
+    // EVENT KLIK: Deteksi Poster & Popup
+    document.addEventListener("click", function(e){
+        const a = e.target.closest('.force-5 a');
+        if(!a) return;
 
-  document.addEventListener("click", function(e){
+        // Simpan posisi ke localStorage
+        const allPosters = document.querySelectorAll('.force-5 a');
+        const index = Array.from(allPosters).indexOf(a);
+        localStorage.setItem("lastHomePoster", index);
 
-    const a = e.target.closest('a[tabindex="0"][data-popup="true"]');
-    if(!a) return;
+        // Jika poster memiliki data-popup="true", tampilkan popup
+        if(a.dataset.popup === "true") {
+            e.preventDefault();
+            lastFocus = a;
+            
+            // Isi data popup
+            img.src = a.querySelector("img").src;
+            title.textContent = a.dataset.title;
+            text.textContent = a.dataset.sinopsis;
+            playLink = a.href;
+            trailerLink = a.dataset.trailer;
+            
+            overlay.classList.add("show");
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
+        }
+    });
 
-    e.preventDefault();
+    // FUNGSI POPUP (Play, Trailer, Close)
+    window.popupPlay = function(){
+        if(typeof Android !== "undefined" && Android.playVideo) Android.playVideo(playLink);
+        else window.open(playLink, "_blank");
+    };
 
-    lastFocus = a;
+    window.popupTrailer = function(){
+        if(!trailerLink) return;
+        img.style.display = "none";
+        if(!iframe){
+            iframe = document.createElement("iframe");
+            iframe.width = "100%"; iframe.height = "315";
+            iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+            content.insertBefore(iframe, content.firstChild);
+        }
+        iframe.src = trailerLink + (trailerLink.includes("?") ? "&" : "?") + "autoplay=1&mute=1";
+    };
 
-    // SIMPAN POSTER TERAKHIR
-    const allPoster = document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-    const index = Array.from(allPoster).indexOf(a);
-    localStorage.setItem("lastHomePoster", index);
+    window.popupClose = function(){
+        overlay.classList.remove("show");
+        if(iframe){ iframe.src = ""; iframe.remove(); iframe = null; }
+        img.style.display = "";
+        if(lastFocus){ setTimeout(() => lastFocus.focus(), 150); }
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
+    };
 
-    const im = a.querySelector("img");
-
-    if(im) img.src = im.src;
-
-    title.textContent = a.dataset.title || "Judul Film";
-    text.textContent = a.dataset.sinopsis || "Sinopsis belum diisi";
-
-    playLink = a.href;
-    trailerLink = a.dataset.trailer || "";
-
-    overlay.classList.add("show");
-
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-      Android.setPopUpStatus(true);
-    }
-
-  });
-
-  window.popupTrailer = function(){
-
-    if(!trailerLink) return;
-
-    img.style.display = "none";
-
-    if(!iframe){
-
-      iframe = document.createElement("iframe");
-
-      iframe.width = "100%";
-      iframe.height = "315";
-
-      iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-
-      iframe.allowFullscreen = true;
-
-      content.insertBefore(iframe, content.firstChild);
-    }
-
-    iframe.src =
-      trailerLink +
-      (trailerLink.includes("?") ? "&" : "?") +
-      "autoplay=1&mute=1";
-  };
-
-  window.popupPlay = function(){
-
-    if(!playLink){
-      alert("Tautan film tidak ditemukan!");
-      return;
-    }
-
-    if(lastFocus){
-
-      const posters =
-        document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-
-      const index =
-        Array.from(posters).indexOf(lastFocus);
-
-      localStorage.setItem("lastHomePoster", index);
-    }
-
-    if(typeof Android !== "undefined" && Android.playVideo){
-
-      Android.playVideo(playLink);
-
-    } else {
-
-      window.open(playLink, "_blank");
-    }
-  };
-
-  window.popupClose = function(){
-
-    overlay.classList.remove("show");
-
-    if(iframe){
-
-      iframe.src = "";
-      iframe.remove();
-
-      iframe = null;
-    }
-
-    img.style.display = "";
-
-    if(lastFocus){
-
-      lastFocus.scrollIntoView({
-        block:"center"
-      });
-
-      setTimeout(() => lastFocus.focus(), 150);
-    }
-
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-      Android.setPopUpStatus(false);
-    }
-  };
-
-  window.tutupPopUpPoster = function() {
-    window.popupClose();
-  };
-
-  // RESTORE POSTER TERAKHIR SETELAH KEMBALI DARI PLAYER
-  window.addEventListener("load", function(){
-
-  const lastMenu = localStorage.getItem("lastMenu");
-
-  if(lastMenu){
-
-    const menu = document.querySelector(
-      '[data-menu="' + lastMenu + '"]'
-    );
-
-    if(menu){
-
-      menu.scrollIntoView({
-        block:"center"
-      });
-
-      menu.focus();
-    }
-
-    localStorage.removeItem("lastMenu");
-
-    return; // STOP, jangan restore poster film
-  }
-
-  const lastPoster =
-    localStorage.getItem("lastHomePoster");
-
-  if(lastPoster !== null){
-
-    const posters =
-      document.querySelectorAll('a[tabindex="0"][data-popup="true"]');
-
-    setTimeout(() => {
-
-      if(posters[lastPoster]){
-
-        posters[lastPoster].scrollIntoView({
-          block:"center"
+    // LOAD UTAMA (Satu blok tunggal)
+    window.addEventListener("load", function(){
+        // Efek Suara Click
+        const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
+        document.querySelectorAll('.force-5 a').forEach(item => {
+            item.addEventListener('focus', () => { 
+                soundClick.currentTime = 0; 
+                soundClick.play().catch(()=>{}); 
+            });
         });
 
+        // Restore Posisi & Sidebar
+        const lastPosterIndex = localStorage.getItem("lastHomePoster");
+        const lastMenu = localStorage.getItem("lastMenu");
 
-
-        posters[lastPoster].focus();
-
-        lastFocus = posters[lastPoster];
-      }
-
-    }, 300);
-  }
-});
-
+        setTimeout(() => {
+            if(lastMenu) {
+                const menu = document.querySelector('[data-menu="' + lastMenu + '"]');
+                if(menu) { 
+                    menu.closest('li').classList.add("active");
+                    menu.focus(); 
+                    localStorage.removeItem("lastMenu"); 
+                }
+            } else if(lastPosterIndex !== null) {
+                const all = document.querySelectorAll('.force-5 a');
+                const target = all[parseInt(lastPosterIndex)];
+                if(target) {
+                    target.scrollIntoView({ block: "center" });
+                    target.focus();
+                    localStorage.removeItem("lastHomePoster");
+                }
+            }
+        }, 500);
+    });
 })();
 </script>
 
