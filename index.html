@@ -656,8 +656,8 @@
 </script>
 
 <script>
+
 (function(){
-    // Mencegah browser scroll otomatis saat Back
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
     const overlay = document.getElementById("popupOverlay");
@@ -665,53 +665,12 @@
     const title = document.getElementById("popupTitle");
     const text = document.getElementById("popupText");
     const content = document.getElementById("popupContent");
-    
     let playLink = "", trailerLink = "", lastFocus = null, iframe = null;
 
-    // EVENT KLIK: Deteksi Poster & Popup
-    document.addEventListener("click", function(e){
-        const a = e.target.closest('.force-5 a');
-        if(!a) return;
-
-        // Simpan posisi ke localStorage
-        const allPosters = document.querySelectorAll('.force-5 a');
-        const index = Array.from(allPosters).indexOf(a);
-        localStorage.setItem("lastHomePoster", index);
-
-        // Jika poster memiliki data-popup="true", tampilkan popup
-        if(a.dataset.popup === "true") {
-            e.preventDefault();
-            lastFocus = a;
-            
-            // Isi data popup
-            img.src = a.querySelector("img").src;
-            title.textContent = a.dataset.title;
-            text.textContent = a.dataset.sinopsis;
-            playLink = a.href;
-            trailerLink = a.dataset.trailer;
-            
-            overlay.classList.add("show");
-            if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
-        }
-    });
-
-    // FUNGSI POPUP (Play, Trailer, Close)
+    // FUNGSI UTAMA POPUP
     window.popupPlay = function(){
         if(typeof Android !== "undefined" && Android.playVideo) Android.playVideo(playLink);
         else window.open(playLink, "_blank");
-    };
-
-    window.popupTrailer = function(){
-        if(!trailerLink) return;
-        img.style.display = "none";
-        if(!iframe){
-            iframe = document.createElement("iframe");
-            iframe.width = "100%"; iframe.height = "315";
-            iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
-            iframe.allowFullscreen = true;
-            content.insertBefore(iframe, content.firstChild);
-        }
-        iframe.src = trailerLink + (trailerLink.includes("?") ? "&" : "?") + "autoplay=1&mute=1";
     };
 
     window.popupClose = function(){
@@ -722,42 +681,59 @@
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
     };
 
-    // LOAD UTAMA (Satu blok tunggal)
+    // EVENT LISTENER BACK: Mencegah aplikasi keluar saat popup terbuka
+    window.addEventListener('keydown', function(event) {
+        // Kode 27 (Escape) atau 10009 (Back Remote TV)
+        if (event.keyCode === 27 || event.keyCode === 10009) {
+            if (overlay.classList.contains("show")) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                window.popupClose();
+            }
+        }
+    });
+
+    // EVENT KLIK POSTER
+    document.addEventListener("click", function(e){
+        const a = e.target.closest('.force-5 a');
+        if(!a) return;
+        localStorage.setItem("lastHomePoster", Array.from(document.querySelectorAll('.force-5 a')).indexOf(a));
+
+        if(a.dataset.popup === "true") {
+            e.preventDefault();
+            lastFocus = a;
+            img.src = a.querySelector("img").src;
+            title.textContent = a.dataset.title;
+            text.textContent = a.dataset.sinopsis;
+            playLink = a.href;
+            trailerLink = a.dataset.trailer;
+            overlay.classList.add("show");
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
+        }
+    });
+
+    // LOAD UTAMA
     window.addEventListener("load", function(){
-        // Efek Suara Click
         const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
         document.querySelectorAll('.force-5 a').forEach(item => {
-            item.addEventListener('focus', () => { 
-                soundClick.currentTime = 0; 
-                soundClick.play().catch(()=>{}); 
-            });
+            item.addEventListener('focus', () => { soundClick.currentTime = 0; soundClick.play().catch(()=>{}); });
         });
 
-        // Restore Posisi & Sidebar
+        // Restore posisi
         const lastPosterIndex = localStorage.getItem("lastHomePoster");
-        const lastMenu = localStorage.getItem("lastMenu");
-
         setTimeout(() => {
-            if(lastMenu) {
-                const menu = document.querySelector('[data-menu="' + lastMenu + '"]');
-                if(menu) { 
-                    menu.closest('li').classList.add("active");
-                    menu.focus(); 
-                    localStorage.removeItem("lastMenu"); 
-                }
-            } else if(lastPosterIndex !== null) {
+            if(lastPosterIndex !== null) {
                 const all = document.querySelectorAll('.force-5 a');
-                const target = all[parseInt(lastPosterIndex)];
-                if(target) {
-                    target.scrollIntoView({ block: "center" });
-                    target.focus();
+                if(all[parseInt(lastPosterIndex)]) {
+                    all[parseInt(lastPosterIndex)].focus();
                     localStorage.removeItem("lastHomePoster");
                 }
             }
-        }, 500);
+        }, 300);
     });
 })();
 </script>
+
 
 <script>
 window.addEventListener("load", function(){
