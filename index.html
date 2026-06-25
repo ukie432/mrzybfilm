@@ -409,7 +409,7 @@
 </head>
 <body>
 
-<div class="slideshow-container">
+<div class="slideshow-container" tabindex="0">
     <div class="mySlides fade">
         <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/PicRetouch_20250322_110858401.webp" style="width: 100%">
     </div>
@@ -800,8 +800,35 @@ window.addEventListener("load", function(){
         });
     });
     </script>
+    
+    
+    <script>
+document.addEventListener('keydown', function(e) {
+    // 38 adalah kode remote untuk tombol ATAS
+    if (e.keyCode === 38) {
+        const activeEl = document.activeElement;
+        
+        // Pastikan yang aktif adalah salah satu poster di grid 'force-5'
+        if (activeEl && activeEl.closest('.force-5')) {
+            // Dapatkan index poster yang sedang aktif
+            const allPosters = Array.from(document.querySelectorAll('.force-5 a'));
+            const currentIndex = allPosters.indexOf(activeEl);
+            
+            // Cek apakah poster berada di baris pertama (index 0 sampai 4)
+            if (currentIndex >= 0 && currentIndex < 5) {
+                // Tentukan ID banner Anda (ganti 'bannerUtama' dengan ID banner yang sebenarnya)
+                const banner = document.querySelector('.slideshow-container'); 
+                
+                if (banner) {
+                    e.preventDefault(); // Mencegah navigasi ke sidebar
+                    banner.focus();    // Langsung pindah ke banner
+                }
+            }
+        }
+    }
+});
+</script>
 
 </body>
 </html>
-
 
