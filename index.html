@@ -657,50 +657,79 @@
 
 <script>
 (function(){
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
     const overlay = document.getElementById("popupOverlay");
     const img = document.getElementById("popupImg");
     const title = document.getElementById("popupTitle");
     const text = document.getElementById("popupText");
-    let playLink = "", lastFocus = null;
+    const content = document.getElementById("popupContent");
+    let playLink = "", trailerLink = "", lastFocus = null, iframe = null;
 
-    // FUNGSI CLOSE (Panggil ini saja untuk menutup)
+    // FUNGSI UTAMA POPUP
+    window.popupPlay = function(){
+        if(typeof Android !== "undefined" && Android.playVideo) Android.playVideo(playLink);
+        else window.open(playLink, "_blank");
+    };
+
     window.popupClose = function(){
         overlay.classList.remove("show");
-        // Hapus Iframe jika ada
-        const iframe = overlay.querySelector('iframe');
-        if(iframe) iframe.remove();
-        
-        if(lastFocus) lastFocus.focus();
-        
-        // BERITAHU ANDROID JIKA PERLU
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
-        }
+        if(iframe){ iframe.src = ""; iframe.remove(); iframe = null; }
+        img.style.display = "";
+        if(lastFocus){ setTimeout(() => lastFocus.focus(), 150); }
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
     };
+
+    // EVENT LISTENER BACK: Mencegah aplikasi keluar saat popup terbuka
+    window.addEventListener('keydown', function(event) {
+        // Kode 27 (Escape) atau 10009 (Back Remote TV)
+        if (event.keyCode === 27 || event.keyCode === 10009) {
+            if (overlay.classList.contains("show")) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                window.popupClose();
+            }
+        }
+    });
 
     // EVENT KLIK POSTER
     document.addEventListener("click", function(e){
         const a = e.target.closest('.force-5 a');
         if(!a) return;
-        
+        localStorage.setItem("lastHomePoster", Array.from(document.querySelectorAll('.force-5 a')).indexOf(a));
+
         if(a.dataset.popup === "true") {
-            // JANGAN PAKAI e.preventDefault() secara berlebihan jika tidak perlu
+            e.preventDefault();
             lastFocus = a;
             img.src = a.querySelector("img").src;
             title.textContent = a.dataset.title;
             text.textContent = a.dataset.sinopsis;
             playLink = a.href;
-            
+            trailerLink = a.dataset.trailer;
             overlay.classList.add("show");
-            
-            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                Android.setPopUpStatus(true);
-            }
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
         }
     });
 
-    // --- JANGAN TAMBAHKAN KEYDOWN ATAU POPSTATE APAPUN DI SINI ---
-    // Biarkan WebView menangani tombol Back secara native seperti kode awal Anda.
+    // LOAD UTAMA
+    window.addEventListener("load", function(){
+        const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
+        document.querySelectorAll('.force-5 a').forEach(item => {
+            item.addEventListener('focus', () => { soundClick.currentTime = 0; soundClick.play().catch(()=>{}); });
+        });
+
+        // Restore posisi
+        const lastPosterIndex = localStorage.getItem("lastHomePoster");
+        setTimeout(() => {
+            if(lastPosterIndex !== null) {
+                const all = document.querySelectorAll('.force-5 a');
+                if(all[parseInt(lastPosterIndex)]) {
+                    all[parseInt(lastPosterIndex)].focus();
+                    localStorage.removeItem("lastHomePoster");
+                }
+            }
+        }, 300);
+    });
 })();
 </script>
 <script>
