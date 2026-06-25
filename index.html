@@ -707,36 +707,31 @@
         window.popupClose();
     };
 
-// EVENT LISTENER BACK: Mencegah aplikasi keluar secara paksa
 window.addEventListener('keydown', function(event) {
-    // 27 (Escape) atau 10009 (Back Remote TV)
+    // 27 adalah tombol Escape, 10009 adalah tombol Back di Remote TV
     if (event.keyCode === 27 || event.keyCode === 10009) {
         
-        // 1. Prioritas Pertama: Jika Popup terbuka, tutup popup
+        // 1. Cek apakah Popup sedang terbuka
         const overlay = document.getElementById("popupOverlay");
         if (overlay && overlay.classList.contains("show")) {
             event.preventDefault();
-            event.stopImmediatePropagation();
-            window.tutupPopUpPoster();
+            window.tutupPopUpPoster(); // Menggunakan fungsi yang sudah berhasil
             return;
         }
 
-        // 2. Prioritas Kedua: Jika Hamburger Menu terbuka, tutup menu
+        // 2. Cek apakah Menu Hamburger sedang terbuka
         const wrapper = document.querySelector(".wrapper");
         if (wrapper && wrapper.classList.contains("active")) {
             event.preventDefault();
-            event.stopImmediatePropagation();
-            // Menutup menu dengan cara yang sama seperti tombol 'close'
-            wrapper.classList.remove("active");
-            // Kembalikan fokus ke tombol hamburger agar navigasi tidak hilang
+            wrapper.classList.remove("active"); // Menutup menu
+            
+            // Fokuskan balik ke ikon menu agar remote tidak hilang arah
             const hamburger = document.querySelector(".hamburger");
             if (hamburger) hamburger.focus();
             return;
         }
-        
-        // 3. Jika tidak ada yang terbuka, biarkan event berlanjut (untuk goBack atau Exit)
     }
-});
+}, true);
 
     // EVENT KLIK POSTER
     document.addEventListener("click", function(e){
