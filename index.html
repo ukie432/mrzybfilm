@@ -672,12 +672,23 @@
         else window.open(playLink, "_blank");
     };
 
+    // 1. Fungsi asli untuk tombol Close (Biarkan tetap ada)
     window.popupClose = function(){
         overlay.classList.remove("show");
-        if(iframe){ iframe.src = ""; iframe.remove(); iframe = null; }
+        const iframe = overlay.querySelector('iframe');
+        if(iframe) iframe.remove();
         img.style.display = "";
-        if(lastFocus){ setTimeout(() => lastFocus.focus(), 150); }
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
+        if(lastFocus) { setTimeout(() => lastFocus.focus(), 150); }
+        
+        if (typeof Android !== "undefined") {
+            Android.setPopUpStatus(false);
+        }
+    };
+
+    // 2. FUNGSI BARU (Jembatan untuk Java)
+    // Java akan memanggil ini, dan fungsi ini akan meneruskan perintah ke popupClose
+    window.tutupPopUpPoster = function(){
+        window.popupClose();
     };
 
     // EVENT LISTENER BACK: Mencegah aplikasi keluar saat popup terbuka
