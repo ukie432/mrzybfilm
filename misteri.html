@@ -8,147 +8,121 @@
 <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
 
 <style>
-/* TEMA HOROR */
 *{margin:0;padding:0;box-sizing:border-box;}
-
+body { 
+    background: radial-gradient(circle, #2a0000 0%, #000000 90%); 
+    width:100vw; height:100vh; display:flex; justify-content:center; align-items:center;
+    overflow:hidden; animation: flicker 4s infinite; color: white;
+}
 @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
-body {
-    background: radial-gradient(circle, #2a0000 0%, #000000 90%);
-    width:100vw; height:100vh; overflow:hidden; position:relative;
-    animation: flicker 4s infinite;
-}
-
-.main-container-music { width:100vw; height:100vh; display:flex; justify-content:center; align-items:center; }
-
 .music-player-container {
-    width:260px; height:500px;
+    width: 800px; height: 400px; 
     background: rgba(10, 0, 0, 0.9);
-    border: 2px solid #550000;
-    border-radius:20px;
-    box-shadow: 0 0 40px rgba(150, 0, 0, 0.5);
-    padding:15px;
-    position:relative;
-    display:flex; flex-direction:column; justify-content:space-between;
+    border: 2px solid #550000; border-radius:20px;
+    padding: 30px; display: flex; gap: 40px;
 }
 
-/* TEXT */
-.brand-name { font-family: 'Creepster', cursive; font-size: 2em; color: #ff0000; text-shadow: 0 0 15px #ff0000; text-align: center; margin-bottom: 5px; }
-.playlist-par { font-size:1.2em; color: #880000; text-align: center; margin-bottom: 10px; }
-#title { color: #cc0000; margin-top:10px; text-align: center; font-size: 1.1em; }
-#artist { color: #555; font-size:12px; text-align: center; text-transform: uppercase; }
+.left-side { width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.brand-name { font-family: 'Creepster', cursive; font-size: 2.5em; color: #ff0000; }
+.sub-brand { font-family: 'Creepster', cursive; font-size: 1.2em; color: #880000; margin-bottom: 20px; letter-spacing: 2px; }
+.circle-container { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #500; overflow: hidden; }
+#cover { width: 100%; height: 100%; object-fit: cover; }
 
-/* CIRCLE */
-.circle-container { width:100px; height:100px; margin:15px auto; border-radius:50%; border: 2px solid #500; display:flex; justify-content:center; align-items:center; }
-.circle-volume { width:93px; height:93px; background:#111; border-radius:50%; display:flex; justify-content:center; align-items:center; }
+.right-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+#title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
 
-/* VISUALIZER */
-.sound-wave-container { display:flex; align-items:flex-end; gap:4px; height:30px; pointer-events:none; }
-.sound-wave { width:3px; animation:load .9s infinite; background: #8b0000; }
-.when-music-paused .sound-wave { animation-play-state:paused; }
-@keyframes load { 0%{height:4px} 50%{height:25px} 100%{height:4px} }
+.progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 30px; }
+.seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; }
+.fill { height:8px; width:0%; background:#ff0000; }
 
-/* VOLUME & PROGRESS */
-.volume-up { position:absolute; right:20px; top:50%; cursor:pointer; color: #ff0000; }
-.progress-bar-container { display:flex; align-items:center; gap:6px; margin-top:10px; color: #555; font-size: 11px; }
-.seeks { flex:1; height:4px; background:#220000; border-radius:10px; cursor:pointer; }
-.fill { height:4px; width:0%; background:#ff0000; box-shadow: 0 0 8px #ff0000; }
-
-/* CONTROLS */
-.controls { display:flex; justify-content:center; align-items:center; gap:20px; margin:15px 0; }
-.controls button { width:44px; height:44px; border:1px solid #400; border-radius:50%; background:#1a0000; cursor:pointer; color:#ff3333; }
-
-@media (orientation:landscape){
- .music-player-container{ width:85vw; max-width:900px; height:70vh; flex-direction:row; }
- .left, .right { width:50%; }
-}
+.controls-area { display: flex; align-items: center; justify-content: space-between; }
+.controls { display:flex; gap:20px; }
+.controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; }
+.volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; }
+.volume-up:focus { outline: 2px solid #ff0000; border-radius: 5px; }
 </style>
 </head>
 
 <body>
-<div class="main-container-music">
-    <div class="music-player-container">
-        <div class="left">
-            <div class="brand-name">MRZYB</div>
-            <p class="playlist-par">Nightmare Side</p>
-            <h2 id="title"></h2>
-            <p id="artist"></p>
-            <div class="circle-container">
-                <div class="circle-volume">
-                    <div class="sound-wave-container when-music-paused">
-                        <div class="sound-wave" style="animation-delay:.1s"></div>
-                        <div class="sound-wave" style="animation-delay:.2s"></div>
-                        <div class="sound-wave" style="animation-delay:.3s"></div>
-                        <div class="sound-wave" style="animation-delay:.4s"></div>
-                        <div class="sound-wave" style="animation-delay:.5s"></div>
-                        <div class="sound-wave" style="animation-delay:.6s"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="right">
-            <a class="volume-up"><i class="fa fa-volume-up"></i></a>
-            <div class="progress-bar-container">
-                <span class="current_time">00:00</span>
-                <div class="seeks"><div class="fill"></div></div>
-                <span class="duration_time">00:00</span>
-            </div>
+<div class="music-player-container">
+    <div class="left-side">
+        <div class="brand-name">MRZYB</div>
+        <div class="sub-brand">Nightmare Story</div>
+        <div class="circle-container"><img id="cover" src="" alt="Cover"></div>
+    </div>
+    
+    <div class="right-side">
+        <h2 id="title">Loading...</h2>
+        
+        <div class="progress-bar-container">
+            <span class="current_time">00:00</span>
+            <div class="seeks"><div class="fill"></div></div>
+            <span class="duration_time">00:00</span>
+        </div>
+        
+        <div class="controls-area">
             <div class="controls">
                 <button id="previous"><i class="fas fa-backward"></i></button>
                 <button id="play"><i class="fas fa-play"></i></button>
                 <button id="forword"><i class="fas fa-forward"></i></button>
             </div>
+            <a class="volume-up" tabindex="0"><i class="fa fa-volume-up"></i></a>
         </div>
-        <audio></audio>
     </div>
 </div>
+<audio></audio>
 
 <script>
-const songs=[
-{title:"Nightmare Side Story",artist:"Perpustakaan",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595569-48000-2-5d7ee2dba6488.mp3"},
-{title:"Nightmare Side Story",artist:"Jahil Membawa Petaka",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595576-48000-2-8cb455c7669c6.mp3"},
-{title:"Nightmare Side Story",artist:"Pengalaman Driver Ojol",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595547-48000-2-8d25f5709d238.mp3"},
-{title:"Nightmare Side Story",artist:"Hantu Penunggu Jembatan",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595579-48000-2-676cb884cbd94.mp3"},
-{title:"Nightmare Side Story",artist:"Boneka Suster",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595657-48000-2-2565e44ea74a7.mp3"},
-{title:"Nightmare Side Story",artist:"Penari Misterius",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595703-48000-2-b3db7dea57a5.mp3"},
-{title:"Nightmare Side Story",artist:"Ayahku Di Santet",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595711-48000-2-7dc2a87532cbc.mp3"},
-{title:"Nightmare Side Story",artist:"Hantu Jaman Penjajahan",song:"https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595733-48000-2-534166e529dc2.mp3"}
+const songs = [
+    {title: "Perpustakaan", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595569-48000-2-5d7ee2dba6488.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Perpustakaaan-.webp"},
+    {title: "Jahil Membawa Petaka", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595576-48000-2-8cb455c7669c6.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/PetakA.webp"},
+    {title: "Pengalaman Driver Ojol", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595547-48000-2-8d25f5709d238.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Ojek1.webp"},
+    {title: "Hantu Penunggu Jembatan", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595579-48000-2-676cb884cbd94.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Jembatan.webp"},
+    {title: "Boneka Suster", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595657-48000-2-2565e44ea74a7.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Boneka.webp"},
+    {title: "Penari Misterius", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595703-48000-2-b3db7dea57a5.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Penari.webp"},
+    {title: "Ayahku Di Santet", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595711-48000-2-7dc2a87532cbc.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Santet.webp"},
+    {title: "Hantu Jaman Penjajahan", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595733-48000-2-534166e529dc2.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Hntupenjajahan.webp"}
 ];
 
-let index=0, isPlay=false;
-const music=document.querySelector("audio"),
-      playBtn=document.getElementById("play"),
-      playIcon=playBtn.querySelector("i"),
-      wave=document.querySelector(".sound-wave-container"),
-      fill=document.querySelector(".fill"),
-      volumeBtn=document.querySelector(".volume-up"),
-      volumeIcon=volumeBtn.querySelector("i");
+let index = 0, isPlay = false;
+const music = document.querySelector("audio"), 
+      titleEl = document.getElementById("title"),
+      coverEl = document.getElementById("cover"), 
+      playBtn = document.getElementById("play"),
+      fill = document.querySelector(".fill"),
+      volumeBtn = document.querySelector(".volume-up"),
+      volumeIcon = volumeBtn.querySelector("i");
 
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") music.currentTime = Math.min(music.currentTime + 10, music.duration);
     if (e.key === "ArrowLeft") music.currentTime = Math.max(music.currentTime - 10, 0);
+    if (e.key === "Enter") {
+        if(document.activeElement === volumeBtn) volumeBtn.click();
+        else playBtn.click();
+    }
 });
 
 function loadSong(i){
-    document.getElementById("title").textContent=songs[i].title;
-    document.getElementById("artist").textContent=songs[i].artist;
-    music.src=songs[i].song;
+    titleEl.textContent = songs[i].title;
+    music.src = songs[i].song;
+    coverEl.src = songs[i].cover;
 }
-loadSong(index);
+loadSong(0);
 
-playBtn.onclick=()=>{
-    if(!isPlay){ music.play(); playIcon.className="fas fa-pause"; wave.classList.remove("when-music-paused"); }
-    else{ music.pause(); playIcon.className="fas fa-play"; wave.classList.add("when-music-paused"); }
-    isPlay=!isPlay;
+playBtn.onclick = () => {
+    if(!isPlay) { music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; }
+    else { music.pause(); playBtn.innerHTML='<i class="fas fa-play"></i>'; }
+    isPlay = !isPlay;
 };
 
-document.getElementById("previous").onclick=()=>{index=(index-1+songs.length)%songs.length; loadSong(index); music.play();};
-document.getElementById("forword").onclick=()=>{index=(index+1)%songs.length; loadSong(index); music.play();};
+document.getElementById("previous").onclick = () => { index=(index-1+songs.length)%songs.length; loadSong(index); music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; isPlay=true; };
+document.getElementById("forword").onclick = () => { index=(index+1)%songs.length; loadSong(index); music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; isPlay=true; };
 
-volumeBtn.onclick=()=>{
-    if(music.volume > 0){ music.volume=0; volumeIcon.className="fa fa-volume-mute"; }
-    else{ music.volume=1; volumeIcon.className="fa fa-volume-up"; }
+volumeBtn.onclick = () => {
+    if(music.volume > 0) { music.volume = 0; volumeIcon.className = "fa fa-volume-mute"; }
+    else { music.volume = 1; volumeIcon.className = "fa fa-volume-up"; }
 };
 
 music.addEventListener("timeupdate",()=>{
