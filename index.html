@@ -499,7 +499,7 @@
                 <a href="telegram.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/94345968e9c09b69bf95f1a491379da3.webp"  /></span></a>
                 <a href="alurcerita.html"><span style="color:#5c2d91;"><img alt="" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/41ffb8ee960a176b0942f5df5e2e5125.webp"  /></span></a>
 
-                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/upris%202024.mp4" tabindex="0" data-popup="true" data-title="Uprising" data-sinopsis="(2024)" data-trailer="https://www.youtube.com/embed/TqfaCAA1UeE?si=1C8wV1-_E5PuXSdq">
+                <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/upris%202024.mp4" tabindex="0" data-popup="true" data-title="Uprising" data-sinopsis="(2024)" data-trailer="https://mutia1503.ukielaki88.workers.dev/0:/Trailler/Uprising%20_%20Official%20Trailer.mp4">
                     <img src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/ce162b0f50e2d88aa25f336ca89edc36.webp">
                 </a>
                 <a href="https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Avengers_%20Endgame%20(2019)%20[Dub%20Indo].mp4" tabindex="0" data-popup="true" data-title="Avengers Endgame" data-sinopsis="(2019)" data-trailer="https://www.youtube.com/embed/TcMBFSGVi1c?si=RgA2g_jKXJrXbdxX">
@@ -680,20 +680,47 @@
     const title = document.getElementById("popupTitle");
     const text = document.getElementById("popupText");
     const content = document.getElementById("popupContent");
-    let playLink = "", trailerLink = "", lastFocus = null, iframe = null;
+    const trailerBtn = document.querySelector(".trailerBtn"); // Mengambil referensi tombol trailer
+    let playLink = "", trailerLink = "", lastFocus = null;
 
     // FUNGSI UTAMA POPUP
     window.popupPlay = function(){
         if(typeof Android !== "undefined" && Android.playVideo) Android.playVideo(playLink);
         else window.open(playLink, "_blank");
     };
+    
+    // FUNGSI TRAILER
+    window.popupTrailer = function(){
+        if (trailerLink) {
+            const iframe = document.createElement("iframe");
+            iframe.src = trailerLink;
+            iframe.width = "100%";
+            iframe.height = "315";
+            iframe.frameBorder = "0";
+            iframe.allowFullscreen = true;
+            
+            img.style.display = "none";
+            content.prepend(iframe);
+            
+            // Sembunyikan tombol trailer agar tidak diklik dua kali
+            if(trailerBtn) trailerBtn.style.display = "none";
+        } else {
+            alert("Trailer tidak tersedia.");
+        }
+    };
 
-    // 1. Fungsi asli untuk tombol Close (Biarkan tetap ada)
+    // FUNGSI CLOSE (DIPERBAIKI)
     window.popupClose = function(){
         overlay.classList.remove("show");
+        
+        // Hapus iframe jika ada
         const iframe = overlay.querySelector('iframe');
         if(iframe) iframe.remove();
-        img.style.display = "";
+        
+        // Kembalikan tampilan poster dan tombol
+        img.style.display = ""; 
+        if(trailerBtn) trailerBtn.style.display = "inline-block"; // <--- PENTING: Mengembalikan tombol
+        
         if(lastFocus) { setTimeout(() => lastFocus.focus(), 150); }
         
         if (typeof Android !== "undefined") {
@@ -701,37 +728,31 @@
         }
     };
 
-    // 2. FUNGSI BARU (Jembatan untuk Java)
-    // Java akan memanggil ini, dan fungsi ini akan meneruskan perintah ke popupClose
+    // 2. FUNGSI JEMBATAN UNTUK JAVA
     window.tutupPopUpPoster = function(){
         window.popupClose();
     };
 
-window.addEventListener('keydown', function(event) {
-    // 27 adalah tombol Escape, 10009 adalah tombol Back di Remote TV
-    if (event.keyCode === 27 || event.keyCode === 10009) {
-        
-        // 1. Cek apakah Popup sedang terbuka
-        const overlay = document.getElementById("popupOverlay");
-        if (overlay && overlay.classList.contains("show")) {
-            event.preventDefault();
-            window.tutupPopUpPoster(); // Menggunakan fungsi yang sudah berhasil
-            return;
-        }
+    // EVENT KEYDOWN
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 27 || event.keyCode === 10009) {
+            const overlay = document.getElementById("popupOverlay");
+            if (overlay && overlay.classList.contains("show")) {
+                event.preventDefault();
+                window.tutupPopUpPoster();
+                return;
+            }
 
-        // 2. Cek apakah Menu Hamburger sedang terbuka
-        const wrapper = document.querySelector(".wrapper");
-        if (wrapper && wrapper.classList.contains("active")) {
-            event.preventDefault();
-            wrapper.classList.remove("active"); // Menutup menu
-            
-            // Fokuskan balik ke ikon menu agar remote tidak hilang arah
-            const hamburger = document.querySelector(".hamburger");
-            if (hamburger) hamburger.focus();
-            return;
+            const wrapper = document.querySelector(".wrapper");
+            if (wrapper && wrapper.classList.contains("active")) {
+                event.preventDefault();
+                wrapper.classList.remove("active");
+                const hamburger = document.querySelector(".hamburger");
+                if (hamburger) hamburger.focus();
+                return;
+            }
         }
-    }
-}, true);
+    }, true);
 
     // EVENT KLIK POSTER
     document.addEventListener("click", function(e){
@@ -759,7 +780,6 @@ window.addEventListener('keydown', function(event) {
             item.addEventListener('focus', () => { soundClick.currentTime = 0; soundClick.play().catch(()=>{}); });
         });
 
-        // Restore posisi
         const lastPosterIndex = localStorage.getItem("lastHomePoster");
         setTimeout(() => {
             if(lastPosterIndex !== null) {
