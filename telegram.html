@@ -1,29 +1,69 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
     <title>MRZYBtv</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        .qr-image {
+            width: 450px;
+            height: auto;
+            border: 8px solid white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .info-text {
+            font-size: 2rem;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
 
-  </head>
-<body bgcolor="black">
-<center>
+    <h1>MRZYB TV</h1>
+    
+    <img class="qr-image" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Telegramku.webp" alt="QR Code">
+    
+    <div class="info-text">
+        Join ke telegram untuk kendala & request film:<br>
+        <span class="highlight">t.me/mrzybstream</span>
+    </div>
 
-  <font color="white" face="Courier New" size="6">
-  <marquee bgcolor="black"><b></b></marquee></font><br>
-<img width="200" src="https://i.pinimg.com/736x/2a/62/3c/2a623c0590d62e0777ad2f736add66da.jpg"><br>
-<font color="white" face="Courier New" size="3">Join ke telegram<br> t.me/mrzybmovie<br>untuk kendala dan request film.</font><br><br><br>
-  <audio id="audioNotifikasi">
-  <audio controls source="mp3" src="https://ia802902.us.archive.org/23/items/skilletmonster/skillet%20-%20monster.mp3?cnt=0" type="audio/mp3" autoplay="autoplay"></audio>
-<button style="border:2px solid white; border-radius:30px; background-color:green;" onclick="playAudio()" type="button"><font face="monaco" size="5" color="white">TELEGRAM</font></button>
-<button style="border:2px solid white; border-radius:30px; background-color:green;" onclick="pauseAudio()" type="button"><font face="monaco" size="5" color="white">GOPAY: 082210512185</font></button> <br>
-<script type="text/javascript">
-var el = document.getElementById("audioNotifikasi"); 
-function playAudio() { 
-  el.play(); 
-} 
-function pauseAudio() { 
-  el.pause(); 
-} 
-</script>
-</center>
+    <audio id="audioNotifikasi" loop autoplay>
+        <source src="https://ia802902.us.archive.org/23/items/skilletmonster/skillet%20-%20monster.mp3" type="audio/mp3">
+    </audio>
+
+    <script type="text/javascript">
+        // Memastikan audio berputar saat ada interaksi pertama di halaman
+        document.addEventListener('click', function() {
+            var audio = document.getElementById("audioNotifikasi");
+            audio.play();
+        }, { once: true });
+    </script>
 </body>
 </html>
