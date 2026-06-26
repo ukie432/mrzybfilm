@@ -680,46 +680,54 @@
     const title = document.getElementById("popupTitle");
     const text = document.getElementById("popupText");
     const content = document.getElementById("popupContent");
-    const trailerBtn = document.querySelector(".trailerBtn"); // Mengambil referensi tombol trailer
+    const trailerBtn = document.querySelector(".trailerBtn");
     let playLink = "", trailerLink = "", lastFocus = null;
 
-    // FUNGSI UTAMA POPUP
+    // FUNGSI UTAMA PLAY FILM
     window.popupPlay = function(){
         if(typeof Android !== "undefined" && Android.playVideo) Android.playVideo(playLink);
         else window.open(playLink, "_blank");
     };
     
-    // FUNGSI TRAILER
+    // FUNGSI TRAILER (MENGGUNAKAN VIDEO HTML5)
     window.popupTrailer = function(){
         if (trailerLink) {
-            const iframe = document.createElement("iframe");
-            iframe.src = trailerLink;
-            iframe.width = "100%";
-            iframe.height = "315";
-            iframe.frameBorder = "0";
-            iframe.allowFullscreen = true;
+            // Hapus media sebelumnya jika ada
+            const existingMedia = overlay.querySelector('iframe, video');
+            if(existingMedia) existingMedia.remove();
+
+            // Buat elemen video HTML5
+            const video = document.createElement("video");
+            video.src = trailerLink;
+            video.width = "100%";
+            video.height = "315";
+            video.controls = true; // Penting: Ini memunculkan tombol kontrol untuk remote TV
+            video.autoplay = true; // Video otomatis jalan
+            video.style.display = "block";
             
             img.style.display = "none";
-            content.prepend(iframe);
+            content.prepend(video);
             
-            // Sembunyikan tombol trailer agar tidak diklik dua kali
+            // Sembunyikan tombol trailer
             if(trailerBtn) trailerBtn.style.display = "none";
+            
+            // Fokuskan ke video agar remote langsung bisa mengontrolnya
+            setTimeout(() => video.focus(), 200);
         } else {
             alert("Trailer tidak tersedia.");
         }
     };
 
-    // FUNGSI CLOSE (DIPERBAIKI)
+    // FUNGSI CLOSE
     window.popupClose = function(){
         overlay.classList.remove("show");
         
-        // Hapus iframe jika ada
-        const iframe = overlay.querySelector('iframe');
-        if(iframe) iframe.remove();
+        // Hapus video atau iframe
+        const media = overlay.querySelector('iframe, video');
+        if(media) media.remove();
         
-        // Kembalikan tampilan poster dan tombol
         img.style.display = ""; 
-        if(trailerBtn) trailerBtn.style.display = "inline-block"; // <--- PENTING: Mengembalikan tombol
+        if(trailerBtn) trailerBtn.style.display = "inline-block";
         
         if(lastFocus) { setTimeout(() => lastFocus.focus(), 150); }
         
@@ -728,7 +736,6 @@
         }
     };
 
-    // 2. FUNGSI JEMBATAN UNTUK JAVA
     window.tutupPopUpPoster = function(){
         window.popupClose();
     };
@@ -738,6 +745,7 @@
         if (event.keyCode === 27 || event.keyCode === 10009) {
             const overlay = document.getElementById("popupOverlay");
             if (overlay && overlay.classList.contains("show")) {
+                // Jika video sedang main, tutup popup
                 event.preventDefault();
                 window.tutupPopUpPoster();
                 return;
@@ -767,7 +775,7 @@
             title.textContent = a.dataset.title;
             text.textContent = a.dataset.sinopsis;
             playLink = a.href;
-            trailerLink = a.dataset.trailer;
+            trailerLink = a.dataset.trailer; // Pastikan data-trailer di HTML Anda berisi link .mp4
             overlay.classList.add("show");
             if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
         }
