@@ -691,32 +691,19 @@
     
     // FUNGSI TRAILER (MENGGUNAKAN VIDEO HTML5)
     window.popupTrailer = function(){
-        if (trailerLink) {
-            // Hapus media sebelumnya jika ada
-            const existingMedia = overlay.querySelector('iframe, video');
-            if(existingMedia) existingMedia.remove();
-
-            // Buat elemen video HTML5
-            const video = document.createElement("video");
-            video.src = trailerLink;
-            video.width = "100%";
-            video.height = "315";
-            video.controls = true; // Penting: Ini memunculkan tombol kontrol untuk remote TV
-            video.autoplay = true; // Video otomatis jalan
-            video.style.display = "block";
-            
-            img.style.display = "none";
-            content.prepend(video);
-            
-            // Sembunyikan tombol trailer
-            if(trailerBtn) trailerBtn.style.display = "none";
-            
-            // Fokuskan ke video agar remote langsung bisa mengontrolnya
-            setTimeout(() => video.focus(), 200);
+    if (trailerLink) {
+        // Langsung panggil fungsi native Android untuk memutar trailer
+        // Ini akan membuka pemutar video asli (ExoPlayer) milik aplikasi Anda
+        if(typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(trailerLink);
         } else {
-            alert("Trailer tidak tersedia.");
+            // Jika Anda sedang tes di browser/CodePen, akan terbuka di tab baru
+            window.open(trailerLink, "_blank");
         }
-    };
+    } else {
+        alert("Trailer tidak tersedia.");
+    }
+};
 
     // FUNGSI CLOSE
     window.popupClose = function(){
