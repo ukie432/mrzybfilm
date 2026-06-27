@@ -22,6 +22,37 @@
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
         .eps-btn:focus { background:#00c54f; color:black; outline: none; }
+        
+        
+        
+        /* Kontainer pembungkus agar judul tetap di bawah poster */
+.poster-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 5px; 
+}
+
+/* Gaya teks judul */
+.poster-title { 
+    color: #fff; 
+    font-size: 12px; 
+    text-align: center; 
+    width: 100%; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    transition: 0.2s;
+}
+
+/* Efek highlight saat poster difokuskan */
+.poster:focus + .poster-title {
+    color: #00c54f;
+    font-weight: bold;
+}
+        
+        
+        
     </style>
 </head>
 <body>
@@ -77,17 +108,33 @@
     // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
     // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
     // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
-
+    
+    
     fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"></div>`);
-            });
-            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
-            checkLastSession();
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(item => {
+            const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+            
+            // Menggunakan template literal untuk membuat struktur baru
+            $("#grid").append(`
+                <div class="poster-wrapper">
+                    <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
+                        <img src="${item.poster}">
+                    </div>
+                    <div class="poster-title">${item.title}</div>
+                </div>
+            `);
         });
+        setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+        checkLastSession();
+    });
+    
+    
+    
+    
+
+    
 
     // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
     // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
