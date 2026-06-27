@@ -5,35 +5,19 @@
     <title>MRZYBtv Series</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-    
-    
-    
-    /* Mengunci tampilan agar selalu landscape */
-@media screen and (orientation: portrait) {
-    body {
-        width: 100vh;
-        height: 100vw;
-        transform: rotate(90deg);
-        transform-origin: top left;
-        position: absolute;
-        top: 0;
-        left: 100%;
-        overflow: hidden;
-    }
-}
-    
-    
-    
-    
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
         /* Search bar dikunci agar tidak bisa difokuskan navigasi */
         #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
         #search:focus { outline: 2px solid #00c54f; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
+        
+        /* Gaya baru untuk judul di bawah poster */
+        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .poster:focus .poster-title { color: #00c54f; } /* Mengubah warna judul saat poster difokuskan */
         
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
@@ -42,37 +26,6 @@
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
         .eps-btn:focus { background:#00c54f; color:black; outline: none; }
-        
-        
-        
-        /* Kontainer pembungkus agar judul tetap di bawah poster */
-.poster-wrapper { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 5px; 
-}
-
-/* Gaya teks judul */
-.poster-title { 
-    color: #fff; 
-    font-size: 12px; 
-    text-align: center; 
-    width: 100%; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    transition: 0.2s;
-}
-
-/* Efek highlight saat poster difokuskan */
-.poster:focus + .poster-title {
-    color: #00c54f;
-    font-weight: bold;
-}
-        
-        
-        
     </style>
 </head>
 <body>
@@ -117,47 +70,25 @@
     });
 
     // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
-    // Kita buat shortcut: Jika tekan tombol 'Menu' atau 'Search' di remote (misal e.keyCode 13 di grid)
-    // Tapi karena kita ingin tetap bisa cari, gunakan trik ini:
     $(document).on('keydown', function(e) {
         if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
             // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
         }
     });
 
-    // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
-    // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
-    // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
-    
-    
     fetch(jsonUrl)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(item => {
-            const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-            
-            // Menggunakan template literal untuk membuat struktur baru
-            $("#grid").append(`
-                <div class="poster-wrapper">
-                    <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
-                        <img src="${item.poster}">
-                    </div>
-                    <div class="poster-title">${item.title}</div>
-                </div>
-            `);
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                // Ditambahkan elemen div class="poster-title" di bawah gambar poster
+                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
+            });
+            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+            checkLastSession();
         });
-        setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
-        checkLastSession();
-    });
-    
-    
-    
-    
-
-    
 
     // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
-    // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
     $(document).on('keydown', function(e) {
         if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
             const index = $('.grid .poster').index(document.activeElement);
@@ -220,7 +151,7 @@
     });
 </script>
 
-  <script>
+<script>
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     // Fungsi untuk memutar suara
@@ -229,13 +160,11 @@
         soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
     }
 
-    // Gunakan delegasi event pada dokumen agar tidak perlu mencari elemen satu per satu
-    // Ini akan menangkap event 'focus' dari elemen apa pun di dalam halaman
     document.addEventListener('focus', function(e) {
         if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x')) {
             playSound();
         }
-    }, true); // Gunakan 'true' (capture phase) agar event focus tertangkap
+    }, true);
 </script>
 </body>
 </html>
