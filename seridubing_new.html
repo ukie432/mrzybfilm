@@ -6,14 +6,45 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
+        
+        /* Container untuk membungkus navbar */
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        /* Search bar dikunci agar tidak bisa difokuskan navigasi */
-        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
+        
+        /* Wrapper untuk search input dan tombol X agar posisinya pas di tengah */
+        .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
+        
+        #search { width: 100%; padding: 12px 40px 12px 15px; border-radius: 20px; border: none; outline: none; box-sizing: border-box; }
         #search:focus { outline: 2px solid #00c54f; }
+        
+        /* Gaya tombol X untuk hapus tulisan pencarian */
+        .clear-search { 
+            position: absolute; 
+            right: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: #444; 
+            color: #fff; 
+            border: none; 
+            border-radius: 50%; 
+            width: 22px; 
+            height: 22px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: none; /* Sembunyikan default-nya, muncul lewat js */
+            align-items: center; 
+            justify-content: center; 
+            line-height: 1;
+        }
+        .clear-search:focus { background: red; outline: none; }
+
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
         .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; }
+        
+        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .poster:focus .poster-title { color: #00c54f; }
         
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
@@ -27,7 +58,11 @@
 <body>
 
     <div class="navbar">
-        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+        <div class="search-container">
+            <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+            <!-- Tombol X baru di dalam kolom search -->
+            <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
+        </div>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -43,15 +78,19 @@
 <script>
     const jsonUrl = "seridubing.json";
 
-    // 1. Logika Navigasi Remote
+    // 1. Logika Navigasi Remote & Tombol ATAS
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Jika user berada di poster baris pertama, kunci tombol ATAS agar tidak lari ke navbar
+        // Logika tombol ATAS (Keycode 38)
         if (e.keyCode == 38) { 
             if (activeEl.classList.contains('poster')) {
                 const index = $('.grid .poster').index(activeEl);
-                if (index < 5) { e.preventDefault(); return false; }
+                if (index < 5) { 
+                    e.preventDefault(); 
+                    $("#search").attr("tabindex", "0").focus(); 
+                    return false; 
+                }
             }
         }
 
@@ -66,49 +105,74 @@
     });
 
     // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
-    // Kita buat shortcut: Jika tekan tombol 'Menu' atau 'Search' di remote (misal e.keyCode 13 di grid)
-    // Tapi karena kita ingin tetap bisa cari, gunakan trik ini:
     $(document).on('keydown', function(e) {
         if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
             // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
         }
     });
 
-    // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
-    // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
-    // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
-
+    // Load Data JSON
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
             data.forEach(item => {
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"></div>`);
+                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
             });
             setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
             checkLastSession();
         });
 
-    // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
-    // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
-    $(document).on('keydown', function(e) {
-        if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
-            const index = $('.grid .poster').index(document.activeElement);
-            if (index < 5) {
-                $("#search").attr("tabindex", "0").focus(); // Search jadi bisa difokuskan
-            }
+    // Navigasi di dalam kolom search
+    $("#search").on('keydown', function(e) {
+        // Jika tekan Bawah (40), kunci search kembali dan ke poster pertama
+        if (e.keyCode == 40) {
+            $(this).attr("tabindex", "-1").blur();
+            $("#clear-btn").attr("tabindex", "-1");
+            $(".poster").first().focus();
+        }
+        // Jika ada teks, lalu tekan Kanan (39), arahkan fokus ke tombol X
+        else if (e.keyCode == 39 && $(this).val().length > 0) {
+            $("#clear-btn").attr("tabindex", "0").focus();
         }
     });
 
-    // Jika search sedang fokus dan tekan bawah, kunci lagi search-nya
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40) {
+    // Navigasi di tombol X hapus
+    $("#clear-btn").on('keydown', function(e) {
+        // Jika tekan Kiri (37), kembali fokus ke ketikan teks
+        if (e.keyCode == 37) {
+            $("#search").focus();
+        }
+        // Jika tekan Bawah (40) saat di tombol X, turun ke poster
+        else if (e.keyCode == 40) {
+            $("#search").attr("tabindex", "-1");
             $(this).attr("tabindex", "-1").blur();
             $(".poster").first().focus();
         }
     });
 
-    // ... (Fungsi openModal, closePopup, dsb sama seperti sebelumnya)
+    // Fungsi klik/OK pada tombol X untuk menghapus teks pencarian instan
+    $("#clear-btn").on('click', function() {
+        $("#search").val("").focus(); // kosongkan teks dan kembalikan fokus ke kolom ketik
+        $(".poster").show(); // tampilkan semua poster kembali
+        $(this).css("display", "none").attr("tabindex", "-1"); // sembunyikan tombol X ini kembali
+    });
+
+    // Logika menampilkan/menyembunyikan tombol X saat mengetik serta filter poster
+    $("#search").on("input", function() {
+        const keyword = $(this).val().toLowerCase();
+        
+        if (keyword.length > 0) {
+            $("#clear-btn").css("display", "flex"); // Tampilkan tombol X jika ada huruf
+        } else {
+            $("#clear-btn").css("display", "none").attr("tabindex", "-1"); // Sembunyikan jika kosong
+        }
+
+        $(".poster").each(function() {
+            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
+        });
+    });
+
     function openModal(title, epsEncoded) {
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("last_poster_title", title);
@@ -144,31 +208,21 @@
             if(title && eps) openModal(title, eps);
         }
     }
-
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-        });
-    });
 </script>
 
-  <script>
+<script>
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
-    // Fungsi untuk memutar suara
     function playSound() {
         soundClick.currentTime = 0;
         soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
     }
 
-    // Gunakan delegasi event pada dokumen agar tidak perlu mencari elemen satu per satu
-    // Ini akan menangkap event 'focus' dari elemen apa pun di dalam halaman
     document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x')) {
+        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn') {
             playSound();
         }
-    }, true); // Gunakan 'true' (capture phase) agar event focus tertangkap
+    }, true);
 </script>
 </body>
 </html>
