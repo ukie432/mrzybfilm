@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>MRZYBtv</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        .qr-image {
+            width: 400px;
+            height: auto;
+            border: none !important;    /* Memaksa border hilang */
+            outline: none !important;   /* Menghilangkan sisa outline */
+            box-shadow: none !important; /* Menghilangkan bayangan */
+            background-color: transparent;
+            margin-bottom: 30px;
+        }
+        .info-text {
+            font-size: 2rem;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1></h1>
+    
+    <img class="qr-image" src="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/AIRetouch_20260627_213407343.webp" alt="QR Code">
+    
+    <div class="info-text">
+        <br>
+        <span class="highlight"></span>
+    </div>
+
+    <audio id="audioNotifikasi" loop autoplay>
+        <source src="https://ia802902.us.archive.org/23/items/skilletmonster/skillet%20-%20monster.mp3" type="audio/mp3">
+    </audio>
+
+    <script type="text/javascript">
+        document.addEventListener('click', function() {
+            var audio = document.getElementById("audioNotifikasi");
+            audio.play();
+        }, { once: true });
+    </script>
+</body>
+</html>
