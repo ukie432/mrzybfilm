@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>MRZYBtv Series</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
+        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
+        /* Search bar dikunci agar tidak bisa difokuskan navigasi */
+        #search { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: none; outline: none; }
+        #search:focus { outline: 2px solid #00c54f; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; }
+        .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
+        .poster img { width: 100%; height: 200px; object-fit: cover; }
+        
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
+        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div id="popup" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
+            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
+            <div id="eps-list"></div>
+        </div>
+    </div>
+
+<script>
+    const jsonUrl = "data/serianimasi.json";
+
+    // 1. Logika Navigasi Remote
+    $(document).on('keydown', function(e) {
+        const activeEl = document.activeElement;
+
+        // Jika user berada di poster baris pertama, kunci tombol ATAS agar tidak lari ke navbar
+        if (e.keyCode == 38) { 
+            if (activeEl.classList.contains('poster')) {
+                const index = $('.grid .poster').index(activeEl);
+                if (index < 5) { e.preventDefault(); return false; }
+            }
+        }
+
+        // Navigasi Popup
+        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
+            $('.close-x').focus();
+        } else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
+        }
+    });
+
+    // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
+    // Kita buat shortcut: Jika tekan tombol 'Menu' atau 'Search' di remote (misal e.keyCode 13 di grid)
+    // Tapi karena kita ingin tetap bisa cari, gunakan trik ini:
+    $(document).on('keydown', function(e) {
+        if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
+            // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
+        }
+    });
+
+    // Tambahkan trigger manual untuk Search: Jika user ingin search, dia harus klik/pilih search
+    // Karena kita sudah kasih tabindex="-1", dia tidak akan ter-fokus otomatis.
+    // Jika ingin mencari, user bisa menggunakan tombol "Back" atau tombol khusus untuk berpindah ke Search.
+
+    fetch(jsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"></div>`);
+            });
+            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+            checkLastSession();
+        });
+
+    // Fungsi untuk mengaktifkan search jika benar-benar ingin diketik
+    // Gunakan trik: jika user menekan tombol "Atas" di poster pertama, aktifkan search
+    $(document).on('keydown', function(e) {
+        if (e.keyCode == 38 && document.activeElement.classList.contains('poster')) {
+            const index = $('.grid .poster').index(document.activeElement);
+            if (index < 5) {
+                $("#search").attr("tabindex", "0").focus(); // Search jadi bisa difokuskan
+            }
+        }
+    });
+
+    // Jika search sedang fokus dan tekan bawah, kunci lagi search-nya
+    $("#search").on('keydown', function(e) {
+        if (e.keyCode == 40) {
+            $(this).attr("tabindex", "-1").blur();
+            $(".poster").first().focus();
+        }
+    });
+
+    // ... (Fungsi openModal, closePopup, dsb sama seperti sebelumnya)
+    function openModal(title, epsEncoded) {
+        localStorage.setItem("status_popup", "open");
+        localStorage.setItem("last_poster_title", title);
+        localStorage.setItem("judul_film", title);
+        localStorage.setItem("eps_data", epsEncoded);
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        eps.forEach((e, index) => {
+            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+        });
+        $("#popup").css("display", "flex");
+        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
+        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
+    }
+
+    function playAndSave(url, index, title) {
+        localStorage.setItem("last_eps_" + title, index);
+        Android.playVideo(url);
+    }
+
+    function closePopup() { 
+        $("#popup").hide(); 
+        localStorage.setItem("status_popup", "closed");
+        const lastTitle = localStorage.getItem("last_poster_title");
+        if (lastTitle) setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
+    }
+
+    function checkLastSession() {
+        if (localStorage.getItem("status_popup") === "open") {
+            const title = localStorage.getItem("judul_film");
+            const eps = localStorage.getItem("eps_data");
+            if(title && eps) openModal(title, eps);
+        }
+    }
+
+    $("#search").on("input", function() {
+        const keyword = $(this).val().toLowerCase();
+        $(".poster").each(function() {
+            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
+        });
+    });
+</script>
+
+  <script>
+    const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
+
+    // Fungsi untuk memutar suara
+    function playSound() {
+        soundClick.currentTime = 0;
+        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+    }
+
+    // Gunakan delegasi event pada dokumen agar tidak perlu mencari elemen satu per satu
+    // Ini akan menangkap event 'focus' dari elemen apa pun di dalam halaman
+    document.addEventListener('focus', function(e) {
+        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x')) {
+            playSound();
+        }
+    }, true); // Gunakan 'true' (capture phase) agar event focus tertangkap
+</script>
+</body>
+</html>
