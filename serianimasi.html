@@ -7,16 +7,35 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         
-        /* Container untuk membungkus navbar */
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        
-        /* Wrapper untuk search input dan tombol X agar posisinya pas di tengah */
         .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
         
-        #search { width: 100%; padding: 12px 40px 12px 15px; border-radius: 20px; border: none; outline: none; box-sizing: border-box; }
-        #search:focus { outline: 2px solid #00c54f; }
+        /* Elemen pembungkus luar yang menerima fokus navigasi remote */
+        .search-bar-wrapper { 
+            width: 100%; 
+            background: #fff; 
+            border-radius: 20px; 
+            border: 3px solid transparent; 
+            box-sizing: border-box; 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer;
+        }
+        /* Efek saat bar pencarian disorot/dipilih (selection) */
+        .search-bar-wrapper:focus { border-color: #00c54f; outline: none; }
         
-        /* Gaya tombol X untuk hapus tulisan pencarian */
+        /* Input asli dibuat tanpa border dan diatur agar tidak merespon fokus otomatis */
+        #search { 
+            width: 100%; 
+            padding: 12px 40px 12px 15px; 
+            border: none; 
+            outline: none; 
+            background: transparent; 
+            font-size: 16px; 
+            color: #000; 
+            box-sizing: border-box; 
+        }
+        
         .clear-search { 
             position: absolute; 
             right: 12px; 
@@ -31,10 +50,11 @@
             font-size: 12px; 
             font-weight: bold; 
             cursor: pointer; 
-            display: none; /* Sembunyikan default-nya, muncul lewat js */
+            display: none; 
             align-items: center; 
             justify-content: center; 
             line-height: 1;
+            z-index: 12;
         }
         .clear-search:focus { background: red; outline: none; }
 
@@ -59,7 +79,9 @@
 
     <div class="navbar">
         <div class="search-container">
-            <input type="text" id="search" tabindex="-1" placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+            <div class="search-bar-wrapper" id="search-box" tabindex="0">
+                <input type="text" id="search" disabled placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+            </div>
             <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
         </div>
     </div>
@@ -76,33 +98,18 @@
 
 <script>
     const jsonUrl = "data/serianimasi.json";
-    
-    // Variabel pengunci untuk menahan lompatan instan ke search
-    let canGoToSearch = false;
-    let currentBarisPertama = false;
 
-    // 1. Logika Navigasi Remote & Tombol ATAS
+    // 1. Logika Navigasi Umum Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Logika tombol ATAS (Keycode 38)
-        if (e.keyCode == 38) { 
-            if (activeEl.classList.contains('poster')) {
-                const index = $('.grid .poster').index(activeEl);
-                
-                if (index < 5) { 
-                    // Jika baru mendarat di baris pertama, kunci tombol atas agar layar sempat scroll penuh
-                    if (!canGoToSearch) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    
-                    // Jika sudah selesai scroll penuh dan menekan tombol atas lagi, baru buka search
-                    e.preventDefault(); 
-                    $("#search").attr("tabindex", "0").focus(); 
-                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Pastikan mentok ke atas
-                    return false; 
-                }
+        // Jika menekan ATAS di baris pertama, biarkan naik normal ke bar pencarian
+        if (e.keyCode == 38 && activeEl.classList.contains('poster')) {
+            const index = $('.grid .poster').index(activeEl);
+            if (index < 5) {
+                e.preventDefault();
+                $("#search-box").focus();
+                return false;
             }
         }
 
@@ -116,83 +123,55 @@
         }
     });
 
-    // Deteksi perpindahan fokus untuk mengatur pengunci waktu (anti lompat setengah poster)
-    document.addEventListener('focusin', function(e) {
-        if (e.target.classList.contains('poster')) {
-            const index = $('.grid .poster').index(e.target);
-            if (index < 5) {
-                // Jika fokus baru masuk ke baris pertama, kunci pergerakan ke atas selama 300ms
-                if (!currentBarisPertama) {
-                    canGoToSearch = false;
-                    currentBarisPertama = true;
-                    setTimeout(() => {
-                        canGoToSearch = true;
-                    }, 350); // Jeda waktu tunggu layar selesai melakukan auto-scroll penuh
-                }
-            } else {
-                currentBarisPertama = false;
-                canGoToSearch = false;
-            }
+    // 2. Logika Khusus di Bar Pencarian Utama
+    $("#search-box").on('keydown', function(e) {
+        // Jika tekan OK/Enter (13) baru aktifkan input asli dan munculkan keyboard
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search").removeAttr("disabled").focus();
+            return false;
         }
-    }, true);
-
-    // 2. Jika user menekan tombol tengah (OK/Enter) pada keyboard saat di grid
-    $(document).on('keydown', function(e) {
-        if(e.keyCode == 13 && document.activeElement.tagName !== 'INPUT') {
-            // Jika tidak di input dan tekan OK, jangan lakukan apa-apa
+        // Jika tekan BAWAH (40), kembali ke poster pertama tanpa membuka apa-apa
+        else if (e.keyCode == 40) {
+            e.preventDefault();
+            $(".poster").first().focus();
+            return false;
+        }
+        // Jika ada tulisan dan tekan KANAN (39), arahkan ke tombol X hapus
+        else if (e.keyCode == 39 && $("#search").val().length > 0) {
+            $("#clear-btn").attr("tabindex", "0").focus();
         }
     });
 
-    // Load Data JSON
-    fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
-            });
-            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
-            checkLastSession();
-        });
-
-    // Navigasi di dalam kolom search
+    // 3. Logika Saat Mengetik di Dalam Input Asli
     $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40) {
-            $(this).attr("tabindex", "-1").blur();
-            $("#clear-btn").attr("tabindex", "-1");
-            currentBarisPertama = true;
-            canGoToSearch = false; // Reset kunci saat turun ke poster
-            setTimeout(() => { canGoToSearch = true; }, 350);
-            $(".poster").first().focus();
-        }
-        else if (e.keyCode == 39 && $(this).val().length > 0) {
-            $("#clear-btn").attr("tabindex", "0").focus();
+        // Jika sedang mengetik lalu tekan Bawah (40) atau OK/Enter (13), kunci keyboard kembali
+        if (e.keyCode == 40 || e.keyCode == 13) {
+            $(this).attr("disabled", "disabled"); // Matikan input agar keyboard menutup
+            $("#search-box").focus(); // Kembalikan fokus ke pembungkus luar luar
         }
     });
 
     // Navigasi di tombol X hapus
     $("#clear-btn").on('keydown', function(e) {
-        if (e.keyCode == 37) {
-            $("#search").focus();
+        if (e.keyCode == 37) { // Kiri kembali ke kotak pencarian
+            $("#search-box").focus();
         }
-        else if (e.keyCode == 40) {
-            $("#search").attr("tabindex", "-1");
-            $(this).attr("tabindex", "-1").blur();
-            currentBarisPertama = true;
-            canGoToSearch = false;
-            setTimeout(() => { canGoToSearch = true; }, 350);
+        else if (e.keyCode == 40) { // Bawah langsung ke poster teratas
+            $(this).attr("tabindex", "-1");
             $(".poster").first().focus();
         }
     });
 
     // Fungsi klik/OK pada tombol X untuk menghapus teks pencarian instan
     $("#clear-btn").on('click', function() {
-        $("#search").val("").focus(); 
+        $("#search").val(""); 
         $(".poster").show(); 
         $(this).css("display", "none").attr("tabindex", "-1"); 
+        $("#search-box").focus();
     });
 
-    // Logika menampilkan/menyembunyikan tombol X saat mengetik serta filter poster
+    // Logika menampilkan/menyembunyikan tombol X serta filter poster
     $("#search").on("input", function() {
         const keyword = $(this).val().toLowerCase();
         
@@ -206,6 +185,18 @@
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
         });
     });
+
+    // Load Data JSON
+    fetch(jsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
+            });
+            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+            checkLastSession();
+        });
 
     function openModal(title, epsEncoded) {
         localStorage.setItem("status_popup", "open");
@@ -253,7 +244,7 @@
     }
 
     document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn') {
+        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
             playSound();
         }
     }, true);
