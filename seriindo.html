@@ -5,6 +5,26 @@
     <title>MRZYBtv Series</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+    
+    
+    
+    /* Mengunci tampilan agar selalu landscape */
+@media screen and (orientation: portrait) {
+    body {
+        width: 100vh;
+        height: 100vw;
+        transform: rotate(90deg);
+        transform-origin: top left;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        overflow: hidden;
+    }
+}
+    
+    
+    
+    
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
         /* Search bar dikunci agar tidak bisa difokuskan navigasi */
