@@ -21,12 +21,10 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
 
-/* PERBAIKAN UKURAN: Mengurangi lebar poster agar pas di layar TV (Menampilkan lebih banyak poster per baris) */
 .card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; display: block; position: relative; }
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
 .play-link { display: block; text-decoration: none; outline: none; }
 
-/* Menjaga rasio poster 2:3 bioskop agar tidak melar panjang ke bawah */
 .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
 .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 .film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
@@ -36,7 +34,6 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-fav span { font-size: 13px; }
 #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
-/* Penyesuaian responsif layar alternatif */
 @media (max-width: 1400px) { .card-film { width: calc(14.28% - 14px); } }
 @media (max-width: 1000px) { .card-film { width: calc(16.66% - 14px); } }
 @media (max-width: 768px) { .card-film { width: calc(25% - 14px); } .header-banner h1 { font-size: 28px; } }
@@ -73,10 +70,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
 
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-        window.history.pushState(null, "", window.location.href);
-    };
+    // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
+
+    // Menangani tombol BACK fisik Android TV secara manual dan bersih
+    window.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
+            // Jika ada jembatan keluar aplikasi dari pembungkus Android Anda, gunakan ini:
+            if (typeof Android !== "undefined" && Android.exitApp) {
+                e.preventDefault();
+                Android.exitApp(); 
+            }
+            // Jika tidak ada, biarkan browser STB menutup halaman ini secara alami tanpa hambatan stack riwayat.
+        }
+    });
 
     function updateTampilanFavorit() {
         containerFav.innerHTML = "";
@@ -190,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // AMBIL DATA DARI JSON & LOAD FAVORIT DI DALAMNYA (MENCEGAH RAK TERTUTUP/HILANG)
     fetch('data/jadul.json')
     .then(response => response.json())
     .then(data => {
