@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flipbook Premium TV - 2 Page Spread</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<style>
+  body {
+    margin: 0;
+    background: #0a0a0a;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+  }
+  .swiper {
+    width: 100%;
+    height: 100vh;
+  }
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    box-sizing: border-box;
+    padding: 15px;
+  }
+  /* Layout 2 halaman berdampingan (spread) */
+  .spread-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
+  }
+  .swiper-zoom-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  .spread-container img {
+    max-width: 47%;
+    max-height: 94vh;
+    object-fit: contain;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  }
+  /* Halaman cover sendirian */
+  .spread-container.single img {
+    max-width: 75%;
+    max-height: 94vh;
+    border: 5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+  }
+  
+  /* Watermark Modern */
+  .watermark {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.25);
+    font-weight: 600;
+    letter-spacing: 2px;
+    pointer-events: none;
+    z-index: 9998;
+    text-transform: uppercase;
+  }
+
+  /* Indikator Halaman di Pojok Bawah (Keren & Minimalis) */
+  .tv-page-indicator {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 999;
+    backdrop-filter: blur(5px);
+  }
+
+  /* Petunjuk Tombol untuk Pengguna TV */
+  .tv-hint {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #ccc;
+    z-index: 999;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .tv-hint span {
+    background: #4a90e2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin: 0 4px;
+  }
+
+  /* MENU POP-UP LONCAT HALAMAN (GRID TV NAVIGATION) */
+  .tv-menu-popup {
+    position: fixed;
+    bottom: -200px; /* Sembunyi di bawah */
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0.0));
+    padding: 40px 20px 20px 20px;
+    box-sizing: border-box;
+    transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+  .tv-menu-popup.active {
+    bottom: 0; /* Muncul ke atas */
+  }
+  .menu-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #4a90e2;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .grid-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    width: 90%;
+    padding: 10px;
+    justify-content: center;
+    scrollbar-width: none; /* Sembunyikan scrollbar */
+  }
+  .grid-container::-webkit-scrollbar {
+    display: none;
+  }
+  .page-item {
+    background: #222;
+    color: #aaa;
+    border: 2px solid transparent;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    text-align: center;
+  }
+  /* Style saat tombol remot menyorot angka (FOKUS TV) */
+  .page-item:focus, .page-item.tv-focused {
+    background: #4a90e2;
+    color: white;
+    border-color: white;
+    transform: scale(1.15);
+    box-shadow: 0 0 15px #4a90e2;
+    outline: none;
+  }
+  .page-item.current-page {
+    border-color: #4a90e2;
+    color: #4a90e2;
+  }
+  .page-item.current-page:focus, .page-item.current-page.tv-focused {
+    color: white;
+  }
+</style>
+</head>
+<body>
+
+<div class="watermark">mrzyb</div>
+<div class="tv-page-indicator" id="tvPageTxt">Slide 1 / 16</div>
+<div class="tv-hint">Tekan <span>OK / ENTER</span> atau <span>ATAS</span> untuk Pilih Halaman</div>
+
+<div class="swiper" tabindex="0">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container single">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg" alt="Halaman 1">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg" alt="Halaman 2">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg" alt="Halaman 3">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg" alt="Halaman 4">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg" alt="Halaman 5">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg" alt="Halaman 6">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg" alt="Halaman 7">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173044869.jpg" alt="Halaman 8">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173130782.jpg" alt="Halaman 9">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173503492.jpg" alt="Halaman 10">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173629377.jpg" alt="Halaman 11">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173713470.jpg" alt="Halaman 12">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173748352.jpg" alt="Halaman 13">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173819646.jpg" alt="Halaman 14">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173859489.jpg" alt="Halaman 15">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173931764.jpg" alt="Halaman 16">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174010805.jpg" alt="Halaman 17">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174048128.jpg" alt="Halaman 18">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174133243.jpg" alt="Halaman 19">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174210723.jpg" alt="Halaman 20">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174243086.jpg" alt="Halaman 21">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174327826.jpg" alt="Halaman 22">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174414144.jpg" alt="Halaman 23">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174504368.jpg" alt="Halaman 24">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174537483.jpg" alt="Halaman 25">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174600449.jpg" alt="Halaman 26">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174633226.jpg" alt="Halaman 27">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174703039.jpg" alt="Halaman 28">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174733099.jpg" alt="Halaman 29">
+        </div>
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <div class="spread-container">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174803716.jpg" alt="Halaman 30">
+          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174827517.jpg" alt="Halaman 31">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tv-menu-popup" id="tvMenu">
+  <div class="menu-title">Lompat Ke Slide</div>
+  <div class="grid-container" id="gridContainer">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  let menuOpen = false;
+  let focusedMenuIndex = 0;
+
+  const swiper = new Swiper('.swiper', {
+    effect: 'slide',
+    grabCursor: true,
+    keyboard: {
+      enabled: true,
+      onlyInViewport: true,
+    },
+    on: {
+      init: function () {
+        updatePageText(this.activeIndex + 1, this.slides.length);
+        buildTvMenu(this.slides.length);
+      },
+      slideChange: function() {
+        updatePageText(this.activeIndex + 1, this.slides.length);
+        highlightCurrentMenuPage(this.activeIndex);
+      }
+    }
+  });
+
+  function updatePageText(current, total) {
+    document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
+  }
+
+  // Membuat daftar angka loncat halaman secara otomatis
+  function buildTvMenu(totalSlides) {
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = '';
+    for(let i = 0; i < totalSlides; i++) {
+      const btn = document.createElement('div');
+      btn.className = 'page-item';
+      btn.innerText = i + 1;
+      btn.setAttribute('tabindex', '-1'); // Navigasi dikontrol script agar mulus di TV
+      btn.addEventListener('click', () => {
+        swiper.slideTo(i);
+        closeMenu();
+      });
+      container.appendChild(btn);
+    }
+    highlightCurrentMenuPage(swiper.activeIndex);
+  }
+
+  function highlightCurrentMenuPage(activeIndex) {
+    const items = document.querySelectorAll('.page-item');
+    items.forEach((item, idx) => {
+      if(idx === activeIndex) item.classList.add('current-page');
+      else item.classList.remove('current-page');
+    });
+  }
+
+  function openMenu() {
+    menuOpen = true;
+    focusedMenuIndex = swiper.activeIndex;
+    document.getElementById('tvMenu').classList.add('active');
+    updateMenuFocus();
+  }
+
+  function closeMenu() {
+    menuOpen = false;
+    document.getElementById('tvMenu').classList.remove('active');
+    document.querySelector('.swiper').focus();
+  }
+
+  function updateMenuFocus() {
+    const items = document.querySelectorAll('.page-item');
+    items.forEach((item, idx) => {
+      if(idx === focusedMenuIndex) {
+        item.classList.add('tv-focused');
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } else {
+        item.classList.remove('tv-focused');
+      }
+    });
+  }
+
+  // Otomatis kunci fokus remot saat pertama kali dibuka
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.swiper').focus();
+  });
+
+  // SISTEM NAVIGASI REMOT TV (KEYBOARD EVENT)
+  document.addEventListener('keydown', (e) => {
+    if (!menuOpen) {
+      // Jika menu tutup
+      if (e.key === 'Enter' || e.keyCode === 13 || e.key === 'ArrowUp' || e.keyCode === 38) {
+        e.preventDefault();
+        openMenu();
+      }
+      // Pastikan swiper tetap fokus jika tidak sengaja hilang fokus
+      if (document.activeElement !== document.querySelector('.swiper')) {
+        document.querySelector('.swiper').focus();
+      }
+    } else {
+      // Jika menu pop-up sedang terbuka
+      const items = document.querySelectorAll('.page-item');
+      if (e.key === 'ArrowRight' || e.keyCode === 39) {
+        e.preventDefault();
+        if (focusedMenuIndex < items.length - 1) {
+          focusedMenuIndex++;
+          updateMenuFocus();
+        }
+      } else if (e.key === 'ArrowLeft' || e.keyCode === 37) {
+        e.preventDefault();
+        if (focusedMenuIndex > 0) {
+          focusedMenuIndex--;
+          updateMenuFocus();
+        }
+      } else if (e.key === 'ArrowDown' || e.keyCode === 40) {
+        e.preventDefault();
+        closeMenu();
+      } else if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        swiper.slideTo(focusedMenuIndex);
+        closeMenu();
+      } else if (e.key === 'Escape' || e.keyCode === 27) {
+        e.preventDefault();
+        closeMenu();
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
