@@ -54,6 +54,9 @@
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/12.webp", "alt": "Halaman 12" },
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/13%20(1).webp", "alt": "Halaman 13" }
+                "type": "single",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/14.webp", "alt": "Halaman 16" }
               ]
             }
           ]
