@@ -108,17 +108,17 @@
   
   .modal-content {
     background: #141414; 
-    border-radius: 16px; 
+    border-radius: 166px; 
     padding: 30px; 
     width: 90%; 
     max-width: 500px;
     border: 2px solid #333; 
     text-align: center; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    position: relative; /* Diperlukan agar penempatan ikon X menjadi presisi */
+    position: relative; 
+    border-radius: 16px;
   }
   
-  /* TOMBOL ICON X DI POJOK KANAN ATAS MODAL */
   .close-modal-x-btn {
     position: absolute;
     top: 15px;
@@ -151,7 +151,7 @@
   .modal-title { 
     font-size: 22px; 
     margin-bottom: 25px; 
-    margin-right: 40px; /* Agar teks judul tidak tabrakan dengan ikon X */
+    margin-right: 40px; 
     color: #4a90e2; 
     text-align: left;
     padding-left: 5px;
@@ -161,7 +161,7 @@
     display: flex; 
     flex-direction: column; 
     gap: 12px; 
-    max-height: 380px; /* Ditambah sedikit agar muat lebih banyak edisi sebelum scroll */
+    max-height: 380px; 
     overflow-y: auto; 
     padding: 5px; 
   }
@@ -437,7 +437,9 @@
   let menuOpen = false;
   let swiperInstance = null;
   
-  let currentActiveComic = null; 
+  // PERBAIKAN: Gunakan indeks urutan untuk melacak komik aktif di halaman utama
+  let currentActiveComicIdx = null; 
+  let currentActiveComicData = null;
   let currentActiveEdisiIdx = 0; 
 
   const jsonPath = 'data/komik.json';
@@ -455,6 +457,7 @@
     }
   }
 
+  // PERBAIKAN UTAMA: Penandaan ID Poster menggunakan indeks iterasi (idx) agar pasti unik
   function renderCatalog(list) {
     const grid = document.getElementById('posterGridContainer');
     grid.innerHTML = '';
@@ -464,22 +467,24 @@
       return;
     }
 
-    list.forEach((comic) => {
+    list.forEach((comic, idx) => {
       const item = document.createElement('div');
       item.className = 'poster-item';
       item.tabIndex = 0; 
-      item.id = 'comic-id-' + comic.id; 
+      item.id = 'comic-poster-idx-' + idx; // Pasti Unik per poster komik!
       item.innerHTML = `
         <img class="poster-img" src="${comic.poster}" alt="${comic.title}">
         <div class="comic-title">${comic.title}</div>
       `;
       
       item.addEventListener('click', () => {
+        currentActiveComicIdx = idx;
         currentActiveEdisiIdx = 0; 
         openEdisiModal(comic);
       });
       item.addEventListener('keydown', (e) => {
         if(e.key === 'Enter' || e.keyCode === 13) {
+          currentActiveComicIdx = idx;
           currentActiveEdisiIdx = 0;
           openEdisiModal(comic);
         }
@@ -496,7 +501,7 @@
   });
 
   function openEdisiModal(comic) {
-    currentActiveComic = comic; 
+    currentActiveComicData = comic; 
     document.getElementById('modalComicTitle').innerText = comic.title;
     const listContainer = document.getElementById('modalEdisiList');
     listContainer.innerHTML = '';
@@ -509,16 +514,15 @@
       
       btn.addEventListener('click', () => {
         currentActiveEdisiIdx = idx; 
-        closeEdisiModal();
+        closeEdisiModalOnly(); // Tutup popup tanpa mengembalikan fokus dulu karena mau baca
         startReading(comic, ed);
       });
 
-      // KONTROL REMOTE KHUSUS TV DI DALAM LIST EDISI (KANAN KE ICON X)
       btn.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
-        if (code === 39) { // Kanan
+        if (code === 39) { 
           e.preventDefault();
-          document.getElementById('closeModalXBtn').focus(); // Lompat langsung ke ikon X
+          document.getElementById('closeModalXBtn').focus(); 
         }
       });
 
@@ -539,32 +543,35 @@
     }, 50);
   }
 
-  function closeEdisiModal() {
+  // Fungsi menutup popup dan mengembalikan fokus remote tepat ke poster komik asalnya
+  function closeEdisiModalAndRestoreFocus() {
     document.getElementById('edisiModal').style.display = 'none';
-    // Otomatis kembalikan fokus remote ke poster komik di home view
-    if(currentActiveComic) {
-      const posterBtn = document.getElementById('comic-id-' + currentActiveComic.id);
-      if(posterBtn) posterBtn.focus();
+    if(currentActiveComicIdx !== null) {
+      const posterBtn = document.getElementById('comic-poster-idx-' + currentActiveComicIdx);
+      if(posterBtn) {
+        posterBtn.focus(); // Fokus dikembalikan dengan presisi tinggi ke poster terpilih
+      }
     }
   }
+
+  // Fungsi bantu untuk menutup popup saja saat masuk ke halaman pembaca komik
+  function closeEdisiModalOnly() {
+    document.getElementById('edisiModal').style.display = 'none';
+  }
   
-  // AKSI ICON X DIKLIK / KEMBALI KAMPUNG
   document.getElementById('closeModalXBtn').addEventListener('click', () => {
-    closeEdisiModal();
+    closeEdisiModalAndRestoreFocus();
   });
 
-  // KONTROL REMOTE KHUSUS ICON X (KIRI KEMBALI KE EDISI TERAKHIR)
   document.getElementById('closeModalXBtn').addEventListener('keydown', (e) => {
     const code = e.keyCode || e.which;
-    if (code === 37) { // Kiri
+    if (code === 37) { 
       e.preventDefault();
       const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
-      if (targetBtn) {
-        targetBtn.focus();
-      }
-    } else if (code === 13 || e.key === 'Enter') { // Enter pada ikon X
+      if (targetBtn) targetBtn.focus();
+    } else if (code === 13 || e.key === 'Enter') { 
       e.preventDefault();
-      closeEdisiModal();
+      closeEdisiModalAndRestoreFocus();
     }
   });
 
@@ -700,8 +707,8 @@
     
     if(swiperInstance) swiperInstance.destroy(true, true);
     
-    if (currentActiveComic) {
-      openEdisiModal(currentActiveComic);
+    if (currentActiveComicData) {
+      openEdisiModal(currentActiveComicData);
     } else {
       setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
     }
