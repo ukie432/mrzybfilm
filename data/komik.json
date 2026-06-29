@@ -1,82 +1,115 @@
 {
   "komik_list": [
     {
-      "title": "Siksa Neraka Jahanam",
-      "poster": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=80",
+      "title": "01. Siksa Neraka Jahanam",
+      "poster": "https://picsum.photos/id/10/400/600",
       "watermark": "MRZYBtv Comic",
       "edisi": [
         {
           "nama": "Edisi 01: Lembah Jahanam",
           "slides": [
             { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/101/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/102/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/103/800/1200", "alt": "Hal 3" }] },
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/104/800/1200", "alt": "Penutup" }] }
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/102/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/103/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 02: Siksaan Api Kebal",
+          "nama": "Edisi 02: Gejolak Api",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/201/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/202/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/203/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 03: Belenggu Besi Panas",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/301/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/302/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/303/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 04: Air Mendidih Al-Hamim",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/401/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/402/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/403/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 05: Pohon Zaqqum Berduri",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/501/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/502/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/503/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 06: Jurang Kerak Neraka",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/601/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/602/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/603/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 07: Gemuruh Siksa Zamharir",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/701/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/702/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/703/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 08: Cambuk Malaikat Zabaniyah",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/801/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/802/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/803/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 09: Penyesalan yang Terlambat",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/804/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/805/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/806/800/1200", "alt": "Hal 3" }] }
-          ]
-        },
-        {
-          "nama": "Edisi 10: Gerbang Hutamah",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/901/800/1200", "alt": "Cover" }] },
-            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/902/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/903/800/1200", "alt": "Hal 3" }] },
-            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/904/800/1200", "alt": "Penutup" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/104/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/105/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/106/800/1200", "alt": "Hal 3" }] }
           ]
         }
+      ]
+    },
+    {
+      "title": "02. Misteri Kubur Kubro",
+      "poster": "https://picsum.photos/id/20/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        {
+          "nama": "Edisi 01: Sempitnya Liang",
+          "slides": [
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/110/800/1200", "alt": "Cover" }] }
+          ]
+        },
+        {
+          "nama": "Edisi 02: Pertanyaan Malaikat",
+          "slides": [
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/111/800/1200", "alt": "Cover" }] }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03. Jembatan Shiratal Mustaqim",
+      "poster": "https://picsum.photos/id/30/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Setajam Rambut", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/112/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Kilat yang Menyambar", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/113/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "04. Belenggu Besi Panas",
+      "poster": "https://picsum.photos/id/40/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Rantai Neraka", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/114/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Pakaian dari Tar", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/115/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "05. Lembah Siksa Zamharir",
+      "poster": "https://picsum.photos/id/50/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Dingin Membekukan", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/116/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Kulit yang Terkelupas", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/117/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "06. Pohon Zaqqum Berduri",
+      "poster": "https://picsum.photos/id/60/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Hidangan Penduduk Neraka", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/118/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Air Mendidih Al-Hamim", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/119/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "07. Cambuk Zabaniyah",
+      "poster": "https://picsum.photos/id/70/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Tanpa Ampun", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/120/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Jeritan Abadi", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/121/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "08. Amalan yang Terbakar",
+      "poster": "https://picsum.photos/id/80/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Riya dan Hasad", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/122/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Timbangan yang Ringan", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/123/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "09. Penyesalan di Padang Mahsyar",
+      "poster": "https://picsum.photos/id/90/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Matahari Satu Jengkal", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/124/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Mencari Syafa'at", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/125/800/1200", "alt": "Cover" }] }] }
+      ]
+    },
+    {
+      "title": "10. Gerbang Neraka Hutamah",
+      "poster": "https://picsum.photos/id/95/400/600",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        { "nama": "Edisi 01: Pencela & Pengumpat", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/126/800/1200", "alt": "Cover" }] }] },
+        { "nama": "Edisi 02: Api yang Membakar Hati", "slides": [{ "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/127/800/1200", "alt": "Cover" }] }] }
       ]
     }
   ]
