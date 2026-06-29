@@ -6,7 +6,9 @@
 <title>Katalog Komik Premium TV</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <style>
+  /* Reset dasar untuk memastikan padding dan lebar presisi */
   *, *::before, *::after { box-sizing: border-box; }
+  
   body {
     margin: 0; padding: 0;
     background: #0a0a0a; color: white;
@@ -14,80 +16,329 @@
     overflow-x: hidden;
   }
 
-  /* ================= HOME VIEW (KATALOG) ================= */
-  #homeView { padding: 30px; width: 100%; min-height: 100vh; display: block; }
+  /* ================= VIEWS 1: HOME (KATALOG) ================= */
+  #homeView { 
+    padding: 30px; 
+    width: 100%; 
+    min-height: 100vh; 
+    display: block; 
+  }
   
   .search-container {
-    max-width: 600px; margin: 0 auto 40px auto; text-align: center;
+    max-width: 600px; 
+    margin: 0 auto 40px auto; 
+    text-align: center;
   }
+  
   .search-box {
-    width: 100%; padding: 15px 25px; font-size: 18px;
-    background: #1f1f1f; color: white; border: 2px solid #333;
-    border-radius: 30px; outline: none; transition: all 0.3s ease;
+    width: 100%; 
+    padding: 15px 25px; 
+    font-size: 18px;
+    background: #1f1f1f; 
+    color: white; 
+    border: 2px solid #333;
+    border-radius: 30px; 
+    outline: none; 
+    transition: all 0.3s ease;
   }
-  .search-box:focus { border-color: #4a90e2; box-shadow: 0 0 15px rgba(74,144,226,0.3); }
+  
+  .search-box:focus { 
+    border-color: #4a90e2; 
+    box-shadow: 0 0 15px rgba(74,144,226,0.3); 
+  }
 
-  .catalog-title { font-size: 24px; margin-bottom: 20px; font-weight: bold; letter-spacing: 1px; }
+  .catalog-title { 
+    font-size: 24px; 
+    margin-bottom: 20px; 
+    font-weight: bold; 
+    letter-spacing: 1px; 
+  }
+  
   .poster-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 25px; width: 100%;
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px; 
+    width: 100%;
   }
+  
   .poster-item {
-    background: #141414; border-radius: 12px; overflow: hidden;
-    cursor: pointer; border: 3px solid transparent; transition: all 0.2s ease;
-    outline: none; text-align: center; padding-bottom: 10px;
+    background: #141414; 
+    border-radius: 12px; 
+    overflow: hidden;
+    cursor: pointer; 
+    border: 3px solid transparent; 
+    transition: all 0.2s ease;
+    outline: none; 
+    text-align: center; 
+    padding-bottom: 10px;
   }
+  
   .poster-item:focus, .poster-item:hover {
-    border-color: #4a90e2; transform: scale(1.05); box-shadow: 0 10px 25px rgba(74,144,226,0.4);
+    border-color: #4a90e2; 
+    transform: scale(1.05); 
+    box-shadow: 0 10px 25px rgba(74,144,226,0.4);
   }
-  .poster-img { width: 100%; height: 260px; object-fit: cover; }
-  .comic-title { font-size: 16px; font-weight: bold; margin: 10px 10px 0 10px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  
+  .poster-img { 
+    width: 100%; 
+    height: 260px; 
+    object-fit: cover; 
+  }
+  
+  .comic-title { 
+    font-size: 16px; 
+    font-weight: bold; 
+    margin: 10px 10px 0 10px; 
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap; 
+  }
 
-  /* ================= POPUP MODAL EDISI ================= */
+  /* ================= POPUP MODAL PILIHAN EDISI ================= */
   .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center;
-    z-index: 20000; backdrop-filter: blur(8px);
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); 
+    display: none; 
+    align-items: center; 
+    justify-content: center;
+    z-index: 20000; 
+    backdrop-filter: blur(8px);
   }
+  
   .modal-content {
-    background: #141414; border-radius: 16px; padding: 30px; width: 90%; max-width: 500px;
-    border: 2px solid #333; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    background: #141414; 
+    border-radius: 16px; 
+    padding: 30px; 
+    width: 90%; 
+    max-width: 500px;
+    border: 2px solid #333; 
+    text-align: center; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
-  .modal-title { font-size: 22px; margin-bottom: 20px; color: #4a90e2; }
-  .edisi-list { display: flex; flex-direction: column; gap: 12px; max-height: 300px; overflow-y: auto; padding: 5px; }
+  
+  .modal-title { 
+    font-size: 22px; 
+    margin-bottom: 20px; 
+    color: #4a90e2; 
+  }
+  
+  .edisi-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    max-height: 300px; 
+    overflow-y: auto; 
+    padding: 5px; 
+  }
+  
   .edisi-btn {
-    background: #222; color: white; border: 2px solid transparent; padding: 14px;
-    font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; outline: none; transition: all 0.2s;
+    background: #222; 
+    color: white; 
+    border: 2px solid transparent; 
+    padding: 14px;
+    font-size: 16px; 
+    font-weight: bold; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    outline: none; 
+    transition: all 0.2s;
   }
-  .edisi-btn:focus, .edisi-btn:hover { background: #4a90e2; border-color: white; transform: scale(1.02); }
-  .close-modal-btn { background: #e24a4a !important; margin-top: 15px; width: 100%; }
+  
+  .edisi-btn:focus, .edisi-btn:hover { 
+    background: #4a90e2; 
+    border-color: white; 
+    transform: scale(1.02); 
+  }
+  
+  .close-modal-btn { 
+    background: #e24a4a !important; 
+    margin-top: 15px; 
+    width: 100%; 
+  }
 
-  /* ================= READER VIEW (FLIPBOOK) ================= */
-  #readerView { display: none; width: 100%; height: 100vh; position: relative; }
-  .swiper { width: 100%; height: 100vh; }
-  .swiper-slide { display: flex; align-items: center; justify-content: center; background: #0a0a0a; padding: 15px; }
-  .spread-container { display: flex; flex-direction: row; align-items: center; justify-content: center; width: 100%; height: 100%; gap: 20px; }
-  .swiper-zoom-container { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-  .spread-container img { max-width: 47%; max-height: 94vh; object-fit: contain; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-  .spread-container.single img { max-width: 75%; max-height: 94vh; border: 5px solid rgba(255, 255, 255, 0.9); border-radius: 12px; }
+  /* ================= VIEWS 2: READER VIEW (FLIPBOOK) ================= */
+  #readerView { 
+    display: none; 
+    width: 100%; 
+    height: 100vh; 
+    position: relative; 
+  }
   
-  .watermark { position: fixed; top: 20px; right: 25px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 600; letter-spacing: 2px; pointer-events: none; z-index: 9998; text-transform: uppercase; }
-  .tv-page-indicator { position: fixed; bottom: 25px; right: 25px; background: rgba(0, 0, 0, 0.75); padding: 8px 16px; border-radius: 20px; font-size: 16px; font-weight: bold; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.15); z-index: 999; backdrop-filter: blur(5px); }
+  .swiper { 
+    width: 100%; 
+    height: 100vh; 
+  }
   
-  .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; display: flex; gap: 10px; }
-  .menu-btn-tv { background: #4a90e2; color: white; border: 2px solid white; padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; outline: none; }
-  .menu-btn-tv:focus { background: #e24a4a; transform: scale(1.1); box-shadow: 0 0 20px #e24a4a; }
-  .back-btn-tv { background: #555; }
+  .swiper-slide { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: #0a0a0a; 
+    padding: 15px; 
+  }
+  
+  .spread-container { 
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    height: 100%; 
+    gap: 20px; 
+  }
+  
+  .swiper-zoom-container { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%; 
+    height: 100%; 
+  }
+  
+  .spread-container img { 
+    max-width: 47%; 
+    max-height: 94vh; 
+    object-fit: contain; 
+    border: 3px solid rgba(255, 255, 255, 0.8); 
+    border-radius: 8px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
+  }
+  
+  .spread-container.single img { 
+    max-width: 75%; 
+    max-height: 94vh; 
+    border: 5px solid rgba(255, 255, 255, 0.9); 
+    border-radius: 12px; 
+  }
+  
+  .watermark { 
+    position: fixed; 
+    top: 20px; 
+    right: 25px; 
+    font-size: 18px; 
+    color: rgba(255,255,255,0.25); 
+    font-weight: 600; 
+    letter-spacing: 2px; 
+    pointer-events: none; 
+    z-index: 9998; 
+    text-transform: uppercase; 
+  }
+  
+  .tv-page-indicator { 
+    position: fixed; 
+    bottom: 25px; 
+    right: 25px; 
+    background: rgba(0, 0, 0, 0.75); 
+    padding: 8px 16px; 
+    border-radius: 20px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    letter-spacing: 1px; 
+    border: 1px solid rgba(255,255,255,0.15); 
+    z-index: 999; 
+    backdrop-filter: blur(5px); 
+  }
+  
+  .tv-trigger-zone { 
+    position: fixed; 
+    bottom: 25px; 
+    left: 25px; 
+    z-index: 9999; 
+    display: flex; 
+    gap: 10px; 
+  }
+  
+  .menu-btn-tv { 
+    background: #4a90e2; 
+    color: white; 
+    border: 2px solid white; 
+    padding: 10px 20px; 
+    border-radius: 20px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    outline: none; 
+  }
+  
+  .menu-btn-tv:focus { 
+    background: #e24a4a; 
+    transform: scale(1.1); 
+    box-shadow: 0 0 20px #e24a4a; 
+  }
+  
+  .back-btn-tv { 
+    background: #555; 
+  }
 
-  .tv-menu-popup { position: fixed; bottom: -250px; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.98) 85%, rgba(0,0,0,0.0)); padding: 40px 20px 30px 20px; transition: bottom 0.25s ease-out; z-index: 10000; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(10px); }
-  .tv-menu-popup.active { bottom: 0; }
-  .menu-title { font-size: 18px; margin-bottom: 15px; color: #4a90e2; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-  .grid-container { display: flex; gap: 12px; overflow-x: auto; width: 90%; padding: 10px; justify-content: center; }
-  .grid-container::-webkit-scrollbar { display: none; }
+  .tv-menu-popup { 
+    position: fixed; 
+    bottom: -250px; 
+    left: 0; 
+    width: 100%; 
+    background: linear-gradient(to top, rgba(0,0,0,0.98) 85%, rgba(0,0,0,0.0)); 
+    padding: 40px 20px 30px 20px; 
+    transition: bottom 0.25s ease-out; 
+    z-index: 10000; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    backdrop-filter: blur(10px); 
+  }
   
-  .page-item-btn { background: #222; color: #aaa; border: 2px solid transparent; padding: 12px 24px; font-size: 18px; font-weight: bold; border-radius: 8px; min-width: 70px; text-align: center; cursor: pointer; outline: none; }
-  .page-item-btn:focus { background: #4a90e2 !important; color: white !important; border-color: white !important; transform: scale(1.15); box-shadow: 0 0 15px #4a90e2; }
-  .page-item-btn.current-page { border-color: #4a90e2; color: #4a90e2; }
+  .tv-menu-popup.active { 
+    bottom: 0; 
+  }
+  
+  .menu-title { 
+    font-size: 18px; 
+    margin-bottom: 15px; 
+    color: #4a90e2; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+  }
+  
+  .grid-container { 
+    display: flex; 
+    gap: 12px; 
+    overflow-x: auto; 
+    width: 90%; 
+    padding: 10px; 
+    justify-content: center; 
+  }
+  
+  .grid-container::-webkit-scrollbar { 
+    display: none; 
+  }
+  
+  .page-item-btn { 
+    background: #222; 
+    color: #aaa; 
+    border: 2px solid transparent; 
+    padding: 12px 24px; 
+    font-size: 18px; 
+    font-weight: bold; 
+    border-radius: 8px; 
+    min-width: 70px; 
+    text-align: center; 
+    cursor: pointer; 
+    outline: none; 
+  }
+  
+  .page-item-btn:focus { 
+    background: #4a90e2 !important; 
+    color: white !important; 
+    border-color: white !important; 
+    transform: scale(1.15); 
+    box-shadow: 0 0 15px #4a90e2; 
+  }
+  
+  .page-item-btn.current-page { 
+    border-color: #4a90e2; 
+    color: #4a90e2; 
+  }
 </style>
 </head>
 <body>
@@ -132,11 +383,14 @@
   let masterData = [];
   let menuOpen = false;
   let swiperInstance = null;
+  
+  // Pelacak komik mana yang terakhir kali dibuka pop-upnya
+  let currentActiveComic = null; 
 
-  // Silakan ganti path JSON Anda di bawah ini
+  // Masukkan arah lokasi file JSON Anda di sini
   const jsonPath = 'data/komik.json';
 
-  // Membaca Database Utama dari JSON
+  // Fungsi 1: Mengambil Data Utama Berformat Katalog dari File JSON
   async function loadCatalogData() {
     try {
       const response = await fetch(jsonPath);
@@ -146,11 +400,11 @@
       renderCatalog(masterData);
     } catch (error) {
       console.error(error);
-      document.getElementById('posterGridContainer').innerHTML = `<p style="color:red;">Error memuat data katalog: ${error.message}</p>`;
+      document.getElementById('posterGridContainer').innerHTML = `<p style="color:red; padding:20px;">Error memuat data katalog: ${error.message}</p>`;
     }
   }
 
-  // Menampilkan Daftar Poster di Home
+  // Fungsi 2: Membuat Element Grid Poster Komik di Halaman Depok secara Dinamis
   function renderCatalog(list) {
     const grid = document.getElementById('posterGridContainer');
     grid.innerHTML = '';
@@ -160,16 +414,17 @@
       return;
     }
 
-    list.forEach((comic, index) => {
+    list.forEach((comic) => {
       const item = document.createElement('div');
       item.className = 'poster-item';
-      item.tabIndex = 0; // Agar bisa difokuskan remote TV
+      item.tabIndex = 0; // Memberikan kemampuan remote TV agar bisa fokus
+      item.id = 'comic-id-' + comic.id; // Menyematkan ID unik per komik
       item.innerHTML = `
         <img class="poster-img" src="${comic.poster}" alt="${comic.title}">
         <div class="comic-title">${comic.title}</div>
       `;
       
-      // Klik poster memicu popup edisi
+      // Deteksi Klik / Masuk Menggunakan Remote Enter
       item.addEventListener('click', () => openEdisiModal(comic));
       item.addEventListener('keydown', (e) => {
         if(e.key === 'Enter' || e.keyCode === 13) openEdisiModal(comic);
@@ -179,20 +434,21 @@
     });
   }
 
-  // Sistem Pencarian Komik
+  // Fungsi 3: Fitur Filter Kotak Pencarian Real-Time
   document.getElementById('searchBox').addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase();
     const filtered = masterData.filter(comic => comic.title.toLowerCase().includes(keyword));
     renderCatalog(filtered);
   });
 
-  // Sistem Pop-up Modal Pilihan Edisi
+  // Fungsi 4: Sistem Membuka Pop-up Pilihan Edisi
   function openEdisiModal(comic) {
+    currentActiveComic = comic; // Catat komik yang sedang diakses saat ini
     document.getElementById('modalComicTitle').innerText = comic.title;
     const listContainer = document.getElementById('modalEdisiList');
     listContainer.innerHTML = '';
 
-    comic.edisi.forEach((ed, idx) => {
+    comic.edisi.forEach((ed) => {
       const btn = document.createElement('button');
       btn.className = 'edisi-btn';
       btn.innerText = ed.nama;
@@ -204,19 +460,29 @@
     });
 
     document.getElementById('edisiModal').style.display = 'flex';
-    // Fokuskan langsung ke edisi pertama agar mudah bagi remote TV
+    
+    // Remote Smart TV otomatis fokus ke tombol edisi pertama agar siap klik
     setTimeout(() => {
       const firstBtn = listContainer.querySelector('.edisi-btn');
       if(firstBtn) firstBtn.focus();
     }, 50);
   }
 
+  // Fungsi 5: Menutup Pop-up Edisi
   function closeEdisiModal() {
     document.getElementById('edisiModal').style.display = 'none';
   }
-  document.getElementById('closeModalBtn').addEventListener('click', closeEdisiModal);
+  
+  // Tombol Kembali di dalam Pop-up (Fokus akan diposisikan balik ke poster asalnya)
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    closeEdisiModal();
+    if(currentActiveComic) {
+      const posterBtn = document.getElementById('comic-id-' + currentActiveComic.id);
+      if(posterBtn) posterBtn.focus();
+    }
+  });
 
-  // Sistem Load Reader View (Menampilkan Swiper Flipbook)
+  // Fungsi 6: Memulai Sistem Membaca & Merender Gambar Swiper (Lazy Loading diaktifkan)
   function startReading(comic, edisiData) {
     document.getElementById('homeView').style.display = 'none';
     document.getElementById('readerView').style.display = 'block';
@@ -225,7 +491,7 @@
     document.getElementById('watermarkTxt').innerText = comic.watermark;
 
     const wrapper = document.getElementById('swiperWrapperContainer');
-    wrapper.innerHTML = ''; // Reset halaman pembaca sebelumnya
+    wrapper.innerHTML = ''; // Membersihkan sisa halaman bacaan komik sebelumnya
 
     edisiData.slides.forEach(slide => {
       const slideDiv = document.createElement('div');
@@ -241,10 +507,11 @@
         const img = document.createElement('img');
         img.src = page.image_url;
         img.alt = page.alt;
-        img.setAttribute('loading', 'lazy'); 
+        img.setAttribute('loading', 'lazy'); // Native Lazy Load dari web browser
         spreadContainer.appendChild(img);
       });
 
+      // Menambahkan animasi loader spinner bawaan Swiper
       const preloader = document.createElement('div');
       preloader.className = 'swiper-lazy-preloader swiper-lazy-preloader-white';
 
@@ -257,6 +524,7 @@
     initSwiper();
   }
 
+  // Fungsi 7: Inisialisasi Engine Swiper Flipbook
   function initSwiper() {
     if(swiperInstance) swiperInstance.destroy(true, true);
 
@@ -264,7 +532,7 @@
       effect: 'slide',
       grabCursor: true,
       keyboard: { enabled: true },
-      lazy: { loadPrevNext: true, loadPrevNextAmount: 1 },
+      lazy: { loadPrevNext: true, loadPrevNextAmount: 1 }, // Optimasi RAM untuk 100+ Halaman
       on: {
         init: function () {
           updatePageText(this.activeIndex + 1, this.slides.length);
@@ -279,11 +547,12 @@
     document.getElementById('openMenuBtn').focus();
   }
 
-  // Navigasi Slider Angka Halaman TV
+  // Fungsi 8: Mengatur Text Indikator Slide Aktif
   function updatePageText(current, total) {
     document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
   }
 
+  // Fungsi 9: Membangun Tombol Angka Lompat Halaman di Menu Bawah TV
   function buildTvMenu(totalSlides) {
     const container = document.getElementById('gridContainer');
     container.innerHTML = '';
@@ -301,15 +570,15 @@
 
       btn.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
-        if (code === 39) { // Kanan
+        if (code === 39) { // Arah Kanan remote
           e.preventDefault();
           const nextBtn = document.getElementById('slide-btn-' + (i + 1));
           if (nextBtn) nextBtn.focus();
-        } else if (code === 37) { // Kiri
+        } else if (code === 37) { // Arah Kiri remote
           e.preventDefault();
           const prevBtn = document.getElementById('slide-btn-' + (i - 1));
           if (prevBtn) prevBtn.focus();
-        } else if (code === 40 || code === 27) { // Bawah / ESC
+        } else if (code === 40 || code === 27) { // Bawah atau ESC tombol balik
           e.preventDefault();
           closeMenu();
         }
@@ -327,17 +596,26 @@
     });
   }
 
-  // Tombol Menu & Keluar dari Reader
+  // Mengontrol tombol pembuka menu halaman bawah
   document.getElementById('openMenuBtn').addEventListener('click', (e) => { e.preventDefault(); openMenu(); });
   
+  // Fungsi 10: Tombol Keluar dari Reader (PERBAIKAN: Mengembalikan Pop-up Edisi Komik Terakhir)
   document.getElementById('exitReaderBtn').addEventListener('click', () => {
     document.getElementById('readerView').style.display = 'none';
     document.getElementById('homeView').style.display = 'block';
     document.title = "Katalog Komik Premium TV";
+    
     if(swiperInstance) swiperInstance.destroy(true, true);
-    setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
+    
+    // Cek riwayat komik aktif, buka kembali pop-up edisinya langsung
+    if (currentActiveComic) {
+      openEdisiModal(currentActiveComic);
+    } else {
+      setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
+    }
   });
 
+  // Manajemen Animasi Menu Pop-up Balaman Bawah TV
   function openMenu() {
     if (!swiperInstance) return;
     menuOpen = true;
@@ -360,17 +638,18 @@
     document.getElementById('openMenuBtn').focus();
   }
 
-  // Kontrol Remote TV Global
+  // Intersepsi Sistem Keydown Global TV Remote (Atas / Bawah)
   document.addEventListener('keydown', (e) => {
     const code = e.keyCode || e.which;
     if (document.getElementById('readerView').style.display === 'block' && !menuOpen) {
-      if (code === 38 || code === 40) { // Atas / Bawah
+      if (code === 38 || code === 40) { 
         e.preventDefault();
         document.getElementById('exitReaderBtn').focus();
       }
     }
   });
 
+  // Pemicu Awal Aplikasi berjalan
   window.addEventListener('DOMContentLoaded', () => {
     loadCatalogData();
     document.getElementById('searchBox').focus();
