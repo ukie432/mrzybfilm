@@ -1,0 +1,40 @@
+{
+  "komik_list": [
+    {
+      "id": "siksa-neraka",
+      "title": "Siksa Neraka",
+      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
+      "watermark": "mrzyb",
+      "edisi": [
+        {
+          "nama": "Edisi 1 (Awal Mula)",
+          "slides": [
+            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
+            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+          ]
+        },
+        {
+          "nama": "Edisi 2 (Pembalasan)",
+          "slides": [
+            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
+            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "komik-lain",
+      "title": "Petualangan Misteri",
+      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg",
+      "watermark": "mrzyb",
+      "edisi": [
+        {
+          "nama": "Edisi 1",
+          "slides": [
+            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg", "alt": "Halaman 1" }] }
+          ]
+        }
+      ]
+    }
+  ]
+}
