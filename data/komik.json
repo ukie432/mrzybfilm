@@ -1,227 +1,83 @@
-[
+{
+  "komik_list": [
     {
-      "id": "siksa-neraka",
-      "title": "Siksa Neraka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
+      "title": "Siksa Neraka Jahanam",
+      "poster": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=80",
+      "watermark": "MRZYBtv Comic",
       "edisi": [
         {
-          "nama": "Edisi 1 (Awal Mula)",
+          "nama": "Edisi 01: Lembah Jahanam",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/101/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/102/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/103/800/1200", "alt": "Hal 3" }] },
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/104/800/1200", "alt": "Penutup" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalasan)",
+          "nama": "Edisi 02: Siksaan Api Kebal",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "siksa",
-      "title": "Djk",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awalmmm)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/201/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/202/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/203/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalasahhiiin)",
+          "nama": "Edisi 03: Belenggu Besi Panas",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "siksa-nerhhiaka",
-      "title": "Siksa Ner24taka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awal Mxvbbula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/301/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/302/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/303/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalhi78asan)",
+          "nama": "Edisi 04: Air Mendidih Al-Hamim",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "siksa-nerfgyaka",
-      "title": "Siksa Nerfghnaka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awal hifMula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/401/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/402/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/403/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalufgjasan)",
+          "nama": "Edisi 05: Pohon Zaqqum Berduri",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "siksa-ner45taka",
-      "title": "Siksa Nernjjcaka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awal Mhjifula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/501/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/502/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/503/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalhjjfvasan)",
+          "nama": "Edisi 06: Jurang Kerak Neraka",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-    
-    
-      "id": "siksa-ner6u3aka",
-      "title": "Siksa Nert5etaka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awalhghj Mula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/601/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/602/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/603/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembal89jgcasan)",
+          "nama": "Edisi 07: Gemuruh Siksa Zamharir",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-    
-      "id": "siksa-ne7ihfraka",
-      "title": "Siksa Ny64ggeraka",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awali89 Mula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/701/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/702/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/703/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (Pembalyghjcdasan)",
+          "nama": "Edisi 08: Cambuk Malaikat Zabaniyah",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
-          ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "siksa-nera7hddrka",
-      "title": "Siksa Neraktrtga",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
-        {
-          "nama": "Edisi 1 (Awal Mtrg7ula)",
-          "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/801/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/802/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/803/800/1200", "alt": "Hal 3" }] }
           ]
         },
         {
-          "nama": "Edisi 2 (PembaYfhblasan)",
+          "nama": "Edisi 09: Penyesalan yang Terlambat",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg", "alt": "Halaman 1" }] },
-            { "type": "double", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg", "alt": "Halaman 2" }, { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg", "alt": "Halaman 3" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/804/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/805/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/806/800/1200", "alt": "Hal 3" }] }
           ]
-        }
-      ]
-    },
-    {
-    
-    
-    
-    
-      "id": "komik-lain",
-      "title": "Petualangan Misteri",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg",
-      "watermark": "mrzyb",
-      "edisi": [
+        },
         {
-          "nama": "Edisi 1",
+          "nama": "Edisi 10: Gerbang Hutamah",
           "slides": [
-            { "type": "single", "pages": [{ "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg", "alt": "Halaman 1" }] }
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/901/800/1200", "alt": "Cover" }] },
+            { "type": "double", "pages": [{ "image_url": "https://picsum.photos/id/902/800/1200", "alt": "Hal 2" }, { "image_url": "https://picsum.photos/id/903/800/1200", "alt": "Hal 3" }] },
+            { "type": "single", "pages": [{ "image_url": "https://picsum.photos/id/904/800/1200", "alt": "Penutup" }] }
           ]
         }
       ]
-  
-
+    }
+  ]
+}
