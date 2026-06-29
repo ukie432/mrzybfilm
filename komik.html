@@ -66,14 +66,14 @@
     overflow: hidden;
     cursor: pointer; 
     border: 3px solid transparent; 
-    transition: transform 0.2s ease, border-color 0.2s ease;
-    outline: none !important; /* Memaksa STB menghapus outline bawaan yang merusak tampilan */
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    outline: none !important; /* Menghilangkan sisa outline bawaan OS Android TV */
     text-align: center; 
     padding-bottom: 10px;
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Dioptimalkan agar rendering shadow tidak terlalu berat di Android TV */
+  /* Dioptimalkan agar rendering shadow tidak membebani prosesor STB */
   .poster-item:focus, .poster-item:hover {
     border-color: #4a90e2 !important; 
     transform: scale(1.05); 
@@ -84,7 +84,7 @@
     width: 100%; 
     height: 260px; 
     object-fit: cover; 
-    pointer-events: none; /* Mencegah bentrok klik pada TV */
+    pointer-events: none; 
   }
   
   .comic-title { 
@@ -106,7 +106,6 @@
     align-items: center; 
     justify-content: center;
     z-index: 20000; 
-    backdrop-filter: blur(8px); /* Efek blur yang kadang berat di TV low-end */
   }
   
   .modal-content {
@@ -138,7 +137,7 @@
     align-items: center;
     justify-content: center;
     outline: none !important;
-    transition: all 0.2s;
+    transition: all 0.15s;
     line-height: 1;
     padding: 0;
   }
@@ -178,7 +177,7 @@
     border-radius: 8px; 
     cursor: pointer; 
     outline: none !important;
-    transition: all 0.2s;
+    transition: all 0.15s;
     text-align: left;
   }
   
@@ -531,7 +530,6 @@
 
     document.getElementById('edisiModal').style.display = 'flex';
     
-    // DELAY DI-UP KE 150ms AGAR AMAN DI STB DEVICE RAM KECIL
     setTimeout(() => {
       const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
       if(targetBtn) {
@@ -544,20 +542,15 @@
     }, 150);
   }
 
-  // OPTIMASI SEPENUHNYA UNTUK ANDROID TV / STB HARDWARE
   function closeEdisiModalAndRestoreFocus() {
-    // 1. Sembunyikan pop-up terlebih dahulu
     document.getElementById('edisiModal').style.display = 'none';
     
-    // 2. BERIKAN JEDA 150ms (DELAY) agar WebView TV selesai melakukan proses pembersihan grafik pop-up
+    // Jeda 150ms agar WebView STB membersihkan layer pop-up terlebih dahulu sebelum remote menyorot poster
     setTimeout(() => {
       if(currentActiveComicIdx !== null) {
         const posterBtn = document.getElementById('comic-poster-idx-' + currentActiveComicIdx);
         if(posterBtn) {
-          // Bersihkan sisa fokus liar di TV dengan memicu blur global terlebih dahulu
-          if (document.activeElement) document.activeElement.blur();
-          
-          // Fokuskan dengan tepat ke target poster asal
+          if (document.activeElement) document.activeElement.blur(); // Bersihkan sisa fokus lama
           posterBtn.focus(); 
           posterBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -720,7 +713,10 @@
     if (currentActiveComicData) {
       openEdisiModal(currentActiveComicData);
     } else {
-      setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
+      setTimeout(() => { 
+        const firstPoster = document.getElementById('comic-poster-idx-0');
+        if(firstPoster) firstPoster.focus();
+      }, 100);
     }
   });
 
@@ -756,9 +752,19 @@
     }
   });
 
+  // AKSI SAAT APLIKASI PERTAMA KALI DIBUKA DI TV / STB
   window.addEventListener('DOMContentLoaded', () => {
     loadCatalogData();
-    document.getElementById('searchBox').focus();
+    
+    // Memberikan jeda waktu 350ms agar STB selesai menggambar grid poster sebelum disorot remote
+    setTimeout(() => {
+      const firstPoster = document.getElementById('comic-poster-idx-0');
+      if (firstPoster) {
+        if (document.activeElement) document.activeElement.blur(); // Bersihkan fokus default browser
+        firstPoster.focus(); // Sorot langsung ke poster paling pertama
+        firstPoster.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 350); 
   });
 </script>
 </body>
