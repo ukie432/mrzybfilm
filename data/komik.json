@@ -1,5 +1,4 @@
-{
-  "komik_list": [
+[
     {
       "id": "siksa-neraka",
       "title": "Siksa Neraka",
@@ -224,6 +223,5 @@
           ]
         }
       ]
-    }
-  ]
-}
+  
+
