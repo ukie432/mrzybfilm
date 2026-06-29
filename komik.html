@@ -3,353 +3,287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flipbook Premium TV - 100% Compatible Navigation</title>
+<title>Katalog Komik Premium TV</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <style>
+  *, *::before, *::after { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: #0a0a0a;
-    color: white;
+    margin: 0; padding: 0;
+    background: #0a0a0a; color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
   }
-  .swiper {
-    width: 100%;
-    height: 100vh;
-  }
-  .swiper-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0a0a0a;
-    box-sizing: border-box;
-    padding: 15px;
-  }
-  .spread-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    gap: 20px;
-  }
-  .swiper-zoom-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  .spread-container img {
-    max-width: 47%;
-    max-height: 94vh;
-    object-fit: contain;
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-  }
-  .spread-container.single img {
-    max-width: 75%;
-    max-height: 94vh;
-    border: 5px solid rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-  }
+
+  /* ================= HOME VIEW (KATALOG) ================= */
+  #homeView { padding: 30px; width: 100%; min-height: 100vh; display: block; }
   
-  .watermark {
-    position: fixed;
-    top: 20px;
-    right: 25px;
-    font-size: 18px;
-    color: rgba(255,255,255,0.25);
-    font-weight: 600;
-    letter-spacing: 2px;
-    pointer-events: none;
-    z-index: 9998;
-    text-transform: uppercase;
+  .search-container {
+    max-width: 600px; margin: 0 auto 40px auto; text-align: center;
   }
+  .search-box {
+    width: 100%; padding: 15px 25px; font-size: 18px;
+    background: #1f1f1f; color: white; border: 2px solid #333;
+    border-radius: 30px; outline: none; transition: all 0.3s ease;
+  }
+  .search-box:focus { border-color: #4a90e2; box-shadow: 0 0 15px rgba(74,144,226,0.3); }
 
-  .tv-page-indicator {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    background: rgba(0, 0, 0, 0.75);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    border: 1px solid rgba(255,255,255,0.15);
-    z-index: 999;
-    backdrop-filter: blur(5px);
+  .catalog-title { font-size: 24px; margin-bottom: 20px; font-weight: bold; letter-spacing: 1px; }
+  .poster-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px; width: 100%;
   }
+  .poster-item {
+    background: #141414; border-radius: 12px; overflow: hidden;
+    cursor: pointer; border: 3px solid transparent; transition: all 0.2s ease;
+    outline: none; text-align: center; padding-bottom: 10px;
+  }
+  .poster-item:focus, .poster-item:hover {
+    border-color: #4a90e2; transform: scale(1.05); box-shadow: 0 10px 25px rgba(74,144,226,0.4);
+  }
+  .poster-img { width: 100%; height: 260px; object-fit: cover; }
+  .comic-title { font-size: 16px; font-weight: bold; margin: 10px 10px 0 10px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
-  /* Pemicu Menu Utama - Sangat Ramah Remote TV */
-  .tv-trigger-zone {
-    position: fixed;
-    bottom: 25px;
-    left: 25px;
-    z-index: 9999;
+  /* ================= POPUP MODAL EDISI ================= */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center;
+    z-index: 20000; backdrop-filter: blur(8px);
   }
-  .menu-btn-tv {
-    background: #4a90e2;
-    color: white;
-    border: 2px solid white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
-    outline: none;
+  .modal-content {
+    background: #141414; border-radius: 16px; padding: 30px; width: 90%; max-width: 500px;
+    border: 2px solid #333; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
-  .menu-btn-tv:focus {
-    background: #e24a4a;
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #e24a4a;
+  .modal-title { font-size: 22px; margin-bottom: 20px; color: #4a90e2; }
+  .edisi-list { display: flex; flex-direction: column; gap: 12px; max-height: 300px; overflow-y: auto; padding: 5px; }
+  .edisi-btn {
+    background: #222; color: white; border: 2px solid transparent; padding: 14px;
+    font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; outline: none; transition: all 0.2s;
   }
+  .edisi-btn:focus, .edisi-btn:hover { background: #4a90e2; border-color: white; transform: scale(1.02); }
+  .close-modal-btn { background: #e24a4a !important; margin-top: 15px; width: 100%; }
 
-  /* MENU POP-UP LONCAT HALAMAN */
-  .tv-menu-popup {
-    position: fixed;
-    bottom: -250px;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.98) 85%, rgba(0,0,0,0.0));
-    padding: 40px 20px 30px 20px;
-    box-sizing: border-box;
-    transition: bottom 0.25s ease-out;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    backdrop-filter: blur(10px);
-  }
-  .tv-menu-popup.active {
-    bottom: 0;
-  }
-  .menu-title {
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #4a90e2;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .grid-container {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    width: 90%;
-    padding: 10px;
-    justify-content: center;
-  }
-  .grid-container::-webkit-scrollbar {
-    display: none;
-  }
+  /* ================= READER VIEW (FLIPBOOK) ================= */
+  #readerView { display: none; width: 100%; height: 100vh; position: relative; }
+  .swiper { width: 100%; height: 100vh; }
+  .swiper-slide { display: flex; align-items: center; justify-content: center; background: #0a0a0a; padding: 15px; }
+  .spread-container { display: flex; flex-direction: row; align-items: center; justify-content: center; width: 100%; height: 100%; gap: 20px; }
+  .swiper-zoom-container { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+  .spread-container img { max-width: 47%; max-height: 94vh; object-fit: contain; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+  .spread-container.single img { max-width: 75%; max-height: 94vh; border: 5px solid rgba(255, 255, 255, 0.9); border-radius: 12px; }
   
-  /* Elemen Tombol Asli HTML agar Remote TV dipaksa mengenali fokusnya */
-  .page-item-btn {
-    background: #222;
-    color: #aaa;
-    border: 2px solid transparent;
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    min-width: 70px;
-    text-align: center;
-    cursor: pointer;
-    outline: none;
-  }
-  /* Efek Fokus Tombol Angka saat disorot Remote */
-  .page-item-btn:focus {
-    background: #4a90e2 !important;
-    color: white !important;
-    border-color: white !important;
-    transform: scale(1.15);
-    box-shadow: 0 0 15px #4a90e2;
-  }
-  .page-item-btn.current-page {
-    border-color: #4a90e2;
-    color: #4a90e2;
-  }
+  .watermark { position: fixed; top: 20px; right: 25px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 600; letter-spacing: 2px; pointer-events: none; z-index: 9998; text-transform: uppercase; }
+  .tv-page-indicator { position: fixed; bottom: 25px; right: 25px; background: rgba(0, 0, 0, 0.75); padding: 8px 16px; border-radius: 20px; font-size: 16px; font-weight: bold; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.15); z-index: 999; backdrop-filter: blur(5px); }
+  
+  .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; display: flex; gap: 10px; }
+  .menu-btn-tv { background: #4a90e2; color: white; border: 2px solid white; padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; outline: none; }
+  .menu-btn-tv:focus { background: #e24a4a; transform: scale(1.1); box-shadow: 0 0 20px #e24a4a; }
+  .back-btn-tv { background: #555; }
+
+  .tv-menu-popup { position: fixed; bottom: -250px; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.98) 85%, rgba(0,0,0,0.0)); padding: 40px 20px 30px 20px; transition: bottom 0.25s ease-out; z-index: 10000; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(10px); }
+  .tv-menu-popup.active { bottom: 0; }
+  .menu-title { font-size: 18px; margin-bottom: 15px; color: #4a90e2; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+  .grid-container { display: flex; gap: 12px; overflow-x: auto; width: 90%; padding: 10px; justify-content: center; }
+  .grid-container::-webkit-scrollbar { display: none; }
+  
+  .page-item-btn { background: #222; color: #aaa; border: 2px solid transparent; padding: 12px 24px; font-size: 18px; font-weight: bold; border-radius: 8px; min-width: 70px; text-align: center; cursor: pointer; outline: none; }
+  .page-item-btn:focus { background: #4a90e2 !important; color: white !important; border-color: white !important; transform: scale(1.15); box-shadow: 0 0 15px #4a90e2; }
+  .page-item-btn.current-page { border-color: #4a90e2; color: #4a90e2; }
 </style>
 </head>
 <body>
 
-<div class="watermark">mrzyb</div>
-<div class="tv-page-indicator" id="tvPageTxt">Slide 1 / 16</div>
-
-<div class="tv-trigger-zone">
-  <button class="menu-btn-tv" id="openMenuBtn">PILIH HALAMAN</button>
+<div id="homeView">
+  <div class="search-container">
+    <input type="text" class="search-box" id="searchBox" placeholder="Cari judul komik di sini..." autocomplete="off">
+  </div>
+  <div class="catalog-title">Semua Komik</div>
+  <div class="poster-grid" id="posterGridContainer"></div>
 </div>
 
-<div class="swiper" id="mySwiper">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container single">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171650673.jpg" alt="Halaman 1">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171753131.jpg" alt="Halaman 2">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171826240.jpg" alt="Halaman 3">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_171925100.jpg" alt="Halaman 4">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172831728.jpg" alt="Halaman 5">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_172910005.jpg" alt="Halaman 6">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173010505.jpg" alt="Halaman 7">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173044869.jpg" alt="Halaman 8">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173130782.jpg" alt="Halaman 9">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173503492.jpg" alt="Halaman 10">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173629377.jpg" alt="Halaman 11">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173713470.jpg" alt="Halaman 12">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173748352.jpg" alt="Halaman 13">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173819646.jpg" alt="Halaman 14">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173859489.jpg" alt="Halaman 15">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_173931764.jpg" alt="Halaman 16">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174010805.jpg" alt="Halaman 17">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174048128.jpg" alt="Halaman 18">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174133243.jpg" alt="Halaman 19">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174210723.jpg" alt="Halaman 20">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174243086.jpg" alt="Halaman 21">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174327826.jpg" alt="Halaman 22">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174414144.jpg" alt="Halaman 23">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174504368.jpg" alt="Halaman 24">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174537483.jpg" alt="Halaman 25">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174600449.jpg" alt="Halaman 26">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174633226.jpg" alt="Halaman 27">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174703039.jpg" alt="Halaman 28">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174733099.jpg" alt="Halaman 29">
-        </div>
-      </div>
-    </div>
-    <div class="swiper-slide">
-      <div class="swiper-zoom-container">
-        <div class="spread-container">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174803716.jpg" alt="Halaman 30">
-          <img src="https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174827517.jpg" alt="Halaman 31">
-        </div>
-      </div>
-    </div>
+<div class="modal-overlay" id="edisiModal">
+  <div class="modal-content">
+    <div class="modal-title" id="modalComicTitle">Pilih Edisi</div>
+    <div class="edisi-list" id="modalEdisiList"></div>
+    <button class="edisi-btn close-modal-btn" id="closeModalBtn">KEMBALI</button>
   </div>
 </div>
 
-<div class="tv-menu-popup" id="tvMenu">
-  <div class="menu-title">Lompat Ke Slide</div>
-  <div class="grid-container" id="gridContainer"></div>
+<div id="readerView">
+  <div class="watermark" id="watermarkTxt"></div>
+  <div class="tv-page-indicator" id="tvPageTxt">Slide 1 / 1</div>
+
+  <div class="tv-trigger-zone">
+    <button class="menu-btn-tv back-btn-tv" id="exitReaderBtn">KEMBALI KE KATALOG</button>
+    <button class="menu-btn-tv" id="openMenuBtn">PILIH HALAMAN</button>
+  </div>
+
+  <div class="swiper" id="mySwiper">
+    <div class="swiper-wrapper" id="swiperWrapperContainer"></div>
+  </div>
+
+  <div class="tv-menu-popup" id="tvMenu">
+    <div class="menu-title">Lompat Ke Slide</div>
+    <div class="grid-container" id="gridContainer"></div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
+  let masterData = [];
   let menuOpen = false;
+  let swiperInstance = null;
 
-  const swiper = new Swiper('.swiper', {
-    effect: 'slide',
-    grabCursor: true,
-    keyboard: {
-      enabled: true,
-    },
-    on: {
-      init: function () {
-        updatePageText(this.activeIndex + 1, this.slides.length);
-        buildTvMenu(this.slides.length);
-      },
-      slideChange: function() {
-        updatePageText(this.activeIndex + 1, this.slides.length);
-        highlightCurrentMenuPage(this.activeIndex);
-      }
+  // Silakan ganti path JSON Anda di bawah ini
+  const jsonPath = 'data/komik.json';
+
+  // Membaca Database Utama dari JSON
+  async function loadCatalogData() {
+    try {
+      const response = await fetch(jsonPath);
+      if (!response.ok) throw new Error('Gagal mengambil file JSON katalog.');
+      const data = await response.json();
+      masterData = data.komik_list;
+      renderCatalog(masterData);
+    } catch (error) {
+      console.error(error);
+      document.getElementById('posterGridContainer').innerHTML = `<p style="color:red;">Error memuat data katalog: ${error.message}</p>`;
     }
+  }
+
+  // Menampilkan Daftar Poster di Home
+  function renderCatalog(list) {
+    const grid = document.getElementById('posterGridContainer');
+    grid.innerHTML = '';
+    
+    if(list.length === 0) {
+      grid.innerHTML = '<p style="color:#aaa; padding: 20px;">Komik tidak ditemukan...</p>';
+      return;
+    }
+
+    list.forEach((comic, index) => {
+      const item = document.createElement('div');
+      item.className = 'poster-item';
+      item.tabIndex = 0; // Agar bisa difokuskan remote TV
+      item.innerHTML = `
+        <img class="poster-img" src="${comic.poster}" alt="${comic.title}">
+        <div class="comic-title">${comic.title}</div>
+      `;
+      
+      // Klik poster memicu popup edisi
+      item.addEventListener('click', () => openEdisiModal(comic));
+      item.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.keyCode === 13) openEdisiModal(comic);
+      });
+
+      grid.appendChild(item);
+    });
+  }
+
+  // Sistem Pencarian Komik
+  document.getElementById('searchBox').addEventListener('input', (e) => {
+    const keyword = e.target.value.toLowerCase();
+    const filtered = masterData.filter(comic => comic.title.toLowerCase().includes(keyword));
+    renderCatalog(filtered);
   });
 
+  // Sistem Pop-up Modal Pilihan Edisi
+  function openEdisiModal(comic) {
+    document.getElementById('modalComicTitle').innerText = comic.title;
+    const listContainer = document.getElementById('modalEdisiList');
+    listContainer.innerHTML = '';
+
+    comic.edisi.forEach((ed, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'edisi-btn';
+      btn.innerText = ed.nama;
+      btn.addEventListener('click', () => {
+        closeEdisiModal();
+        startReading(comic, ed);
+      });
+      listContainer.appendChild(btn);
+    });
+
+    document.getElementById('edisiModal').style.display = 'flex';
+    // Fokuskan langsung ke edisi pertama agar mudah bagi remote TV
+    setTimeout(() => {
+      const firstBtn = listContainer.querySelector('.edisi-btn');
+      if(firstBtn) firstBtn.focus();
+    }, 50);
+  }
+
+  function closeEdisiModal() {
+    document.getElementById('edisiModal').style.display = 'none';
+  }
+  document.getElementById('closeModalBtn').addEventListener('click', closeEdisiModal);
+
+  // Sistem Load Reader View (Menampilkan Swiper Flipbook)
+  function startReading(comic, edisiData) {
+    document.getElementById('homeView').style.display = 'none';
+    document.getElementById('readerView').style.display = 'block';
+    
+    document.title = `${comic.title} - ${edisiData.nama}`;
+    document.getElementById('watermarkTxt').innerText = comic.watermark;
+
+    const wrapper = document.getElementById('swiperWrapperContainer');
+    wrapper.innerHTML = ''; // Reset halaman pembaca sebelumnya
+
+    edisiData.slides.forEach(slide => {
+      const slideDiv = document.createElement('div');
+      slideDiv.className = 'swiper-slide';
+
+      const zoomContainer = document.createElement('div');
+      zoomContainer.className = 'swiper-zoom-container';
+
+      const spreadContainer = document.createElement('div');
+      spreadContainer.className = `spread-container ${slide.type}`;
+
+      slide.pages.forEach(page => {
+        const img = document.createElement('img');
+        img.src = page.image_url;
+        img.alt = page.alt;
+        img.setAttribute('loading', 'lazy'); 
+        spreadContainer.appendChild(img);
+      });
+
+      const preloader = document.createElement('div');
+      preloader.className = 'swiper-lazy-preloader swiper-lazy-preloader-white';
+
+      zoomContainer.appendChild(spreadContainer);
+      zoomContainer.appendChild(preloader);
+      slideDiv.appendChild(zoomContainer);
+      wrapper.appendChild(slideDiv);
+    });
+
+    initSwiper();
+  }
+
+  function initSwiper() {
+    if(swiperInstance) swiperInstance.destroy(true, true);
+
+    swiperInstance = new Swiper('.swiper', {
+      effect: 'slide',
+      grabCursor: true,
+      keyboard: { enabled: true },
+      lazy: { loadPrevNext: true, loadPrevNextAmount: 1 },
+      on: {
+        init: function () {
+          updatePageText(this.activeIndex + 1, this.slides.length);
+          buildTvMenu(this.slides.length);
+        },
+        slideChange: function() {
+          updatePageText(this.activeIndex + 1, this.slides.length);
+          highlightCurrentMenuPage(this.activeIndex);
+        }
+      }
+    });
+    document.getElementById('openMenuBtn').focus();
+  }
+
+  // Navigasi Slider Angka Halaman TV
   function updatePageText(current, total) {
     document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
   }
 
-  // Membuat tombol angka loncat halaman menggunakan elemen asli HTML <button>
   function buildTvMenu(totalSlides) {
     const container = document.getElementById('gridContainer');
     container.innerHTML = '';
@@ -359,14 +293,12 @@
       btn.innerText = i + 1;
       btn.id = 'slide-btn-' + i;
       
-      // Mengatasi klik remote OK
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        swiper.slideTo(i);
+        swiperInstance.slideTo(i);
         closeMenu();
       });
 
-      // Kontrol navigasi antar tombol angka (Kiri/Kanan/Bawah di dalam menu)
       btn.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
         if (code === 39) { // Kanan
@@ -377,15 +309,14 @@
           e.preventDefault();
           const prevBtn = document.getElementById('slide-btn-' + (i - 1));
           if (prevBtn) prevBtn.focus();
-        } else if (code === 40 || code === 27) { // Bawah atau Back untuk tutup
+        } else if (code === 40 || code === 27) { // Bawah / ESC
           e.preventDefault();
           closeMenu();
         }
       });
-
       container.appendChild(btn);
     }
-    highlightCurrentMenuPage(swiper.activeIndex);
+    highlightCurrentMenuPage(swiperInstance.activeIndex);
   }
 
   function highlightCurrentMenuPage(activeIndex) {
@@ -396,20 +327,24 @@
     });
   }
 
-  // Event klik tombol pemicu "PILIH HALAMAN" di pojok kiri bawah
-  document.getElementById('openMenuBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    openMenu();
+  // Tombol Menu & Keluar dari Reader
+  document.getElementById('openMenuBtn').addEventListener('click', (e) => { e.preventDefault(); openMenu(); });
+  
+  document.getElementById('exitReaderBtn').addEventListener('click', () => {
+    document.getElementById('readerView').style.display = 'none';
+    document.getElementById('homeView').style.display = 'block';
+    document.title = "Katalog Komik Premium TV";
+    if(swiperInstance) swiperInstance.destroy(true, true);
+    setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
   });
 
   function openMenu() {
+    if (!swiperInstance) return;
     menuOpen = true;
-    swiper.keyboard.disable(); // Nonaktifkan keyboard swiper sementara
+    swiperInstance.keyboard.disable();
     document.getElementById('tvMenu').classList.add('active');
-    
-    // Otomatis arahkan fokus remote TV ke tombol halaman aktif saat ini
     setTimeout(() => {
-      const activeBtn = document.getElementById('slide-btn-' + swiper.activeIndex);
+      const activeBtn = document.getElementById('slide-btn-' + swiperInstance.activeIndex);
       if (activeBtn) {
         activeBtn.focus();
         activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -418,29 +353,28 @@
   }
 
   function closeMenu() {
+    if (!swiperInstance) return;
     menuOpen = false;
     document.getElementById('tvMenu').classList.remove('active');
-    swiper.keyboard.enable(); // Aktifkan kembali keyboard swiper untuk kiri kanan
-    document.getElementById('openMenuBtn').focus(); // Kembalikan fokus ke pemicu utama
+    swiperInstance.keyboard.enable();
+    document.getElementById('openMenuBtn').focus();
   }
 
-  // Sistem Global penangkap tombol alternatif (Atas / Bawah / OK) untuk memicu menu
+  // Kontrol Remote TV Global
   document.addEventListener('keydown', (e) => {
     const code = e.keyCode || e.which;
-    if (!menuOpen) {
-      // Jika menekan tombol ATAS (38) atau BAWAH (40) saat membaca komik, fokus langsung dilempar ke tombol PILIH HALAMAN
-      if (code === 38 || code === 40) {
+    if (document.getElementById('readerView').style.display === 'block' && !menuOpen) {
+      if (code === 38 || code === 40) { // Atas / Bawah
         e.preventDefault();
-        document.getElementById('openMenuBtn').focus();
+        document.getElementById('exitReaderBtn').focus();
       }
     }
   });
 
-  // Kunci fokus awal saat dimuat
   window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('openMenuBtn').focus();
+    loadCatalogData();
+    document.getElementById('searchBox').focus();
   });
 </script>
-
 </body>
 </html>
