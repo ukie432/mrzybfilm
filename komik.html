@@ -115,19 +115,53 @@
     border: 2px solid #333; 
     text-align: center; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    position: relative; /* Diperlukan agar penempatan ikon X menjadi presisi */
   }
   
+  /* TOMBOL ICON X DI POJOK KANAN ATAS MODAL */
+  .close-modal-x-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background: #222;
+    color: #fff;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    transition: all 0.2s;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .close-modal-x-btn:focus, .close-modal-x-btn:hover {
+    background: #e24a4a;
+    border-color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #e24a4a;
+  }
+
   .modal-title { 
     font-size: 22px; 
-    margin-bottom: 20px; 
+    margin-bottom: 25px; 
+    margin-right: 40px; /* Agar teks judul tidak tabrakan dengan ikon X */
     color: #4a90e2; 
+    text-align: left;
+    padding-left: 5px;
   }
   
   .edisi-list { 
     display: flex; 
     flex-direction: column; 
     gap: 12px; 
-    max-height: 300px; 
+    max-height: 380px; /* Ditambah sedikit agar muat lebih banyak edisi sebelum scroll */
     overflow-y: auto; 
     padding: 5px; 
   }
@@ -143,18 +177,13 @@
     cursor: pointer; 
     outline: none; 
     transition: all 0.2s;
+    text-align: left;
   }
   
   .edisi-btn:focus, .edisi-btn:hover { 
     background: #4a90e2; 
     border-color: white; 
     transform: scale(1.02); 
-  }
-  
-  .close-modal-btn { 
-    background: #e24a4a !important; 
-    margin-top: 15px; 
-    width: 100%; 
   }
 
   /* ================= VIEWS 2: READER VIEW (FLIPBOOK) ================= */
@@ -187,11 +216,10 @@
     width: 100%; 
     height: 100%; 
     gap: 20px; 
-    opacity: 0; /* Sembunyikan gambar sebelum dimuat penuh agar tidak patah-patah */
+    opacity: 0; 
     transition: opacity 0.3s ease;
   }
   
-  /* Ketika gambar selesai dimuat, kontainer ini akan diberi class 'loaded' */
   .spread-container.loaded {
     opacity: 1;
   }
@@ -220,7 +248,6 @@
     border-radius: 12px; 
   }
   
-  /* LOADING SPINNER CUSTOM (PERBAIKAN UTAMA) */
   .custom-loader {
     position: absolute;
     top: 50%; left: 50%;
@@ -379,9 +406,9 @@
 
 <div class="modal-overlay" id="edisiModal">
   <div class="modal-content">
+    <button class="close-modal-x-btn" id="closeModalXBtn" aria-label="Tutup Pop-up">×</button>
     <div class="modal-title" id="modalComicTitle">Pilih Edisi</div>
     <div class="edisi-list" id="modalEdisiList"></div>
-    <button class="edisi-btn close-modal-btn" id="closeModalBtn">KEMBALI</button>
   </div>
 </div>
 
@@ -413,7 +440,7 @@
   let currentActiveComic = null; 
   let currentActiveEdisiIdx = 0; 
 
-  const jsonPath = 'data/komik.json';
+  const jsonPath = 'data/komiksiksaneraka.json';
 
   async function loadCatalogData() {
     try {
@@ -479,11 +506,22 @@
       btn.className = 'edisi-btn';
       btn.id = 'edisi-btn-idx-' + idx; 
       btn.innerText = ed.nama;
+      
       btn.addEventListener('click', () => {
         currentActiveEdisiIdx = idx; 
         closeEdisiModal();
         startReading(comic, ed);
       });
+
+      // KONTROL REMOTE KHUSUS TV DI DALAM LIST EDISI (KANAN KE ICON X)
+      btn.addEventListener('keydown', (e) => {
+        const code = e.keyCode || e.which;
+        if (code === 39) { // Kanan
+          e.preventDefault();
+          document.getElementById('closeModalXBtn').focus(); // Lompat langsung ke ikon X
+        }
+      });
+
       listContainer.appendChild(btn);
     });
 
@@ -493,6 +531,7 @@
       const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
       if(targetBtn) {
         targetBtn.focus();
+        targetBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else {
         const firstBtn = listContainer.querySelector('.edisi-btn');
         if(firstBtn) firstBtn.focus();
@@ -502,17 +541,33 @@
 
   function closeEdisiModal() {
     document.getElementById('edisiModal').style.display = 'none';
-  }
-  
-  document.getElementById('closeModalBtn').addEventListener('click', () => {
-    closeEdisiModal();
+    // Otomatis kembalikan fokus remote ke poster komik di home view
     if(currentActiveComic) {
       const posterBtn = document.getElementById('comic-id-' + currentActiveComic.id);
       if(posterBtn) posterBtn.focus();
     }
+  }
+  
+  // AKSI ICON X DIKLIK / KEMBALI KAMPUNG
+  document.getElementById('closeModalXBtn').addEventListener('click', () => {
+    closeEdisiModal();
   });
 
-  // LOGIKA BARU UNTUK MENGHILANGKAN LOADING LINGKARAN BERPUTAR
+  // KONTROL REMOTE KHUSUS ICON X (KIRI KEMBALI KE EDISI TERAKHIR)
+  document.getElementById('closeModalXBtn').addEventListener('keydown', (e) => {
+    const code = e.keyCode || e.which;
+    if (code === 37) { // Kiri
+      e.preventDefault();
+      const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
+      if (targetBtn) {
+        targetBtn.focus();
+      }
+    } else if (code === 13 || e.key === 'Enter') { // Enter pada ikon X
+      e.preventDefault();
+      closeEdisiModal();
+    }
+  });
+
   function startReading(comic, edisiData) {
     document.getElementById('homeView').style.display = 'none';
     document.getElementById('readerView').style.display = 'block';
@@ -533,19 +588,17 @@
       const spreadContainer = document.createElement('div');
       spreadContainer.className = `spread-container ${slide.type}`;
 
-      // Buat elemen loading manual di dalam slide ini
       const loader = document.createElement('div');
       loader.className = 'custom-loader';
 
       let totalImages = slide.pages.length;
       let loadedCount = 0;
 
-      // Fungsi pelacak: Jika semua gambar dalam 1 slide selesai di-load, hilangkan lingkaran berputar
       function checkAllImagesLoaded() {
         loadedCount++;
         if (loadedCount === totalImages) {
-          loader.style.display = 'none'; // Sembunyikan lingkaran putar
-          spreadContainer.classList.add('loaded'); // Tampilkan gambar secara halus (fade-in)
+          loader.style.display = 'none'; 
+          spreadContainer.classList.add('loaded'); 
         }
       }
 
@@ -555,15 +608,14 @@
         img.alt = page.alt;
         img.setAttribute('loading', 'lazy'); 
         
-        // Pemicu ketika gambar berhasil diunduh TV
         img.onload = checkAllImagesLoaded;
-        img.onerror = checkAllImagesLoaded; // Tetap hilangkan loading jika link eror agar TV tidak nge-hang
+        img.onerror = checkAllImagesLoaded; 
 
         spreadContainer.appendChild(img);
       });
 
       zoomContainer.appendChild(spreadContainer);
-      zoomContainer.appendChild(loader); // Pasang loader custom
+      zoomContainer.appendChild(loader); 
       slideDiv.appendChild(zoomContainer);
       wrapper.appendChild(slideDiv);
     });
@@ -578,7 +630,6 @@
       effect: 'slide',
       grabCursor: true,
       keyboard: { enabled: true },
-      // Pengaturan lazy bawaan dimatikan karena sudah diganti sistem tracker onload di atas
       on: {
         init: function () {
           updatePageText(this.activeIndex + 1, this.slides.length);
