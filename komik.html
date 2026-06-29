@@ -378,17 +378,18 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></script>
 <script>
   let masterData = [];
   let menuOpen = false;
   let swiperInstance = null;
   
-  // Pelacak komik mana yang terakhir kali dibuka pop-upnya
+  // PELACAK BARU: Mengingat komik dan indeks edisi yang terakhir dipilih
   let currentActiveComic = null; 
+  let currentActiveEdisiIdx = 0; 
 
   // Masukkan arah lokasi file JSON Anda di sini
-  const jsonPath = 'data/komik.json';
+  const jsonPath = 'data/komiksiksaneraka.json';
 
   // Fungsi 1: Mengambil Data Utama Berformat Katalog dari File JSON
   async function loadCatalogData() {
@@ -404,7 +405,7 @@
     }
   }
 
-  // Fungsi 2: Membuat Element Grid Poster Komik di Halaman Depok secara Dinamis
+  // Fungsi 2: Membuat Element Grid Poster Komik di Halaman Depan secara Dinamis
   function renderCatalog(list) {
     const grid = document.getElementById('posterGridContainer');
     grid.innerHTML = '';
@@ -425,9 +426,15 @@
       `;
       
       // Deteksi Klik / Masuk Menggunakan Remote Enter
-      item.addEventListener('click', () => openEdisiModal(comic));
+      item.addEventListener('click', () => {
+        currentActiveEdisiIdx = 0; // Reset ke edisi pertama jika baru klik poster dari home
+        openEdisiModal(comic);
+      });
       item.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter' || e.keyCode === 13) openEdisiModal(comic);
+        if(e.key === 'Enter' || e.keyCode === 13) {
+          currentActiveEdisiIdx = 0;
+          openEdisiModal(comic);
+        }
       });
 
       grid.appendChild(item);
@@ -448,11 +455,13 @@
     const listContainer = document.getElementById('modalEdisiList');
     listContainer.innerHTML = '';
 
-    comic.edisi.forEach((ed) => {
+    comic.edisi.forEach((ed, idx) => {
       const btn = document.createElement('button');
       btn.className = 'edisi-btn';
+      btn.id = 'edisi-btn-idx-' + idx; // Memberikan ID unik berdasarkan urutan edisi
       btn.innerText = ed.nama;
       btn.addEventListener('click', () => {
+        currentActiveEdisiIdx = idx; // INGAT: Pengguna memilih edisi urutan ini (0, 1, 2, dst)
         closeEdisiModal();
         startReading(comic, ed);
       });
@@ -461,10 +470,15 @@
 
     document.getElementById('edisiModal').style.display = 'flex';
     
-    // Remote Smart TV otomatis fokus ke tombol edisi pertama agar siap klik
+    // PERBAIKAN: Fokuskan remote TV langsung ke edisi terakhir yang dibaca pengguna
     setTimeout(() => {
-      const firstBtn = listContainer.querySelector('.edisi-btn');
-      if(firstBtn) firstBtn.focus();
+      const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
+      if(targetBtn) {
+        targetBtn.focus();
+      } else {
+        const firstBtn = listContainer.querySelector('.edisi-btn');
+        if(firstBtn) firstBtn.focus();
+      }
     }, 50);
   }
 
@@ -482,7 +496,7 @@
     }
   });
 
-  // Fungsi 6: Memulai Sistem Membaca & Merender Gambar Swiper (Lazy Loading diaktifkan)
+  // Fungsi 6: Memulai Sistem Membaca & Merender Gambar Swiper
   function startReading(comic, edisiData) {
     document.getElementById('homeView').style.display = 'none';
     document.getElementById('readerView').style.display = 'block';
@@ -599,7 +613,7 @@
   // Mengontrol tombol pembuka menu halaman bawah
   document.getElementById('openMenuBtn').addEventListener('click', (e) => { e.preventDefault(); openMenu(); });
   
-  // Fungsi 10: Tombol Keluar dari Reader (PERBAIKAN: Mengembalikan Pop-up Edisi Komik Terakhir)
+  // Fungsi 10: Tombol Keluar dari Reader (SUDAH DIPERBAIKI SECARA PENUH)
   document.getElementById('exitReaderBtn').addEventListener('click', () => {
     document.getElementById('readerView').style.display = 'none';
     document.getElementById('homeView').style.display = 'block';
@@ -607,7 +621,7 @@
     
     if(swiperInstance) swiperInstance.destroy(true, true);
     
-    // Cek riwayat komik aktif, buka kembali pop-up edisinya langsung
+    // Membuka pop-up komik terakhir, sistem otomatis menyorot edisi yang sesuai riwayat indeksnya
     if (currentActiveComic) {
       openEdisiModal(currentActiveComic);
     } else {
@@ -615,7 +629,7 @@
     }
   });
 
-  // Manajemen Animasi Menu Pop-up Balaman Bawah TV
+  // Manajemen Animasi Menu Pop-up Halaman Bawah TV
   function openMenu() {
     if (!swiperInstance) return;
     menuOpen = true;
