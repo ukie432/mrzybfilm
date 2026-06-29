@@ -54,13 +54,13 @@
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/12.webp", "alt": "Halaman 12" },
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/13%20(1).webp", "alt": "Halaman 13" }
-
               ]
             }
           ]
-        },
-        {
-      
+        }
+      ]
+    },
+    {
       "title": "Doraemon Akhir",
       "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Emonend1.webp",
       "watermark": "MRZYBtv Comic",
@@ -130,9 +130,10 @@
               ]
             }
           ]
-        },
-        {
-        
+        }
+      ]
+    },
+    {
       "title": "Siksa Neraka",
       "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/AIRetouch_20260629_171946666.jpg",
       "watermark": "MRZYBtv Comic",
@@ -254,7 +255,6 @@
               "type": "single",
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174827517.jpg", "alt": "Halaman 31" }
-
               ]
             }
           ]
