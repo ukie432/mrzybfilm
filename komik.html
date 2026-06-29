@@ -23,7 +23,7 @@
             align-items: center; 
             cursor: pointer;
         }
-        .search-bar-wrapper:focus { border-color: #00c54f; outline: none; }
+        .search-bar-wrapper:focus { border-color: #4a90e2; outline: none; }
         
         #search { 
             width: 100%; 
@@ -59,20 +59,20 @@
 
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
-        .poster:focus { transform: scale(1.1); border-color: #00c54f; outline: none; }
+        .poster:focus { transform: scale(1.1); border-color: #4a90e2; outline: none; }
         .poster img { width: 100%; height: 200px; object-fit: cover; pointer-events: none; }
         
         .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .poster:focus .poster-title { color: #00c54f; }
+        .poster:focus .poster-title { color: #4a90e2; }
         
         /* ================= POPUP MODAL PILIHAN EDISI ================= */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #4a90e2; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; padding:0; line-height: 1; }
-        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
+        .close-x:focus { outline: 3px solid #4a90e2; transform: scale(1.1); }
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:14px 10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; font-size: 16px; font-weight: bold; border-radius: 6px; }
-        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
+        .eps-btn:focus { background:#4a90e2; color:white; outline: none; }
 
         /* ================= READER FLIPBOOK PLAYER ================= */
         #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 500; }
@@ -85,8 +85,7 @@
         .spread-container img { max-width: 47%; max-height: 94vh; object-fit: contain; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
         .spread-container.single img { max-width: 75%; max-height: 94vh; border: 5px solid rgba(255, 255, 255, 0.9); border-radius: 12px; }
         
-        /* Loading lingkaran custom otomatis hilang */
-        .custom-loader { position: absolute; top: 50%; left: 50%; width: 44px; height: 44px; margin-top: -22px; margin-left: -22px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #00c54f; border-radius: 50%; animation: spin-loader 0.8s linear infinite; z-index: 5; pointer-events: none; }
+        .custom-loader { position: absolute; top: 50%; left: 50%; width: 44px; height: 44px; margin-top: -22px; margin-left: -22px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #4a90e2; border-radius: 50%; animation: spin-loader 0.8s linear infinite; z-index: 5; pointer-events: none; }
         @keyframes spin-loader { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .watermark { position: fixed; top: 20px; right: 25px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 600; letter-spacing: 2px; pointer-events: none; z-index: 9998; text-transform: uppercase; }
@@ -94,18 +93,7 @@
         
         .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; display: flex; gap: 10px; }
         .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; outline: none; }
-        .menu-btn-tv:focus { background: #00c54f; color: #000; border-color: white; transform: scale(1.1); box-shadow: 0 0 20px #00c54f; }
-        .back-btn-tv { background: red; border-color: white; }
-
-        .tv-menu-popup { position: fixed; bottom: -250px; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.98) 85%, rgba(0,0,0,0.0)); padding: 40px 20px 30px 20px; transition: bottom 0.25s ease-out; z-index: 10000; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(10px); }
-        .tv-menu-popup.active { bottom: 0; }
-        .menu-title { font-size: 18px; margin-bottom: 15px; color: #00c54f; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .grid-container { display: flex; gap: 12px; overflow-x: auto; width: 90%; padding: 10px; justify-content: center; }
-        .grid-container::-webkit-scrollbar { display: none; }
-        
-        .page-item-btn { background: #222; color: #aaa; border: 2px solid transparent; padding: 12px 24px; font-size: 18px; font-weight: bold; border-radius: 8px; min-width: 70px; text-align: center; cursor: pointer; outline: none; }
-        .page-item-btn:focus { background: #00c54f !important; color: black !important; border-color: white !important; transform: scale(1.15); box-shadow: 0 0 15px #00c54f; }
-        .page-item-btn.current-page { border-color: #00c54f; color: #00c54f; }
+        .menu-btn-tv:focus { background: red; color: white; border-color: white; transform: scale(1.1); box-shadow: 0 0 20px red; }
     </style>
 </head>
 <body>
@@ -135,25 +123,17 @@
         <div class="tv-page-indicator" id="tvPageTxt">Slide 1 / 1</div>
 
         <div class="tv-trigger-zone">
-            <button class="menu-btn-tv back-btn-tv" id="exitReaderBtn">X KEMBALI</button>
-            <button class="menu-btn-tv" id="openMenuBtn">PILIH HALAMAN</button>
+            <button class="menu-btn-tv" id="exitReaderBtn">X KEMBALI</button>
         </div>
 
         <div class="swiper" id="mySwiper">
             <div class="swiper-wrapper" id="swiperWrapperContainer"></div>
         </div>
-
-        <div class="tv-menu-popup" id="tvMenu">
-            <div class="menu-title">Lompat Ke Slide</div>
-            <div class="grid-container" id="gridContainer"></div>
-        </div>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    // Konfigurasi arah file JSON baru Anda
-    const jsonUrl = "data/komik.json";
-    let menuOpen = false;
+    const jsonUrl = "data/komiksiksaneraka.json";
     let swiperInstance = null;
 
     // 1. Logika Navigasi Utama Remote TV D-PAD
@@ -172,13 +152,13 @@
         // Navigasi Khusus Pop-up Pilihan Edisi
         if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
             e.preventDefault();
-            $('.close-x').focus(); // Tekan kanan langsung ke icon X
+            $('.close-x').focus();
         } else if (code = e.keyCode || e.which) {
             if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
                 e.preventDefault();
                 const currentTitle = $("#modal-title").text();
                 const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
-                $(`.eps-btn[data-index="${lastIdx}"]`).focus(); // Tekan kiri balik ke edisi terakhir yang disorot
+                $(`.eps-btn[data-index="${lastIdx}"]`).focus();
             }
         }
     });
@@ -243,7 +223,6 @@
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
-            // Membaca object 'komik_list' dari format JSON baru Anda
             const catalogList = data.komik_list || data;
             catalogList.forEach(item => {
                 const edDataEncoded = encodeURIComponent(JSON.stringify(item.edisi));
@@ -255,7 +234,6 @@
                 `);
             });
             
-            // Aturan mutlak fokus awal: Jika popup tidak terbuka di sesi sebelumnya, paksa sorot ke poster paling pertama
             setTimeout(() => { 
                 if (localStorage.getItem("status_popup") !== "open") {
                     $(".poster").first().focus(); 
@@ -264,7 +242,7 @@
             checkLastSession();
         });
 
-    // 5. Fungsi Membuka Popup Modal (Menggunakan data 'edisi' dari JSON)
+    // 5. Fungsi Membuka Popup Modal
     function openModal(title, edisiEncoded) {
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("last_poster_title", title);
@@ -276,7 +254,6 @@
         $("#eps-list").empty();
         
         edisiList.forEach((e, index) => {
-            // Membuat tombol pilihan edisi
             $("#eps-list").append(`
                 <button class="eps-btn" tabindex="0" data-index="${index}" onclick="openComicPlayer(${index})">
                     ${e.nama}
@@ -289,7 +266,7 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
     }
 
-    // 6. Fungsi Player Pembaca Komik (Pengganti Pemutar Video Lama)
+    // 6. Fungsi Player Pembaca Komik
     function openComicPlayer(index) {
         const title = localStorage.getItem("judul_film");
         localStorage.setItem("last_eps_" + title, index);
@@ -299,16 +276,14 @@
         const activeEdisi = edisiList[index];
         const watermarkText = $(`.poster[data-title="${title}"]`).data("watermark") || "mrzyb";
 
-        // Ganti tampilan utama ke mode pembaca komik
         $("#home-view").hide();
         $("#popup").hide();
         $("#reader-view").show();
         
         $("#watermark-txt").text(watermarkText);
         const wrapper = $("#swiperWrapperContainer");
-        wrapper.empty(); // Bersihkan memori sisa slide sebelumnya
+        wrapper.empty(); 
 
-        // Loop merender slide komik dari JSON
         activeEdisi.slides.forEach(slide => {
             const slideDiv = $('<div class="swiper-slide"></div>');
             const zoomContainer = $('<div class="swiper-zoom-container"></div>');
@@ -324,7 +299,6 @@
                 img.alt = page.alt || "Halaman";
                 img.setAttribute('loading', 'lazy');
 
-                // Logika menghilangkan lingkaran loading spinner saat gambar selesai dimuat TV
                 img.onload = function() {
                     loadedCount++;
                     if(loadedCount === totalImages) {
@@ -358,108 +332,36 @@
             on: {
                 init: function () {
                     updatePageIndicator(this.activeIndex + 1, this.slides.length);
-                    buildTvPageMenu(this.slides.length);
                 },
                 slideChange: function() {
                     updatePageIndicator(this.activeIndex + 1, this.slides.length);
-                    highlightActivePageMenu(this.activeIndex);
                 }
             }
         });
-        $("#openMenuBtn").focus();
+        $("#exitReaderBtn").focus();
     }
 
     function updatePageIndicator(current, total) {
         document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
     }
 
-    // 7. Menu Lompat Halaman Cepat (Navigasi Slider Bawah)
-    function buildTvPageMenu(totalSlides) {
-        const container = $("#gridContainer");
-        container.empty();
-        for(let i = 0; i < totalSlides; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'page-item-btn';
-            btn.innerText = i + 1;
-            btn.id = 'slide-btn-' + i;
-            
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                swiperInstance.slideTo(i);
-                closeTvPageMenu();
-            });
-
-            btn.addEventListener('keydown', (e) => {
-                const code = e.keyCode || e.which;
-                if (code === 39) { 
-                    e.preventDefault();
-                    const nextBtn = document.getElementById('slide-btn-' + (i + 1));
-                    if (nextBtn) nextBtn.focus();
-                } else if (code === 37) { 
-                    e.preventDefault();
-                    const prevBtn = document.getElementById('slide-btn-' + (i - 1));
-                    if (prevBtn) prevBtn.focus();
-                } else if (code === 40 || code === 27) { 
-                    e.preventDefault();
-                    closeTvPageMenu();
-                }
-            });
-            container.append(btn);
-        }
-        highlightActivePageMenu(swiperInstance.activeIndex);
-    }
-
-    function highlightActivePageMenu(activeIndex) {
-        const items = document.querySelectorAll('.page-item-btn');
-        items.forEach((item, idx) => {
-            if(idx === activeIndex) item.classList.add('current-page');
-            else item.classList.remove('current-page');
-        });
-    }
-
-    $("#openMenuBtn").on('click', function(e) { e.preventDefault(); openTvPageMenu(); });
-
-    function openTvPageMenu() {
-        if (!swiperInstance) return;
-        menuOpen = true;
-        swiperInstance.keyboard.disable();
-        $("#tvMenu").addClass('active');
-        setTimeout(() => {
-            const activeBtn = document.getElementById('slide-btn-' + swiperInstance.activeIndex);
-            if (activeBtn) {
-                activeBtn.focus();
-                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-        }, 100);
-    }
-
-    function closeTvPageMenu() {
-        if (!swiperInstance) return;
-        menuOpen = false;
-        $("#tvMenu").removeClass('active');
-        swiperInstance.keyboard.enable();
-        $("#openMenuBtn").focus();
-    }
-
-    // 8. Tombol Keluar dari Player Pembaca Komik (Membuka Popup Kembali)
+    // 7. Tombol Keluar dari Player Pembaca Komik
     $("#exitReaderBtn").on('click', function() {
         $("#reader-view").hide();
         $("#home-view").show();
         if(swiperInstance) swiperInstance.destroy(true, true);
         
-        // Membuka kembali popup asal secara otomatis
         const title = localStorage.getItem("judul_film");
         const eps = localStorage.getItem("eps_data");
         if(title && eps) openModal(title, eps);
     });
 
-    // 9. Sistem Penutup Modal Alami JQuery Anda
+    // 8. Sistem Penutup Modal
     function closePopup() { 
         $("#popup").hide(); 
         localStorage.setItem("status_popup", "closed");
         const lastTitle = localStorage.getItem("last_poster_title");
         
-        // Memberikan delay aman agar STB tidak pecah fokus saat transisi layout
         if (lastTitle) {
             setTimeout(() => { 
                 $(`.poster[data-title="${lastTitle}"]`).focus(); 
@@ -475,10 +377,10 @@
         }
     }
 
-    // Intersepsi Sistem Keydown Global TV Remote (Atas / Bawah Player)
+    // Navigasi Otomatis Mengunci Fokus ke Tombol Kembali Saat Atas/Bawah Ditekan di Player
     document.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
-        if (document.getElementById('reader-view').style.display === 'block' && !menuOpen) {
+        if (document.getElementById('reader-view').style.display === 'block') {
             if (code === 38 || code === 40) { 
                 e.preventDefault();
                 document.getElementById('exitReaderBtn').focus();
@@ -496,7 +398,7 @@
     }
 
     document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box' || e.target.classList.contains('menu-btn-tv') || e.target.classList.contains('page-item-btn')) {
+        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box' || e.target.id === 'exitReaderBtn') {
             playSound();
         }
     }, true);
