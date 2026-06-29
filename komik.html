@@ -66,22 +66,25 @@
     overflow: hidden;
     cursor: pointer; 
     border: 3px solid transparent; 
-    transition: all 0.2s ease;
-    outline: none; 
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    outline: none !important; /* Memaksa STB menghapus outline bawaan yang merusak tampilan */
     text-align: center; 
     padding-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
   }
   
+  /* Dioptimalkan agar rendering shadow tidak terlalu berat di Android TV */
   .poster-item:focus, .poster-item:hover {
-    border-color: #4a90e2; 
+    border-color: #4a90e2 !important; 
     transform: scale(1.05); 
-    box-shadow: 0 10px 25px rgba(74,144,226,0.4);
+    box-shadow: 0 5px 15px rgba(74,144,226,0.4);
   }
   
   .poster-img { 
     width: 100%; 
     height: 260px; 
     object-fit: cover; 
+    pointer-events: none; /* Mencegah bentrok klik pada TV */
   }
   
   .comic-title { 
@@ -103,12 +106,11 @@
     align-items: center; 
     justify-content: center;
     z-index: 20000; 
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px); /* Efek blur yang kadang berat di TV low-end */
   }
   
   .modal-content {
     background: #141414; 
-    border-radius: 166px; 
     padding: 30px; 
     width: 90%; 
     max-width: 500px;
@@ -135,7 +137,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: none;
+    outline: none !important;
     transition: all 0.2s;
     line-height: 1;
     padding: 0;
@@ -175,7 +177,7 @@
     font-weight: bold; 
     border-radius: 8px; 
     cursor: pointer; 
-    outline: none; 
+    outline: none !important;
     transition: all 0.2s;
     text-align: left;
   }
@@ -437,12 +439,11 @@
   let menuOpen = false;
   let swiperInstance = null;
   
-  // PERBAIKAN: Gunakan indeks urutan untuk melacak komik aktif di halaman utama
   let currentActiveComicIdx = null; 
   let currentActiveComicData = null;
   let currentActiveEdisiIdx = 0; 
 
-  const jsonPath = 'data/komik.json';
+  const jsonPath = 'data/komiksiksaneraka.json';
 
   async function loadCatalogData() {
     try {
@@ -457,7 +458,6 @@
     }
   }
 
-  // PERBAIKAN UTAMA: Penandaan ID Poster menggunakan indeks iterasi (idx) agar pasti unik
   function renderCatalog(list) {
     const grid = document.getElementById('posterGridContainer');
     grid.innerHTML = '';
@@ -471,7 +471,7 @@
       const item = document.createElement('div');
       item.className = 'poster-item';
       item.tabIndex = 0; 
-      item.id = 'comic-poster-idx-' + idx; // Pasti Unik per poster komik!
+      item.id = 'comic-poster-idx-' + idx; 
       item.innerHTML = `
         <img class="poster-img" src="${comic.poster}" alt="${comic.title}">
         <div class="comic-title">${comic.title}</div>
@@ -514,7 +514,7 @@
       
       btn.addEventListener('click', () => {
         currentActiveEdisiIdx = idx; 
-        closeEdisiModalOnly(); // Tutup popup tanpa mengembalikan fokus dulu karena mau baca
+        closeEdisiModalOnly(); 
         startReading(comic, ed);
       });
 
@@ -531,6 +531,7 @@
 
     document.getElementById('edisiModal').style.display = 'flex';
     
+    // DELAY DI-UP KE 150ms AGAR AMAN DI STB DEVICE RAM KECIL
     setTimeout(() => {
       const targetBtn = document.getElementById('edisi-btn-idx-' + currentActiveEdisiIdx);
       if(targetBtn) {
@@ -540,21 +541,30 @@
         const firstBtn = listContainer.querySelector('.edisi-btn');
         if(firstBtn) firstBtn.focus();
       }
-    }, 50);
+    }, 150);
   }
 
-  // Fungsi menutup popup dan mengembalikan fokus remote tepat ke poster komik asalnya
+  // OPTIMASI SEPENUHNYA UNTUK ANDROID TV / STB HARDWARE
   function closeEdisiModalAndRestoreFocus() {
+    // 1. Sembunyikan pop-up terlebih dahulu
     document.getElementById('edisiModal').style.display = 'none';
-    if(currentActiveComicIdx !== null) {
-      const posterBtn = document.getElementById('comic-poster-idx-' + currentActiveComicIdx);
-      if(posterBtn) {
-        posterBtn.focus(); // Fokus dikembalikan dengan presisi tinggi ke poster terpilih
+    
+    // 2. BERIKAN JEDA 150ms (DELAY) agar WebView TV selesai melakukan proses pembersihan grafik pop-up
+    setTimeout(() => {
+      if(currentActiveComicIdx !== null) {
+        const posterBtn = document.getElementById('comic-poster-idx-' + currentActiveComicIdx);
+        if(posterBtn) {
+          // Bersihkan sisa fokus liar di TV dengan memicu blur global terlebih dahulu
+          if (document.activeElement) document.activeElement.blur();
+          
+          // Fokuskan dengan tepat ke target poster asal
+          posterBtn.focus(); 
+          posterBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       }
-    }
+    }, 150); 
   }
 
-  // Fungsi bantu untuk menutup popup saja saat masuk ke halaman pembaca komik
   function closeEdisiModalOnly() {
     document.getElementById('edisiModal').style.display = 'none';
   }
