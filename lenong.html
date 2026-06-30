@@ -663,6 +663,43 @@
             const defaultCatBtn = document.getElementById('default-category');
             if (defaultCatBtn) defaultCatBtn.focus();
         };
+        let wakeLock = null;
+
+// Fungsi untuk meminta sistem agar tetap terjaga
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock aktif! STB tidak akan tidur.');
+            
+            // Jika aplikasi sempat di-minimize lalu dibuka lagi, aktifkan kembali
+            wakeLock.addEventListener('release', () => {
+                console.log('Wake Lock dilepas.');
+            });
+        }
+    } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+    }
+}
+
+// Jalankan fungsi pengunci saat audio mulai diputar
+audio.addEventListener('play', () => {
+    requestWakeLock();
+});
+
+// Lepas kunci jika audio dimatikan/selesai agar STB bisa istirahat saat tidak dipakai
+audio.addEventListener('pause', () => {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+    }
+});
+audio.addEventListener('ended', () => {
+    if (wakeLock !== null && !isRepeat) {
+        wakeLock.release();
+        wakeLock = null;
+    }
+});
     </script>
 </body>
 </html>
