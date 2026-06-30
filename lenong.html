@@ -245,7 +245,7 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- TRID VIDEO HANTU: Untuk memaksa STB Android tidak tidur -->
+    <!-- TRIK 1: VIDEO HANTU (Ukurannya dibuat 1px, transparan, loop tanpa henti) -->
     <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
         <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
     </video>
@@ -474,13 +474,23 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // Trik Tambahan: Lakukan gerakan klik/scroll virtual tipis tiap 1 menit agar STB tidak mengantuk
+        // TRIK 2: INTERAKSI VIRTUAL (Scroll mikro & klik palsu dikirim tiap 1 menit jika musik jalan)
         setInterval(() => {
             if (!audio.paused) {
+                // Scroll layar 1px lalu kembalikan
                 window.scrollBy(0, 1);
                 window.scrollBy(0, -1);
+
+                // Kirim event klik palsu ke body agar sistem deteksi user masih aktif
+                const dummyClick = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                document.body.dispatchEvent(dummyClick);
+                console.log("Anti-Sleep STB: Sinyal aktivitas virtual dikirim.");
             }
-        }, 60000);
+        }, 60000); // 60000 ms = 1 menit
 
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
