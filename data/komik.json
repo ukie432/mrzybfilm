@@ -68,7 +68,7 @@
     },
     {
       "title": "Doraemon Akhir",
-      "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Emonend1.webp",
+      "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/doraends.webp",
       "watermark": "MRZYBtv Comic",
       "edisi": [
         {
@@ -133,6 +133,12 @@
               "type": "single",
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Emonend16.webp", "alt": "Halaman 16" }
+                              ]
+            },
+            {
+              "type": "single",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Doraendsakhir.webp", "alt": "Halaman 17" }
               ]
             }
           ]
