@@ -245,6 +245,11 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
+    <!-- TRID VIDEO HANTU: Untuk memaksa STB Android tidak tidur -->
+    <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
+        <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+    </video>
+
     <div class="music-app-container">
         
         <!-- ELEMENT BOX PLAYER (ZONA ATAS) -->
@@ -294,6 +299,7 @@
         let targetHeights = Array(totalBars).fill(0);
 
         const audio = document.getElementById('main-audio');
+        const ghostVideo = document.getElementById('ghost-video');
         const playBtn = document.getElementById('play-btn');
         const playerCover = document.getElementById('player-cover');
         const playerTitle = document.getElementById('player-title');
@@ -304,13 +310,12 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const repeatBtn = document.getElementById('repeat-btn');
 
-        // Ambil data JSON dari URL GitHub
+        // Ambil data JSON dari URL
         async function fetchPlaylistData() {
             try {
-                // MASUKKAN LINK RAW GITHUB ANDA DI SINI
                 const response = await fetch('data/lenong.json');
                 if (!response.ok) {
-                    throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
+                    throw new Error("Gagal mengambil data. Periksa file JSON Anda.");
                 }
                 tracks = await response.json();
                 
@@ -347,8 +352,6 @@
                     targetHeights[i] = 0;
                 }
                 barHeights[i] += (targetHeights[i] - barHeights[i]) * 0.15;
-                
-                // MENGGUNAKAN WARNA HIJAU TRANSPARAN ELEGAN (RGB: 0, 204, 102)
                 ctx.fillStyle = `rgba(0, 204, 102, ${barHeights[i] / (canvas.height * 1.5) + 0.15})`;
                 ctx.fillRect(i * barWidth, canvas.height - barHeights[i], barWidth - 4, barHeights[i]);
             }
@@ -357,7 +360,7 @@
         function loadPlaylistView() {
             playlistContainer.innerHTML = "";
             if (tracks.length === 0) {
-                playlistContainer.innerHTML = `<div class="no-result">Daftar surah tidak ditemukan...</div>`;
+                playlistContainer.innerHTML = `<div class="no-result">Daftar lagu tidak ditemukan...</div>`;
                 return;
             }
             tracks.forEach((track, index) => {
@@ -385,24 +388,21 @@
             progressBar.style.width = "0%";
             playerTime.innerText = "00:00 / 00:00";
             
-            // Perbarui status kelas aktif di list playlist
             const items = playlistContainer.querySelectorAll('.playlist-item');
             items.forEach((item, idx) => {
-                if (idx === index) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
+                item.classList.toggle('active', idx === index);
             });
         }
 
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
+                if(ghostVideo) ghostVideo.play().catch(e => {});
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#00cc66';
             } else {
                 audio.pause();
+                if(ghostVideo) ghostVideo.pause();
                 playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
                 playBtn.style.color = '#e0e0e0';
             }
@@ -411,6 +411,7 @@
         function selectTrack(index) {
             loadTrack(index);
             audio.play();
+            if(ghostVideo) ghostVideo.play().catch(e => {});
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#00cc66';
         }
@@ -473,6 +474,14 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
+        // Trik Tambahan: Lakukan gerakan klik/scroll virtual tipis tiap 1 menit agar STB tidak mengantuk
+        setInterval(() => {
+            if (!audio.paused) {
+                window.scrollBy(0, 1);
+                window.scrollBy(0, -1);
+            }
+        }, 60000);
+
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
@@ -516,190 +525,9 @@
             await fetchPlaylistData();
             initVirtualSpectrum(); 
             
-            // Fokus otomatis langsung diarahkan ke daftar playlist murottal pertama kali dibuka
             const firstItem = playlistContainer.querySelector('.playlist-item');
             if (firstItem) firstItem.focus();
         };
-    </script>
-</body>
-</html><img class="item-cover" src="${track.cover}">
-                    <div class="item-title">${track.title}</div>
-                `;
-                playlistContainer.appendChild(item);
-            });
-        }
-
-        function loadTrack(index) {
-            if(tracks.length === 0) return;
-            currentTrackIndex = index;
-            audio.src = tracks[index].url;
-            playerTitle.innerText = tracks[index].title;
-            playerCover.src = tracks[index].cover;
-            progressBar.style.width = "0%";
-            playerTime.innerText = "00:00 / 00:00";
-            filterMusic();
-        }
-
-        function togglePlay() {
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
-                playBtn.style.color = '#cc0044';
-            } else {
-                audio.pause();
-                playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
-                playBtn.style.color = '#e0e0e0';
-            }
-        }
-
-        function selectTrack(index) {
-            loadTrack(index);
-            audio.play();
-            playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
-            playBtn.style.color = '#cc0044';
-        }
-
-        function toggleShuffle() {
-            isShuffle = !isShuffle;
-            shuffleBtn.classList.toggle('active-mode', isShuffle);
-        }
-
-        function toggleRepeat() {
-            isRepeat = !isRepeat;
-            repeatBtn.classList.toggle('active-mode', isRepeat);
-        }
-
-        function playNext() {
-            if (tracks.length === 0) return;
-            if (isShuffle) {
-                let randomIndex = Math.floor(Math.random() * tracks.length);
-                selectTrack(randomIndex);
-            } else {
-                let nextIndex = currentTrackIndex + 1;
-                if (nextIndex >= tracks.length) nextIndex = 0;
-                selectTrack(nextIndex);
-            }
-        }
-
-        function playPrev() {
-            if (tracks.length === 0) return;
-            let prevIndex = currentTrackIndex - 1;
-            if (prevIndex < 0) prevIndex = tracks.length - 1;
-            selectTrack(prevIndex);
-        }
-
-        function formatTime(secs) {
-            if (isNaN(secs) || secs === Infinity) return "00:00";
-            let min = Math.floor(secs / 60);
-            let sec = Math.floor(secs % 60);
-            if (min < 10) min = "0" + min;
-            if (sec < 10) sec = "0" + sec;
-            return min + ":" + sec;
-        }
-
-        audio.addEventListener('loadedmetadata', () => {
-            playerTime.innerText = `00:00 / ${formatTime(audio.duration)}`;
-        });
-
-        audio.addEventListener('timeupdate', () => {
-            const { duration, currentTime } = audio;
-            if (duration && !isNaN(duration)) {
-                const progressPercent = (currentTime / duration) * 100;
-                progressBar.style.width = `${progressPercent}%`;
-                playerTime.innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-            }
-        });
-
-        function setProgress(e) {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            if(duration) audio.currentTime = (clickX / width) * duration;
-        }
-
-        progressContainer.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                if (!audio.duration || isNaN(audio.duration)) return;
-                let newTime = audio.currentTime + 10;
-                if (newTime > audio.duration) newTime = audio.duration;
-                audio.currentTime = newTime;
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                if (!audio.duration || isNaN(audio.duration)) return;
-                let newTime = audio.currentTime - 10;
-                if (newTime < 0) newTime = 0;
-                audio.currentTime = newTime;
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
-                if (firstPlaylistItem) firstPlaylistItem.focus();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                document.getElementById('play-btn').focus();
-            }
-        });
-
-        audio.addEventListener('ended', () => {
-            if (isRepeat) {
-                audio.currentTime = 0;
-                audio.play();
-            } else {
-                playNext();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (canvas) {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            }
-        });
-
-        window.onload = async () => {
-            await fetchPlaylistData();
-            initVirtualSpectrum(); 
-            
-            const defaultCatBtn = document.getElementById('default-category');
-            if (defaultCatBtn) defaultCatBtn.focus();
-        };
-        let wakeLock = null;
-
-// Fungsi untuk meminta sistem agar tetap terjaga
-async function requestWakeLock() {
-    try {
-        if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log('Wake Lock aktif! STB tidak akan tidur.');
-            
-            // Jika aplikasi sempat di-minimize lalu dibuka lagi, aktifkan kembali
-            wakeLock.addEventListener('release', () => {
-                console.log('Wake Lock dilepas.');
-            });
-        }
-    } catch (err) {
-        console.error(`${err.name}, ${err.message}`);
-    }
-}
-
-// Jalankan fungsi pengunci saat audio mulai diputar
-audio.addEventListener('play', () => {
-    requestWakeLock();
-});
-
-// Lepas kunci jika audio dimatikan/selesai agar STB bisa istirahat saat tidak dipakai
-audio.addEventListener('pause', () => {
-    if (wakeLock !== null) {
-        wakeLock.release();
-        wakeLock = null;
-    }
-});
-audio.addEventListener('ended', () => {
-    if (wakeLock !== null && !isRepeat) {
-        wakeLock.release();
-        wakeLock = null;
-    }
-});
     </script>
 </body>
 </html>
