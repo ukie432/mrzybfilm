@@ -63,50 +63,54 @@
 
     // --- FUNGSI PLAYER (Hybrid PDF & Slide Gambar) ---
     async function openComicPlayer(index) {
-        const title = localStorage.getItem("judul_film");
-        localStorage.setItem("last_eps_" + title, index);
-        const edisiList = JSON.parse(decodeURIComponent(localStorage.getItem("eps_data")));
-        const activeEdisi = edisiList[index];
-        const watermarkText = $(`.poster[data-title="${title}"]`).data("watermark") || "mrzyb";
+    const title = localStorage.getItem("judul_film");
+    localStorage.setItem("last_eps_" + title, index);
+    const edisiList = JSON.parse(decodeURIComponent(localStorage.getItem("eps_data")));
+    const activeEdisi = edisiList[index];
+    const watermarkText = $(`.poster[data-title="${title}"]`).data("watermark") || "mrzyb";
 
-        $("#home-view, #popup").hide();
-        $("#reader-view").show();
-        $("#watermark-txt").text(watermarkText);
-        const wrapper = $("#swiperWrapperContainer");
-        wrapper.empty(); 
+    $("#home-view, #popup").hide();
+    $("#reader-view").show();
+    $("#watermark-txt").text(watermarkText);
+    const wrapper = $("#swiperWrapperContainer");
+    wrapper.empty(); 
 
-        if (activeEdisi.pdf_url) {
-            const pdf = await pdfjsLib.getDocument(activeEdisi.pdf_url).promise;
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 1.5 });
-                const canvas = document.createElement('canvas');
-                canvas.height = viewport.height; canvas.width = viewport.width;
-                canvas.style.maxWidth = "95%"; canvas.style.maxHeight = "95vh";
-                const slideDiv = $('<div class="swiper-slide"></div>').append(canvas);
-                wrapper.append(slideDiv);
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-            }
-        } else if (activeEdisi.slides) {
-            activeEdisi.slides.forEach(slide => {
-                const slideDiv = $('<div class="swiper-slide"></div>');
-                const zoomContainer = $('<div class="swiper-zoom-container"></div>');
-                const spreadContainer = $(`<div class="spread-container ${slide.type}"></div>`);
-                const loader = $('<div class="custom-loader"></div>');
-                let total = slide.pages.length, count = 0;
-                slide.pages.forEach(page => {
-                    const img = document.createElement('img');
-                    img.src = page.image_url;
-                    img.onload = () => { if(++count === total) { loader.remove(); spreadContainer.addClass('loaded'); } };
-                    spreadContainer.append(img);
-                });
-                zoomContainer.append(spreadContainer).append(loader);
-                slideDiv.append(zoomContainer);
-                wrapper.append(slideDiv);
-            });
+    if (activeEdisi.pdf_url) {
+        // 1. Loading Dokumen
+        const pdf = await pdfjsLib.getDocument(activeEdisi.pdf_url).promise;
+        
+        // 2. Loop per halaman
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 1.5 }); // Skala resolusi
+            
+            // 3. Buat Canvas dengan container yang benar
+            const slideDiv = $('<div class="swiper-slide"></div>');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            // CSS agar pas di layar TV/HP
+            canvas.style.width = "100%";
+            canvas.style.height = "100%";
+            canvas.style.objectFit = "contain";
+            
+            slideDiv.append(canvas);
+            wrapper.append(slideDiv);
+            
+            // 4. Render ke Canvas
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
         }
-        initComicSwiper();
+        // Update indikator halaman pertama
+        document.getElementById('tvPageTxt').innerText = `Slide 1 / ${pdf.numPages}`;
+    } 
+    else if (activeEdisi.slides) {
+        // ... (biarkan bagian slide gambar Anda yang lama) ...
     }
+    initComicSwiper();
+}
 
 fetch(jsonUrl)
         .then(response => response.json())
