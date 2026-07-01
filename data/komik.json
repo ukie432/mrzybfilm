@@ -133,7 +133,7 @@
               "type": "single",
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_lawas/Emonend16.webp", "alt": "Halaman 16" }
-                              ]
+              ]
             },
             {
               "type": "single",
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "title": "Siksa Neraka",
+      "title": "Sika Neraka",
       "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/AIRetouch_20260629_171946666.jpg",
       "watermark": "MRZYBtv Comic",
       "edisi": [
@@ -267,6 +267,73 @@
               "type": "single",
               "pages": [
                 { "image_url": "https://raw.githubusercontent.com/Ukie4321/Komik/refs/heads/main/PicRetouch_20251016_174827517.jpg", "alt": "Halaman 31" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Petruk Melawan Setan",
+      "poster": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/1.webp",
+      "watermark": "MRZYBtv Comic",
+      "edisi": [
+        {
+          "nama": "Petruk Melawan Setan",
+          "slides": [
+            {
+              "type": "single",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/1.webp", "alt": "Halaman 1" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/2.webp", "alt": "Halaman 2" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/3.webp", "alt": "Halaman 3" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/4.webp", "alt": "Halaman 4" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/5.webp", "alt": "Halaman 5" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/6.webp", "alt": "Halaman 6" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/8.webp", "alt": "Halaman 7" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/9.webp", "alt": "Halaman 8" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/10.webp", "alt": "Halaman 9" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/11.webp", "alt": "Halaman 10" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/12.webp", "alt": "Halaman 11" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/13.webp", "alt": "Halaman 12" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/14.webp", "alt": "Halaman 13" }
+              ]
+            },
+            {
+              "type": "double",
+              "pages": [
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/15.webp", "alt": "Halaman 14" },
+                { "image_url": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/16.webp", "alt": "Halaman 15" }
               ]
             }
           ]
