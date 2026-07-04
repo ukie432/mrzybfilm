@@ -1,5 +1,231 @@
 [
     {
+
+        
+    "id": "dub001",
+    "title": "My name is vendetta (2022)",
+    "data_title": "my name is vendetta (2022)",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Campuran%20link/My%20name%20is%20vendetta%20(2022).mkv",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Vendetta.webp",
+    "poster_alt": "My name is vendetta (2022)"
+  },
+  {
+    "id": "dub002",
+    "title": "The great flood (2025)",
+    "data_title": "the great flood (2025)",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Campuran%20link/The%20Great%20Flood%20(2025).mkv",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/The_great_flood.webp",
+    "poster_alt": "The great flood (2025)"
+  },
+  {
+    "id": "dub003",
+    "title": "10000 BC (2008)",
+    "data_title": "10000 bc (2008)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/10,000%20BC%20(2008)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/10000bc.webp",
+    "poster_alt": "10000 BC (2008)"
+  },
+  {
+    "id": "dub004",
+    "title": "127 Hours (2010)",
+    "data_title": "127 hours (2010)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/127%20Hours%20(2010)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/127.webp",
+    "poster_alt": "127 Hours (2010)"
+  },
+  {
+    "id": "dub005",
+    "title": "2 Fast 2 Furious (2003)",
+    "data_title": "2 fast 2 furious (2003)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/2%20Fast%202%20Furious%20(2003)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/2fast2furious.webp",
+    "poster_alt": "2 Fast 2 Furious (2003)"
+  },
+  {
+    "id": "dub006",
+    "title": "2012 (2009)",
+    "data_title": "2012 (2009)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/2012%20(2009)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/2012.webp",
+    "poster_alt": "2012 (2009)"
+  },
+  {
+    "id": "dub007",
+    "title": "300 (2006)",
+    "data_title": "300 (2006)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/300%20(2006)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/3001.webp",
+    "poster_alt": "300 (2006)"
+  },
+  {
+    "id": "dub008",
+    "title": "300: Rise of an Empire (2014)",
+    "data_title": "300: rise of an empire (2014)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/300:%20Rise%20of%20an%20Empire%20(2014)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/3002.webp",
+    "poster_alt": "300: Rise of an Empire (2014)"
+  },
+  {
+    "id": "dub009",
+    "title": "A Nightmare on Elm Street (2010)",
+    "data_title": "a nightmare on elm street (2010)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/A%20Nightmare%20on%20Elm%20Street%20(2010)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Nighmare.webp"
+    "poster_alt": "A Nightmare on Elm Street (2010)"
+  },
+  {
+    "id": "dub010",
+    "title": "A Perfect Pairing (2022)",
+    "data_title": "a perfect pairing (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/A%20Perfect%20Pairing%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/A_perfect_pairing.webp",
+    "poster_alt": "A Perfect Pairing (2022)"
+  },
+  {
+    "id": "dub011",
+    "title": "A Quiet Place II (2020)",
+    "data_title": "a quiet place ii (2020)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/A%20Quiet%20Place%20II%20(2020)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/A_quit_palace.webp",
+    "poster_alt": "A Quiet Place II (2020)"
+  },
+  {
+    "id": "dub012",
+    "title": "Alita: Battle Angel (2019)",
+    "data_title": "alita: battle angel (2019)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Alita:%20Battle%20Angel%20(2019)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Alitta.webp",
+    "poster_alt": "Alita: Battle Angel (2019)"
+  },
+  {
+    "id": "dub013",
+    "title": "Angels & Demons (2009)",
+    "data_title": "angels & demons (2009)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Angels%20&%20Demons%20(2009)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Angeldemons.webp",
+    "poster_alt": "Angels & Demons (2009)"
+  },
+  {
+    "id": "dub014",
+    "title": "Antlers (2021)",
+    "data_title": "antlers (2021)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Antlers%20(2021)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Antlers.webp",
+    "poster_alt": "Antlers (2021)"
+  },
+  {
+    "id": "dub015",
+    "title": "Barbarian (2022)",
+    "data_title": "barbarian (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Barbarian%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Barbarian.webp",
+    "poster_alt": "Barbarian (2022)"
+  },
+  {
+    "id": "dub016",
+    "title": "Battleship (2012)",
+    "data_title": "battleship (2012)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Battleship%20(2012)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Battleship.webp",
+    "poster_alt": "Battleship (2012)"
+  },
+  {
+    "id": "dub017",
+    "title": "Better Nate Than Ever (2022)",
+    "data_title": "better nate than ever (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Better%20Nate%20Than%20Ever%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/Better_Nate_Than_Ever_Poster.webp",
+    "poster_alt": "Better Nate Than Ever (2022)"
+  },
+  {
+    "id": "dub018",
+    "title": "Birds of Prey and the Fantabulous Emancipation of One Harley Quinn (2020)",
+    "data_title": "birds of prey and the fantabulous emancipation of one harley quinn (2020)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Birds%20of%20Prey%20and%20the%20Fantabulous%20Emancipation%20of%20One%20Harley%20Quinn%20(2020)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Birds_of_prey.webp",
+    "poster_alt": "Birds of Prey and the Fantabulous Emancipation of One Harley Quinn (2020)"
+  },
+  {
+    "id": "dub019",
+    "title": "Blended (2014)",
+    "data_title": "blended (2014)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Blended%20(2014)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Blended.webp",
+    "poster_alt": "Blended (2014)"
+  },
+  {
+    "id": "dub020",
+    "title": "Bumblebee (2018)",
+    "data_title": "bumblebee (2018)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Bumblebee%20(2018)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_dubbing/bumblebee.webp",
+    "poster_alt": "Bumblebee (2018)"
+  },
+  {
+    "id": "dub021",
+    "title": "Carter (2022)",
+    "data_title": "carter (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Carter%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Carter.webp",
+    "poster_alt": "Carter (2022)"
+  },
+  {
+    "id": "dub022",
+    "title": "Clash of the Titans (2010)",
+    "data_title": "clash of the titans (2010)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Clash%20of%20the%20Titans%20(2010)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Titans.webp",
+    "poster_alt": "Clash of the Titans (2010)"
+  },
+  {
+    "id": "dub023",
+    "title": "Confessions of a Shopaholic (2009)",
+    "data_title": "confessions of a shopaholic (2009)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Confessions%20of%20a%20Shopaholic%20(2009)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Confensions.webp",
+    "poster_alt": "Confessions of a Shopaholic (2009)"
+  },
+  {
+    "id": "dub024",
+    "title": "Crawl (2019)",
+    "data_title": "crawl (2019)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Crawl%20(2019)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Crawl.webp",
+    "poster_alt": "Crawl (2019)"
+  },
+  {
+    "id": "dub025",
+    "title": "Day Shift (2022)",
+    "data_title": "day shift (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Day%20Shift%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Dayshift.webp",
+    "poster_alt": "Day Shift (2022)"
+  },
+  {
+    "id": "dub026",
+    "title": "Death on the Nile (2022)",
+    "data_title": "death on the nile (2022)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Death%20on%20the%20Nile%20(2022)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Deathofnail.webp",
+    "poster_alt": "Death on the Nile (2022)"
+  },
+  {
+    "id": "dub027",
+    "title": "Dune (2021)",
+    "data_title": "dune (2021)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Dune%20(2021)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Dune.webp",
+    "poster_alt": "Dune (2021)"
+  },
+  {
+    "id": "dub028",
+    "title": "Edge of Tomorrow (2014)",
+    "data_title": "edge of tomorrow (2014)",
+    "url": "https://cloud-oyen.eu.org/1:/Film%20Dubbing%20Indonesia/gendhutz/Edge%20of%20Tomorrow%20(2014)%20[Dub%20Indo].mp4",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_dubbing/Edge.webp",
+    "poster_alt": "Edge of Tomorrow (2014)"
+  }
+]
         "id": "mrz1",
         "title": "Frankenstein (2025)",
         "data_title": "frankenstein (2025)",
