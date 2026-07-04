@@ -132,9 +132,7 @@
         "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_indonesia/Pertaruhan1.webp",
         "seasons": [
             {
-                "season": "01",
-                "episodes": [
-                    {
+        
                         "ep": "01",
                         "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Pertaruhan%20season%201/Pertaruhan%20The%20Series%20Season%20S1E1.mp4"
                     },
