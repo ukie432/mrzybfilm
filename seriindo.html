@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
     <meta charset="UTF-8">
     <title>MRZYBtv Series</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,56 +11,47 @@
         .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
         
         .search-bar-wrapper { 
-            width: 100%; 
-            background: #fff; 
-            border-radius: 20px; 
-            border: 3px solid transparent; 
-            box-sizing: border-box; 
-            display: flex; 
-            align-items: center; 
-            cursor: pointer;
+            width: 100%; background: #fff; border-radius: 20px; border: 3px solid transparent; 
+            box-sizing: border-box; display: flex; align-items: center; cursor: pointer;
         }
         .search-bar-wrapper:focus { border-color: #00c54f; outline: none; }
         
         #search { 
-            width: 100%; 
-            padding: 12px 40px 12px 15px; 
-            border: none; 
-            outline: none; 
-            background: transparent; 
-            font-size: 16px; 
-            color: #000; 
-            box-sizing: border-box; 
+            width: 100%; padding: 12px 40px 12px 15px; border: none; outline: none; 
+            background: transparent; font-size: 16px; color: #000; box-sizing: border-box; 
         }
         
         .clear-search { 
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
             background: #444; color: #fff; border: none; border-radius: 50%; 
             width: 22px; height: 22px; font-size: 12px; font-weight: bold; 
-            cursor: pointer; display: none; align-items: center; justify-content: center; 
-            z-index: 12;
+            cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 12;
         }
         .clear-search:focus { background: red; outline: none; }
 
-        /* PERUBAHAN PADA GRID DAN POSTER */
+        /* GRID: 6 Kolom dengan minmax 120px */
         .grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 20px; 
-            padding: 20px; 
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 15px; 
+            padding: 15px; 
         }
+        
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
         .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
+        
+        /* POSTER: Aspect Ratio 3/4 agar proporsional */
         .poster img { 
             width: 100%; 
-            aspect-ratio: 2 / 3; /* Memastikan poster tetap vertikal proporsional */
+            aspect-ratio: 3 / 4; 
             object-fit: cover; 
             display: block; 
         }
         
-        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .poster-title { padding: 8px; font-size: 12px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
         .poster:focus .poster-title { color: #00c54f; }
         
+        /* POPUP */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
@@ -76,7 +66,7 @@
     <div class="navbar">
         <div class="search-container">
             <div class="search-bar-wrapper" id="search-box" tabindex="0">
-                <input type="text" id="search" disabled placeholder="Cari (Tekan OK/Enter)...">
+                <input type="text" id="search" disabled placeholder="Cari...">
             </div>
             <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
         </div>
@@ -87,40 +77,13 @@
     <div id="popup" onclick="closePopup()">
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
-            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
+            <h2 id="modal-title" style="margin-top:0;"></h2>
             <div id="eps-list"></div>
         </div>
     </div>
 
 <script>
     const jsonUrl = "data/seriindo.json";
-
-    $(document).on('keydown', function(e) {
-        const activeEl = document.activeElement;
-        if (e.keyCode == 38 && activeEl.classList.contains('poster')) {
-            const index = $('.grid .poster').index(activeEl);
-            if (index < 5) { e.preventDefault(); $("#search-box").focus(); return false; }
-        }
-    });
-
-    $("#search-box").on('keydown', function(e) {
-        if (e.keyCode == 13) { e.preventDefault(); $("#search").removeAttr("disabled").focus(); }
-        else if (e.keyCode == 40) { e.preventDefault(); $(".poster").first().focus(); }
-        else if (e.keyCode == 39 && $("#search").val().length > 0) { $("#clear-btn").attr("tabindex", "0").focus(); }
-    });
-
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40 || e.keyCode == 13) { $(this).attr("disabled", "disabled"); $("#search-box").focus(); }
-    });
-
-    $("#clear-btn").on('click', function() {
-        $("#search").val(""); $(".poster").show(); $(this).css("display", "none"); $("#search-box").focus();
-    });
-
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        $(".poster").each(function() { $(this).toggle($(this).data("title").toLowerCase().includes(keyword)); });
-    });
 
     fetch(jsonUrl)
         .then(response => response.json())
@@ -136,7 +99,7 @@
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        eps.forEach((e, index) => {
+        eps.forEach((e) => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playAndSave('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
