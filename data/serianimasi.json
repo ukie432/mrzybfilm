@@ -1,6 +1,116 @@
 [
   {
 
+    
+  "title": "Slam Dunk",
+  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Slamdunksub.webp",
+  "episodes": [
+    {"ep": "Episode 1", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20001.mp4"},
+    {"ep": "Episode 2", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20002.mp4"},
+    {"ep": "Episode 3", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20003.mp4"},
+    {"ep": "Episode 4", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20004.mp4"},
+    {"ep": "Episode 5", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20005.mp4"},
+    {"ep": "Episode 6", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20006.mp4"},
+    {"ep": "Episode 7", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20007.mp4"},
+    {"ep": "Episode 8", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20008.mp4"},
+    {"ep": "Episode 9", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20009.mp4"},
+    {"ep": "Episode 10", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20010.mp4"},
+    {"ep": "Episode 11", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20011.mp4"},
+    {"ep": "Episode 12", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20012.mp4"},
+    {"ep": "Episode 13", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20013.mp4"},
+    {"ep": "Episode 14", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20014.mp4"},
+    {"ep": "Episode 15", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20015.mp4"},
+    {"ep": "Episode 16", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20016.mp4"},
+    {"ep": "Episode 17", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20017.mp4"},
+    {"ep": "Episode 18", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20018.mp4"},
+    {"ep": "Episode 19", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20019.mp4"},
+    {"ep": "Episode 20", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20020.mp4"},
+    {"ep": "Episode 21", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20021.mp4"},
+    {"ep": "Episode 22", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20022.mp4"},
+    {"ep": "Episode 23", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20023.mp4"},
+    {"ep": "Episode 24", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20024.mp4"},
+    {"ep": "Episode 25", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20025.mp4"},
+    {"ep": "Episode 26", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20026.mp4"},
+    {"ep": "Episode 27", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20027.mp4"},
+    {"ep": "Episode 28", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20028.mp4"},
+    {"ep": "Episode 29", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20029.mp4"},
+    {"ep": "Episode 30", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20030.mp4"},
+    {"ep": "Episode 31", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20031.mp4"},
+    {"ep": "Episode 32", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20032.mp4"},
+    {"ep": "Episode 33", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20033.mp4"},
+    {"ep": "Episode 34", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20034.mp4"},
+    {"ep": "Episode 35", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20035.mp4"},
+    {"ep": "Episode 36", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20036.mp4"},
+    {"ep": "Episode 37", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20037.mp4"},
+    {"ep": "Episode 38", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20038.mp4"},
+    {"ep": "Episode 39", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20039.mp4"},
+    {"ep": "Episode 40", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20040.mp4"},
+    {"ep": "Episode 41", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20041.mp4"},
+    {"ep": "Episode 42", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20042.mp4"},
+    {"ep": "Episode 43", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20043.mp4"},
+    {"ep": "Episode 44", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20044.mp4"},
+    {"ep": "Episode 45", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20045.mp4"},
+    {"ep": "Episode 46", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20046.mp4"},
+    {"ep": "Episode 47", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20047.mp4"},
+    {"ep": "Episode 48", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20048.mp4"},
+    {"ep": "Episode 49", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20049.mp4"},
+    {"ep": "Episode 50", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20050.mp4"},
+    {"ep": "Episode 51", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20051.mp4"},
+    {"ep": "Episode 52", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20052.mp4"},
+    {"ep": "Episode 53", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20053.mp4"},
+    {"ep": "Episode 54", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20054.mp4"},
+    {"ep": "Episode 55", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20055.mp4"},
+    {"ep": "Episode 56", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20056.mp4"},
+    {"ep": "Episode 57", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20057.mp4"},
+    {"ep": "Episode 58", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20058.mp4"},
+    {"ep": "Episode 59", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20059.mp4"},
+    {"ep": "Episode 60", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20060.mp4"},
+    {"ep": "Episode 61", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20061.mp4"},
+    {"ep": "Episode 62", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20062.mp4"},
+    {"ep": "Episode 63", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20063.mp4"},
+    {"ep": "Episode 64", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20064.mp4"},
+    {"ep": "Episode 65", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20065.mp4"},
+    {"ep": "Episode 66", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20066.mp4"},
+    {"ep": "Episode 67", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20067.mp4"},
+    {"ep": "Episode 68", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20068.mp4"},
+    {"ep": "Episode 69", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20069.mp4"},
+    {"ep": "Episode 70", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20070.mp4"},
+    {"ep": "Episode 71", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20071.mp4"},
+    {"ep": "Episode 72", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20072.mp4"},
+    {"ep": "Episode 73", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20073.mp4"},
+    {"ep": "Episode 74", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20074.mp4"},
+    {"ep": "Episode 75", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20075.mp4"},
+    {"ep": "Episode 76", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20076.mp4"},
+    {"ep": "Episode 77", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20077.mp4"},
+    {"ep": "Episode 78", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20078.mp4"},
+    {"ep": "Episode 79", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20079.mp4"},
+    {"ep": "Episode 80", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20080.mp4"},
+    {"ep": "Episode 81", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20081.mp4"},
+    {"ep": "Episode 82", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20082.mp4"},
+    {"ep": "Episode 83", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20083.mp4"},
+    {"ep": "Episode 84", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20084.mp4"},
+    {"ep": "Episode 85", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20085.mp4"},
+    {"ep": "Episode 86", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20086.mp4"},
+    {"ep": "Episode 87", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20087.mp4"},
+    {"ep": "Episode 88", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20088.mp4"},
+    {"ep": "Episode 89", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20089.mp4"},
+    {"ep": "Episode 90", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20090.mp4"},
+    {"ep": "Episode 91", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20091.mp4"},
+    {"ep": "Episode 92", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20092.mp4"},
+    {"ep": "Episode 93", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20093.mp4"},
+    {"ep": "Episode 94", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20094.mp4"},
+    {"ep": "Episode 95", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20095.mp4"},
+    {"ep": "Episode 96", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20096.mp4"},
+    {"ep": "Episode 97", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20097.mp4"},
+    {"ep": "Episode 98", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20098.mp4"},
+    {"ep": "Episode 99", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20099.mp4"},
+    {"ep": "Episode 100", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20100.mp4"},
+    {"ep": "Episode 101 [END]", "url": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Slamdunk/Slam%20Dunk%20Episode%20101%20[END].mp4"
+    }
+  ]
+},
+{
+
 
     
   "title": "Zom 100: Bucket List of the Dead",
@@ -50,7 +160,7 @@
 
 {
   "title": "Viral Hit Season 1",
-  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Viral_hit_season1.webp",
+  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Viralhitsub.webp",
   "episodes": [
     {
       "ep": "01",
@@ -108,7 +218,7 @@
 
 {
   "title": "Solo Leveling Season 1",
-  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Solo_leveling_season1.webp",
+  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Sololevelingsub.webp",
   "episodes": [
     {
       "ep": "01",
@@ -168,7 +278,7 @@
 
 {
   "title": "Solo Leveling Season 2",
-  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Solo_leveling_season2.webp",
+  "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/Sololeveling2sub.webp",
   "episodes": [
     {
       "ep": "1",
