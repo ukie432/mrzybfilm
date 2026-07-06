@@ -240,23 +240,27 @@
 
     // FUNGSI TUTUP POPUP (MODAL)
     function closePopup() { 
+        // 1. Sembunyikan popup terlebih dahulu dari layar
         $("#popup").hide(); 
         
-        // HAPUS SISA MEMORI POPUP DI HALAMAN INI AGAR TIDAK BENTROK SAAT DI BUKA DI HALAMAN LAIN
+        // 2. Bersihkan memori local storage instan agar tidak bentrok
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
 
-        // Lepas status popup di aplikasi Android
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
-        }
-
-        // Kembalikan sorotan fokus remote tepat ke poster terakhir yang diklik
+        // 3. Kembalikan sorotan fokus remote tepat ke poster terakhir secepatnya
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
-            setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
+            $(`.poster[data-title="${lastTitle}"]`).focus();
         }
+
+        // 4. BERIKAN JEDA DELAY (300ms) sebelum melepaskan gembok Back Android.
+        // Berfungsi mematikan efek sinyal ganda (double-trigger) dari remote TV yang sensitif.
+        setTimeout(() => {
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+                Android.setPopUpStatus(false);
+            }
+        }, 300);
     }
 
     // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
