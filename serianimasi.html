@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MRZYBtv Series</title>
+    <title>MRZYBtv Series Animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
@@ -52,7 +52,6 @@
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
         .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
         
-        /* Pengaturan Aspect Ratio 3/4 agar kotak lebih pendek */
         .poster img { 
             width: 100%; 
             aspect-ratio: 3 / 4; 
@@ -86,319 +85,223 @@
 
     <div class="grid" id="grid"></div>
 
-    <div id="popup" onclick="closePopup()">
+    <div id="popup">
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
             <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
             <div id="eps-list"></div>
         </div>
     </div>
+
 <script>
+    const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
+    const jsonUrl = "data/serianimasi.json"; 
 
-    const jsonUrl = "data/serianimasi.json";
+    // ========================================================
+    // LOGIKA PENYELARASAN NATIVE (MENCONTEK KODE YANG BERHASIL)
+    // ========================================================
+    
+    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
+    window.tutupPopUpPoster = function(){
+        window.closePopup();
+    };
 
+    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const popupElement = document.getElementById("popup");
+            // Jika popup sedang aktif terbuka di layar
+            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+                event.preventDefault();
+                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
+                return;
+            }
+        }
+    }, true); 
 
-
-    // 1. Logika Navigasi Umum Remote
-
+    // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
     $(document).on('keydown', function(e) {
-
         const activeEl = document.activeElement;
 
-
-
-        // Jika menekan ATAS di baris pertama, biarkan naik normal ke bar pencarian
-
-        if (e.keyCode == 38 && activeEl.classList.contains('poster')) {
-
+        // Jika menekan ATAS di baris poster pertama, naik ke pencarian
+        if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
             const index = $('.grid .poster').index(activeEl);
-
             if (index < 5) {
-
                 e.preventDefault();
-
                 $("#search-box").focus();
-
                 return false;
-
             }
-
         }
 
-
-
-        // Navigasi Popup
-
-        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
-
+        // Navigasi internal di dalam Popup
+        if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
             $('.close-x').focus();
-
-        } else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
-
+        } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
             const currentTitle = $("#modal-title").text();
-
-            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
-
+            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-
         }
-
     });
-
-
 
     // 2. Logika Khusus di Bar Pencarian Utama
-
     $("#search-box").on('keydown', function(e) {
-
-        // Jika tekan OK/Enter (13) baru aktifkan input asli dan munculkan keyboard
-
-        if (e.keyCode == 13) {
-
+        if (e.keyCode == 13) { 
             e.preventDefault();
-
             $("#search").removeAttr("disabled").focus();
-
             return false;
-
         }
-
-        // Jika tekan BAWAH (40), kembali ke poster pertama tanpa membuka apa-apa
-
-        else if (e.keyCode == 40) {
-
+        else if (e.keyCode == 40) { 
             e.preventDefault();
-
             $(".poster").first().focus();
-
             return false;
-
         }
-
-        // Jika ada tulisan dan tekan KANAN (39), arahkan ke tombol X hapus
-
-        else if (e.keyCode == 39 && $("#search").val().length > 0) {
-
+        else if (e.keyCode == 39 && $("#search").val().length > 0) { 
             $("#clear-btn").attr("tabindex", "0").focus();
-
         }
-
     });
-
-
 
     // 3. Logika Saat Mengetik di Dalam Input Asli
-
     $("#search").on('keydown', function(e) {
-
-        // Jika sedang mengetik lalu tekan Bawah (40) atau OK/Enter (13), kunci keyboard kembali
-
         if (e.keyCode == 40 || e.keyCode == 13) {
-
-            $(this).attr("disabled", "disabled"); // Matikan input agar keyboard menutup
-
-            $("#search-box").focus(); // Kembalikan fokus ke pembungkus luar luar
-
-        }
-
-    });
-
-
-
-    // Navigasi di tombol X hapus
-
-    $("#clear-btn").on('keydown', function(e) {
-
-        if (e.keyCode == 37) { // Kiri kembali ke kotak pencarian
-
+            $(this).attr("disabled", "disabled");
             $("#search-box").focus();
-
         }
+    });
 
-        else if (e.keyCode == 40) { // Bawah langsung ke poster teratas
-
+    // Navigasi di tombol X hapus pencarian
+    $("#clear-btn").on('keydown', function(e) {
+        if (e.keyCode == 37) {
+            $("#search-box").focus();
+        }
+        else if (e.keyCode == 40) {
             $(this).attr("tabindex", "-1");
-
             $(".poster").first().focus();
-
         }
-
     });
 
-
-
-    // Fungsi klik/OK pada tombol X untuk menghapus teks pencarian instan
-
+    // Fungsi klik/OK pada tombol X hapus pencarian
     $("#clear-btn").on('click', function() {
-
         $("#search").val(""); 
-
         $(".poster").show(); 
-
         $(this).css("display", "none").attr("tabindex", "-1"); 
-
         $("#search-box").focus();
-
     });
 
-
-
-    // Logika menampilkan/menyembunyikan tombol X serta filter poster
-
+    // Logika filter ketikan pencarian
     $("#search").on("input", function() {
-
         const keyword = $(this).val().toLowerCase();
-
         
-
         if (keyword.length > 0) {
-
             $("#clear-btn").css("display", "flex"); 
-
         } else {
-
             $("#clear-btn").css("display", "none").attr("tabindex", "-1"); 
-
         }
-
-
 
         $(".poster").each(function() {
-
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-
         });
-
     });
 
-
-
-    // Load Data JSON
-
+    // Load Data JSON Utama
     fetch(jsonUrl)
-
         .then(response => response.json())
-
         .then(data => {
-
             data.forEach(item => {
-
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
-
             });
-
-            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
-
+            setTimeout(() => { 
+                const popupElement = document.getElementById("popup");
+                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                    $(".poster").first().focus(); 
+                }
+            }, 600);
             checkLastSession();
-
         });
 
-
-
+    // FUNGSI BUKA POPUP (MODAL)
     function openModal(title, epsEncoded) {
+        localStorage.setItem(pageTitle + "_status_popup", "open");
+        localStorage.setItem(pageTitle + "_last_poster_title", title);
+        localStorage.setItem(pageTitle + "_judul_film", title);
+        localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
-        localStorage.setItem("status_popup", "open");
-
-        localStorage.setItem("last_poster_title", title);
-
-        localStorage.setItem("judul_film", title);
-
-        localStorage.setItem("eps_data", epsEncoded);
+        // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
 
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
-
         $("#modal-title").text(title);
-
         $("#eps-list").empty();
-
         eps.forEach((e, index) => {
-
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
-
         });
-
+        
         $("#popup").css("display", "flex");
-
-        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
-
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
-
+        
+        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
+        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-
-
+    // FUNGSI PLAY VIDEO
     function playAndSave(url, index, title) {
-
-        localStorage.setItem("last_eps_" + title, index);
-
-        Android.playVideo(url);
-
+        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+        if (typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(url);
+        } else {
+            window.open(url, "_blank");
+        }
     }
 
+    // FUNGSI TUTUP POPUP (MODAL) - SEKARANG SEJAJAR DENGAN KODE SUKSES KAMU
+    window.closePopup = function() { 
+        // 1. Sembunyikan popup secara instan
+        $("#popup").css("display", "none"); 
+        
+        // 2. Bersihkan penyimpanan lokal
+        localStorage.removeItem(pageTitle + "_status_popup");
+        localStorage.removeItem(pageTitle + "_judul_film");
+        localStorage.removeItem(pageTitle + "_eps_data");
 
-
-    function closePopup() { 
-
-        $("#popup").hide(); 
-
-        localStorage.setItem("status_popup", "closed");
-
-        const lastTitle = localStorage.getItem("last_poster_title");
-
-        if (lastTitle) setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
-
-    }
-
-
-
-    function checkLastSession() {
-
-        if (localStorage.getItem("status_popup") === "open") {
-
-            const title = localStorage.getItem("judul_film");
-
-            const eps = localStorage.getItem("eps_data");
-
-            if(title && eps) openModal(title, eps);
-
+        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
+        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+        if (lastTitle) {
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 150);
         }
 
+        // 4. Langsung matikan status gembok popup di sisi Android (Tanpa setTimeout delay)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
+        }
+    };
+
+    // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
+    function checkLastSession() {
+        if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
+            const title = localStorage.getItem(pageTitle + "_judul_film");
+            const eps = localStorage.getItem(pageTitle + "_eps_data");
+            if(title && eps) openModal(title, eps);
+        }
     }
-
 </script>
-
-
 
 <script>
-
+    // Efek Suara Navigasi Remote
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
-
-
     function playSound() {
-
         soundClick.currentTime = 0;
-
         soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
-
     }
 
-
-
     document.addEventListener('focus', function(e) {
-
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
-
+        if ($(e.target).hasClass('poster') || $(e.target).hasClass('eps-btn') || $(e.target).hasClass('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
             playSound();
-
         }
-
     }, true);
-
 </script>
-
 </body>
-
-</html> 
+</html>
