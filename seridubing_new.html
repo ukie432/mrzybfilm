@@ -52,7 +52,6 @@
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
         .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
         
-        /* Pengaturan Aspect Ratio 3/4 agar kotak lebih pendek */
         .poster img { 
             width: 100%; 
             aspect-ratio: 3 / 4; 
@@ -99,28 +98,32 @@
     const jsonUrl = "seridubing.json"; 
 
     // ========================================================
-    // LOGIKA FIX TOTAL: Mencegah Mental Menggunakan Deteksi Elemen Langsung
+    // LOGIKA PENYELARASAN NATIVE (MENCONTEK KODE YANG BERHASIL)
     // ========================================================
-    window.addEventListener('keydown', function(e) {
-        // Cek tombol Back Android (4), Escape (27), Tizen TV (10009)
-        if (e.keyCode == 4 || e.keyCode == 27 || e.keyCode == 10009) {
+    
+    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
+    window.tutupPopUpPoster = function(){
+        window.closePopup();
+    };
+
+    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const popupElement = document.getElementById("popup");
-            
-            // JIKA POPUP SEDANG TERLIHAT / DITAMPILKAN DI LAYAR
+            // Jika popup sedang aktif terbuka di layar
             if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
-                e.preventDefault();     // Kunci total agar WebView Android tidak memproses Back keluar halaman
-                e.stopPropagation();    // Stop propagasi event ke sistem luar
-                closePopup();           // Tutup popup lewat fungsi internal web secara aman
-                return false;
+                event.preventDefault();
+                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
+                return;
             }
         }
-    }, true); // Angka 'true' di sini wajib agar perintah pencegahan dieksekusi pertama kali mengalahkan sistem TV
+    }, true); 
 
-    // Logika navigasi remote TV untuk arah lainnya (Atas, Bawah, Kiri, Kanan)
+    // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Jika menekan ATAS di baris poster teratas, naik ke kolom pencarian
+        // Jika menekan ATAS di baris poster pertama, naik ke pencarian
         if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
@@ -223,7 +226,7 @@
         localStorage.setItem(pageTitle + "_judul_film", title);
         localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
-        // Kunci tombol Back pada sisi Android Native App agar dikendalikan penuh oleh Web
+        // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -238,7 +241,7 @@
         $("#popup").css("display", "flex");
         
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
+        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
     // FUNGSI PLAY VIDEO
@@ -251,30 +254,29 @@
         }
     }
 
-    // FUNGSI TUTUP POPUP (MODAL)
-    function closePopup() { 
-        // 1. Sembunyikan visual popup dari TV sesegera mungkin secara instan
+    // FUNGSI TUTUP POPUP (MODAL) - SEKARANG SEJAJAR DENGAN KODE SUKSES KAMU
+    window.closePopup = function() { 
+        // 1. Sembunyikan popup secara instan
         $("#popup").css("display", "none"); 
         
-        // 2. Bersihkan flag status popup di penyimpanan lokal
+        // 2. Bersihkan penyimpanan lokal
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
 
-        // 3. Kembalikan sorotan kursor remote ke poster yang terakhir dibuka agar kursor tidak hilang
+        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
-            $(`.poster[data-title="${lastTitle}"]`).focus();
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 150);
         }
 
-        // 4. BERI JEDA DELAY SECUKUPNYA (350ms) sebelum mematikan gembok Back Android.
-        // Berfungsi meredam sinyal ganda (double-bounce) tombol remote fisik agar tidak mental keluar ke halaman home.
-        setTimeout(() => {
-            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-                Android.setPopUpStatus(false);
-            }
-        }, 350);
-    }
+        // 4. Langsung matikan status gembok popup di sisi Android (Tanpa setTimeout delay)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
+        }
+    };
 
     // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
     function checkLastSession() {
