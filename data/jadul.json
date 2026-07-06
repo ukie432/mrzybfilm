@@ -1,5 +1,85 @@
 [
     {
+
+        
+    "id": "fid1A",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/permainan%20bulan%20desember%20(1990).mp4",
+    "title": "Permainanan dibulan desember (1990)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Bulan_desember.webp"
+  },
+  {
+    "id": "fid2b",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/hukum%20karma%20(1982).mp4",
+    "title": "Hukum karma (1982)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Hukum_karma.webp"
+  },
+  {
+    "id": "fid3c",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Indonesia%20jadul/dukun%20ilmu%20hitam%20(1981).mp4",
+    "title": "Dukun ilmu hitam (1981)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Dukun_ilmu_hitam.webp"
+  },
+  {
+    "id": "fid4d",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/titian%20serambut%20dibelah%20tujuh%20(1959).mp4",
+    "title": "Titian serambut dibelah tujuh (1959)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Titian_serambut.webp"
+  },
+  {
+    "id": "fid5e",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/tjoet%20nyak%20dhien%20(1988).mp4",
+    "title": "Tjoet nyak dhien (1988)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Tjoet_nyak_dhien.webp"
+  },
+  {
+    "id": "fid6f",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/tak%20seindah%20kasih%20mama%20(1986).mp4",
+    "title": "Tak seindah kasih mama (1986)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Tak_seindah_kasih_mama.webp"
+  },
+  {
+    "id": "fid7g",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/akibat%20buah%20terlarang%20(1984).mp4",
+    "title": "Akibat buah terlarang (1984)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Buah_terlarang.webp"
+  },
+  {
+    "id": "fid8h",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/cubit-cubitan%20(1979).mp4",
+    "title": "Cubit-cubitan (1979)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Cubit.webp"
+  },
+  {
+    "id": "fid9i",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/krikil-krikil%20tajam%20(1986).mp4",
+    "title": "Kerikil-kerikil tajam (1986)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Kerikil_tajam.webp"
+  },
+  {
+    "id": "fid10j",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/macan%20kampus%20(1987).mp4",
+    "title": "Macan kampus (1987)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Macan_kampus.webp"
+  },
+  {
+    "id": "fid11k",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Gitar%20Tua%20Oma%20Irama%20(1976)%20Film%20Indonesia.mp4",
+    "title": "Rhoma irama gitar tua (1976)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Gitartua.webp"
+  },
+  {
+    "id": "fid12l",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Rhoma%20Irama%20Berkelana%20I%20(1978).mp4",
+    "title": "Rhoma irama Berkelana part 1 (1978)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Berkelana1.webp"
+  },
+  {
+    "id": "fid13m",
+    "url": "https://movieku.ukielaki8387.workers.dev/0:/Indo%20jadul/Rhoma%20Irama%20Berkelana%20II%20(1978).mp4",
+    "title": "Rhoma irama berkelana part 2 (1978)",
+    "img": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Berkelana2.webp"
+  },
+  {
         "id": "fid1",
         "url": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Indonesia%20jadul/Pengabdi%20Setan%20(1980).mp4",
         "title": "Pengabdi Setan (1980)",
