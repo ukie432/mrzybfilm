@@ -136,11 +136,47 @@
     const jsonUrl = "data/komik.json";
     let swiperInstance = null;
 
+    // ========================================================
+    // LOGIKA ANTI-MENTAL NATIVE BERTINGKAT (READER & POPUP)
+    // ========================================================
+    
+    // Fungsi jembatan wajib dari Tombol Back Android Native App kamu
+    window.tutupPopUpPoster = function() {
+        const readerElement = document.getElementById("reader-view");
+        const popupElement = document.getElementById("popup");
+
+        // TINGKAT 1: Jika Pembaca Komik sedang terbuka, tekan Back akan menutup reader & balik ke Popup
+        if (readerElement && window.getComputedStyle(readerElement).display === "block") {
+            $("#exitReaderBtn").click(); // Trigger fungsi keluar reader resmi
+        } 
+        // TINGKAT 2: Jika Reader sudah tutup tapi Popup Edisi masih buka, tekan Back akan menutup popup ke katalog
+        else if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+            window.closePopup();
+        }
+    };
+
+    // Deteksi Keydown Event Global Tombol Back Remote (4, 27, 10009)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const readerElement = document.getElementById("reader-view");
+            const popupElement = document.getElementById("popup");
+
+            // Jika salah satu tampilan overlay sedang aktif di layar
+            if ((readerElement && window.getComputedStyle(readerElement).display === "block") || 
+                (popupElement && window.getComputedStyle(popupElement).display !== "none")) {
+                event.preventDefault();
+                window.tutupPopUpPoster(); // Jalankan urutan penutupan
+                return;
+            }
+        }
+    }, true);
+
+
     // 1. Logika Navigasi Utama Remote TV D-PAD
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        if (e.keyCode == 38 && activeEl.classList.contains('poster')) {
+        if (e.keyCode == 38 && activeEl && activeEl.classList.contains('poster')) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
                 e.preventDefault();
@@ -150,16 +186,14 @@
         }
 
         // Navigasi Khusus Pop-up Pilihan Edisi
-        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
+        if (e.keyCode == 39 && activeEl && activeEl.classList.contains('eps-btn')) {
             e.preventDefault();
             $('.close-x').focus();
-        } else if (code = e.keyCode || e.which) {
-            if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
-                e.preventDefault();
-                const currentTitle = $("#modal-title").text();
-                const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
-                $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-            }
+        } else if (e.keyCode == 37 && activeEl && activeEl.classList.contains('close-x')) {
+            e.preventDefault();
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
     });
 
@@ -248,6 +282,11 @@
         localStorage.setItem("last_poster_title", title);
         localStorage.setItem("judul_film", title);
         localStorage.setItem("eps_data", edisiEncoded);
+        
+        // Aktifkan gembok Android Native Back
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
         
         const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
         $("#modal-title").text(title);
@@ -353,11 +392,15 @@
         
         const title = localStorage.getItem("judul_film");
         const eps = localStorage.getItem("eps_data");
-        if(title && eps) openModal(title, eps);
+        
+        // Munculkan popup edisi kembali secara aman
+        if(title && eps) {
+            openModal(title, eps);
+        }
     });
 
     // 8. Sistem Penutup Modal
-    function closePopup() { 
+    window.closePopup = function() { 
         $("#popup").hide(); 
         localStorage.setItem("status_popup", "closed");
         const lastTitle = localStorage.getItem("last_poster_title");
@@ -366,6 +409,11 @@
             setTimeout(() => { 
                 $(`.poster[data-title="${lastTitle}"]`).focus(); 
             }, 150);
+        }
+
+        // Matikan gembok Android Native Back secara instan (Karna sudah kembali ke katalog utama)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
         }
     }
 
@@ -380,7 +428,8 @@
     // Navigasi Otomatis Mengunci Fokus ke Tombol Kembali Saat Atas/Bawah Ditekan di Player
     document.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
-        if (document.getElementById('reader-view').style.display === 'block') {
+        const readerElement = document.getElementById('reader-view');
+        if (readerElement && readerElement.style.display === 'block') {
             if (code === 38 || code === 40) { 
                 e.preventDefault();
                 document.getElementById('exitReaderBtn').focus();
@@ -390,6 +439,7 @@
 </script>
 
 <script>
+    // Efek Suara Navigasi Remote
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     function playSound() {
@@ -398,7 +448,7 @@
     }
 
     document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box' || e.target.id === 'exitReaderBtn') {
+        if (e.target && (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box' || e.target.id === 'exitReaderBtn')) {
             playSound();
         }
     }, true);
