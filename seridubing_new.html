@@ -95,25 +95,30 @@
     </div>
 
 <script>
-    // Membuat ID Local Storage unik otomatis berdasarkan teks di dalam tag <title>
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
-    const jsonUrl = "seridubing.json"; // Sesuaikan nama file json di setiap halaman html kamu
+    const jsonUrl = "seridubing.json"; 
 
-    // 1. Logika Navigasi Umum Remote
-    $(document).on('keydown', function(e) {
-        const activeEl = document.activeElement;
-
-        // JIKA TOMBOL BACK TV DITEKAN (4 = Android, 27 = Escape Browser, 10009 = Smart TV Tizen)
+    // ========================================================
+    // LOGIKA ANTI-MENTAL: Mencegah Back Keluar Menggunakan Capture Phase (true)
+    // ========================================================
+    window.addEventListener('keydown', function(e) {
+        // Cek tombol Back Android (4), Escape (27), Tizen (10009)
         if (e.keyCode == 4 || e.keyCode == 27 || e.keyCode == 10009) {
             if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
-                e.preventDefault(); // Mengunci sistem WebView agar tidak menutup aplikasi
-                closePopup();       // Menjalankan fungsi web untuk menutup popup dan fokus ke poster
+                e.preventDefault();    // Hentikan langsung sistem Android TV agar tidak keluar halaman
+                e.stopPropagation();    // Hentikan penyebaran event ke elemen luar
+                closePopup();          // Jalankan fungsi web untuk menutup popup info film
                 return false;
             }
         }
+    }, true); // Angka atau nilai 'true' di sini wajib agar perintah dieksekusi duluan sebelum sistem TV mengambil alih
 
-        // Jika menekan ATAS di baris pertama, biarkan naik normal ke bar pencarian
-        if (e.keyCode == 38 && activeEl.classList.contains('poster')) {
+    // Logika Navigasi Arah Remote Umum lainnya tetap berjalan normal
+    $(document).on('keydown', function(e) {
+        const activeEl = document.activeElement;
+
+        // Jika menekan ATAS di baris pertama, naik ke pencarian
+        if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
                 e.preventDefault();
@@ -123,9 +128,9 @@
         }
 
         // Navigasi Internal di dalam Popup
-        if (e.keyCode == 39 && activeEl.classList.contains('eps-btn')) {
+        if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
             $('.close-x').focus();
-        } else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
+        } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
             const currentTitle = $("#modal-title").text();
             const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
@@ -212,7 +217,7 @@
         localStorage.setItem(pageTitle + "_judul_film", title);
         localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
-        // Beritahu aplikasi Android bahwa ada popup yang aktif menahan tombol Back
+        // Kunci tombol Back pada sisi Android Native App agar dikendalikan oleh Web
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -240,22 +245,22 @@
 
     // FUNGSI TUTUP POPUP (MODAL)
     function closePopup() { 
-        // 1. Sembunyikan popup terlebih dahulu dari layar
+        // 1. Sembunyikan visual popup dari TV sesegera mungkin
         $("#popup").hide(); 
         
-        // 2. Bersihkan memori local storage instan agar tidak bentrok
+        // 2. Hapus flag status popup di penyimpanan lokal secara instan
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
 
-        // 3. Kembalikan sorotan fokus remote tepat ke poster terakhir secepatnya
+        // 3. Kembalikan sorotan kursor remote ke poster yang terakhir dibuka
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
             $(`.poster[data-title="${lastTitle}"]`).focus();
         }
 
-        // 4. BERIKAN JEDA DELAY (300ms) sebelum melepaskan gembok Back Android.
-        // Berfungsi mematikan efek sinyal ganda (double-trigger) dari remote TV yang sensitif.
+        // 4. BERI JEDA DELAY AMAN (300ms) sebelum mematikan gembok Back Android.
+        // Berfungsi untuk meredam sinyal ganda (double click bounce) dari remote TV fisik yang rentan terpental.
         setTimeout(() => {
             if (typeof Android !== "undefined" && Android.setPopUpStatus) {
                 Android.setPopUpStatus(false);
@@ -283,7 +288,7 @@
     }
 
     document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('poster') || e.target.classList.contains('eps-btn') || e.target.classList.contains('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
+        if ($(e.target).hasClass('poster') || $(e.target).hasClass('eps-btn') || $(e.target).hasClass('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
             playSound();
         }
     }, true);
