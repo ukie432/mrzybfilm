@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
     <meta charset="UTF-8">
     <title>MRZYBtv Series - Comic Edition</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -58,41 +57,12 @@
         }
         .clear-search:focus { background: red; outline: none; }
 
-        /* Grid & Poster Sesuai Request Abang */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 20px; 
-            padding: 20px; 
-        }
-
-        /* Kotak poster dikunci 3:4 agar ukuran sama rata */
-        .poster { 
-            cursor: pointer; 
-            border: 3px solid #333; 
-            border-radius: 8px; 
-            overflow: hidden; 
-            transition: 0.2s; 
-            background: #111; 
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            aspect-ratio: 3 / 4; 
-        }
-        /* Fokus warna hijau terang sesuai request */
-        .poster:focus { transform: scale(1.05); border-color: #4a90e2; outline: none; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; transition: 0.2s; background: #111; }
+        .poster:focus { transform: scale(1.1); border-color: #4a90e2; outline: none; }
+        .poster img { width: 100%; height: 200px; object-fit: cover; pointer-events: none; }
         
-        /* Gambar disetel contain agar utuh 100% tidak terpotong */
-        .poster img { 
-            width: 100%; 
-            height: 100%;
-            object-fit: contain; 
-            display: block; 
-            pointer-events: none;
-            background: #111;
-        }
-        
-        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-top: auto; background: rgba(0, 0, 0, 0.6); }
+        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
         .poster:focus .poster-title { color: #4a90e2; }
         
         /* ================= POPUP MODAL PILIHAN EDISI ================= */
@@ -166,46 +136,56 @@
     const jsonUrl = "data/komik.json";
     let swiperInstance = null;
 
+    // ========================================================
+    // LOGIKA ANTI-MENTAL NATIVE BERTINGKAT (READER & POPUP)
+    // ========================================================
+    
+    // Fungsi jembatan wajib dari Tombol Back Android Native App kamu
     window.tutupPopUpPoster = function() {
         const readerElement = document.getElementById("reader-view");
         const popupElement = document.getElementById("popup");
 
+        // TINGKAT 1: Jika Pembaca Komik sedang terbuka, tekan Back akan menutup reader & balik ke Popup
         if (readerElement && window.getComputedStyle(readerElement).display === "block") {
-            $("#exitReaderBtn").click(); 
+            $("#exitReaderBtn").click(); // Trigger fungsi keluar reader resmi
         } 
+        // TINGKAT 2: Jika Reader sudah tutup tapi Popup Edisi masih buka, tekan Back akan menutup popup ke katalog
         else if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
             window.closePopup();
         }
     };
 
+    // Deteksi Keydown Event Global Tombol Back Remote (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const readerElement = document.getElementById("reader-view");
             const popupElement = document.getElementById("popup");
 
+            // Jika salah satu tampilan overlay sedang aktif di layar
             if ((readerElement && window.getComputedStyle(readerElement).display === "block") || 
                 (popupElement && window.getComputedStyle(popupElement).display !== "none")) {
                 event.preventDefault();
-                window.tutupPopUpPoster(); 
+                window.tutupPopUpPoster(); // Jalankan urutan penutupan
                 return;
             }
         }
     }, true);
 
+
+    // 1. Logika Navigasi Utama Remote TV D-PAD
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Penyesuaian deteksi batas atas grid dinamis untuk fokus ke search bar
         if (e.keyCode == 38 && activeEl && activeEl.classList.contains('poster')) {
             const index = $('.grid .poster').index(activeEl);
-            const rowItems = Math.floor($('.grid').width() / 160); // Menghitung perkiraan jumlah item per baris
-            if (index < rowItems) {
+            if (index < 5) {
                 e.preventDefault();
                 $("#search-box").focus();
                 return false;
             }
         }
 
+        // Navigasi Khusus Pop-up Pilihan Edisi
         if (e.keyCode == 39 && activeEl && activeEl.classList.contains('eps-btn')) {
             e.preventDefault();
             $('.close-x').focus();
@@ -217,6 +197,7 @@
         }
     });
 
+    // 2. Logika Khusus di Bar Pencarian Utama
     $("#search-box").on('keydown', function(e) {
         if (e.keyCode == 13) {
             e.preventDefault();
@@ -233,6 +214,7 @@
         }
     });
 
+    // 3. Logika Saat Mengetik di Dalam Input Asli
     $("#search").on('keydown', function(e) {
         if (e.keyCode == 40 || e.keyCode == 13) {
             $(this).attr("disabled", "disabled");
@@ -271,6 +253,7 @@
         });
     });
 
+    // 4. Proses Ambil Data JSON Murni & Gambar Grid Poster
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
@@ -293,12 +276,14 @@
             checkLastSession();
         });
 
+    // 5. Fungsi Membuka Popup Modal
     function openModal(title, edisiEncoded) {
         localStorage.setItem("status_popup", "open");
         localStorage.setItem("last_poster_title", title);
         localStorage.setItem("judul_film", title);
         localStorage.setItem("eps_data", edisiEncoded);
         
+        // Aktifkan gembok Android Native Back
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -320,6 +305,7 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
     }
 
+    // 6. Fungsi Player Pembaca Komik
     function openComicPlayer(index) {
         const title = localStorage.getItem("judul_film");
         localStorage.setItem("last_eps_" + title, index);
@@ -398,6 +384,7 @@
         document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
     }
 
+    // 7. Tombol Keluar dari Player Pembaca Komik
     $("#exitReaderBtn").on('click', function() {
         $("#reader-view").hide();
         $("#home-view").show();
@@ -406,11 +393,13 @@
         const title = localStorage.getItem("judul_film");
         const eps = localStorage.getItem("eps_data");
         
+        // Munculkan popup edisi kembali secara aman
         if(title && eps) {
             openModal(title, eps);
         }
     });
 
+    // 8. Sistem Penutup Modal
     window.closePopup = function() { 
         $("#popup").hide(); 
         localStorage.setItem("status_popup", "closed");
@@ -422,6 +411,7 @@
             }, 150);
         }
 
+        // Matikan gembok Android Native Back secara instan (Karna sudah kembali ke katalog utama)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
@@ -435,6 +425,7 @@
         }
     }
 
+    // Navigasi Otomatis Mengunci Fokus ke Tombol Kembali Saat Atas/Bawah Ditekan di Player
     document.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
         const readerElement = document.getElementById('reader-view');
@@ -448,6 +439,7 @@
 </script>
 
 <script>
+    // Efek Suara Navigasi Remote
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     function playSound() {
