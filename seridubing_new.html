@@ -86,7 +86,7 @@
 
     <div class="grid" id="grid"></div>
 
-    <div id="popup" onclick="closePopup()">
+    <div id="popup">
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
             <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
@@ -99,25 +99,28 @@
     const jsonUrl = "seridubing.json"; 
 
     // ========================================================
-    // LOGIKA ANTI-MENTAL: Mencegah Back Keluar Menggunakan Capture Phase (true)
+    // LOGIKA FIX TOTAL: Mencegah Mental Menggunakan Deteksi Elemen Langsung
     // ========================================================
     window.addEventListener('keydown', function(e) {
-        // Cek tombol Back Android (4), Escape (27), Tizen (10009)
+        // Cek tombol Back Android (4), Escape (27), Tizen TV (10009)
         if (e.keyCode == 4 || e.keyCode == 27 || e.keyCode == 10009) {
-            if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
-                e.preventDefault();    // Hentikan langsung sistem Android TV agar tidak keluar halaman
-                e.stopPropagation();    // Hentikan penyebaran event ke elemen luar
-                closePopup();          // Jalankan fungsi web untuk menutup popup info film
+            const popupElement = document.getElementById("popup");
+            
+            // JIKA POPUP SEDANG TERLIHAT / DITAMPILKAN DI LAYAR
+            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+                e.preventDefault();     // Kunci total agar WebView Android tidak memproses Back keluar halaman
+                e.stopPropagation();    // Stop propagasi event ke sistem luar
+                closePopup();           // Tutup popup lewat fungsi internal web secara aman
                 return false;
             }
         }
-    }, true); // Angka atau nilai 'true' di sini wajib agar perintah dieksekusi duluan sebelum sistem TV mengambil alih
+    }, true); // Angka 'true' di sini wajib agar perintah pencegahan dieksekusi pertama kali mengalahkan sistem TV
 
-    // Logika Navigasi Arah Remote Umum lainnya tetap berjalan normal
+    // Logika navigasi remote TV untuk arah lainnya (Atas, Bawah, Kiri, Kanan)
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // Jika menekan ATAS di baris pertama, naik ke pencarian
+        // Jika menekan ATAS di baris poster teratas, naik ke kolom pencarian
         if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
@@ -127,7 +130,7 @@
             }
         }
 
-        // Navigasi Internal di dalam Popup
+        // Navigasi internal di dalam Popup
         if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
             $('.close-x').focus();
         } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
@@ -205,7 +208,10 @@
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
             });
             setTimeout(() => { 
-                if (localStorage.getItem(pageTitle + "_status_popup") !== "open") $(".poster").first().focus(); 
+                const popupElement = document.getElementById("popup");
+                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                    $(".poster").first().focus(); 
+                }
             }, 600);
             checkLastSession();
         });
@@ -217,7 +223,7 @@
         localStorage.setItem(pageTitle + "_judul_film", title);
         localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
-        // Kunci tombol Back pada sisi Android Native App agar dikendalikan oleh Web
+        // Kunci tombol Back pada sisi Android Native App agar dikendalikan penuh oleh Web
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -228,7 +234,9 @@
         eps.forEach((e, index) => {
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
+        
         $("#popup").css("display", "flex");
+        
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
     }
@@ -245,27 +253,27 @@
 
     // FUNGSI TUTUP POPUP (MODAL)
     function closePopup() { 
-        // 1. Sembunyikan visual popup dari TV sesegera mungkin
-        $("#popup").hide(); 
+        // 1. Sembunyikan visual popup dari TV sesegera mungkin secara instan
+        $("#popup").css("display", "none"); 
         
-        // 2. Hapus flag status popup di penyimpanan lokal secara instan
+        // 2. Bersihkan flag status popup di penyimpanan lokal
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
 
-        // 3. Kembalikan sorotan kursor remote ke poster yang terakhir dibuka
+        // 3. Kembalikan sorotan kursor remote ke poster yang terakhir dibuka agar kursor tidak hilang
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
             $(`.poster[data-title="${lastTitle}"]`).focus();
         }
 
-        // 4. BERI JEDA DELAY AMAN (300ms) sebelum mematikan gembok Back Android.
-        // Berfungsi untuk meredam sinyal ganda (double click bounce) dari remote TV fisik yang rentan terpental.
+        // 4. BERI JEDA DELAY SECUKUPNYA (350ms) sebelum mematikan gembok Back Android.
+        // Berfungsi meredam sinyal ganda (double-bounce) tombol remote fisik agar tidak mental keluar ke halaman home.
         setTimeout(() => {
             if (typeof Android !== "undefined" && Android.setPopUpStatus) {
                 Android.setPopUpStatus(false);
             }
-        }, 300);
+        }, 350);
     }
 
     // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
