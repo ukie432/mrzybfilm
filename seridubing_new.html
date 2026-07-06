@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MRZYBtv Series</title>
+    <title>MRZYBtv Series Dubbing</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
@@ -95,17 +95,19 @@
     </div>
 
 <script>
-    const jsonUrl = "seridubing.json";
+    // Membuat ID Local Storage unik otomatis berdasarkan teks di dalam tag <title>
+    const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
+    const jsonUrl = "seridubing.json"; // Sesuaikan nama file json di setiap halaman html kamu
 
     // 1. Logika Navigasi Umum Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
-        // JIKA TOMBOL BACK DITEKAN (4 = Android, 27 = Escape Browser, 10009 = Smart TV)
+        // JIKA TOMBOL BACK TV DITEKAN (4 = Android, 27 = Escape Browser, 10009 = Smart TV Tizen)
         if (e.keyCode == 4 || e.keyCode == 27 || e.keyCode == 10009) {
-            if (localStorage.getItem("status_popup") === "open") {
-                e.preventDefault(); // Kunci agar WebView tidak keluar aplikasi
-                closePopup();       // Jalankan fungsi tutup popup bawaan web
+            if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
+                e.preventDefault(); // Mengunci sistem WebView agar tidak menutup aplikasi
+                closePopup();       // Menjalankan fungsi web untuk menutup popup dan fokus ke poster
                 return false;
             }
         }
@@ -125,24 +127,24 @@
             $('.close-x').focus();
         } else if (e.keyCode == 37 && activeEl.classList.contains('close-x')) {
             const currentTitle = $("#modal-title").text();
-            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
+            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
     });
 
     // 2. Logika Khusus di Bar Pencarian Utama
     $("#search-box").on('keydown', function(e) {
-        if (e.keyCode == 13) { // Tekan Enter/OK
+        if (e.keyCode == 13) { 
             e.preventDefault();
             $("#search").removeAttr("disabled").focus();
             return false;
         }
-        else if (e.keyCode == 40) { // Tekan Bawah ke Poster Pertama
+        else if (e.keyCode == 40) { 
             e.preventDefault();
             $(".poster").first().focus();
             return false;
         }
-        else if (e.keyCode == 39 && $("#search").val().length > 0) { // Tekan Kanan ke Tombol Clear
+        else if (e.keyCode == 39 && $("#search").val().length > 0) { 
             $("#clear-btn").attr("tabindex", "0").focus();
         }
     });
@@ -197,18 +199,20 @@
                 const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
             });
-            setTimeout(() => { if (localStorage.getItem("status_popup") !== "open") $(".poster").first().focus(); }, 600);
+            setTimeout(() => { 
+                if (localStorage.getItem(pageTitle + "_status_popup") !== "open") $(".poster").first().focus(); 
+            }, 600);
             checkLastSession();
         });
 
     // FUNGSI BUKA POPUP (MODAL)
     function openModal(title, epsEncoded) {
-        localStorage.setItem("status_popup", "open");
-        localStorage.setItem("last_poster_title", title);
-        localStorage.setItem("judul_film", title);
-        localStorage.setItem("eps_data", epsEncoded);
+        localStorage.setItem(pageTitle + "_status_popup", "open");
+        localStorage.setItem(pageTitle + "_last_poster_title", title);
+        localStorage.setItem(pageTitle + "_judul_film", title);
+        localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
-        // Beritahu aplikasi Android bahwa popup sedang terbuka
+        // Beritahu aplikasi Android bahwa ada popup yang aktif menahan tombol Back
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -220,13 +224,13 @@
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
-        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
+        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
     }
 
     // FUNGSI PLAY VIDEO
     function playAndSave(url, index, title) {
-        localStorage.setItem("last_eps_" + title, index);
+        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         if (typeof Android !== "undefined" && Android.playVideo) {
             Android.playVideo(url);
         } else {
@@ -237,25 +241,29 @@
     // FUNGSI TUTUP POPUP (MODAL)
     function closePopup() { 
         $("#popup").hide(); 
-        localStorage.setItem("status_popup", "closed");
+        
+        // HAPUS SISA MEMORI POPUP DI HALAMAN INI AGAR TIDAK BENTROK SAAT DI BUKA DI HALAMAN LAIN
+        localStorage.removeItem(pageTitle + "_status_popup");
+        localStorage.removeItem(pageTitle + "_judul_film");
+        localStorage.removeItem(pageTitle + "_eps_data");
 
-        // Beritahu aplikasi Android bahwa popup sudah ditutup
+        // Lepas status popup di aplikasi Android
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
 
-        // Kembalikan sorotan fokus remote ke poster terakhir yang dipilih
-        const lastTitle = localStorage.getItem("last_poster_title");
+        // Kembalikan sorotan fokus remote tepat ke poster terakhir yang diklik
+        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
             setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 100);
         }
     }
 
-    // Memeriksa Sesi Terakhir
+    // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
     function checkLastSession() {
-        if (localStorage.getItem("status_popup") === "open") {
-            const title = localStorage.getItem("judul_film");
-            const eps = localStorage.getItem("eps_data");
+        if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
+            const title = localStorage.getItem(pageTitle + "_judul_film");
+            const eps = localStorage.getItem(pageTitle + "_eps_data");
             if(title && eps) openModal(title, eps);
         }
     }
