@@ -40,86 +40,215 @@
         <div id="eps-list"></div>
     </div>
 </div>
-
 <script>
-    // 1. Fungsi Tutup
-    window.tutupPopUpPoster = function() {
-        $("#popup").css("display", "none");
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
-        
-        const lastId = localStorage.getItem("last_card_id");
-        if (lastId) {
-            setTimeout(() => {
-                const target = document.querySelector(`[data-id="${lastId}"]`);
-                if (target) target.focus();
-            }, 300);
-        }
+    const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
+    const jsonUrl = "data/seriindo.json"; 
+
+    // ========================================================
+    // LOGIKA PENYELARASAN NATIVE (MENCONTEK KODE YANG BERHASIL)
+    // ========================================================
+    
+    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
+    window.tutupPopUpPoster = function(){
+        window.closePopup();
     };
 
-    // 2. Event Back
-    window.addEventListener('keydown', function(e) {
-        if ([4, 27, 10009].includes(e.keyCode)) {
-            if ($("#popup").is(":visible")) {
-                e.preventDefault();
-                tutupPopUpPoster();
+    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const popupElement = document.getElementById("popup");
+            // Jika popup sedang aktif terbuka di layar
+            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+                event.preventDefault();
+                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
+                return;
             }
         }
-    }, true);
+    }, true); 
 
-    // 3. Fungsi Player
-    window.playVideo = function(url) {
+    // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
+    $(document).on('keydown', function(e) {
+        const activeEl = document.activeElement;
+
+        // Jika menekan ATAS di baris poster pertama, naik ke pencarian
+        if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
+            const index = $('.grid .poster').index(activeEl);
+            if (index < 5) {
+                e.preventDefault();
+                $("#search-box").focus();
+                return false;
+            }
+        }
+
+        // Navigasi internal di dalam Popup
+        if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
+            $('.close-x').focus();
+        } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
+        }
+    });
+
+    // 2. Logika Khusus di Bar Pencarian Utama
+    $("#search-box").on('keydown', function(e) {
+        if (e.keyCode == 13) { 
+            e.preventDefault();
+            $("#search").removeAttr("disabled").focus();
+            return false;
+        }
+        else if (e.keyCode == 40) { 
+            e.preventDefault();
+            $(".poster").first().focus();
+            return false;
+        }
+        else if (e.keyCode == 39 && $("#search").val().length > 0) { 
+            $("#clear-btn").attr("tabindex", "0").focus();
+        }
+    });
+
+    // 3. Logika Saat Mengetik di Dalam Input Asli
+    $("#search").on('keydown', function(e) {
+        if (e.keyCode == 40 || e.keyCode == 13) {
+            $(this).attr("disabled", "disabled");
+            $("#search-box").focus();
+        }
+    });
+
+    // Navigasi di tombol X hapus pencarian
+    $("#clear-btn").on('keydown', function(e) {
+        if (e.keyCode == 37) {
+            $("#search-box").focus();
+        }
+        else if (e.keyCode == 40) {
+            $(this).attr("tabindex", "-1");
+            $(".poster").first().focus();
+        }
+    });
+
+    // Fungsi klik/OK pada tombol X hapus pencarian
+    $("#clear-btn").on('click', function() {
+        $("#search").val(""); 
+        $(".poster").show(); 
+        $(this).css("display", "none").attr("tabindex", "-1"); 
+        $("#search-box").focus();
+    });
+
+    // Logika filter ketikan pencarian
+    $("#search").on("input", function() {
+        const keyword = $(this).val().toLowerCase();
+        
+        if (keyword.length > 0) {
+            $("#clear-btn").css("display", "flex"); 
+        } else {
+            $("#clear-btn").css("display", "none").attr("tabindex", "-1"); 
+        }
+
+        $(".poster").each(function() {
+            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
+        });
+    });
+
+    // Load Data JSON Utama
+    fetch(jsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
+            });
+            setTimeout(() => { 
+                const popupElement = document.getElementById("popup");
+                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                    $(".poster").first().focus(); 
+                }
+            }, 600);
+            checkLastSession();
+        });
+
+    // FUNGSI BUKA POPUP (MODAL)
+    function openModal(title, epsEncoded) {
+        localStorage.setItem(pageTitle + "_status_popup", "open");
+        localStorage.setItem(pageTitle + "_last_poster_title", title);
+        localStorage.setItem(pageTitle + "_judul_film", title);
+        localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
+
+        // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
+
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        eps.forEach((e, index) => {
+            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+        });
+        
+        $("#popup").css("display", "flex");
+        
+        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
+        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
+    }
+
+    // FUNGSI PLAY VIDEO
+    function playAndSave(url, index, title) {
+        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         if (typeof Android !== "undefined" && Android.playVideo) {
             Android.playVideo(url);
         } else {
             window.open(url, "_blank");
         }
-    };
+    }
 
-    // 4. Fungsi Buka
-    window.openModal = function(title, epsEncoded, cardId) {
-        localStorage.setItem("last_card_id", cardId);
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
+    // FUNGSI TUTUP POPUP (MODAL) - SEKARANG SEJAJAR DENGAN KODE SUKSES KAMU
+    window.closePopup = function() { 
+        // 1. Sembunyikan popup secara instan
+        $("#popup").css("display", "none"); 
         
-        const eps = JSON.parse(decodeURIComponent(epsEncoded));
-        $("#modal-title").text(title);
-        $("#eps-list").empty();
-        eps.forEach(e => {
-            $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
-        });
-        $("#popup").css("display", "flex");
-        $(".close-x").focus();
+        // 2. Bersihkan penyimpanan lokal
+        localStorage.removeItem(pageTitle + "_status_popup");
+        localStorage.removeItem(pageTitle + "_judul_film");
+        localStorage.removeItem(pageTitle + "_eps_data");
+
+        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
+        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+        if (lastTitle) {
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 150);
+        }
+
+        // 4. Langsung matikan status gembok popup di sisi Android (Tanpa setTimeout delay)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
+        }
     };
 
-    // 5. Fetch & Render
-    fetch('data/serianimasi.json')
-    .then(r => r.json())
-    .then(data => {
-        data.forEach(film => {
-            const epsEncoded = encodeURIComponent(JSON.stringify(film.episodes));
-            $("#containerUtama").append(`
-                <div class="card-film">
-                    <div class="poster-wrapper" tabindex="0" data-id="${film.id}" onclick="openModal('${film.title.replace(/'/g, "\\'")}', '${epsEncoded}', '${film.id}')">
-                        <img src="${film.img}">
-                    </div>
-                    <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
-                </div>
-            `);
-        });
-    setTimeout(() => {
-            const posterPertama = document.querySelector('.poster-pertama');
-            if (posterPertama) {
-                posterPertama.focus();
-            }
-        }, 500); // Delay 500ms agar DOM benar-benar siap
-    });
+    // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
+    function checkLastSession() {
+        if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
+            const title = localStorage.getItem(pageTitle + "_judul_film");
+            const eps = localStorage.getItem(pageTitle + "_eps_data");
+            if(title && eps) openModal(title, eps);
+        }
+    }
+</script>
 
-    // 6. Pencarian
-    $("#searchBox").on("input", function() {
-        const val = $(this).val().toLowerCase();
-        $(".card-film").each(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(val));
-        });
-    });
+<script>
+    // Efek Suara Navigasi Remote
+    const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
+
+    function playSound() {
+        soundClick.currentTime = 0;
+        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+    }
+
+    document.addEventListener('focus', function(e) {
+        if ($(e.target).hasClass('poster') || $(e.target).hasClass('eps-btn') || $(e.target).hasClass('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
+            playSound();
+        }
+    }, true);
 </script>
 </body>
 </html>
