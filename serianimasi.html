@@ -2,39 +2,44 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYB TV - Koleksi Film animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Gaya Dasar */
-        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
-        .header { text-align: center; padding: 20px; }
-        .search-wrapper { text-align: center; margin-bottom: 20px; }
-        .search-box { padding: 10px; width: 80%; max-width: 400px; border-radius: 20px; border: none; }
-        
-        /* Grid Poster */
-        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
-        .card-film { width: 150px; background: #181818; border-radius: 8px; overflow: hidden; }
-        .card-film:focus { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
-        .poster-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; cursor: pointer; }
+        /* CSS Gabungan */
+        body { font-family: sans-serif; background-color: #000; color: #fff; margin: 0; padding-bottom: 50px; }
+        .header-banner { text-align: center; padding: 20px 0; }
+        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; position: relative; }
+        .search-box { width: 80%; max-width: 400px; padding: 12px; border-radius: 8px; border: 2px solid #333; background: #141414; color: #fff; outline: none; }
+        .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
+        .card-film { width: 140px; margin: 7px; background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
+        .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
+        .btn-fav.active { color: #ffcc00; }
         
         /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
-        .close-x { position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: red; color: white; border-radius: 50%; border: none; cursor: pointer; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
         .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>MRZYB TV</h1></div>
+<div class="header-banner"><h1>MRZYB TV</h1></div>
 <div class="search-wrapper">
     <input type="text" id="searchBox" class="search-box" placeholder="Cari film...">
 </div>
 
-<div class="grid" id="containerUtama"></div>
+<div class="section-title" id="favSectionTitle" style="display:none; padding:10px;">FAVORIT SAYA</div>
+<div class="container-film" id="containerFav"></div>
 
-<!-- Popup -->
+<div class="section-title" id="utamaSectionTitle" style="padding:10px;">SEMUA FILM</div>
+<div class="container-film" id="containerUtama"></div>
+
 <div id="popup">
     <div class="popup-content">
         <button class="close-x" onclick="closePopup()">X</button>
@@ -44,8 +49,8 @@
 </div>
 
 <script>
-    // 1. Logika Tombol Back (Menangani Popup)
-    window.addEventListener('keydown', function(e) {
+    // 1. Logika Tombol Back
+    window.addEventListener("keydown", function(e) {
         if (e.keyCode === 4 || e.keyCode === 27 || e.keyCode === 10009) {
             if ($("#popup").is(":visible")) {
                 e.preventDefault();
@@ -58,10 +63,10 @@
 
     // 2. Fungsi Popup
     function openModal(title, episodes, id) {
-        localStorage.setItem("last_focus_id", id);
+        localStorage.setItem("last_id", id);
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        JSON.parse(episodes).forEach(e => {
+        JSON.parse(episodes).forEach((e, index) => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
@@ -70,9 +75,9 @@
 
     function closePopup() {
         $("#popup").css("display", "none");
-        const lastId = localStorage.getItem("last_focus_id");
+        const lastId = localStorage.getItem("last_id");
         if (lastId) {
-            setTimeout(() => { document.getElementById(lastId).focus(); }, 100);
+            setTimeout(() => { document.getElementById(lastId).focus(); }, 150);
         }
     }
 
@@ -84,17 +89,19 @@
         }
     }
 
-    // 3. Load Data & Fitur
+    // 3. Load Data & Render
     fetch('data/serianimasi.json')
         .then(response => response.json())
         .then(data => {
             data.forEach(film => {
                 const epData = JSON.stringify(film.episodes || [{ep:"Play", url:film.url}]);
                 $("#containerUtama").append(`
-                    <div class="card-film" id="${film.id}" tabindex="0">
-                        <img class="poster-img" src="${film.img}" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
+                    <div class="card-film" id="${film.id}" data-id="${film.id}" tabindex="0">
+                        <div class="poster-wrapper" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
+                            <img src="${film.img}">
+                        </div>
+                        <button class="btn-fav" data-target="${film.id}">☆ Favorit</button>
                         <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
-                        <button class="btn-fav" onclick="toggleFav('${film.id}')">★</button>
                     </div>
                 `);
             });
@@ -107,15 +114,6 @@
             $(this).toggle($(this).text().toLowerCase().includes(val));
         });
     });
-
-    // 5. Fitur Favorit (Simpel)
-    function toggleFav(id) {
-        let favs = JSON.parse(localStorage.getItem('favs') || '[]');
-        if (favs.includes(id)) favs = favs.filter(i => i !== id);
-        else favs.push(id);
-        localStorage.setItem('favs', JSON.stringify(favs));
-        alert("Favorit diperbarui!");
-    }
 </script>
 </body>
 </html>
