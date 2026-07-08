@@ -87,8 +87,18 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
+    // FUNGSI PLAY VIDEO
+    function playAndSave(url, index, title) {
+        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+        if (typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(url);
+        } else {
+            window.open(url, "_blank");
+        }
+    }
+
     // 4. Fetch & Render
-    fetch('data/serianimasi.json')
+    fetch('data/jadul.json')
     .then(r => r.json())
     .then(data => {
         data.forEach(film => {
