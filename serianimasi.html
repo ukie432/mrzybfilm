@@ -1,32 +1,28 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-    <title>MRZYB TV - Seri Animasi</title>
+    <meta charset="UTF-8">
+    <title>MRZYB TV</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #000; color: #fff; padding-bottom: 50px; }
-        .container-film { display: flex; flex-wrap: wrap; padding: 20px; justify-content: flex-start; }
-        .card-film { width: 140px; margin: 7px; background: #181818; border-radius: 6px; overflow: hidden; position: relative; border: 3px solid #333; }
-        .card-film:focus { transform: scale(1.05); border: 3px solid #00c54f; outline: none; }
-        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
-        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; padding: 20px; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
+        .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
+        .poster img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
         
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:20px; border-radius:15px; width:90%; max-width:450px; max-height:85vh; border:2px solid #00c54f; position: relative; display: flex; flex-direction: column; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; cursor: pointer; z-index: 101; }
-        #eps-list { overflow-y: auto; margin-top: 15px; flex-grow: 1; }
-        .eps-btn { display:block; width:100%; padding:12px; margin:6px 0; background:#333; border:none; color:white; text-align: left; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; z-index: 101; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
         .eps-btn:focus { background:#00c54f; outline: none; }
     </style>
 </head>
 <body>
 
-<div class="container-film" id="containerUtama"></div>
+<div class="grid" id="grid"></div>
 
-<div id="popup" onclick="tutupPopUpPoster()">
+<div id="popup">
     <div class="popup-content" onclick="event.stopPropagation()">
         <button class="close-x" onclick="tutupPopUpPoster()">X</button>
         <h2 id="modal-title"></h2>
@@ -35,14 +31,14 @@
 </div>
 
 <script>
-    const pageTitle = "serianimasi";
+    const pageTitle = "mrzybtv";
 
-    // 1. FUNGSI WAJIB UNTUK ANDROID (Gunakan nama 'tutupPopUpPoster')
-    window.tutupPopUpPoster = function(){
+    // 1. FUNGSI WAJIB UNTUK ANDROID
+    window.tutupPopUpPoster = function() {
         window.closePopup();
     };
 
-    // 2. DETEKSI TOMBOL BACK REMOTE (Logika penahan agar tidak mental)
+    // 2. DETEKSI TOMBOL BACK (MENCEGAH MENTAL)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const popupElement = document.getElementById("popup");
@@ -55,11 +51,32 @@
         }
     }, true);
 
-    // 3. BUKA POPUP (Menyimpan judul sebagai penanda fokus)
-    function openModal(title, episodesEncoded) {
+    // 3. FUNGSI TUTUP POPUP (Sama persis dengan yang berhasil)
+    window.closePopup = function() {
+        $("#popup").css("display", "none");
+        
+        // PENTING: Mencari poster berdasarkan data-title
+        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+        if (lastTitle) {
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 150);
+        }
+
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
+        }
+    };
+
+    // 4. LOAD DATA & FUNGSI LAIN
+    function openModal(title, epsEncoded) {
         localStorage.setItem(pageTitle + "_last_poster_title", title);
         
-        const eps = JSON.parse(decodeURIComponent(episodesEncoded));
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
+
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach((e) => {
@@ -69,44 +86,25 @@
         $(".close-x").focus();
     }
 
-    // 4. TUTUP POPUP (Logika pengembalian fokus yang sinkron dengan kode sukses Anda)
-    window.closePopup = function() {
-        $("#popup").css("display", "none");
-        
-        // PENTING: Mencari elemen berdasarkan data-title, bukan ID
-        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
-        if (lastTitle) {
-            setTimeout(() => {
-                $(`.card-film[data-title="${lastTitle}"]`).focus();
-            }, 150);
-        }
-
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
-        }
-    };
-
     function playVideo(url) {
-        if (typeof Android !== "undefined" && Android.playVideo) {
-            Android.playVideo(url);
-        } else {
-            window.open(url, "_blank");
-        }
+        if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
+        else window.open(url, "_blank");
     }
 
-    // LOAD DATA
-    fetch('data/serianimasi.json')
-        .then(response => response.json())
+    // Ganti 'data/seriindo.json' dengan file Anda
+    fetch('data/seriindo.json')
+        .then(res => res.json())
         .then(data => {
-            data.forEach(film => {
-                const epData = encodeURIComponent(JSON.stringify(film.episodes));
-                $("#containerUtama").append(`
-                    <div class="card-film" data-title="${film.title}" tabindex="0" onclick='openModal("${film.title}", "${epData}")'>
-                        <div class="poster-wrapper"><img src="${film.img}"></div>
-                        <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
+            data.forEach(item => {
+                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+                $("#grid").append(`
+                    <div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'>
+                        <img src="${item.poster}">
+                        <div class="poster-title">${item.title}</div>
                     </div>
                 `);
             });
+            $(".poster").first().focus();
         });
 </script>
 </body>
