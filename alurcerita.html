@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
 
 <meta charset="utf-8">
@@ -209,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                 <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                     <div class="poster-wrapper">
-                        <img src="${film.img}" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                        <img src="${film.img}" loading="lazy" decoding="async">
                     </div>
                 </a>
                 <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
@@ -218,9 +214,6 @@ document.addEventListener("DOMContentLoaded", function() {
         `).join('');
 
         updateTampilanFavorit();
-        
-        // PENTING: Panggil pasangEventAksi setelah HTML dimasukkan
-        pasangEventAksi();
 
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
@@ -245,6 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Gagal load JSON:", err);
         if (searchBox) searchBox.focus();
     });
+});
 </script>
 </body>
 </html>
