@@ -21,12 +21,14 @@
         .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
         .btn-fav.active { color: #ffcc00; }
         
-        /* CSS Popup */
-        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
-        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
-        .eps-btn:focus { background:#E50914; outline: none; }
+        /* Popup */
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
+        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
     </style>
 </head>
 <body>
