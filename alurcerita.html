@@ -13,7 +13,7 @@
 <meta http-equiv="Expires" content="0" />
 <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>MRZYB TV - Koleksi Film alurcerita</title>
+<title>MRZYB TV - Koleksi Film alur cerita</title>
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -202,50 +202,23 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // --- FETCH DATA DENGAN SISTEM LOAD MORE & ERROR HANDLING ---
     fetch('data/alurcerita.json')
     .then(response => response.json())
     .then(data => {
-        let indexTampil = 0;
-        const perBatch = 20; // Muat 20 film per scroll
+        containerUtama.innerHTML = data.map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                    <div class="poster-wrapper">
+                        <img src="${film.img}" loading="lazy" decoding="async">
+                    </div>
+                </a>
+                <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
+                <div class="film-title">${film.title}</div>
+            </div>
+        `).join('');
 
-        function tampilkanFilm() {
-            const nextBatch = data.slice(indexTampil, indexTampil + perBatch);
-            if (nextBatch.length === 0) return;
+        updateTampilanFavorit();
 
-            const htmlBaru = nextBatch.map(film => `
-                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                    <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
-                        <div class="poster-wrapper">
-                            <img src="${film.img}" loading="lazy" decoding="async" onerror="this.style.display='none'">
-                        </div>
-                    </a>
-                    <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
-                    <div class="film-title">${film.title}</div>
-                </div>
-            `).join('');
-
-            containerUtama.insertAdjacentHTML('beforeend', htmlBaru);
-            
-            // Panggil fungsi asli Anda agar fitur klik/favorit tetap berfungsi pada item baru
-            pasangEventAksi();
-            updateTampilanFavorit();
-            perbaruiStatusTombolBintang();
-            
-            indexTampil += perBatch;
-        }
-
-        // Tampilkan 20 film pertama
-        tampilkanFilm();
-
-        // Deteksi scroll untuk memuat film berikutnya
-        window.addEventListener('scroll', function() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                tampilkanFilm();
-            }
-        });
-
-        // --- FUNGSI FOKUS STB ANDA (TETAP SAMA) ---
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
@@ -269,6 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Gagal load JSON:", err);
         if (searchBox) searchBox.focus();
     });
+});
 </script>
 </body>
 </html>
