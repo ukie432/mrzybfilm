@@ -4,7 +4,7 @@
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-    <title>MRZYB TV - Koleksi Film Jadul</title>
+    <title>MRZYB TV - Koleksi seri animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* CSS Dasar */
@@ -33,7 +33,7 @@
 
 <div class="header-banner"><h1>MRZYB TV</h1></div>
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film jadul...">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film seri animasi...">
 </div>
 
 <div class="section-title" id="favSectionTitle" style="display:none; padding:10px;">FAVORIT SAYA</div>
@@ -51,7 +51,7 @@
 </div>
 
 <script>
-    let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
+    let listFavorit = JSON.parse(localStorage.getItem('j_favorit')) || [];
 
     // 1. Logika Tombol Back (Menangani Popup & Keluar Aplikasi)
     window.addEventListener("keydown", function(e) {
@@ -95,7 +95,7 @@
     }
 
     // 3. Load Data & Render
-    fetch('data/jadul.json')
+    fetch('data/serianimasi.json')
         .then(response => response.json())
         .then(data => {
             data.forEach(film => {
@@ -138,7 +138,7 @@
         const id = $(this).data('target');
         if (listFavorit.includes(id)) listFavorit = listFavorit.filter(i => i !== id);
         else listFavorit.push(id);
-        localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
+        localStorage.setItem('serianimasi_favorit', JSON.stringify(listFavorit));
         updateTampilanFavorit();
     });
 
