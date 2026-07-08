@@ -91,7 +91,7 @@
     };
 
     // 5. Fetch & Render
-    fetch('data/serianimasi.json')
+    fetch('data/jadul.json')
     .then(r => r.json())
     .then(data => {
         data.forEach(film => {
@@ -105,6 +105,12 @@
                 </div>
             `);
         });
+    setTimeout(() => {
+            const posterPertama = document.querySelector('.poster-pertama');
+            if (posterPertama) {
+                posterPertama.focus();
+            }
+        }, 500); // Delay 500ms agar DOM benar-benar siap
     });
 
     // 6. Pencarian
