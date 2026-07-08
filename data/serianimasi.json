@@ -1,6 +1,51 @@
 [
   {
-    
+            "id": "animasi1"
+        "title": "Zom 100: Bucket List of the Dead",        "data_title" "Zom 100: Bucket List of the Dead",
+         "url": "https://posterfilm.pages.dev/poster/film_animasi/Zoom_100.webp",
+         "poster_alt": "Zom 100: Bucket List of the Dead",
+          
+  "episodes": [
+    {
+      "ep": "01",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2001%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "02",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2002%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "03",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2003%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "04",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2004%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "05",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2005%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "06",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2006%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "07",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2007%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "08",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2008%20[Bahasa%20Indonesia].mp4"
+    },
+    {
+      "ep": "09",
+      "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2009%20[Bahasa%20Indonesia].mp4"
+    }
+  ]
+},
+
+  {  
   "title": "Slam Dunk",
   "poster": "https://posterfilm.pages.dev/poster/film_animasi/Slamdunksub.webp",
   "episodes": [
