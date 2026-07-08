@@ -1,256 +1,91 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
-
-    <meta charset="UTF-8">
-    <title>MRZYBtv Series Animasi</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MRZYB TV - Koleksi Film Seri animasi</title>
+    
+    <!-- Load jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
-        
-        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
-        
-        .search-bar-wrapper { 
-            width: 100%; 
-            background: #fff; 
-            border-radius: 20px; 
-            border: 3px solid transparent; 
-            box-sizing: border-box; 
-            display: flex; 
-            align-items: center; 
-            cursor: pointer;
-        }
-        .search-bar-wrapper:focus { border-color: #00c54f; outline: none; }
-        
-        #search { 
-            width: 100%; 
-            padding: 12px 40px 12px 15px; 
-            border: none; 
-            outline: none; 
-            background: transparent; 
-            font-size: 16px; 
-            color: #000; 
-            box-sizing: border-box; 
-        }
-        
-        .clear-search { 
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
-            background: #444; color: #fff; border: none; border-radius: 50%; 
-            width: 22px; height: 22px; font-size: 12px; font-weight: bold; 
-            cursor: pointer; display: none; align-items: center; justify-content: center; 
-            z-index: 12;
-        }
-        .clear-search:focus { background: red; outline: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
+        .header-banner { text-align: center; padding: 20px 0 10px 0; }
+        .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+        .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+        .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none;}
+        .search-box:focus { border-color: #E50914; }
+        .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
+        .section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+        .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
+        .card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; display: block; position: relative; }
+        .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
+        .play-link { display: block; text-decoration: none; outline: none; }
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
+        .btn-fav { width: 100%; padding: 6px 0; background-color: #222; color: #bbb; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
+        .btn-fav:focus { background-color: #E50914; color: #fff; }
+        #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
-        /* Grid & Poster */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 20px; 
-            padding: 20px; 
-        }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
-        .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
-        
-        .poster img { 
-            width: 100%; 
-            aspect-ratio: 3 / 4; 
-            object-fit: cover; 
-            display: block; 
-        }
-        
-        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .poster:focus .poster-title { color: #00c54f; }
-        
-        /* Popup */
-        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
-        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
-        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        /* Popup Styles */
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; cursor: pointer; z-index: 101; }
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
-        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
+        .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="search-container">
-            <div class="search-bar-wrapper" id="search-box" tabindex="0">
-                <input type="text" id="search" disabled placeholder="Cari (Tekan OK/Enter)...">
-            </div>
-            <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
-        </div>
-    </div>
+<div class="header-banner"><h1>MRZYB TV</h1></div>
 
-    <div class="grid" id="grid"></div>
+<div class="search-wrapper">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film Seri animasi..." tabindex="0">
+    <button id="btnClear" class="btn-clear">&times;</button>
+</div>
 
-    <div id="popup">
-        <div class="popup-content" onclick="event.stopPropagation()">
-            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
-            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
-            <div id="eps-list"></div>
-        </div>
+<div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
+<div class="container-film" id="containerFav"></div>
+
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM Seri animasi</div>
+<div class="container-film" id="containerUtama"></div>
+
+<div id="noResultsText">Film tidak ditemukan...</div>
+
+<!-- Popup Modal -->
+<div id="popup">
+    <div class="popup-content" onclick="event.stopPropagation()">
+        <button class="close-x" onclick="closePopup()">X</button>
+        <h2 id="modal-title" style="margin-top:0; color:#fff;"></h2>
+        <div id="eps-list"></div>
     </div>
+</div>
 
 <script>
-    const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
-    const jsonUrl = "data/serianimasi.json"; 
-
-    // ========================================================
-    // LOGIKA PENYELARASAN NATIVE (MENCONTEK KODE YANG BERHASIL)
-    // ========================================================
-    
-    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
-    window.tutupPopUpPoster = function(){
-        window.closePopup();
-    };
-
-    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
-    window.addEventListener('keydown', function(event) {
-        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-            const popupElement = document.getElementById("popup");
-            // Jika popup sedang aktif terbuka di layar
-            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
-                event.preventDefault();
-                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
-                return;
-            }
-        }
-    }, true); 
-
-    // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
-    $(document).on('keydown', function(e) {
-        const activeEl = document.activeElement;
-
-        // Jika menekan ATAS di baris poster pertama, naik ke pencarian
-        if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
-            const index = $('.grid .poster').index(activeEl);
-            if (index < 5) {
-                e.preventDefault();
-                $("#search-box").focus();
-                return false;
-            }
-        }
-
-        // Navigasi internal di dalam Popup
-        if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
-            $('.close-x').focus();
-        } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
-            const currentTitle = $("#modal-title").text();
-            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
-            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-        }
-    });
-
-    // 2. Logika Khusus di Bar Pencarian Utama
-    $("#search-box").on('keydown', function(e) {
-        if (e.keyCode == 13) { 
-            e.preventDefault();
-            $("#search").removeAttr("disabled").focus();
-            return false;
-        }
-        else if (e.keyCode == 40) { 
-            e.preventDefault();
-            $(".poster").first().focus();
-            return false;
-        }
-        else if (e.keyCode == 39 && $("#search").val().length > 0) { 
-            $("#clear-btn").attr("tabindex", "0").focus();
-        }
-    });
-
-    // 3. Logika Saat Mengetik di Dalam Input Asli
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40 || e.keyCode == 13) {
-            $(this).attr("disabled", "disabled");
-            $("#search-box").focus();
-        }
-    });
-
-    // Navigasi di tombol X hapus pencarian
-    $("#clear-btn").on('keydown', function(e) {
-        if (e.keyCode == 37) {
-            $("#search-box").focus();
-        }
-        else if (e.keyCode == 40) {
-            $(this).attr("tabindex", "-1");
-            $(".poster").first().focus();
-        }
-    });
-
-    // Fungsi klik/OK pada tombol X hapus pencarian
-    $("#clear-btn").on('click', function() {
-        $("#search").val(""); 
-        $(".poster").show(); 
-        $(this).css("display", "none").attr("tabindex", "-1"); 
-        $("#search-box").focus();
-    });
-
-    // Logika filter ketikan pencarian
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        
-        if (keyword.length > 0) {
-            $("#clear-btn").css("display", "flex"); 
-        } else {
-            $("#clear-btn").css("display", "none").attr("tabindex", "-1"); 
-        }
-
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-        });
-    });
-
-    // Load Data JSON Utama
-    fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
-            });
-            setTimeout(() => { 
-                const popupElement = document.getElementById("popup");
-                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
-                    $(".poster").first().focus(); 
-                }
-            }, 600);
-            checkLastSession();
-        });
-
-    // FUNGSI BUKA POPUP (MODAL)
-    function openModal(title, epsEncoded) {
-        localStorage.setItem(pageTitle + "_status_popup", "open");
-        localStorage.setItem(pageTitle + "_last_poster_title", title);
-        localStorage.setItem(pageTitle + "_judul_film", title);
-        localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
-
-        // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(true);
-        }
-
-        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+    // FUNGSI POPUP
+    function openModal(title, episodes) {
+        const eps = typeof episodes === 'string' ? JSON.parse(episodes) : episodes;
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach((e, index) => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+            $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
-        
         $("#popup").css("display", "flex");
-        
-        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // FUNGSI PLAY VIDEO
-    function playAndSave(url, index, title) {
-        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+    function closePopup() {
+        $("#popup").css("display", "none");
+    }
+
+    function playVideo(url) {
         if (typeof Android !== "undefined" && Android.playVideo) {
             Android.playVideo(url);
         } else {
@@ -258,54 +93,39 @@
         }
     }
 
-    // FUNGSI TUTUP POPUP (MODAL) - SEKARANG SEJAJAR DENGAN KODE SUKSES KAMU
-    window.closePopup = function() { 
-        // 1. Sembunyikan popup secara instan
-        $("#popup").css("display", "none"); 
-        
-        // 2. Bersihkan penyimpanan lokal
-        localStorage.removeItem(pageTitle + "_status_popup");
-        localStorage.removeItem(pageTitle + "_judul_film");
-        localStorage.removeItem(pageTitle + "_eps_data");
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchBox = document.getElementById('searchBox');
+        const btnClear = document.getElementById('btnClear');
+        const containerUtama = document.getElementById('containerUtama');
 
-        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
-        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
-        if (lastTitle) {
-            setTimeout(() => {
-                $(`.poster[data-title="${lastTitle}"]`).focus();
-            }, 150);
-        }
+        // Fetch data
+        fetch('data/serianimasi.json')
+            .then(response => response.json())
+            .then(data => {
+                containerUtama.innerHTML = data.map(film => `
+                    <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                        <a tabindex="0" class="play-link" href="#" data-title="${film.title.toLowerCase()}" 
+                           onclick='openModal("${film.title}", ${JSON.stringify(film.episodes || [{ep:"Play", url:film.url}])})'>
+                            <div class="poster-wrapper">
+                                <img src="${film.img}" loading="lazy" decoding="async">
+                            </div>
+                        </a>
+                        <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
+                        <div class="film-title">${film.title}</div>
+                    </div>
+                `).join('');
+            });
 
-        // 4. Langsung matikan status gembok popup di sisi Android (Tanpa setTimeout delay)
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
-        }
-    };
-
-    // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
-    function checkLastSession() {
-        if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
-            const title = localStorage.getItem(pageTitle + "_judul_film");
-            const eps = localStorage.getItem(pageTitle + "_eps_data");
-            if(title && eps) openModal(title, eps);
-        }
-    }
-</script>
-
-<script>
-    // Efek Suara Navigasi Remote
-    const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
-
-    function playSound() {
-        soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
-    }
-
-    document.addEventListener('focus', function(e) {
-        if ($(e.target).hasClass('poster') || $(e.target).hasClass('eps-btn') || $(e.target).hasClass('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
-            playSound();
-        }
-    }, true);
+        // Event listener untuk search dan navigasi sederhana
+        searchBox.addEventListener('input', function() {
+            const filterText = searchBox.value.toLowerCase().trim();
+            btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+            document.querySelectorAll('.card-film').forEach(card => {
+                const title = card.querySelector('.play-link').getAttribute('data-title');
+                card.style.display = title.includes(filterText) ? "block" : "none";
+            });
+        });
+    });
 </script>
 </body>
 </html>
