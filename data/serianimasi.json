@@ -1,11 +1,10 @@
 [
   {
-            "id": "animasi1"
-        "title": "Zom 100: Bucket List of the Dead",        "data_title" "Zom 100: Bucket List of the Dead",
-         "url": "https://posterfilm.pages.dev/poster/film_animasi/Zoom_100.webp",
-         "poster_alt": "Zom 100: Bucket List of the Dead",
-          
-  "episodes": [
+            
+"id": "mzfilm_160200",
+    "title": "Zom 100: Bucket List of the Dead",
+    "img": "https://posterfilm.pages.dev/poster/film_animasi/Zoom_100.webp",
+    "episodes": [
     {
       "ep": "01",
       "url": "https://cloud-oyen.eu.org/1:/ZOM%20100%3A%20Bucket%20List%20of%20the%20Dead%20(2023)/Zom%20100%EF%BC%9A%20Bucket%20List%20of%20the%20Dead%20-%20Episode%2001%20[Bahasa%20Indonesia].mp4"
@@ -44,6 +43,7 @@
     }
   ]
 },
+
 
   {  
   "title": "Slam Dunk",
