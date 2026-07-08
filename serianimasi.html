@@ -13,9 +13,7 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 10px; }
         
         .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
-        /* Efek fokus */
         .poster-wrapper:focus { transform: scale(1.05); border: 3px solid #E50914; outline: none; }
-        
         .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; border: 3px solid transparent; }
         .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
@@ -44,14 +42,13 @@
 </div>
 
 <script>
-    // 1. Fungsi Tutup (dengan fokus kembali)
+    // 1. Fungsi Tutup
     window.tutupPopUpPoster = function() {
         $("#popup").css("display", "none");
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
         
         const lastId = localStorage.getItem("last_card_id");
         if (lastId) {
-            // Delay 300ms krusial untuk kestabilan fokus
             setTimeout(() => {
                 const target = document.querySelector(`[data-id="${lastId}"]`);
                 if (target) target.focus();
@@ -59,7 +56,7 @@
         }
     };
 
-    // 2. Event Back (Remote TV)
+    // 2. Event Back
     window.addEventListener('keydown', function(e) {
         if ([4, 27, 10009].includes(e.keyCode)) {
             if ($("#popup").is(":visible")) {
@@ -69,36 +66,32 @@
         }
     }, true);
 
-    // 3. Fungsi Buka
-    function openModal(title, epsEncoded, cardId) {
+    // 3. Fungsi Player
+    window.playVideo = function(url) {
+        if (typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(url);
+        } else {
+            window.open(url, "_blank");
+        }
+    };
+
+    // 4. Fungsi Buka
+    window.openModal = function(title, epsEncoded, cardId) {
         localStorage.setItem("last_card_id", cardId);
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
         
         const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        eps.forEach((e, index) => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+        eps.forEach(e => {
+            $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
-        
         $("#popup").css("display", "flex");
-        
-        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
-    }
+        $(".close-x").focus();
+    };
 
-    // FUNGSI PLAY VIDEO
-    function playAndSave(url, index, title) {
-        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
-        if (typeof Android !== "undefined" && Android.playVideo) {
-            Android.playVideo(url);
-        } else {
-            window.open(url, "_blank");
-        }
-    }
-
-    // 4. Fetch & Render
-    fetch('data/serianimasi.json')
+    // 5. Fetch & Render
+    fetch('data/jadul.json')
     .then(r => r.json())
     .then(data => {
         data.forEach(film => {
@@ -114,7 +107,7 @@
         });
     });
 
-    // 5. Pencarian
+    // 6. Pencarian
     $("#searchBox").on("input", function() {
         const val = $(this).val().toLowerCase();
         $(".card-film").each(function() {
