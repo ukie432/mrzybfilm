@@ -6,18 +6,19 @@
     <title>MRZYB TV - Koleksi Film Jadul</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Gaya CSS Anda */
         body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
         .header-banner { text-align: center; padding: 20px 0; }
         .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
         #searchBox { width: 80%; max-width: 400px; padding: 12px; border: 2px solid #333; border-radius: 8px; background: #141414; color: #fff; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 10px; }
-        .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
-        .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
-        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
-        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Popup Baru */
+        .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
+        /* Efek fokus */
+        .poster-wrapper:focus { transform: scale(1.05); border: 3px solid #E50914; outline: none; }
+        
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; border: 3px solid transparent; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
@@ -43,22 +44,22 @@
 </div>
 
 <script>
-    // FUNGSI POPUP (Global)
+    // 1. Fungsi Tutup (dengan fokus kembali)
     window.tutupPopUpPoster = function() {
         $("#popup").css("display", "none");
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
         
-        // PENTING: Kembalikan fokus ke poster yang tersimpan
         const lastId = localStorage.getItem("last_card_id");
         if (lastId) {
+            // Delay 300ms krusial untuk kestabilan fokus
             setTimeout(() => {
-                const el = document.getElementById(lastId);
-                if(el) el.focus();
-            }, 200);
+                const target = document.querySelector(`[data-id="${lastId}"]`);
+                if (target) target.focus();
+            }, 300);
         }
     };
 
-    // Deteksi tombol Back Remote
+    // 2. Event Back (Remote TV)
     window.addEventListener('keydown', function(e) {
         if ([4, 27, 10009].includes(e.keyCode)) {
             if ($("#popup").is(":visible")) {
@@ -68,6 +69,7 @@
         }
     }, true);
 
+    // 3. Fungsi Buka
     function openModal(title, epsEncoded, cardId) {
         localStorage.setItem("last_card_id", cardId);
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
@@ -82,21 +84,15 @@
         $(".close-x").focus();
     }
 
-    function playVideo(url) {
-        if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
-        else window.open(url, "_blank");
-    }
-
-    // LOAD DATA
+    // 4. Fetch & Render
     fetch('data/serianimasi.json')
     .then(r => r.json())
     .then(data => {
         data.forEach(film => {
             const epsEncoded = encodeURIComponent(JSON.stringify(film.episodes));
-            const cardId = "card-" + film.id;
             $("#containerUtama").append(`
-                <div class="card-film" id="${cardId}">
-                    <div class="poster-wrapper" tabindex="0" onclick="openModal('${film.title.replace(/'/g, "\\'")}', '${epsEncoded}', '${cardId}')">
+                <div class="card-film">
+                    <div class="poster-wrapper" tabindex="0" data-id="${film.id}" onclick="openModal('${film.title.replace(/'/g, "\\'")}', '${epsEncoded}', '${film.id}')">
                         <img src="${film.img}">
                     </div>
                     <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
@@ -105,7 +101,7 @@
         });
     });
 
-    // FITUR PENCARIAN
+    // 5. Pencarian
     $("#searchBox").on("input", function() {
         const val = $(this).val().toLowerCase();
         $(".card-film").each(function() {
