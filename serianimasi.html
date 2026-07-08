@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <title>MRZYB TV - Koleksi Film Jadul</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Gaya Asli Anda */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #000; color: #fff; padding-bottom: 50px; }
+        /* Gaya CSS Anda */
+        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
         .header-banner { text-align: center; padding: 20px 0; }
+        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+        #searchBox { width: 80%; max-width: 400px; padding: 12px; border: 2px solid #333; border-radius: 8px; background: #141414; color: #fff; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 10px; }
-        .card-film { background: #181818; border-radius: 6px; overflow: hidden; }
-        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; border: 2px solid transparent; }
-        .poster-wrapper:focus { border: 2px solid #E50914; outline: none; }
+        .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
+        .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
         .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
-        .btn-fav.active { color: #ffcc00; }
-
-        /* Gaya Popup Baru */
-        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
+        
+        /* Popup Baru */
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; z-index: 101; }
-        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
+        .eps-btn { display:block; width:100%; padding:12px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
         .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
 <div class="header-banner"><h1>MRZYB TV</h1></div>
+<div class="search-wrapper">
+    <input type="text" id="searchBox" placeholder="Cari film...">
+</div>
+
 <div class="grid" id="containerUtama"></div>
 
 <div id="popup">
@@ -42,16 +43,22 @@
 </div>
 
 <script>
-    // FUNGSI POPUP GLOBAL
+    // FUNGSI POPUP (Global)
     window.tutupPopUpPoster = function() {
         $("#popup").css("display", "none");
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
+        
+        // PENTING: Kembalikan fokus ke poster yang tersimpan
         const lastId = localStorage.getItem("last_card_id");
         if (lastId) {
-            setTimeout(() => { document.getElementById(lastId).focus(); }, 150);
+            setTimeout(() => {
+                const el = document.getElementById(lastId);
+                if(el) el.focus();
+            }, 200);
         }
     };
 
+    // Deteksi tombol Back Remote
     window.addEventListener('keydown', function(e) {
         if ([4, 27, 10009].includes(e.keyCode)) {
             if ($("#popup").is(":visible")) {
@@ -65,10 +72,10 @@
         localStorage.setItem("last_card_id", cardId);
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
         
-        const episodes = JSON.parse(decodeURIComponent(epsEncoded));
+        const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        episodes.forEach(e => {
+        eps.forEach(e => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
@@ -92,10 +99,17 @@
                     <div class="poster-wrapper" tabindex="0" onclick="openModal('${film.title.replace(/'/g, "\\'")}', '${epsEncoded}', '${cardId}')">
                         <img src="${film.img}">
                     </div>
-                    <button class="btn-fav">Favorit</button>
                     <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
                 </div>
             `);
+        });
+    });
+
+    // FITUR PENCARIAN
+    $("#searchBox").on("input", function() {
+        const val = $(this).val().toLowerCase();
+        $(".card-film").each(function() {
+            $(this).toggle($(this).text().toLowerCase().includes(val));
         });
     });
 </script>
