@@ -1,61 +1,66 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-    <title>MRZYB TV - Koleksi Seri Animasi</title>
+    <title>MRZYB TV - Koleksi Film seri animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Gaya CSS Tetap */
-        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
-        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
-        .search-box { width: 80%; max-width: 400px; padding: 12px; border-radius: 20px; border: 2px solid #333; background: #141414; color: #fff; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; padding: 20px; }
+        /* Gaya CSS Asli Anda */
+        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
+        .header-banner { text-align: center; padding: 20px 0; }
+        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+        .search-box { width: 80%; max-width: 400px; padding: 12px; border: 2px solid #333; border-radius: 8px; background: #141414; color: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 10px; }
         
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; position: relative; }
-        .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
-        .poster img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
+        .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
+        .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; font-size: 11px; }
         .btn-fav.active { color: #ffcc00; }
 
-        /* Popup */
+        /* Gaya Popup Baru */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; z-index: 101; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
-        .eps-btn:focus { background:#00c54f; outline: none; }
+        .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
-<div class="navbar">
+<div class="header-banner"><h1>MRZYB TV</h1></div>
+<div class="search-wrapper">
     <input type="text" id="searchBox" class="search-box" placeholder="Cari film...">
 </div>
 
-<div id="favSection" style="display:none; padding:20px 20px 0;"><h3>FAVORIT SAYA</h3><div class="grid" id="containerFav"></div></div>
-<div style="padding:20px 20px 0;"><h3>SEMUA FILM</h3></div>
-<div class="grid" id="grid"></div>
+<div class="section-title" id="favSectionTitle" style="padding:10px; display:none;">FAVORIT SAYA</div>
+<div class="grid" id="containerFav"></div>
+
+<div class="section-title" style="padding:10px;">SEMUA FILM</div>
+<div class="grid" id="containerUtama"></div>
 
 <div id="popup">
     <div class="popup-content" onclick="event.stopPropagation()">
         <button class="close-x" onclick="tutupPopUpPoster()">X</button>
-        <h2 id="modal-title"></h2>
+        <h2 id="modal-title" style="margin-top:0; color:white;"></h2>
         <div id="eps-list"></div>
     </div>
 </div>
 
 <script>
-    const pageTitle = "mrzybtv_animasi";
-    let listFavorit = JSON.parse(localStorage.getItem(pageTitle + '_favorit')) || [];
+    let listFavorit = JSON.parse(localStorage.getItem('serianimasi_favorit')) || [];
 
-    // 1. KUNCI NAVIGASI BACK (Agar tidak mental)
+    // --- LOGIKA POPUP & BACK BUTTON ---
     window.tutupPopUpPoster = function() {
         $("#popup").css("display", "none");
-        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
-        if (lastTitle) {
-            setTimeout(() => { $(`.poster[data-title="${lastTitle}"]`).focus(); }, 150);
-        }
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
+        const lastId = localStorage.getItem("last_card_id");
+        if (lastId) {
+            setTimeout(() => { document.getElementById(lastId).focus(); }, 150);
+        }
     };
 
     window.addEventListener('keydown', function(e) {
@@ -67,63 +72,12 @@
         }
     }, true);
 
-    // 2. FUNGSI RENDER (Pencarian & Favorit)
-    function renderGrid(data) {
-        $("#grid").empty();
-        data.forEach(film => {
-            const epData = encodeURIComponent(JSON.stringify(film.episodes));
-            const isFav = listFavorit.includes(film.id);
-            $("#grid").append(`
-                <div class="poster" tabindex="0" data-title="${film.title}" onclick='openModal("${film.title}", "${epData}")'>
-                    <img src="${film.img}">
-                    <button class="btn-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav('${film.id}')">
-                        ${isFav ? '★ Favorit' : '☆ Favorit'}
-                    </button>
-                    <div class="poster-title">${film.title}</div>
-                </div>
-            `);
-        });
-        updateFavSection();
-    }
-
-    // 3. LOGIKA FAVORIT
-    function toggleFav(id) {
-        if (listFavorit.includes(id)) listFavorit = listFavorit.filter(i => i !== id);
-        else listFavorit.push(id);
-        localStorage.setItem(pageTitle + '_favorit', JSON.stringify(listFavorit));
-        renderGrid(window.allData); // Reload grid
-    }
-
-    function updateFavSection() {
-        $("#containerFav").empty();
-        if (listFavorit.length > 0) {
-            $("#favSection").show();
-            // Logika kloning item favorit ke containerFav
-            window.allData.filter(f => listFavorit.includes(f.id)).forEach(film => {
-                // (Logika kloning serupa dengan sebelumnya)
-            });
-        } else {
-            $("#favSection").hide();
-        }
-    }
-
-    // 4. PENCARIAN
-    $("#searchBox").on("input", function() {
-        const val = $(this).val().toLowerCase();
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(val));
-        });
-    });
-
-    // 5. BUKA POPUP
-    function openModal(title, epsEncoded) {
-        localStorage.setItem(pageTitle + "_last_poster_title", title);
+    function openModal(title, episodes, cardId) {
+        localStorage.setItem("last_card_id", cardId);
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
-        
-        const eps = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        eps.forEach(e => {
+        episodes.forEach(e => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
@@ -135,10 +89,40 @@
         else window.open(url, "_blank");
     }
 
-    // Load Awal
-    fetch('data/serianimasi.json').then(r => r.json()).then(data => {
-        window.allData = data;
-        renderGrid(data);
+    // --- LOGIKA FAVORIT & RENDER ---
+    fetch('data/serianimasi.json')
+    .then(r => r.json())
+    .then(data => {
+        data.forEach(film => {
+            const epsEncoded = JSON.stringify(film.episodes);
+            const isFav = listFavorit.includes(film.id);
+            $("#containerUtama").append(`
+                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                    <div class="poster-wrapper" tabindex="0" onclick="openModal('${film.title}', ${epsEncoded}, 'utama-${film.id}')">
+                        <img src="${film.img}">
+                    </div>
+                    <button class="btn-fav ${isFav ? 'active' : ''}" data-target="${film.id}" onclick="toggleFav('${film.id}')">
+                        ${isFav ? '★ Favorit' : '☆ Favorit'}
+                    </button>
+                    <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
+                </div>
+            `);
+        });
+    });
+
+    function toggleFav(id) {
+        if (listFavorit.includes(id)) listFavorit = listFavorit.filter(i => i !== id);
+        else listFavorit.push(id);
+        localStorage.setItem('serianimasi_favorit', JSON.stringify(listFavorit));
+        location.reload(); // Reload sederhana untuk update tampilan
+    }
+
+    // --- PENCARIAN ---
+    $("#searchBox").on("input", function() {
+        const val = $(this).val().toLowerCase();
+        $(".card-film").each(function() {
+            $(this).toggle($(this).text().toLowerCase().includes(val));
+        });
     });
 </script>
 </body>
