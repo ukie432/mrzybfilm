@@ -2,87 +2,69 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>MRZYB TV - Koleksi Film Seri animasi</title>
-    
-    <!-- Load jQuery -->
+    <title>MRZYB TV - Koleksi Film animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
-        .header-banner { text-align: center; padding: 20px 0 10px 0; }
-        .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
-        .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
-        .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none;}
-        .search-box:focus { border-color: #E50914; }
-        .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
-        .section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
-        .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
-        .card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; display: block; position: relative; }
-        .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
-        .play-link { display: block; text-decoration: none; outline: none; }
-        .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
-        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
-        .film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
-        .btn-fav { width: 100%; padding: 6px 0; background-color: #222; color: #bbb; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
-        .btn-fav:focus { background-color: #E50914; color: #fff; }
-        #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
-
-        /* Popup Styles */
+        /* CSS Gabungan dari kedua file Anda */
+        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; }
+        .grid { display: flex; flex-wrap: wrap; padding: 20px; }
+        .card-film { width: 160px; margin: 10px; background: #181818; border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .card-film:focus { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
+        .poster-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; cursor: pointer; z-index: 101; }
-        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
-        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
         .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
-<div class="header-banner"><h1>MRZYB TV</h1></div>
+<div class="grid" id="containerUtama"></div>
 
-<div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film Seri animasi..." tabindex="0">
-    <button id="btnClear" class="btn-clear">&times;</button>
-</div>
-
-<div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
-<div class="container-film" id="containerFav"></div>
-
-<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM Seri animasi</div>
-<div class="container-film" id="containerUtama"></div>
-
-<div id="noResultsText">Film tidak ditemukan...</div>
-
-<!-- Popup Modal -->
 <div id="popup">
-    <div class="popup-content" onclick="event.stopPropagation()">
+    <div class="popup-content">
         <button class="close-x" onclick="closePopup()">X</button>
-        <h2 id="modal-title" style="margin-top:0; color:#fff;"></h2>
+        <h2 id="modal-title"></h2>
         <div id="eps-list"></div>
     </div>
 </div>
 
 <script>
-    // FUNGSI POPUP
-    function openModal(title, episodes) {
-        const eps = typeof episodes === 'string' ? JSON.parse(episodes) : episodes;
+    // 1. Logika Tombol Back (Menangani Popup)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const popup = document.getElementById("popup");
+            if (popup.style.display === "flex") {
+                event.preventDefault();
+                closePopup();
+            } else if (typeof Android !== "undefined" && Android.exitApp) {
+                Android.exitApp();
+            }
+        }
+    });
+
+    // 2. Fungsi Popup
+    function openModal(title, episodes, id) {
+        localStorage.setItem("last_id", id); // Simpan ID untuk fokus kembali
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        eps.forEach((e, index) => {
+        
+        JSON.parse(episodes).forEach((e, index) => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
+        
         $("#popup").css("display", "flex");
+        $(".close-x").focus();
     }
 
     function closePopup() {
         $("#popup").css("display", "none");
+        const lastId = localStorage.getItem("last_id");
+        if (lastId) {
+            setTimeout(() => { document.getElementById(lastId).focus(); }, 100);
+        }
     }
 
     function playVideo(url) {
@@ -93,39 +75,20 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const searchBox = document.getElementById('searchBox');
-        const btnClear = document.getElementById('btnClear');
-        const containerUtama = document.getElementById('containerUtama');
-
-        // Fetch data
-        fetch('data/serianimasi.json')
-            .then(response => response.json())
-            .then(data => {
-                containerUtama.innerHTML = data.map(film => `
-                    <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                        <a tabindex="0" class="play-link" href="#" data-title="${film.title.toLowerCase()}" 
-                           onclick='openModal("${film.title}", ${JSON.stringify(film.episodes || [{ep:"Play", url:film.url}])})'>
-                            <div class="poster-wrapper">
-                                <img src="${film.img}" loading="lazy" decoding="async">
-                            </div>
-                        </a>
-                        <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
-                        <div class="film-title">${film.title}</div>
+    // 3. Load Data
+    fetch('data/serianimasi.json')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(film => {
+                const epData = JSON.stringify(film.episodes || [{ep:"Play", url:film.url}]);
+                $("#containerUtama").append(`
+                    <div class="card-film" id="${film.id}" tabindex="0" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
+                        <img class="poster-img" src="${film.img}">
+                        <div style="padding:10px">${film.title}</div>
                     </div>
-                `).join('');
-            });
-
-        // Event listener untuk search dan navigasi sederhana
-        searchBox.addEventListener('input', function() {
-            const filterText = searchBox.value.toLowerCase().trim();
-            btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
-            document.querySelectorAll('.card-film').forEach(card => {
-                const title = card.querySelector('.play-link').getAttribute('data-title');
-                card.style.display = title.includes(filterText) ? "block" : "none";
+                `);
             });
         });
-    });
 </script>
 </body>
 </html>
