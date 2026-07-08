@@ -202,72 +202,77 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // --- SCRIPT OPTIMASI ---
+// --- FETCH ASLI YANG ANDA YAKINI BERJALAN ---
 fetch('data/alurcerita.json')
 .then(response => response.json())
 .then(data => {
-    let index = 0;
-    const step = 20; // 20 film per muat
-    
-    // Fungsi untuk menambah kartu film ke dalam container utama
-    function tambahFilm() {
-        const target = data.slice(index, index + step);
-        if (target.length === 0) return;
+    // Menambahkan variabel untuk kontrol lazy loading
+    let indexTampil = 20; 
 
-        let html = "";
-        target.forEach(film => {
-            html += `
+    // Fungsi render data
+    function renderFilm(filmList) {
+        return filmList.map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                 <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                     <div class="poster-wrapper">
-                        <img src="${film.img}" loading="lazy" decoding="async" onerror="this.style.display='none'" alt="${film.title}">
+                        <img src="${film.img}" loading="lazy" decoding="async" onerror="this.style.display='none'">
                     </div>
                 </a>
                 <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
                 <div class="film-title">${film.title}</div>
-            </div>`;
-        });
-
-        // Gunakan insertAdjacentHTML agar fungsi asli tidak terganggu
-        containerUtama.insertAdjacentHTML('beforeend', html);
-        
-        index += step;
-        
-        // Panggil fungsi pendukung asli Anda agar fitur klik tetap jalan
-        pasangEventAksi();
-        perbaruiStatusTombolBintang();
+            </div>
+        `).join('');
     }
 
-    // Load Batch pertama
-    tambahFilm();
+    // Tampilkan 20 data awal saja
+    containerUtama.innerHTML = renderFilm(data.slice(0, indexTampil));
 
-    // Event Scroll
+    // Pasang fungsi pendukung Anda
+    pasangEventAksi();
+    updateTampilanFavorit();
+    perbaruiStatusTombolBintang();
+
+    // --- FITUR LAZY LOADING (TAMBAHAN) ---
+    // Cukup tambahkan event listener untuk memuat sisa data saat di-scroll
     window.addEventListener('scroll', () => {
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-            tambahFilm();
+            if (indexTampil < data.length) {
+                const sisaData = data.slice(indexTampil, indexTampil + 20);
+                containerUtama.insertAdjacentHTML('beforeend', renderFilm(sisaData));
+                
+                // Panggil ulang event agar film baru bisa diklik
+                pasangEventAksi();
+                perbaruiStatusTombolBintang();
+                
+                indexTampil += 20;
+            }
         }
     });
 
-    updateTampilanFavorit();
-
-    // Fokus STB (Fungsi asli)
+    // --- FUNGSI FOKUS STB ANDA ---
     setTimeout(() => {
-        const status = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
-        const idLast = localStorage.getItem("alurcerita_idPosterTerakhir");
-        if (status === "ya" && idLast) {
-            const target = document.getElementById(idLast);
-            if (target) {
-                target.querySelector('.play-link').focus();
-                target.scrollIntoView({ behavior: "auto", block: "center" });
-                localStorage.removeItem("alurcerita_sedangNontonVideoSTB");
-                localStorage.removeItem("alurcerita_idPosterTerakhir");
+        const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
+        const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
+        if (statusNontonSTB === "ya" && idPosterTerakhir) {
+            const targetPoster = document.getElementById(idPosterTerakhir);
+            if (targetPoster) {
+                const tombolPlay = targetPoster.querySelector('.play-link');
+                if (tombolPlay) {
+                    tombolPlay.focus();
+                    targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                    localStorage.removeItem("alurcerita_sedangNontonVideoSTB");
+                    localStorage.removeItem("alurcerita_idPosterTerakhir");
+                    return;
+                }
             }
-        } else if (searchBox) {
-            searchBox.focus();
         }
-    }, 500);
+        if (searchBox) searchBox.focus();
+    }, 180);
 })
-.catch(err => console.error("Error Load:", err));
+.catch(err => {
+    console.error("Gagal load JSON:", err);
+    if (searchBox) searchBox.focus();
+});
 </script>
 </body>
 </html>
