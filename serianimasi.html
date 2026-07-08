@@ -44,28 +44,34 @@
 <div class="section-title" style="padding:10px;">SEMUA FILM</div>
 <div class="container-film" id="containerUtama"></div>
 
-<div id="popup">
-    <div class="popup-content">
-        <button class="close-x" onclick="closePopup()">X</button>
-        <h2 id="modal-title"></h2>
-        <div id="eps-list"></div>
+ <div id="popup">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
+            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
+            <div id="eps-list"></div>
+        </div>
     </div>
-</div>
 
 <script>
     let listFavorit = JSON.parse(localStorage.getItem('j_favorit')) || [];
 
-    // 1. Logika Tombol Back (Menangani Popup & Keluar Aplikasi)
-    window.addEventListener("keydown", function(e) {
-        if (e.keyCode === 4 || e.keyCode === 27 || e.keyCode === 10009) {
-            if ($("#popup").is(":visible")) {
-                e.preventDefault();
-                closePopup();
-            } else if (typeof Android !== "undefined" && Android.exitApp) {
-                Android.exitApp();
+    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
+    window.tutupPopUpPoster = function(){
+        window.closePopup();
+    };
+
+    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const popupElement = document.getElementById("popup");
+            // Jika popup sedang aktif terbuka di layar
+            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+                event.preventDefault();
+                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
+                return;
             }
         }
-    });
+    }, true); 
 
     // 2. Fungsi Popup
     function openModal(title, episodesEncoded, id) {
