@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRZYB TV - Koleksi Film animasi</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <title>MRZYB TV - Koleksi Film Jadul</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* CSS Gabungan */
-        body { font-family: sans-serif; background-color: #000; color: #fff; margin: 0; padding-bottom: 50px; }
+        /* CSS Dasar */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #000; color: #fff; padding-bottom: 50px; }
         .header-banner { text-align: center; padding: 20px 0; }
-        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; position: relative; }
-        .search-box { width: 80%; max-width: 400px; padding: 12px; border-radius: 8px; border: 2px solid #333; background: #141414; color: #fff; outline: none; }
+        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+        .search-box { width: 80%; max-width: 400px; padding: 12px; border-radius: 8px; border: 2px solid #333; background: #141414; color: #fff; }
         .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
         .card-film { width: 140px; margin: 7px; background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
         .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
@@ -19,7 +21,7 @@
         .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
         .btn-fav.active { color: #ffcc00; }
         
-        /* Popup */
+        /* CSS Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
@@ -31,13 +33,13 @@
 
 <div class="header-banner"><h1>MRZYB TV</h1></div>
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film...">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film jadul...">
 </div>
 
 <div class="section-title" id="favSectionTitle" style="display:none; padding:10px;">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
-<div class="section-title" id="utamaSectionTitle" style="padding:10px;">SEMUA FILM</div>
+<div class="section-title" style="padding:10px;">SEMUA FILM</div>
 <div class="container-film" id="containerUtama"></div>
 
 <div id="popup">
@@ -49,7 +51,9 @@
 </div>
 
 <script>
-    // 1. Logika Tombol Back
+    let listFavorit = JSON.parse(localStorage.getItem('jadul_favorit')) || [];
+
+    // 1. Logika Tombol Back (Menangani Popup & Keluar Aplikasi)
     window.addEventListener("keydown", function(e) {
         if (e.keyCode === 4 || e.keyCode === 27 || e.keyCode === 10009) {
             if ($("#popup").is(":visible")) {
@@ -62,11 +66,12 @@
     });
 
     // 2. Fungsi Popup
-    function openModal(title, episodes, id) {
+    function openModal(title, episodesEncoded, id) {
         localStorage.setItem("last_id", id);
+        const eps = JSON.parse(decodeURIComponent(episodesEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        JSON.parse(episodes).forEach((e, index) => {
+        eps.forEach((e, index) => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
         $("#popup").css("display", "flex");
@@ -90,14 +95,14 @@
     }
 
     // 3. Load Data & Render
-    fetch('data/serianimasi.json')
+    fetch('data/jadul.json')
         .then(response => response.json())
         .then(data => {
             data.forEach(film => {
-                const epData = JSON.stringify(film.episodes || [{ep:"Play", url:film.url}]);
+                const epData = encodeURIComponent(JSON.stringify(film.episodes || [{ep:"Play", url:film.url}]));
                 $("#containerUtama").append(`
-                    <div class="card-film" id="${film.id}" data-id="${film.id}" tabindex="0">
-                        <div class="poster-wrapper" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
+                    <div class="card-film" data-id="${film.id}" id="${film.id}" tabindex="0">
+                        <div class="poster-wrapper" onclick='openModal("${film.title}", "${epData}", "${film.id}")'>
                             <img src="${film.img}">
                         </div>
                         <button class="btn-fav" data-target="${film.id}">☆ Favorit</button>
@@ -105,9 +110,39 @@
                     </div>
                 `);
             });
+            updateTampilanFavorit();
         });
 
-    // 4. Fitur Pencarian
+    // 4. Logika Favorit
+    function updateTampilanFavorit() {
+        $("#containerFav").empty();
+        if (listFavorit.length === 0) {
+            $("#favSectionTitle").hide();
+        } else {
+            $("#favSectionTitle").show();
+            listFavorit.forEach(id => {
+                const item = $(`#${id}`).clone();
+                item.attr('id', 'fav-' + id);
+                $("#containerFav").append(item);
+            });
+        }
+        $(".btn-fav").each(function() {
+            const id = $(this).data('target');
+            $(this).toggleClass('active', listFavorit.includes(id));
+            $(this).html(listFavorit.includes(id) ? "★ Favorit" : "☆ Favorit");
+        });
+    }
+
+    $(document).on('click', '.btn-fav', function(e) {
+        e.stopPropagation();
+        const id = $(this).data('target');
+        if (listFavorit.includes(id)) listFavorit = listFavorit.filter(i => i !== id);
+        else listFavorit.push(id);
+        localStorage.setItem('jadul_favorit', JSON.stringify(listFavorit));
+        updateTampilanFavorit();
+    });
+
+    // 5. Fitur Pencarian
     $("#searchBox").on("input", function() {
         const val = $(this).val().toLowerCase();
         $(".card-film").each(function() {
