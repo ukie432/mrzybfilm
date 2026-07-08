@@ -3,22 +3,21 @@
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-    <title>MRZYB TV - Koleksi Film seri animasi</title>
+    <title>MRZYB TV - Koleksi Film Jadul</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Gaya CSS Asli Anda */
-        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
+        /* Gaya Asli Anda */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #000; color: #fff; padding-bottom: 50px; }
         .header-banner { text-align: center; padding: 20px 0; }
-        .search-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
-        .search-box { width: 80%; max-width: 400px; padding: 12px; border: 2px solid #333; border-radius: 8px; background: #141414; color: #fff; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 10px; }
-        
-        .card-film { background: #181818; border-radius: 6px; overflow: hidden; position: relative; }
-        .card-film:focus-within { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
-        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; }
+        .card-film { background: #181818; border-radius: 6px; overflow: hidden; }
+        .poster-wrapper { width: 100%; aspect-ratio: 2/3; cursor: pointer; border: 2px solid transparent; }
+        .poster-wrapper:focus { border: 2px solid #E50914; outline: none; }
         .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; font-size: 11px; }
+        .btn-fav { width: 100%; padding: 6px; background: #222; color: #bbb; border: none; cursor: pointer; }
         .btn-fav.active { color: #ffcc00; }
 
         /* Gaya Popup Baru */
@@ -32,14 +31,6 @@
 <body>
 
 <div class="header-banner"><h1>MRZYB TV</h1></div>
-<div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film...">
-</div>
-
-<div class="section-title" id="favSectionTitle" style="padding:10px; display:none;">FAVORIT SAYA</div>
-<div class="grid" id="containerFav"></div>
-
-<div class="section-title" style="padding:10px;">SEMUA FILM</div>
 <div class="grid" id="containerUtama"></div>
 
 <div id="popup">
@@ -51,9 +42,7 @@
 </div>
 
 <script>
-    let listFavorit = JSON.parse(localStorage.getItem('serianimasi_favorit')) || [];
-
-    // --- LOGIKA POPUP & BACK BUTTON ---
+    // FUNGSI POPUP GLOBAL
     window.tutupPopUpPoster = function() {
         $("#popup").css("display", "none");
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(false);
@@ -72,9 +61,11 @@
         }
     }, true);
 
-    function openModal(title, episodes, cardId) {
+    function openModal(title, epsEncoded, cardId) {
         localStorage.setItem("last_card_id", cardId);
         if (typeof Android !== "undefined" && Android.setPopUpStatus) Android.setPopUpStatus(true);
+        
+        const episodes = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
         $("#eps-list").empty();
         episodes.forEach(e => {
@@ -89,39 +80,22 @@
         else window.open(url, "_blank");
     }
 
-    // --- LOGIKA FAVORIT & RENDER ---
-    fetch('data/serianimasi.json')
+    // LOAD DATA
+    fetch('data/jadul.json')
     .then(r => r.json())
     .then(data => {
         data.forEach(film => {
-            const epsEncoded = JSON.stringify(film.episodes);
-            const isFav = listFavorit.includes(film.id);
+            const epsEncoded = encodeURIComponent(JSON.stringify(film.episodes));
+            const cardId = "card-" + film.id;
             $("#containerUtama").append(`
-                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                    <div class="poster-wrapper" tabindex="0" onclick="openModal('${film.title}', ${epsEncoded}, 'utama-${film.id}')">
+                <div class="card-film" id="${cardId}">
+                    <div class="poster-wrapper" tabindex="0" onclick="openModal('${film.title.replace(/'/g, "\\'")}', '${epsEncoded}', '${cardId}')">
                         <img src="${film.img}">
                     </div>
-                    <button class="btn-fav ${isFav ? 'active' : ''}" data-target="${film.id}" onclick="toggleFav('${film.id}')">
-                        ${isFav ? '★ Favorit' : '☆ Favorit'}
-                    </button>
+                    <button class="btn-fav">Favorit</button>
                     <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
                 </div>
             `);
-        });
-    });
-
-    function toggleFav(id) {
-        if (listFavorit.includes(id)) listFavorit = listFavorit.filter(i => i !== id);
-        else listFavorit.push(id);
-        localStorage.setItem('serianimasi_favorit', JSON.stringify(listFavorit));
-        location.reload(); // Reload sederhana untuk update tampilan
-    }
-
-    // --- PENCARIAN ---
-    $("#searchBox").on("input", function() {
-        const val = $(this).val().toLowerCase();
-        $(".card-film").each(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(val));
         });
     });
 </script>
