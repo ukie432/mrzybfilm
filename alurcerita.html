@@ -31,6 +31,8 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
 .play-link { display: block; text-decoration: none; outline: none; }
 
+.poster-wrapper img { display: block; }
+
 .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
 .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 .film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
@@ -202,16 +204,17 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-// --- FETCH ASLI YANG ANDA YAKINI BERJALAN ---
-fetch('data/alurcerita.json')
-.then(response => response.json())
-.then(data => {
-    // Menambahkan variabel untuk kontrol lazy loading
-    let indexTampil = 20; 
-
-    // Fungsi render data
-    function renderFilm(filmList) {
-        return filmList.map(film => `
+// --- FETCH ASLI ANDA ---
+    fetch('data/alurcerita.json')
+    .then(response => response.json())
+    .then(data => {
+        // --- 1. TAMBAHKAN CSS UNTUK MENGHILANGKAN IKON SILANG ---
+        // Masukkan ini di dalam <style> Anda:
+        // img { display: block; }
+        // img[src=""], img:not([src]) { display: none; }
+        
+        // --- 2. RENDER SEMUA FILM (KARENA INI PALING AMAN AGAR TIDAK GAGAL) ---
+        containerUtama.innerHTML = data.map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                 <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                     <div class="poster-wrapper">
@@ -222,57 +225,33 @@ fetch('data/alurcerita.json')
                 <div class="film-title">${film.title}</div>
             </div>
         `).join('');
-    }
 
-    // Tampilkan 20 data awal saja
-    containerUtama.innerHTML = renderFilm(data.slice(0, indexTampil));
+        updateTampilanFavorit();
 
-    // Pasang fungsi pendukung Anda
-    pasangEventAksi();
-    updateTampilanFavorit();
-    perbaruiStatusTombolBintang();
-
-    // --- FITUR LAZY LOADING (TAMBAHAN) ---
-    // Cukup tambahkan event listener untuk memuat sisa data saat di-scroll
-    window.addEventListener('scroll', () => {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-            if (indexTampil < data.length) {
-                const sisaData = data.slice(indexTampil, indexTampil + 20);
-                containerUtama.insertAdjacentHTML('beforeend', renderFilm(sisaData));
-                
-                // Panggil ulang event agar film baru bisa diklik
-                pasangEventAksi();
-                perbaruiStatusTombolBintang();
-                
-                indexTampil += 20;
-            }
-        }
-    });
-
-    // --- FUNGSI FOKUS STB ANDA ---
-    setTimeout(() => {
-        const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
-        const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
-        if (statusNontonSTB === "ya" && idPosterTerakhir) {
-            const targetPoster = document.getElementById(idPosterTerakhir);
-            if (targetPoster) {
-                const tombolPlay = targetPoster.querySelector('.play-link');
-                if (tombolPlay) {
-                    tombolPlay.focus();
-                    targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                    localStorage.removeItem("alurcerita_sedangNontonVideoSTB");
-                    localStorage.removeItem("alurcerita_idPosterTerakhir");
-                    return;
+        // Fokus STB (Fungsi asli Anda)
+        setTimeout(() => {
+            const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
+            const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
+            if (statusNontonSTB === "ya" && idPosterTerakhir) {
+                const targetPoster = document.getElementById(idPosterTerakhir);
+                if (targetPoster) {
+                    const tombolPlay = targetPoster.querySelector('.play-link');
+                    if (tombolPlay) {
+                        tombolPlay.focus();
+                        targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                        localStorage.removeItem("alurcerita_sedangNontonVideoSTB");
+                        localStorage.removeItem("alurcerita_idPosterTerakhir");
+                        return;
+                    }
                 }
             }
-        }
+            if (searchBox) searchBox.focus();
+        }, 180);
+    })
+    .catch(err => {
+        console.error("Gagal load JSON:", err);
         if (searchBox) searchBox.focus();
-    }, 180);
-})
-.catch(err => {
-    console.error("Gagal load JSON:", err);
-    if (searchBox) searchBox.focus();
-});
+    });
 </script>
 </body>
 </html>
