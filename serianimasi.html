@@ -90,22 +90,14 @@
         $(".close-x").focus();
     }
 
-    window.closePopup = function() { 
-        // 1. Sembunyikan popup secara instan
-        $("#popup").css("display", "none"); 
-        
-        // 2. Bersihkan penyimpanan lokal
-        localStorage.removeItem(pageTitle + "_status_popup");
-        localStorage.removeItem(pageTitle + "_judul_film");
-        localStorage.removeItem(pageTitle + "_eps_data");
-
-        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
-        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
-        if (lastTitle) {
-            setTimeout(() => {
-                $(`.poster[data-title="${lastTitle}"]`).focus();
-            }, 150);
+    function closePopup() {
+        $("#popup").css("display", "none");
+        const lastId = localStorage.getItem("last_id");
+        if (lastId) {
+            setTimeout(() => { document.getElementById(lastId).focus(); }, 150);
         }
+    }
+
     function playVideo(url) {
         if (typeof Android !== "undefined" && Android.playVideo) {
             Android.playVideo(url);
