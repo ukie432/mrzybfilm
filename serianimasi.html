@@ -5,24 +5,36 @@
     <title>MRZYB TV - Koleksi Film animasi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* CSS Gabungan dari kedua file Anda */
-        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; }
-        .grid { display: flex; flex-wrap: wrap; padding: 20px; }
-        .card-film { width: 160px; margin: 10px; background: #181818; border-radius: 8px; overflow: hidden; cursor: pointer; }
-        .card-film:focus { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
-        .poster-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        /* Gaya Dasar */
+        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
+        .header { text-align: center; padding: 20px; }
+        .search-wrapper { text-align: center; margin-bottom: 20px; }
+        .search-box { padding: 10px; width: 80%; max-width: 400px; border-radius: 20px; border: none; }
         
+        /* Grid Poster */
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
+        .card-film { width: 150px; background: #181818; border-radius: 8px; overflow: hidden; }
+        .card-film:focus { transform: scale(1.05); border: 2px solid #E50914; outline: none; }
+        .poster-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; cursor: pointer; }
+        
+        /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #E50914; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; cursor: pointer; }
+        .close-x { position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: red; color: white; border-radius: 50%; border: none; cursor: pointer; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; color:white; border:none; text-align: left; }
         .eps-btn:focus { background:#E50914; outline: none; }
     </style>
 </head>
 <body>
 
+<div class="header"><h1>MRZYB TV</h1></div>
+<div class="search-wrapper">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film...">
+</div>
+
 <div class="grid" id="containerUtama"></div>
 
+<!-- Popup -->
 <div id="popup">
     <div class="popup-content">
         <button class="close-x" onclick="closePopup()">X</button>
@@ -33,11 +45,10 @@
 
 <script>
     // 1. Logika Tombol Back (Menangani Popup)
-    window.addEventListener('keydown', function(event) {
-        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-            const popup = document.getElementById("popup");
-            if (popup.style.display === "flex") {
-                event.preventDefault();
+    window.addEventListener('keydown', function(e) {
+        if (e.keyCode === 4 || e.keyCode === 27 || e.keyCode === 10009) {
+            if ($("#popup").is(":visible")) {
+                e.preventDefault();
                 closePopup();
             } else if (typeof Android !== "undefined" && Android.exitApp) {
                 Android.exitApp();
@@ -47,21 +58,19 @@
 
     // 2. Fungsi Popup
     function openModal(title, episodes, id) {
-        localStorage.setItem("last_id", id); // Simpan ID untuk fokus kembali
+        localStorage.setItem("last_focus_id", id);
         $("#modal-title").text(title);
         $("#eps-list").empty();
-        
-        JSON.parse(episodes).forEach((e, index) => {
+        JSON.parse(episodes).forEach(e => {
             $("#eps-list").append(`<button class="eps-btn" onclick="playVideo('${e.url}')">${e.ep}</button>`);
         });
-        
         $("#popup").css("display", "flex");
         $(".close-x").focus();
     }
 
     function closePopup() {
         $("#popup").css("display", "none");
-        const lastId = localStorage.getItem("last_id");
+        const lastId = localStorage.getItem("last_focus_id");
         if (lastId) {
             setTimeout(() => { document.getElementById(lastId).focus(); }, 100);
         }
@@ -75,20 +84,38 @@
         }
     }
 
-    // 3. Load Data
+    // 3. Load Data & Fitur
     fetch('data/serianimasi.json')
         .then(response => response.json())
         .then(data => {
             data.forEach(film => {
                 const epData = JSON.stringify(film.episodes || [{ep:"Play", url:film.url}]);
                 $("#containerUtama").append(`
-                    <div class="card-film" id="${film.id}" tabindex="0" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
-                        <img class="poster-img" src="${film.img}">
-                        <div style="padding:10px">${film.title}</div>
+                    <div class="card-film" id="${film.id}" tabindex="0">
+                        <img class="poster-img" src="${film.img}" onclick='openModal("${film.title}", \`${epData}\`, "${film.id}")'>
+                        <div style="padding:5px; font-size:12px; text-align:center">${film.title}</div>
+                        <button class="btn-fav" onclick="toggleFav('${film.id}')">★</button>
                     </div>
                 `);
             });
         });
+
+    // 4. Fitur Pencarian
+    $("#searchBox").on("input", function() {
+        const val = $(this).val().toLowerCase();
+        $(".card-film").each(function() {
+            $(this).toggle($(this).text().toLowerCase().includes(val));
+        });
+    });
+
+    // 5. Fitur Favorit (Simpel)
+    function toggleFav(id) {
+        let favs = JSON.parse(localStorage.getItem('favs') || '[]');
+        if (favs.includes(id)) favs = favs.filter(i => i !== id);
+        else favs.push(id);
+        localStorage.setItem('favs', JSON.stringify(favs));
+        alert("Favorit diperbarui!");
+    }
 </script>
 </body>
 </html>
