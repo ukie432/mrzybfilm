@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    
-<link rel="preconnect" href="https://posterfilm.pages.dev">
 
+    <link rel="preconnect" href="https://posterfilm.pages.dev">
 <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
 
@@ -237,12 +235,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-            if (searchBox) searchBox.focus();
+            const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
         }, 180);
     })
     .catch(err => {
         console.error("Gagal load JSON:", err);
-        if (searchBox) searchBox.focus();
+        const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
     });
 });
 </script>
