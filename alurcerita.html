@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <link rel="preconnect" href="https://posterfilm.pages.dev">
 <link rel="preconnect" href="https://iptv-posterku.pages.dev">
@@ -222,6 +221,8 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
+            
+            // 1. Prioritas: Kembali ke posisi terakhir jika baru saja selesai nonton
             if (statusNontonSTB === "ya" && idPosterTerakhir) {
                 const targetPoster = document.getElementById(idPosterTerakhir);
                 if (targetPoster) {
@@ -235,7 +236,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-            if (searchBox) searchBox.focus();
+
+            // 2. Default: Fokus ke poster pertama jika tidak sedang kembali dari menonton
+            const posterPertama = document.querySelector('#containerUtama .card-film .play-link');
+            if (posterPertama) {
+                posterPertama.focus();
+            }
         }, 180);
     })
     .catch(err => {
