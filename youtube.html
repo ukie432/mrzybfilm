@@ -46,11 +46,6 @@
 
   var player = plyr.setup(".js-player")[0];
 
-  // Matikan kontrol keyboard bawaan Plyr agar remote tidak bentrok
-  player.on('ready', event => {
-    document.removeEventListener('keydown', player.keyboard);
-  });
-
   function renderPlaylist(list) {
     let html = list.map(v => `
       <li tabindex="0" onclick="openPlayer('${v.src}')">
@@ -63,7 +58,7 @@
 
   function openPlayer(id) {
     $("#player-overlay").show();
-    $(".close-btn").focus(); // Fokus ke tombol tutup agar remote terkunci di sini
+    $(".close-btn").focus(); 
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
     setTimeout(() => player.play(), 500);
   }
@@ -71,30 +66,31 @@
   function closePlayer() {
     $("#player-overlay").hide();
     player.stop();
-    $("#playlist li:first").focus(); // Kembalikan fokus ke poster
+    // Mengembalikan fokus ke playlist utama
+    $("#playlist li:first").focus();
   }
 
-  // Menangani tombol Back remote (ESC/Back) dan Panah
+  // Menangani tombol di keyboard/remote
   $(document).keydown(function(e) {
+    // Jika player terbuka, tombol Back/Esc menutup player
     if ($("#player-overlay").is(":visible")) {
-      // 27 = ESC, 8 = Backspace (Sering digunakan tombol Back di STB)
-      if (e.keyCode === 27 || e.keyCode === 8) {
+      if (e.keyCode === 8 || e.keyCode === 27) {
         closePlayer();
-      }
-      // Mencegah panah mengganti volume jika player sedang terbuka
-      if (e.keyCode >= 37 && e.keyCode <= 40) {
-        // e.preventDefault(); 
       }
     }
   });
 
+  // Tombol Enter pada remote menekan poster
+  $(document).on('keydown', 'li', function(e) {
+    if (e.keyCode === 13) {
+      $(this).trigger('click');
+    }
+  });
+
+  // Fitur Pencarian
   $("#searchInput").on("input", function() {
     let val = $(this).val().toLowerCase();
     renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
-  });
-
-  $(document).on('keydown', 'li', function(e) {
-    if (e.keyCode === 13) $(this).trigger('click');
   });
 
   $(document).ready(() => renderPlaylist(myPlaylist));
