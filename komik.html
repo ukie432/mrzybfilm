@@ -2,37 +2,58 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+    <link rel="preconnect" href="https://posterfilm.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
     <meta charset="UTF-8">
     <title>MRZYBtv Series - Comic Edition</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <style>
-        /* CSS ASLI ANDA */
         *, *::before, *::after { box-sizing: border-box; }
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow-x: hidden; }
+        
+        /* Katalog */
         #home-view { display: block; width: 100%; min-height: 100vh; }
+        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
-        .poster img { width: 100%; height: 200px; object-fit: cover; }
-        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #4a90e2; }
-        .eps-btn { display:block; width:100%; padding:14px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 6px; }
+        .poster:focus { transform: scale(1.1); border-color: #4a90e2; outline: none; }
+        .poster img { width: 100%; height: 200px; object-fit: cover; pointer-events: none; }
+        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* CSS READER VERTIKAL (Update) */
+        /* Popup */
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #4a90e2; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .eps-btn { display:block; width:100%; padding:14px 10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 6px; }
+        .eps-btn:focus { background:#4a90e2; outline: none; }
+
+        /* Reader Vertikal */
         #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 500; overflow-y: auto; }
         .swiper { width: 100%; height: 100%; }
-        .swiper-slide { height: auto; display: flex; flex-direction: column; align-items: center; }
+        .swiper-slide { height: auto; display: flex; flex-direction: column; align-items: center; background: #000; }
         .spread-container { display: flex; flex-direction: column; width: 100%; align-items: center; }
-        .spread-container img { width: 100%; max-width: 800px; display: block; margin: 0; border: none; }
+        .spread-container img { width: 100%; max-width: 800px; display: block; border: none; margin: 0; padding-bottom: 5px; }
+        
         .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; }
-        .menu-btn-tv { background: #333; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+        .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .menu-btn-tv:focus { background: red; border-color: white; transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <div id="home-view"><div class="grid" id="grid"></div></div>
+    <div id="home-view">
+        <div class="navbar"><h3>MRZYBtv Comic Collection</h3></div>
+        <div class="grid" id="grid"></div>
+    </div>
 
-    <div id="popup"><div class="popup-content"><h2 id="modal-title"></h2><div id="eps-list"></div></div></div>
+    <div id="popup" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-x" onclick="closePopup()">X</button>
+            <h2 id="modal-title"></h2>
+            <div id="eps-list"></div>
+        </div>
+    </div>
 
     <div id="reader-view">
         <div class="tv-trigger-zone"><button class="menu-btn-tv" id="exitReaderBtn">X KEMBALI</button></div>
@@ -41,33 +62,43 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
+    const jsonUrl = "data/komik.json";
     let swiperInstance = null;
 
-    // --- FUNGSI READER VERTIKAL YANG SUDAH TERINTEGRASI ---
-    function openComicPlayer(index) {
-        const title = localStorage.getItem("judul_film");
-        const edisiEncoded = localStorage.getItem("eps_data");
-        const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
-        const activeEdisi = edisiList[index];
+    // Load Data
+    fetch(jsonUrl).then(r => r.json()).then(data => {
+        (data.komik_list || data).forEach(item => {
+            const ed = encodeURIComponent(JSON.stringify(item.edisi));
+            $("#grid").append(`<div class="poster" tabindex="0" onclick='openModal("${item.title}", "${ed}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
+        });
+    });
 
-        $("#home-view").hide();
-        $("#popup").hide();
+    function openModal(title, ed) {
+        localStorage.setItem("judul_film", title);
+        localStorage.setItem("eps_data", ed);
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        JSON.parse(decodeURIComponent(ed)).forEach((e, i) => {
+            $("#eps-list").append(`<button class="eps-btn" onclick="openComicPlayer(${i})">${e.nama}</button>`);
+        });
+        $("#popup").css("display", "flex");
+    }
+
+    function closePopup() { $("#popup").hide(); }
+
+    function openComicPlayer(index) {
+        const edisi = JSON.parse(decodeURIComponent(localStorage.getItem("eps_data")))[index];
+        $("#home-view, #popup").hide();
         $("#reader-view").show();
         
-        const wrapper = $("#swiperWrapperContainer");
-        wrapper.empty(); 
+        const wrapper = $("#swiperWrapperContainer").empty();
+        const slide = $('<div class="swiper-slide"></div>');
+        const container = $('<div class="spread-container"></div>');
 
-        const slideDiv = $('<div class="swiper-slide"></div>');
-        const spreadContainer = $('<div class="spread-container"></div>');
+        edisi.slides.forEach(s => s.pages.forEach(p => container.append(`<img src="${p.image_url}">`)));
 
-        activeEdisi.slides.forEach(slide => {
-            slide.pages.forEach(page => {
-                spreadContainer.append(`<img src="${page.image_url}" alt="page">`);
-            });
-        });
-
-        slideDiv.append(spreadContainer);
-        wrapper.append(slideDiv);
+        slide.append(container);
+        wrapper.append(slide);
 
         if(swiperInstance) swiperInstance.destroy(true, true);
         swiperInstance = new Swiper('.swiper', {
@@ -75,7 +106,7 @@
             slidesPerView: 'auto',
             freeMode: true,
             mousewheel: true,
-            keyboard: { enabled: true }
+            keyboard: true
         });
         $("#exitReaderBtn").focus();
     }
@@ -84,315 +115,6 @@
         $("#reader-view").hide();
         $("#home-view").show();
         if(swiperInstance) swiperInstance.destroy(true, true);
-    });
-
-                                   
-
-    // --- MASUKKAN LOGIKA NAVIGASI D-PAD & ANDROID BRIDGE ANDA DI SINI ---
-    // (Kode navigasi asli Anda yang menggunakan event.keyCode tetap berfungsi di sini)
-
-    const jsonUrl = "data/komik.json";
-    let swiperInstance = null;
-
-    // ========================================================
-    // LOGIKA ANTI-MENTAL NATIVE BERTINGKAT (READER & POPUP)
-    // ========================================================
-    
-    // Fungsi jembatan wajib dari Tombol Back Android Native App kamu
-    window.tutupPopUpPoster = function() {
-        const readerElement = document.getElementById("reader-view");
-        const popupElement = document.getElementById("popup");
-
-        // TINGKAT 1: Jika Pembaca Komik sedang terbuka, tekan Back akan menutup reader & balik ke Popup
-        if (readerElement && window.getComputedStyle(readerElement).display === "block") {
-            $("#exitReaderBtn").click(); // Trigger fungsi keluar reader resmi
-        } 
-        // TINGKAT 2: Jika Reader sudah tutup tapi Popup Edisi masih buka, tekan Back akan menutup popup ke katalog
-        else if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
-            window.closePopup();
-        }
-    };
-
-    // Deteksi Keydown Event Global Tombol Back Remote (4, 27, 10009)
-    window.addEventListener('keydown', function(event) {
-        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-            const readerElement = document.getElementById("reader-view");
-            const popupElement = document.getElementById("popup");
-
-            // Jika salah satu tampilan overlay sedang aktif di layar
-            if ((readerElement && window.getComputedStyle(readerElement).display === "block") || 
-                (popupElement && window.getComputedStyle(popupElement).display !== "none")) {
-                event.preventDefault();
-                window.tutupPopUpPoster(); // Jalankan urutan penutupan
-                return;
-            }
-        }
-    }, true);
-
-
-    // 1. Logika Navigasi Utama Remote TV D-PAD
-    $(document).on('keydown', function(e) {
-        const activeEl = document.activeElement;
-
-        if (e.keyCode == 38 && activeEl && activeEl.classList.contains('poster')) {
-            const index = $('.grid .poster').index(activeEl);
-            if (index < 5) {
-                e.preventDefault();
-                $("#search-box").focus();
-                return false;
-            }
-        }
-
-        // Navigasi Khusus Pop-up Pilihan Edisi
-        if (e.keyCode == 39 && activeEl && activeEl.classList.contains('eps-btn')) {
-            e.preventDefault();
-            $('.close-x').focus();
-        } else if (e.keyCode == 37 && activeEl && activeEl.classList.contains('close-x')) {
-            e.preventDefault();
-            const currentTitle = $("#modal-title").text();
-            const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
-            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-        }
-    });
-
-    // 2. Logika Khusus di Bar Pencarian Utama
-    $("#search-box").on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            $("#search").removeAttr("disabled").focus();
-            return false;
-        }
-        else if (e.keyCode == 40) {
-            e.preventDefault();
-            $(".poster").first().focus();
-            return false;
-        }
-        else if (e.keyCode == 39 && $("#search").val().length > 0) {
-            $("#clear-btn").attr("tabindex", "0").focus();
-        }
-    });
-
-    // 3. Logika Saat Mengetik di Dalam Input Asli
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40 || e.keyCode == 13) {
-            $(this).attr("disabled", "disabled");
-            $("#search-box").focus();
-        }
-    });
-
-    $("#clear-btn").on('keydown', function(e) {
-        if (e.keyCode == 37) {
-            $("#search-box").focus();
-        }
-        else if (e.keyCode == 40) {
-            $(this).attr("tabindex", "-1");
-            $(".poster").first().focus();
-        }
-    });
-
-    $("#clear-btn").on('click', function() {
-        $("#search").val(""); 
-        $(".poster").show(); 
-        $(this).css("display", "none").attr("tabindex", "-1"); 
-        $("#search-box").focus();
-    });
-
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        
-        if (keyword.length > 0) {
-            $("#clear-btn").css("display", "flex"); 
-        } else {
-            $("#clear-btn").css("display", "none").attr("tabindex", "-1"); 
-        }
-
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-        });
-    });
-
-    // 4. Proses Ambil Data JSON Murni & Gambar Grid Poster
-    fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            const catalogList = data.komik_list || data;
-            catalogList.forEach(item => {
-                const edDataEncoded = encodeURIComponent(JSON.stringify(item.edisi));
-                $("#grid").append(`
-                    <div class="poster" tabindex="0" data-title="${item.title}" data-watermark="${item.watermark || 'mrzyb'}" onclick='openModal("${item.title}", "${edDataEncoded}")'>
-                        <img src="${item.poster}">
-                        <div class="poster-title">${item.title}</div>
-                    </div>
-                `);
-            });
-            
-            setTimeout(() => { 
-                if (localStorage.getItem("status_popup") !== "open") {
-                    $(".poster").first().focus(); 
-                }
-            }, 600);
-            checkLastSession();
-        });
-
-    // 5. Fungsi Membuka Popup Modal
-    function openModal(title, edisiEncoded) {
-        localStorage.setItem("status_popup", "open");
-        localStorage.setItem("last_poster_title", title);
-        localStorage.setItem("judul_film", title);
-        localStorage.setItem("eps_data", edisiEncoded);
-        
-        // Aktifkan gembok Android Native Back
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(true);
-        }
-        
-        const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
-        $("#modal-title").text(title);
-        $("#eps-list").empty();
-        
-        edisiList.forEach((e, index) => {
-            $("#eps-list").append(`
-                <button class="eps-btn" tabindex="0" data-index="${index}" onclick="openComicPlayer(${index})">
-                    ${e.nama}
-                </button>
-            `);
-        });
-        
-        $("#popup").css("display", "flex");
-        const lastIdx = localStorage.getItem("last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 200);
-    }
-
-    // 6. Fungsi Player Pembaca Komik
-    function openComicPlayer(index) {
-        const title = localStorage.getItem("judul_film");
-        localStorage.setItem("last_eps_" + title, index);
-        
-        const edisiEncoded = localStorage.getItem("eps_data");
-        const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
-        const activeEdisi = edisiList[index];
-        const watermarkText = $(`.poster[data-title="${title}"]`).data("watermark") || "mrzyb";
-
-        $("#home-view").hide();
-        $("#popup").hide();
-        $("#reader-view").show();
-        
-        $("#watermark-txt").text(watermarkText);
-        const wrapper = $("#swiperWrapperContainer");
-        wrapper.empty(); 
-
-        activeEdisi.slides.forEach(slide => {
-            const slideDiv = $('<div class="swiper-slide"></div>');
-            const zoomContainer = $('<div class="swiper-zoom-container"></div>');
-            const spreadContainer = $(`<div class="spread-container ${slide.type}"></div>`);
-            const loader = $('<div class="custom-loader"></div>');
-
-            let totalImages = slide.pages.length;
-            let loadedCount = 0;
-
-            slide.pages.forEach(page => {
-                const img = document.createElement('img');
-                img.src = page.image_url;
-                img.alt = page.alt || "Halaman";
-                img.setAttribute('loading', 'lazy');
-
-                img.onload = function() {
-                    loadedCount++;
-                    if(loadedCount === totalImages) {
-                        loader.remove();
-                        spreadContainer.addClass('loaded');
-                    }
-                };
-                img.onerror = function() {
-                    loader.remove();
-                    spreadContainer.addClass('loaded');
-                };
-
-                spreadContainer.append(img);
-            });
-
-            zoomContainer.append(spreadContainer).append(loader);
-            slideDiv.append(zoomContainer);
-            wrapper.append(slideDiv);
-        });
-
-        initComicSwiper();
-    }
-
-    function initComicSwiper() {
-        if(swiperInstance) swiperInstance.destroy(true, true);
-
-        swiperInstance = new Swiper('.swiper', {
-            effect: 'slide',
-            grabCursor: true,
-            keyboard: { enabled: true },
-            on: {
-                init: function () {
-                    updatePageIndicator(this.activeIndex + 1, this.slides.length);
-                },
-                slideChange: function() {
-                    updatePageIndicator(this.activeIndex + 1, this.slides.length);
-                }
-            }
-        });
-        $("#exitReaderBtn").focus();
-    }
-
-    function updatePageIndicator(current, total) {
-        document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
-    }
-
-    // 7. Tombol Keluar dari Player Pembaca Komik
-    $("#exitReaderBtn").on('click', function() {
-        $("#reader-view").hide();
-        $("#home-view").show();
-        if(swiperInstance) swiperInstance.destroy(true, true);
-        
-        const title = localStorage.getItem("judul_film");
-        const eps = localStorage.getItem("eps_data");
-        
-        // Munculkan popup edisi kembali secara aman
-        if(title && eps) {
-            openModal(title, eps);
-        }
-    });
-
-    // 8. Sistem Penutup Modal
-    window.closePopup = function() { 
-        $("#popup").hide(); 
-        localStorage.setItem("status_popup", "closed");
-        const lastTitle = localStorage.getItem("last_poster_title");
-        
-        if (lastTitle) {
-            setTimeout(() => { 
-                $(`.poster[data-title="${lastTitle}"]`).focus(); 
-            }, 150);
-        }
-
-        // Matikan gembok Android Native Back secara instan (Karna sudah kembali ke katalog utama)
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
-        }
-    }
-
-    function checkLastSession() {
-        if (localStorage.getItem("status_popup") === "open") {
-            const title = localStorage.getItem("judul_film");
-            const eps = localStorage.getItem("eps_data");
-            if(title && eps) openModal(title, eps);
-        }
-    }
-
-    // Navigasi Otomatis Mengunci Fokus ke Tombol Kembali Saat Atas/Bawah Ditekan di Player
-    document.addEventListener('keydown', (e) => {
-        const code = e.keyCode || e.which;
-        const readerElement = document.getElementById('reader-view');
-        if (readerElement && readerElement.style.display === 'block') {
-            if (code === 38 || code === 40) { 
-                e.preventDefault();
-                document.getElementById('exitReaderBtn').focus();
-            }
-        }
     });
 </script>
 </body>
