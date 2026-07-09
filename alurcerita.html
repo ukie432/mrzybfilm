@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+
     <link rel="preconnect" href="https://posterfilm.pages.dev">
 <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
@@ -12,7 +13,7 @@
 <meta http-equiv="Expires" content="0" />
 <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>MRZYB TV - Koleksi Film Alur cerita</title>
+<title>MRZYB TV - Koleksi Film alur cerita</title>
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,7 +60,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
-<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM ALUR CERITA</div>
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM alur ceritai</div>
 <div class="container-film" id="containerUtama"></div>
 
 <div id="noResultsText">Film tidak ditemukan...</div>
@@ -201,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    fetch('data/alurceita.json')
+    fetch('data/alurcerita.json')
     .then(response => response.json())
     .then(data => {
         containerUtama.innerHTML = data.map(film => `
@@ -221,8 +222,6 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
-            
-            // 1. Prioritas: Kembali ke posisi terakhir jika baru saja selesai nonton
             if (statusNontonSTB === "ya" && idPosterTerakhir) {
                 const targetPoster = document.getElementById(idPosterTerakhir);
                 if (targetPoster) {
@@ -236,17 +235,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-
-            // 2. Default: Fokus ke poster pertama jika tidak sedang kembali dari menonton
-            const posterPertama = document.querySelector('#containerUtama .card-film .play-link');
-            if (posterPertama) {
-                posterPertama.focus();
-            }
-        }, 300);
+            const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
+        }, 180);
     })
     .catch(err => {
         console.error("Gagal load JSON:", err);
-        
+        const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
     });
 });
 </script>
