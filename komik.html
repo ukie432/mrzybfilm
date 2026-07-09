@@ -2,56 +2,52 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MRZYBtv Series - Comic Edition</title>
+    <title>MRZYBtv Series - Vertical Reader</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow: hidden; }
         
-        /* === KATALOG & POPUP (TETAP SAMA) === */
-        #home-view { display: block; width: 100%; min-height: 100vh; }
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
-        .poster img { width: 100%; height: 200px; object-fit: cover; }
+        /* === STRUKTUR READER === */
+        #reader-view { 
+            display: none; width: 100%; height: 100vh; position: fixed; 
+            inset: 0; background: #000; z-index: 1000; overflow-y: auto;
+        }
         
-        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #4a90e2; }
-        .eps-btn { display:block; width:100%; padding:14px; margin:5px 0; background:#333; color:white; border:none; text-align: left; border-radius: 6px; }
-
-        /* === READER VERTIKAL (DIUBAH) === */
-        #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 500; }
-        .swiper { width: 100%; height: 100vh; }
+        .swiper { width: 100%; height: 100%; }
         
         .swiper-slide { 
-            height: auto; /* Mengikuti panjang gambar */
-            display: block; 
-            text-align: center;
+            height: auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
         }
         
         .spread-container { 
             display: flex; 
-            flex-direction: column; /* Gambar berjejer ke bawah */
+            flex-direction: column; 
             width: 100%; 
             align-items: center;
         }
         
         .spread-container img { 
             width: 100%; 
-            max-width: 800px; /* Batasi lebar agar tidak pecah di TV besar */
+            max-width: 800px; 
             display: block;
-            margin-bottom: 5px; /* Sedikit spasi antar halaman */
+            margin: 0;
+            padding: 0;
         }
-        
-        .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; }
-        .menu-btn-tv { background: #333; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+
+        /* Tombol Kembali */
+        .tv-trigger-zone { position: fixed; top: 20px; left: 20px; z-index: 9999; }
+        .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .menu-btn-tv:focus { background: red; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="home-view"><div class="grid" id="grid"></div></div>
-
-    <div id="popup"><div class="popup-content"><h2 id="modal-title"></h2><div id="eps-list"></div></div></div>
+    <div id="home-view">...</div> 
+    <div id="popup">...</div>
 
     <div id="reader-view">
         <div class="tv-trigger-zone">
@@ -64,18 +60,35 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    // Inisialisasi Swiper Vertikal
     let swiperInstance = null;
 
     function openComicPlayer(index) {
-        // ... (Logika fetch gambar tetap sama) ...
-        // Saat membuka, pastikan wrapper disiapkan
+        const title = localStorage.getItem("judul_film");
+        const edisiEncoded = localStorage.getItem("eps_data");
+        const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
+        const activeEdisi = edisiList[index];
+
         $("#home-view").hide();
         $("#popup").hide();
         $("#reader-view").show();
         
-        // ... (Logika append gambar ke #swiperWrapperContainer) ...
-        
+        const wrapper = $("#swiperWrapperContainer");
+        wrapper.empty(); 
+
+        // Membuat Slide Tunggal yang berisi semua gambar agar bisa di-scroll vertikal
+        const slideDiv = $('<div class="swiper-slide"></div>');
+        const spreadContainer = $('<div class="spread-container"></div>');
+
+        activeEdisi.slides.forEach(slide => {
+            slide.pages.forEach(page => {
+                const img = $('<img>').attr('src', page.image_url).attr('alt', page.alt);
+                spreadContainer.append(img);
+            });
+        });
+
+        slideDiv.append(spreadContainer);
+        wrapper.append(slideDiv);
+
         initComicSwiper();
     }
 
@@ -83,12 +96,16 @@
         if(swiperInstance) swiperInstance.destroy(true, true);
 
         swiperInstance = new Swiper('.swiper', {
-            direction: 'vertical',      // <-- KUNCI: Scroll ke bawah
-            slidesPerView: 'auto',      // <-- KUNCI: Scroll mulus
-            freeMode: true,             // <-- KUNCI: Bisa scroll bebas
-            mousewheel: true,           // Support mouse
+            direction: 'vertical',
+            slidesPerView: 'auto',
+            freeMode: true,
+            mousewheel: true,
+            scrollbar: { el: '.swiper-scrollbar' },
             keyboard: { enabled: true }
         });
+        
+        // Fokus ke tombol kembali saat reader dibuka
+        $("#exitReaderBtn").focus();
     }
 
     $("#exitReaderBtn").on('click', function() {
