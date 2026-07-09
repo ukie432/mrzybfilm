@@ -7,20 +7,22 @@
   <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
   <style>
     body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
-    .search-bar { position: sticky; top: 0; background: #111; padding: 15px; z-index: 10; text-align: center; }
+    .search-bar { position: static; background: #111; padding: 15px; text-align: center; }
     .search-bar input { width: 90%; padding: 12px; border-radius: 5px; border: none; font-size: 16px; }
     
-    /* Overlay Player */
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
-    .close-btn { position: absolute; top: 20px; right: 20px; z-index: 10000; background: #dc2626; color: #fff; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; }
     
-    /* Playlist */
+    /* Tombol Kustom (Play/Pause/Back) */
+    .custom-controls { position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; z-index: 10000; }
+    .btn-ctrl { background: #dc2626; color: #fff; border: none; padding: 15px 30px; margin: 5px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+    .btn-ctrl:focus { background: #fff; color: #000; outline: none; }
+    
     .plyr-playlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; list-style: none; margin: 0; }
     .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
     .plyr-playlist li:focus { border: 2px solid #fff; }
     
-    /* Perubahan di sini: aspect-ratio diubah ke 3/4 */
-    .plyr-miniposter { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px 8px 0 0; }
+    .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 8px 8px 0 0; }
+    .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     
     .playlist-title { display: block; padding: 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
@@ -34,7 +36,11 @@
 <ul class="plyr-playlist" id="playlist"></ul>
 
 <div id="player-overlay">
-  <button class="close-btn" onclick="closePlayer()">TUTUP</button>
+  <!-- Tombol Kustom -->
+  <div class="custom-controls">
+    <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay()">PLAY/PAUSE</button>
+    <button class="btn-ctrl" onclick="closePlayer()">BACK</button>
+  </div>
   <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
 </div>
 
@@ -48,12 +54,13 @@
     {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
   ];
 
-  var player = plyr.setup(".js-player")[0];
+  // Inisialisasi tanpa controls bawaan (controls: [])
+  var player = plyr.setup(".js-player", { controls: [] })[0];
 
   function renderPlaylist(list) {
     let html = list.map(v => `
       <li tabindex="0" onclick="openPlayer('${v.src}')">
-        <img class="plyr-miniposter" src="${v.poster}">
+        <div class="poster-container"><img class="plyr-miniposter" src="${v.poster}"></div>
         <span class="playlist-title">${v.title}</span>
       </li>
     `).join("");
@@ -63,19 +70,21 @@
   function openPlayer(id) {
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
-    setTimeout(() => player.play(), 500);
+    setTimeout(() => {
+        player.play();
+        $("#btnPlayPause").focus(); // Fokus ke tombol Play agar bisa dikontrol remote
+    }, 500);
+  }
+
+  function togglePlay() {
+    player.togglePlay();
   }
 
   function closePlayer() {
     $("#player-overlay").hide();
     player.stop();
+    $("#playlist li:first").focus();
   }
-
-  $("#searchInput").on("input", function() {
-    let val = $(this).val().toLowerCase();
-    let filtered = myPlaylist.filter(p => p.title.toLowerCase().includes(val));
-    renderPlaylist(filtered);
-  });
 
   $(document).on('keydown', 'li', function(e) {
     if (e.keyCode === 13) $(this).trigger('click');
