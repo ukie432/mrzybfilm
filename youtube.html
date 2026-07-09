@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iwan Fals Musik Player</title>
   <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
   <style>
@@ -12,19 +11,20 @@
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
-    /* Tombol Kustom agar tidak terjebak kontrol bawaan */
-    .custom-controls { position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; z-index: 10000; }
-    .btn-ctrl { background: #dc2626; color: #fff; border: none; padding: 15px 30px; margin: 5px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-    .btn-ctrl:focus { background: #fff; color: #000; outline: none; }
+    /* Tombol Kustom dengan transisi */
+    .custom-controls { 
+        position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; 
+        transition: opacity 0.5s ease; /* Efek transisi muncul/hilang */
+    }
+    .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+    .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
     
     .plyr-playlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; list-style: none; margin: 0; }
     .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
     .plyr-playlist li:focus { border: 2px solid #fff; }
     
-    /* Rasio 3:4 untuk poster */
     .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 8px 8px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-    
     .playlist-title { display: block; padding: 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
 </head>
@@ -37,9 +37,11 @@
 <ul class="plyr-playlist" id="playlist"></ul>
 
 <div id="player-overlay">
-  <div class="custom-controls">
-    <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay()">PLAY/PAUSE</button>
-    <button class="btn-ctrl" onclick="closePlayer()">BACK</button>
+  <div class="custom-controls" id="controls">
+    <button class="btn-ctrl" onclick="seek(-10); resetHideTimer()">-10</button>
+    <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay(); resetHideTimer()">||</button>
+    <button class="btn-ctrl" onclick="seek(10); resetHideTimer()">+10</button>
+    <button class="btn-ctrl" onclick="closePlayer()">X</button>
   </div>
   <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
 </div>
@@ -54,8 +56,49 @@
     {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
   ];
 
-  // Inisialisasi tanpa kontrol bawaan
   var player = plyr.setup(".js-player", { controls: [] })[0];
+  var hideTimer;
+
+  function resetHideTimer() {
+    $("#controls").css("opacity", "1"); // Tampilkan tombol
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+        $("#controls").css("opacity", "0"); // Hilangkan tombol setelah 5 detik
+    }, 5000);
+  }
+
+  function openPlayer(id) {
+    $("#player-overlay").show();
+    player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
+    setTimeout(() => {
+        player.play();
+        player.muted = false;
+        player.setVolume(100);
+        $("#btnPlayPause").focus();
+        resetHideTimer(); // Mulai timer saat player dibuka
+    }, 1000);
+  }
+
+  // Jika remote ditekan saat player terbuka, tombol muncul kembali
+  $(document).keydown(function() {
+      if ($("#player-overlay").is(":visible")) {
+          resetHideTimer();
+      }
+  });
+
+  function togglePlay() { player.togglePlay(); }
+  function seek(s) { player.seek(player.getCurrentTime() + s); }
+  function closePlayer() { 
+      $("#player-overlay").hide(); 
+      player.stop(); 
+      clearTimeout(hideTimer); // Hapus timer agar tidak error
+      $("#playlist li:first").focus(); 
+  }
+
+  $("#searchInput").on("input", function() {
+    let val = $(this).val().toLowerCase();
+    renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
+  });
 
   function renderPlaylist(list) {
     let html = list.map(v => `
@@ -67,45 +110,8 @@
     $("#playlist").html(html);
   }
 
-  function openPlayer(id) {
-    $("#player-overlay").show();
-    player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
-    
-    setTimeout(() => {
-        player.play();
-        // Memaksa suara agar keluar di STB
-        player.muted = false;
-        player.setVolume(100);
-        
-        // Memastikan elemen video internal (jika ada) tidak mute
-        var v = document.querySelector('video');
-        if(v) { v.muted = false; v.volume = 1.0; }
-        
-        $("#btnPlayPause").focus();
-    }, 1000);
-  }
-
-  function togglePlay() {
-    player.togglePlay();
-  }
-
-  function closePlayer() {
-    $("#player-overlay").hide();
-    player.stop();
-    $("#playlist li:first").focus();
-  }
-
-  $("#searchInput").on("input", function() {
-    let val = $(this).val().toLowerCase();
-    renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
-  });
-
-  $(document).on('keydown', 'li', function(e) {
-    if (e.keyCode === 13) $(this).trigger('click');
-  });
-
+  $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
   $(document).ready(() => renderPlaylist(myPlaylist));
 </script>
-
 </body>
 </html>
