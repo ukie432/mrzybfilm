@@ -6,32 +6,29 @@
   <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
   <style>
     body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
-    .search-bar { position: static; background: #111; padding: 15px; text-align: center; }
-    .search-bar input { width: 90%; padding: 12px; border-radius: 5px; border: none; font-size: 16px; }
+    .search-bar { position: static; background: #111; padding: 10px; text-align: center; }
+    .search-bar input { width: 90%; padding: 10px; border-radius: 5px; border: none; font-size: 14px; }
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
-    /* Tombol Kustom dengan transisi */
-    .custom-controls { 
-        position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; 
-        transition: opacity 0.5s ease;
-    }
-    .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+    .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
+    .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
     
-    .plyr-playlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; list-style: none; margin: 0; }
-    .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
-    .plyr-playlist li:focus { border: 2px solid #fff; }
+    /* 4 Kolom per baris */
+    .plyr-playlist { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px; list-style: none; margin: 0; }
+    .plyr-playlist li { background: #222; border-radius: 6px; text-align: center; cursor: pointer; outline: none; }
+    .plyr-playlist li:focus { border: 2px solid #fff; transform: scale(1.05); }
     
-    .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 8px 8px 0 0; }
+    .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 6px 6px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-    .playlist-title { display: block; padding: 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .playlist-title { display: block; padding: 6px 4px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
 </head>
 <body>
 
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Cari lagu Iwan Fals...">
+  <input type="text" id="searchInput" placeholder="Cari lagu...">
 </div>
 
 <ul class="plyr-playlist" id="playlist"></ul>
@@ -53,21 +50,24 @@
     {title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
     {title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
     {title:"Ibu", src:"d_uQ70o-N1g", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
-    {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
+    {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"},
+    {title:"Sarjana Muda", src:"example1", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
+    {title:"Ujung Aspal", src:"example2", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
+    {title:"Surat Buat Wakil Rakyat", src:"example3", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
+    {title:"Kemesraan", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
   ];
 
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
 
-  // Handle Tombol BACK Android TV
   window.addEventListener("keydown", function(e) {
-      if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
+      if (e.keyCode === 4 || e.keyCode === 27 || e.key === "Back") {
           if ($("#player-overlay").is(":visible")) {
-              e.preventDefault();
+              e.preventDefault(); e.stopImmediatePropagation();
               closePlayer();
           }
       }
-  });
+  }, true);
 
   function resetHideTimer() {
     $("#controls").css("opacity", "1");
@@ -78,29 +78,14 @@
   function openPlayer(id) {
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
-    setTimeout(() => {
-        player.play();
-        player.muted = false;
-        player.setVolume(100);
-        $("#btnPlayPause").focus();
-        resetHideTimer();
-    }, 1000);
+    setTimeout(() => { player.play(); player.muted = false; player.setVolume(100); $("#btnPlayPause").focus(); resetHideTimer(); }, 1000);
   }
 
   $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
   function togglePlay() { player.togglePlay(); }
   function seek(s) { player.seek(player.getCurrentTime() + s); }
-  function closePlayer() { 
-      $("#player-overlay").hide(); 
-      player.stop(); 
-      clearTimeout(hideTimer);
-      $("#playlist li:first").focus(); 
-  }
-
-  $("#searchInput").on("input", function() {
-    let val = $(this).val().toLowerCase();
-    renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
-  });
+  function closePlayer() { $("#player-overlay").hide(); player.stop(); clearTimeout(hideTimer); $("#playlist li:first").focus(); }
+  $("#searchInput").on("input", function() { let val = $(this).val().toLowerCase(); renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val))); });
 
   function renderPlaylist(list) {
     let html = list.map(v => `
