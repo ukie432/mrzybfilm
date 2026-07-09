@@ -10,11 +10,10 @@
     .search-bar { position: sticky; top: 0; background: #111; padding: 15px; z-index: 10; text-align: center; }
     .search-bar input { width: 90%; padding: 12px; border-radius: 5px; border: none; font-size: 16px; }
     
-    /* Overlay Player */
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     .close-btn { position: absolute; top: 20px; right: 20px; z-index: 10000; background: #dc2626; color: #fff; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+    .close-btn:focus { border: 2px solid #fff; outline: none; }
     
-    /* Playlist */
     .plyr-playlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; list-style: none; margin: 0; }
     .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
     .plyr-playlist li:focus { border: 2px solid #fff; }
@@ -38,7 +37,6 @@
 <script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-  // Data Lagu Iwan Fals
   var myPlaylist = [
     {title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
     {title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
@@ -47,6 +45,11 @@
   ];
 
   var player = plyr.setup(".js-player")[0];
+
+  // Matikan kontrol keyboard bawaan Plyr agar remote tidak bentrok
+  player.on('ready', event => {
+    document.removeEventListener('keydown', player.keyboard);
+  });
 
   function renderPlaylist(list) {
     let html = list.map(v => `
@@ -60,6 +63,7 @@
 
   function openPlayer(id) {
     $("#player-overlay").show();
+    $(".close-btn").focus(); // Fokus ke tombol tutup agar remote terkunci di sini
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
     setTimeout(() => player.play(), 500);
   }
@@ -67,16 +71,28 @@
   function closePlayer() {
     $("#player-overlay").hide();
     player.stop();
+    $("#playlist li:first").focus(); // Kembalikan fokus ke poster
   }
 
-  // Pencarian
-  $("#searchInput").on("input", function() {
-    let val = $(this).val().toLowerCase();
-    let filtered = myPlaylist.filter(p => p.title.toLowerCase().includes(val));
-    renderPlaylist(filtered);
+  // Menangani tombol Back remote (ESC/Back) dan Panah
+  $(document).keydown(function(e) {
+    if ($("#player-overlay").is(":visible")) {
+      // 27 = ESC, 8 = Backspace (Sering digunakan tombol Back di STB)
+      if (e.keyCode === 27 || e.keyCode === 8) {
+        closePlayer();
+      }
+      // Mencegah panah mengganti volume jika player sedang terbuka
+      if (e.keyCode >= 37 && e.keyCode <= 40) {
+        // e.preventDefault(); 
+      }
+    }
   });
 
-  // Support Remote TV (Tombol Enter)
+  $("#searchInput").on("input", function() {
+    let val = $(this).val().toLowerCase();
+    renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
+  });
+
   $(document).on('keydown', 'li', function(e) {
     if (e.keyCode === 13) $(this).trigger('click');
   });
