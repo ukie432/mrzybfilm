@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+
     <link rel="preconnect" href="https://posterfilm.pages.dev">
 <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
@@ -59,7 +60,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
-<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM dubbing</div>
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM DUBBING</div>
 <div class="container-film" id="containerUtama"></div>
 
 <div id="noResultsText">Film tidak ditemukan...</div>
@@ -234,12 +235,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-            if (searchBox) searchBox.focus();
+            const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
         }, 180);
     })
     .catch(err => {
         console.error("Gagal load JSON:", err);
-        if (searchBox) searchBox.focus();
+        const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
     });
 });
 </script>
