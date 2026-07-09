@@ -2,52 +2,42 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MRZYBtv Series - Vertical Reader</title>
+    <title>MRZYBtv Series - Comic Edition</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <style>
-        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow: hidden; }
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         
-        /* === STRUKTUR READER === */
-        #reader-view { 
-            display: none; width: 100%; height: 100vh; position: fixed; 
-            inset: 0; background: #000; z-index: 1000; overflow-y: auto;
-        }
+        /* === GRID KATALOG === */
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
+        .poster img { width: 100%; height: 200px; object-fit: cover; }
         
+        /* === READER VERTIKAL === */
+        #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 1000; overflow-y: auto; }
         .swiper { width: 100%; height: 100%; }
+        .swiper-slide { height: auto; display: flex; flex-direction: column; align-items: center; }
+        .spread-container { display: flex; flex-direction: column; width: 100%; align-items: center; }
+        .spread-container img { width: 100%; max-width: 800px; display: block; margin: 0; }
         
-        .swiper-slide { 
-            height: auto; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
-        
-        .spread-container { 
-            display: flex; 
-            flex-direction: column; 
-            width: 100%; 
-            align-items: center;
-        }
-        
-        .spread-container img { 
-            width: 100%; 
-            max-width: 800px; 
-            display: block;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Tombol Kembali */
         .tv-trigger-zone { position: fixed; top: 20px; left: 20px; z-index: 9999; }
-        .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .menu-btn-tv:focus { background: red; outline: none; }
+        .menu-btn-tv { background: #333; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; border: 2px solid #555; }
+        .menu-btn-tv:focus { background: red; }
     </style>
 </head>
 <body>
 
-    <div id="home-view">...</div> 
-    <div id="popup">...</div>
+    <div id="home-view">
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <div id="popup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center;">
+        <div style="background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px;">
+            <h2 id="modal-title"></h2>
+            <div id="eps-list"></div>
+            <button onclick="$('#popup').hide()">TUTUP</button>
+        </div>
+    </div>
 
     <div id="reader-view">
         <div class="tv-trigger-zone">
@@ -60,10 +50,40 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
+    const jsonUrl = "data/komik.json"; // <-- INI SUDAH ADA KEMBALI
     let swiperInstance = null;
 
+    // 1. Fetch Data
+    fetch(jsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            const catalogList = data.komik_list || data;
+            catalogList.forEach(item => {
+                const edDataEncoded = encodeURIComponent(JSON.stringify(item.edisi));
+                $("#grid").append(`
+                    <div class="poster" onclick='openModal("${item.title}", "${edDataEncoded}")'>
+                        <img src="${item.poster}">
+                        <div>${item.title}</div>
+                    </div>
+                `);
+            });
+        });
+
+    // 2. Open Modal
+    function openModal(title, edisiEncoded) {
+        localStorage.setItem("judul_film", title);
+        localStorage.setItem("eps_data", edisiEncoded);
+        const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
+        $("#modal-title").text(title);
+        $("#eps-list").empty();
+        edisiList.forEach((e, index) => {
+            $("#eps-list").append(`<button onclick="openComicPlayer(${index})">${e.nama}</button>`);
+        });
+        $("#popup").css("display", "flex");
+    }
+
+    // 3. Reader Vertikal
     function openComicPlayer(index) {
-        const title = localStorage.getItem("judul_film");
         const edisiEncoded = localStorage.getItem("eps_data");
         const edisiList = JSON.parse(decodeURIComponent(edisiEncoded));
         const activeEdisi = edisiList[index];
@@ -75,43 +95,31 @@
         const wrapper = $("#swiperWrapperContainer");
         wrapper.empty(); 
 
-        // Membuat Slide Tunggal yang berisi semua gambar agar bisa di-scroll vertikal
         const slideDiv = $('<div class="swiper-slide"></div>');
         const spreadContainer = $('<div class="spread-container"></div>');
 
         activeEdisi.slides.forEach(slide => {
             slide.pages.forEach(page => {
-                const img = $('<img>').attr('src', page.image_url).attr('alt', page.alt);
-                spreadContainer.append(img);
+                spreadContainer.append($('<img>').attr('src', page.image_url));
             });
         });
 
         slideDiv.append(spreadContainer);
         wrapper.append(slideDiv);
 
-        initComicSwiper();
-    }
-
-    function initComicSwiper() {
         if(swiperInstance) swiperInstance.destroy(true, true);
-
         swiperInstance = new Swiper('.swiper', {
             direction: 'vertical',
             slidesPerView: 'auto',
             freeMode: true,
             mousewheel: true,
-            scrollbar: { el: '.swiper-scrollbar' },
             keyboard: { enabled: true }
         });
-        
-        // Fokus ke tombol kembali saat reader dibuka
-        $("#exitReaderBtn").focus();
     }
 
     $("#exitReaderBtn").on('click', function() {
         $("#reader-view").hide();
         $("#home-view").show();
-        if(swiperInstance) swiperInstance.destroy(true, true);
     });
 </script>
 </body>
