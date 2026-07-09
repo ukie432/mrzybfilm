@@ -12,7 +12,7 @@
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
-    /* Tombol Kustom (Play/Pause/Back) */
+    /* Tombol Kustom agar tidak terjebak kontrol bawaan */
     .custom-controls { position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; z-index: 10000; }
     .btn-ctrl { background: #dc2626; color: #fff; border: none; padding: 15px 30px; margin: 5px; cursor: pointer; border-radius: 5px; font-weight: bold; }
     .btn-ctrl:focus { background: #fff; color: #000; outline: none; }
@@ -21,6 +21,7 @@
     .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
     .plyr-playlist li:focus { border: 2px solid #fff; }
     
+    /* Rasio 3:4 untuk poster */
     .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 8px 8px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     
@@ -36,7 +37,6 @@
 <ul class="plyr-playlist" id="playlist"></ul>
 
 <div id="player-overlay">
-  <!-- Tombol Kustom -->
   <div class="custom-controls">
     <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay()">PLAY/PAUSE</button>
     <button class="btn-ctrl" onclick="closePlayer()">BACK</button>
@@ -54,7 +54,7 @@
     {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
   ];
 
-  // Inisialisasi tanpa controls bawaan (controls: [])
+  // Inisialisasi tanpa kontrol bawaan
   var player = plyr.setup(".js-player", { controls: [] })[0];
 
   function renderPlaylist(list) {
@@ -70,10 +70,19 @@
   function openPlayer(id) {
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
+    
     setTimeout(() => {
         player.play();
-        $("#btnPlayPause").focus(); // Fokus ke tombol Play agar bisa dikontrol remote
-    }, 500);
+        // Memaksa suara agar keluar di STB
+        player.muted = false;
+        player.setVolume(100);
+        
+        // Memastikan elemen video internal (jika ada) tidak mute
+        var v = document.querySelector('video');
+        if(v) { v.muted = false; v.volume = 1.0; }
+        
+        $("#btnPlayPause").focus();
+    }, 1000);
   }
 
   function togglePlay() {
@@ -85,6 +94,11 @@
     player.stop();
     $("#playlist li:first").focus();
   }
+
+  $("#searchInput").on("input", function() {
+    let val = $(this).val().toLowerCase();
+    renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val)));
+  });
 
   $(document).on('keydown', 'li', function(e) {
     if (e.keyCode === 13) $(this).trigger('click');
