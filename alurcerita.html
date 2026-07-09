@@ -227,10 +227,6 @@ searchBox.addEventListener("keydown", function(e) {
     searchBox.addEventListener('input', function() {
     
     
-    searchBox.addEventListener("blur", function() {
-    searchAktif = false;
-    searchBox.setAttribute("readonly", "readonly");
-});
     
     
     
@@ -240,11 +236,69 @@ searchBox.addEventListener("keydown", function(e) {
     });
 
     btnClear.addEventListener('click', function() {
-        searchBox.value = "";
-        btnClear.style.display = "none";
-        saringFilm("");
+
+    searchBox.value = "";
+
+    btnClear.style.display = "none";
+
+    saringFilm("");
+
+    searchBox.focus();
+
+});
+
+btnClear.addEventListener("keydown", function(e){
+
+    if(e.keyCode==37){
+
+        e.preventDefault();
+
         searchBox.focus();
-    });
+
+    }
+
+    if(e.keyCode==40){
+
+        e.preventDefault();
+
+        const pertama=document.querySelector(".play-link");
+
+        if(pertama){
+
+            pertama.focus();
+
+        }
+
+    }
+
+});
+
+
+searchBox.addEventListener("keydown",function(e){
+
+    if(e.keyCode==39 && searchBox.value.length>0){
+
+        e.preventDefault();
+
+        btnClear.focus();
+
+    }
+
+    if(e.keyCode==40){
+
+        e.preventDefault();
+
+        const pertama=document.querySelector(".play-link");
+
+        if(pertama){
+
+            pertama.focus();
+
+        }
+
+    }
+
+});
 
     fetch('data/alurcerita.json')
     .then(response => response.json())
