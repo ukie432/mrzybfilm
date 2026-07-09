@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iwan Fals Musik Player</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
+  <style>
+    body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+    .search-bar { position: sticky; top: 0; background: #111; padding: 15px; z-index: 10; text-align: center; }
+    .search-bar input { width: 90%; padding: 12px; border-radius: 5px; border: none; font-size: 16px; }
+    
+    /* Overlay Player */
+    #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+    .close-btn { position: absolute; top: 20px; right: 20px; z-index: 10000; background: #dc2626; color: #fff; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+    
+    /* Playlist */
+    .plyr-playlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; list-style: none; margin: 0; }
+    .plyr-playlist li { background: #222; border-radius: 8px; text-align: center; cursor: pointer; outline: none; }
+    .plyr-playlist li:focus { border: 2px solid #fff; }
+    .plyr-miniposter { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 8px 8px 0 0; }
+    .playlist-title { display: block; padding: 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Cari lagu Iwan Fals...">
+</div>
+
+<ul class="plyr-playlist" id="playlist"></ul>
+
+<div id="player-overlay">
+  <button class="close-btn" onclick="closePlayer()">TUTUP</button>
+  <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
+</div>
+
+<script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  // Data Lagu Iwan Fals
+  var myPlaylist = [
+    {title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
+    {title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
+    {title:"Ibu", src:"d_uQ70o-N1g", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
+    {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
+  ];
+
+  var player = plyr.setup(".js-player")[0];
+
+  function renderPlaylist(list) {
+    let html = list.map(v => `
+      <li tabindex="0" onclick="openPlayer('${v.src}')">
+        <img class="plyr-miniposter" src="${v.poster}">
+        <span class="playlist-title">${v.title}</span>
+      </li>
+    `).join("");
+    $("#playlist").html(html);
+  }
+
+  function openPlayer(id) {
+    $("#player-overlay").show();
+    player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
+    setTimeout(() => player.play(), 500);
+  }
+
+  function closePlayer() {
+    $("#player-overlay").hide();
+    player.stop();
+  }
+
+  // Pencarian
+  $("#searchInput").on("input", function() {
+    let val = $(this).val().toLowerCase();
+    let filtered = myPlaylist.filter(p => p.title.toLowerCase().includes(val));
+    renderPlaylist(filtered);
+  });
+
+  // Support Remote TV (Tombol Enter)
+  $(document).on('keydown', 'li', function(e) {
+    if (e.keyCode === 13) $(this).trigger('click');
+  });
+
+  $(document).ready(() => renderPlaylist(myPlaylist));
+</script>
+
+</body>
+</html>
