@@ -81,7 +81,7 @@
     <div class="navbar">
         <div class="search-container">
             <div class="search-bar-wrapper" id="search-box" tabindex="0">
-                <input type="text" id="search" disabled placeholder="Cari (Tekan OK/Enter)...">
+              <input type="text" id="search" placeholder="Cari...">
             </div>
             <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
         </div>
@@ -148,30 +148,45 @@
     });
 
     // 2. Logika Khusus di Bar Pencarian Utama
-    $("#search-box").on('keydown', function(e) {
-        if (e.keyCode == 13) { 
-            e.preventDefault();
-            $("#search").removeAttr("disabled").focus();
-            return false;
-        }
-        else if (e.keyCode == 40) { 
-            e.preventDefault();
-            $(".poster").first().focus();
-            return false;
-        }
-        else if (e.keyCode == 39 && $("#search").val().length > 0) { 
-            $("#clear-btn").attr("tabindex", "0").focus();
-        }
-    });
+    $("#search-box").on("keydown click touchstart", function(e) {
+
+    if (e.type === "click" || e.type === "touchstart") {
+        $("#search").focus();
+        return;
+    }
+
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        $("#search").focus();
+        return false;
+    }
+
+    if (e.keyCode == 40) {
+        e.preventDefault();
+        $(".poster").first().focus();
+        return false;
+    }
+
+    if (e.keyCode == 39 && $("#search").val().length > 0) {
+        $("#clear-btn").attr("tabindex", "0").focus();
+    }
+
+});
 
     // 3. Logika Saat Mengetik di Dalam Input Asli
-    $("#search").on('keydown', function(e) {
-        if (e.keyCode == 40 || e.keyCode == 13) {
-            $(this).attr("disabled", "disabled");
-            $("#search-box").focus();
-        }
-    });
+    $("#search").on("keydown", function(e) {
 
+    if (e.keyCode == 40) {
+        e.preventDefault();
+        $("#search-box").focus();
+        $(".poster").first().focus();
+    }
+
+    if (e.keyCode == 13) {
+        e.preventDefault();
+    }
+
+});
     // Navigasi di tombol X hapus pencarian
     $("#clear-btn").on('keydown', function(e) {
         if (e.keyCode == 37) {
