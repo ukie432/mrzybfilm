@@ -1,55 +1,43 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
     <meta charset="UTF-8">
-    <title>MRZYBtv Series - Comic Edition</title>
+    <title>MRZYBtv Comic - Vertical Scroll</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow: hidden; }
         
-        /* Katalog */
-        #home-view { display: block; width: 100%; min-height: 100vh; }
-        .navbar { padding: 20px; text-align: center; background: #111; position: sticky; top: 0; z-index: 10; }
+        /* Grid Katalog */
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
         .poster:focus { transform: scale(1.1); border-color: #4a90e2; outline: none; }
-        .poster img { width: 100%; height: 200px; object-fit: cover; pointer-events: none; }
-        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
+        .poster img { width: 100%; height: 200px; object-fit: cover; }
+        
         /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #4a90e2; position: relative; }
-        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .eps-btn { display:block; width:100%; padding:14px 10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 6px; }
+        .eps-btn { display:block; width:100%; padding:14px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 6px; cursor: pointer; }
         .eps-btn:focus { background:#4a90e2; outline: none; }
 
-        /* Reader Vertikal */
-        #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 500; overflow-y: auto; }
-        .swiper { width: 100%; height: 100%; }
-        .swiper-slide { height: auto; display: flex; flex-direction: column; align-items: center; background: #000; }
-        .spread-container { display: flex; flex-direction: column; width: 100%; align-items: center; }
-        .spread-container img { width: 100%; max-width: 800px; display: block; border: none; margin: 0; padding-bottom: 5px; }
+        /* Reader Vertikal STB Friendly */
+        #reader-view { display: none; width: 100%; height: 100vh; position: fixed; inset: 0; background: #000; z-index: 500; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+        .swiper { width: 100%; height: auto; } /* Tinggi auto untuk scroll */
+        .swiper-slide { height: auto !important; display: block !important; }
+        .spread-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .spread-container img { width: 100%; max-width: 800px; display: block; margin: 0; border: none; }
         
-        .tv-trigger-zone { position: fixed; bottom: 25px; left: 25px; z-index: 9999; }
-        .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .menu-btn-tv:focus { background: red; border-color: white; transform: scale(1.1); }
+        .tv-trigger-zone { position: fixed; bottom: 20px; left: 20px; z-index: 9999; }
+        .menu-btn-tv { background: #333; color: white; border: 2px solid #555; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+        .menu-btn-tv:focus { background: red; border-color: white; }
     </style>
 </head>
 <body>
 
-    <div id="home-view">
-        <div class="navbar"><h3>MRZYBtv Comic Collection</h3></div>
-        <div class="grid" id="grid"></div>
-    </div>
+    <div id="home-view"><div class="grid" id="grid"></div></div>
 
-    <div id="popup" onclick="closePopup()">
+    <div id="popup" onclick="this.style.display='none'">
         <div class="popup-content" onclick="event.stopPropagation()">
-            <button class="close-x" onclick="closePopup()">X</button>
             <h2 id="modal-title"></h2>
             <div id="eps-list"></div>
         </div>
@@ -65,17 +53,15 @@
     const jsonUrl = "data/komik.json";
     let swiperInstance = null;
 
-    // Load Data
+    // Load Grid
     fetch(jsonUrl).then(r => r.json()).then(data => {
         (data.komik_list || data).forEach(item => {
             const ed = encodeURIComponent(JSON.stringify(item.edisi));
-            $("#grid").append(`<div class="poster" tabindex="0" onclick='openModal("${item.title}", "${ed}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
+            $("#grid").append(`<div class="poster" tabindex="0" onclick='openModal("${item.title}", "${ed}")'><img src="${item.poster}"><div style="padding:10px">${item.title}</div></div>`);
         });
     });
 
     function openModal(title, ed) {
-        localStorage.setItem("judul_film", title);
-        localStorage.setItem("eps_data", ed);
         $("#modal-title").text(title);
         $("#eps-list").empty();
         JSON.parse(decodeURIComponent(ed)).forEach((e, i) => {
@@ -83,8 +69,6 @@
         });
         $("#popup").css("display", "flex");
     }
-
-    function closePopup() { $("#popup").hide(); }
 
     function openComicPlayer(index) {
         const edisi = JSON.parse(decodeURIComponent(localStorage.getItem("eps_data")))[index];
@@ -95,16 +79,18 @@
         const slide = $('<div class="swiper-slide"></div>');
         const container = $('<div class="spread-container"></div>');
 
+        // Gabungkan SEMUA halaman jadi 1 container
         edisi.slides.forEach(s => s.pages.forEach(p => container.append(`<img src="${p.image_url}">`)));
 
         slide.append(container);
         wrapper.append(slide);
 
+        // Inisialisasi Swiper dengan mode Free Mode & Vertikal
         if(swiperInstance) swiperInstance.destroy(true, true);
         swiperInstance = new Swiper('.swiper', {
             direction: 'vertical',
             slidesPerView: 'auto',
-            freeMode: true,
+            freeMode: { enabled: true, sticky: false },
             mousewheel: true,
             keyboard: true
         });
