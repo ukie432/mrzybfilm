@@ -49,7 +49,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 </div>
 
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film alur cerita..." tabindex="0">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film alur cerita..." tabindex="0" readonly>
     <button id="btnClear" class="btn-clear">&times;</button>
 </div>
 
@@ -69,6 +69,45 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerUtama = document.getElementById('containerUtama');
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
+    
+    
+    let searchAktif = false;
+
+function bukaKeyboard() {
+    if (!searchAktif) {
+        searchAktif = true;
+        searchBox.removeAttribute("readonly");
+    }
+
+    searchBox.focus();
+
+    setTimeout(() => {
+        searchBox.click();
+    }, 50);
+}
+
+// HP
+searchBox.addEventListener("click", bukaKeyboard);
+searchBox.addEventListener("touchstart", bukaKeyboard);
+
+// STB
+searchBox.addEventListener("keydown", function(e) {
+
+    if (e.key === "Enter" || e.keyCode === 13) {
+        e.preventDefault();
+        bukaKeyboard();
+    }
+
+    if (e.key === "ArrowDown" || e.keyCode === 40) {
+        const pertama = document.querySelector(".play-link");
+        if (pertama) {
+            e.preventDefault();
+            pertama.focus();
+        }
+    }
+
+});
+    
 
     let listFavorit = JSON.parse(localStorage.getItem('alurcerita_favorit')) || [];
 
@@ -186,6 +225,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     searchBox.addEventListener('input', function() {
+    
+    
+    searchBox.addEventListener("blur", function() {
+    searchAktif = false;
+    searchBox.setAttribute("readonly", "readonly");
+});
+    
+    
+    
         const filterText = searchBox.value.toLowerCase().trim();
         btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
         saringFilm(filterText);
@@ -231,13 +279,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-            if (searchBox) searchBox.focus();
+            
         }, 180);
     })
     .catch(err => {
-        console.error("Gagal load JSON:", err);
-        if (searchBox) searchBox.focus();
-    });
+    console.error("Gagal load JSON:", err);
+});
 });
 </script>
 </body>
