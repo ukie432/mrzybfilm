@@ -14,7 +14,7 @@
     /* Tombol Kustom dengan transisi */
     .custom-controls { 
         position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; 
-        transition: opacity 0.5s ease; /* Efek transisi muncul/hilang */
+        transition: opacity 0.5s ease;
     }
     .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
     .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
@@ -59,12 +59,20 @@
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
 
+  // Handle Tombol BACK Android TV
+  window.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
+          if ($("#player-overlay").is(":visible")) {
+              e.preventDefault();
+              closePlayer();
+          }
+      }
+  });
+
   function resetHideTimer() {
-    $("#controls").css("opacity", "1"); // Tampilkan tombol
+    $("#controls").css("opacity", "1");
     clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => {
-        $("#controls").css("opacity", "0"); // Hilangkan tombol setelah 5 detik
-    }, 5000);
+    hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
   }
 
   function openPlayer(id) {
@@ -75,23 +83,17 @@
         player.muted = false;
         player.setVolume(100);
         $("#btnPlayPause").focus();
-        resetHideTimer(); // Mulai timer saat player dibuka
+        resetHideTimer();
     }, 1000);
   }
 
-  // Jika remote ditekan saat player terbuka, tombol muncul kembali
-  $(document).keydown(function() {
-      if ($("#player-overlay").is(":visible")) {
-          resetHideTimer();
-      }
-  });
-
+  $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
   function togglePlay() { player.togglePlay(); }
   function seek(s) { player.seek(player.getCurrentTime() + s); }
   function closePlayer() { 
       $("#player-overlay").hide(); 
       player.stop(); 
-      clearTimeout(hideTimer); // Hapus timer agar tidak error
+      clearTimeout(hideTimer);
       $("#playlist li:first").focus(); 
   }
 
