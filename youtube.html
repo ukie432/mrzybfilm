@@ -15,20 +15,27 @@
     .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
     
-    /* 4 Kolom per baris */
-    .plyr-playlist { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px; list-style: none; margin: 0; }
-    .plyr-playlist li { background: #222; border-radius: 6px; text-align: center; cursor: pointer; outline: none; }
+    /* Default Portrait: Diubah jadi 5 Kolom agar lebar kotak lebih kecil sedikit */
+    .plyr-playlist { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; list-style: none; margin: 0; }
+    .plyr-playlist li { background: #222; border-radius: 6px; text-align: center; cursor: pointer; outline: none; overflow: hidden; }
     .plyr-playlist li:focus { border: 2px solid #fff; transform: scale(1.05); }
     
-    .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 6px 6px 0 0; }
+    /* Kotak dibuat lebih panjang ke bawah (Rasio diubah ke 140%) */
+    .poster-container { width: 100%; position: relative; padding-bottom: 140%; overflow: hidden; border-radius: 6px 6px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-    .playlist-title { display: block; padding: 6px 4px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .playlist-title { display: block; padding: 4px 2px; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-.search-box{position:relative;width:90%;margin:auto;}
-.search-box input{width:100%;padding:10px 40px 10px 10px;box-sizing:border-box;}
-#clearSearch{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;cursor:pointer;color:#888;font-size:18px;}
+    /* KHUSUS LANDSCAPE: Diubah jadi 7 Kolom agar muat lebih banyak dan kotak makin ramping */
+    @media (orientation: landscape) {
+      .plyr-playlist { grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 12px; }
+      .poster-container { padding-bottom: 140%; }
+      .playlist-title { font-size: 10px; padding: 5px 3px; }
+    }
 
-</style>
+    .search-box{position:relative;width:90%;margin:auto;}
+    .search-box input{width:100%;padding:10px 40px 10px 10px;box-sizing:border-box;}
+    #clearSearch{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;cursor:pointer;color:#888;font-size:18px;}
+  </style>
 </head>
 <body>
 
@@ -67,7 +74,7 @@
 
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
-  var lastClickedItem = null; // Variabel untuk menyimpan elemen poster terakhir yang diklik
+  var lastClickedItem = null;
 
   window.addEventListener("keydown", function(e) {
       if (e.keyCode === 4 || e.keyCode === 27 || e.key === "Back") {
@@ -86,7 +93,7 @@
 
   function openPlayer(id, element) {
     if (element) {
-      lastClickedItem = element; // Simpan elemen poster yang memicu pemutar aktif
+      lastClickedItem = element;
     }
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
@@ -101,8 +108,6 @@
     $("#player-overlay").hide(); 
     player.stop(); 
     clearTimeout(hideTimer); 
-    
-    // Kembalikan fokus ke poster terakhir yang diklik, jika tidak ada baru ke poster pertama
     if (lastClickedItem) {
       $(lastClickedItem).focus();
     } else {
@@ -111,7 +116,7 @@
   }
   
   $("#searchInput").on("input", function(){let val=$(this).val().toLowerCase();$("#clearSearch").toggle(val.length>0);renderPlaylist(myPlaylist.filter(p=>p.title.toLowerCase().includes(val)));});
-$("#clearSearch").on("click",function(){$("#searchInput").val("").focus();$(this).hide();renderPlaylist(myPlaylist);});
+  $("#clearSearch").on("click",function(){$("#searchInput").val("").focus();$(this).hide();renderPlaylist(myPlaylist);});
 
   function renderPlaylist(list) {
     let html = list.map(v => `
