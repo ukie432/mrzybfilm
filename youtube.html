@@ -41,7 +41,7 @@
         .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
         .poster:focus .poster-title { color: #00c54f; }
         
-        /* LAYER 2: Popup Kategori (Asli Sesuai File Referensi Bapak) */
+        /* LAYER 2: Popup Kategori */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
@@ -107,13 +107,13 @@
         youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
     })[0];
 
-    // Logika Struktur Remote Back Bertingkat
+    // Logika Struktur Remote Back Bertingkat Resmi
     window.tutupPopUpPoster = function(){
         if ($("#player-overlay").is(":visible")) {
             closePlayer();
             return;
         }
-        if ($("#popup").is(":visible")) {
+        if ($("#popup").is(":visible") && $("#popup").css("opacity") !== "0") {
             window.closePopup();
             return;
         }
@@ -210,18 +210,17 @@
         });
     });
 
-    // LOAD DATA JSON SESUAI VARIABEL .categories ANDA
+    // LOAD DATA JSON SESUAI VARIABEL .categories
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
             data.forEach(item => {
-                // Diperbaiki untuk membaca .categories dari format JSON baru Anda
                 const epEncoded = encodeURIComponent(JSON.stringify(item.categories || []));
                 $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
             });
             setTimeout(() => {
                 const popupElement = document.getElementById("popup");
-                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
                     $(".poster").first().focus();
                 }
             }, 600);
@@ -247,7 +246,8 @@
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playFullscreen('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         
-        $("#popup").css("display", "flex");
+        // Kembalikan posisi style normal jika baru dibuka
+        $("#popup").css("display", "flex").css("opacity", "1").css("pointer-events", "auto");
         
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
@@ -258,7 +258,8 @@
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
 
-        $("#popup").css("visibility", "hidden"); 
+        // TRIK UTAMA: Jangan pakai display none, melainkan sembunyikan tampilannya saja agar status gembok Android tidak lepas
+        $("#popup").css("opacity", "0").css("pointer-events", "none"); 
         $("#player-overlay").show();
 
         player.source({ type: "video", sources: [{ src: url, type: "youtube" }] });
@@ -285,7 +286,9 @@
         player.stop();
         clearTimeout(hideTimer);
         $("#player-overlay").hide();
-        $("#popup").css("visibility", "visible");
+        
+        // Kembalikan popup ke layar penuh
+        $("#popup").css("opacity", "1").css("pointer-events", "auto");
         
         const title = localStorage.getItem(pageTitle + "_judul_film");
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
@@ -298,7 +301,7 @@
     // BACK TINGKAT 2: POPUP -> POSTER UTAMA
     window.closePopup = function() { 
         player.stop();
-        $("#popup").css("display", "none").css("visibility", "visible");
+        $("#popup").css("display", "none").css("opacity", "1").css("pointer-events", "auto");
         
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
 
