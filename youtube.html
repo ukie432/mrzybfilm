@@ -11,6 +11,17 @@
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
+    /* STYLE LOGO DI POJOK KIRI ATAS PLAYER */
+    .player-logo { 
+      position: absolute; 
+      top: 20px; 
+      left: 20px; 
+      height: 50px; /* Atur tinggi logo sesuai kebutuhan */
+      width: auto; 
+      z-index: 10001; 
+      pointer-events: none; /* Supaya tidak mengganggu klik remote */
+    }
+
     .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
     .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
@@ -48,6 +59,8 @@
 <ul class="plyr-playlist" id="playlist"></ul>
 
 <div id="player-overlay">
+  <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
+  
   <div class="custom-controls" id="controls">
     <button class="btn-ctrl" onclick="seek(-10); resetHideTimer()">-10</button>
     <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay(); resetHideTimer()">||</button>
@@ -74,12 +87,10 @@
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
 
-  // DISAMAKAN PERSIS DENGAN FUNGSI JEMBATAN KODE SUKSES ANDA (denganpopup.txt)
   window.tutupPopUpPoster = function(){
       window.closePlayer();
   };
 
-  // Event Listener tombol Back Remote global menggunakan capturing (true)
   window.addEventListener("keydown", function(event) {
       if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
           const overlay = document.getElementById("player-overlay");
@@ -87,7 +98,7 @@
               event.preventDefault();
               event.stopPropagation();
               event.stopImmediatePropagation();
-              window.tutupPopUpPoster(); // Memanggil nama jembatan resmi Anda
+              window.tutupPopUpPoster();
               return false;
           }
       }
@@ -102,7 +113,6 @@
   function openPlayer(id, elementId) {
     localStorage.setItem("iwan_idPosterTerakhir", elementId);
     
-    // Kunci tombol Back Android agar tidak mental keluar aplikasi
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(true);
     }
@@ -127,12 +137,10 @@
     player.stop(); 
     clearTimeout(hideTimer); 
     
-    // Buka gembok tombol Back di sisi Android secara instan saat player ditutup
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(false);
     }
     
-    // Kembalikan fokus berdasarkan ID dari localStorage agar kursor remot tidak hilang
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (lastId) {
       setTimeout(() => {
