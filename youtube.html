@@ -15,17 +15,20 @@
     .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
     
-    /* Default Portrait: Diubah jadi 5 Kolom agar lebar kotak lebih kecil sedikit */
+    /* Playlist Grid */
     .plyr-playlist { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; list-style: none; margin: 0; }
-    .plyr-playlist li { background: #222; border-radius: 6px; text-align: center; cursor: pointer; outline: none; overflow: hidden; }
-    .plyr-playlist li:focus { border: 2px solid #fff; transform: scale(1.05); }
     
-    /* Kotak dibuat lebih panjang ke bawah (Rasio diubah ke 140%) */
-    .poster-container { width: 100%; position: relative; padding-bottom: 140%; overflow: hidden; border-radius: 6px 6px 0 0; }
+    /* Ditambahkan border putih tipis (1px solid #fff) pada kondisi normal */
+    .plyr-playlist li { background: #222; border: 1px solid #fff; border-radius: 6px; text-align: center; cursor: pointer; outline: none; overflow: hidden; transition: all 0.2s ease; box-sizing: border-box; }
+    
+    /* Ketika FOCUS: Border berubah menjadi MERAH (#dc2626) */
+    .plyr-playlist li:focus { border: 2px solid #dc2626; transform: scale(1.05); }
+    
+    .poster-container { width: 100%; position: relative; padding-bottom: 140%; overflow: hidden; border-radius: 5px 5px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     .playlist-title { display: block; padding: 4px 2px; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-    /* KHUSUS LANDSCAPE: Diubah jadi 7 Kolom agar muat lebih banyak dan kotak makin ramping */
+    /* KHUSUS LANDSCAPE */
     @media (orientation: landscape) {
       .plyr-playlist { grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 12px; }
       .poster-container { padding-bottom: 140%; }
@@ -34,7 +37,7 @@
 
     .search-box{position:relative;width:90%;margin:auto;}
     .search-box input{width:100%;padding:10px 40px 10px 10px;box-sizing:border-box;}
-    #clearSearch{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;cursor:pointer;color:#888;font-size:18px;}
+    #clearSearch{position:absolute;right:12px;top:50%;transform:translateY-%50% optimal;display:none;cursor:pointer;color:#888;font-size:18px;}
   </style>
 </head>
 <body>
