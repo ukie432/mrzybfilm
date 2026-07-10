@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Iwan Fals Musik Player</title>
+  <title>MRZYB TV - Player All-in-One</title>
   <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
   <style>
     body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
@@ -10,6 +10,7 @@
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
+    /* LOGO MRZYB TV POJOK KIRI ATAS PLAYER */
     .player-logo { 
       position: absolute; 
       top: 20px; 
@@ -33,17 +34,19 @@
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     .playlist-title { display: block; padding: 4px 2px; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-    /* KHUSUS LANDSCAPE */
+    /* KHUSUS LANDSCAPE (TAMPILAN TV) */
     @media (orientation: landscape) {
       .plyr-playlist { grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 12px; }
       .poster-container { padding-bottom: 140%; }
       .playlist-title { font-size: 10px; padding: 5px 3px; }
     }
 
+    /* KOTAK PENCARIAN PRESISI */
     .search-box { position: relative; width: 90%; max-width: 500px; margin: auto; display: flex; align-items: center; }
     .search-box input { width: 100%; padding: 10px 45px 10px 15px; box-sizing: border-box; border-radius: 5px; border: none; font-size: 14px; background: #fff; color: #000; }
     .search-box input:focus { outline: 2px solid #dc2626; }
 
+    /* TOMBOL SILANG BISA DI-FOCUS REMOTE */
     #clearSearch { 
       position: absolute; 
       right: 15px; 
@@ -66,7 +69,7 @@
 
 <div class="search-bar">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Cari lagu...">
+    <input type="text" id="searchInput" placeholder="Cari konten...">
     <span id="clearSearch" tabindex="0">✖</span>
   </div>
 </div>
@@ -77,9 +80,12 @@
   <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
   
   <div class="custom-controls" id="controls">
+    <button class="btn-ctrl" onclick="putarKontenSampingnya(-1); resetHideTimer()">⏮</button>
     <button class="btn-ctrl" onclick="seek(-10); resetHideTimer()">-10</button>
     <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay(); resetHideTimer()">||</button>
     <button class="btn-ctrl" onclick="seek(10); resetHideTimer()">+10</button>
+    <button class="btn-ctrl" onclick="putarKontenSampingnya(1); resetHideTimer()">⏭</button>
+    <button class="btn-ctrl" id="btnCC" onclick="toggleSubtitle(); resetHideTimer()">CC</button>
     <button class="btn-ctrl" onclick="closePlayer()">X</button>
   </div>
   <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
@@ -88,15 +94,26 @@
 <script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-  // Sekarang variabel global ini diinisialisasi sebagai array kosong
   var myPlaylist = []; 
-  var player = plyr.setup(".js-player", { controls: [] })[0];
+  
+  // Setelan awal: Matikan CC/Teks otomatis di awal putar agar layar bersih
+  var player = plyr.setup(".js-player", { 
+    controls: [],
+    youtube: {
+      cc_load_policy: 0,
+      hl: 'id'
+    }
+  })[0];
+  
   var hideTimer;
+  var subtitleAktif = false;
 
+  // JEMBATAN BACK KODE SUKSES ANDA
   window.tutupPopUpPoster = function(){
       window.closePlayer();
   };
 
+  // EVENT LISTENER BACK REMOTE GLOBAL
   window.addEventListener("keydown", function(event) {
       if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
           const overlay = document.getElementById("player-overlay");
@@ -118,9 +135,12 @@
 
   function openPlayer(id, elementId) {
     localStorage.setItem("iwan_idPosterTerakhir", elementId);
+    
+    // Kunci tombol Back Android agar tidak mental keluar aplikasi
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(true);
     }
+    
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
     setTimeout(() => { 
@@ -129,6 +149,10 @@
       player.setVolume(100); 
       $("#btnPlayPause").focus(); 
       resetHideTimer(); 
+      
+      // Reset status tombol CC tiap ganti konten baru
+      subtitleAktif = false;
+      $("#btnCC").css("border", "none");
     }, 1000);
   }
 
@@ -140,9 +164,13 @@
     $("#player-overlay").hide(); 
     player.stop(); 
     clearTimeout(hideTimer); 
+    
+    // Matikan gembok tombol Back di sisi Android
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(false);
     }
+    
+    // Kembalikan fokus berdasarkan ID dari localStorage agar kursor remot tidak ilang
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (lastId) {
       setTimeout(() => {
@@ -157,6 +185,49 @@
     }
   }
   
+  // NAVIGASI PINTAR PINDAH KONTEN SESUAI KATEGORI (Musik / Film)
+  function putarKontenSampingnya(arah) {
+    const lastId = localStorage.getItem("iwan_idPosterTerakhir");
+    if (!lastId || myPlaylist.length === 0) return;
+
+    let currentKonten = myPlaylist.find(item => item.id === lastId);
+    if (!currentKonten) return;
+
+    let kategoriSekarang = currentKonten.category || "musik";
+    let playlistSamaKategori = myPlaylist.filter(item => (item.category || "musik") === kategoriSekarang);
+
+    let currentIndex = playlistSamaKategori.findIndex(item => item.id === lastId);
+    
+    if (currentIndex !== -1) {
+      let nextIndex = currentIndex + arah;
+
+      if (nextIndex >= playlistSamaKategori.length) nextIndex = 0;
+      if (nextIndex < 0) nextIndex = playlistSamaKategori.length - 1;
+
+      const kontenBaru = playlistSamaKategori[nextIndex];
+      player.stop();
+      openPlayer(kontenBaru.src, kontenBaru.id);
+    }
+  }
+
+  // LOGIKA PENGONTROL SUBTITLE / CC 
+  function toggleSubtitle() {
+    if (player && typeof player.toggleCaptions === "function") {
+      player.toggleCaptions();
+      subtitleAktif = !subtitleAktif;
+      $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
+    } else {
+      const iframe = document.querySelector('#player-overlay iframe');
+      if (iframe && iframe.contentWindow) {
+        subtitleAktif = !subtitleAktif;
+        const opsiCC = subtitleAktif ? 'loadCaps' : 'unloadCaps';
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: opsiCC }), '*');
+        $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
+      }
+    }
+  }
+  
+  // PENCARIAN KONTEN
   $("#searchInput").on("input", function(){
     let val=$(this).val().toLowerCase();
     $("#clearSearch").toggle(val.length > 0);
@@ -188,21 +259,20 @@
 
   $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
   
-  // PROSES LOADING DATA DARI FILE JSON EKSTERNAL
+  // SEKARANG MEMBACA DARI PATH REPO YANG SAMA (data/youtube.json)
   $(document).ready(() => {
     fetch('data/youtube.json')
       .then(response => response.json())
       .then(data => {
-        myPlaylist = data; // Masukkan data json ke variabel playlist global
-        renderPlaylist(myPlaylist); // Gambar item playlist ke layar
+        myPlaylist = data; 
+        renderPlaylist(myPlaylist); 
         
-        // Atur fokus awal setelah list dimuat
         setTimeout(() => {
           $("#searchInput").focus();
         }, 150);
       })
       .catch(err => {
-        console.error("Gagal memuat daftar lagu dari JSON:", err);
+        console.error("Gagal memuat JSON dari folder data/ :", err);
         $("#searchInput").focus();
       });
   });
