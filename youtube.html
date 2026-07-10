@@ -33,7 +33,7 @@
         }
         .clear-search:focus { background: red; outline: none; }
 
-        /* Grid & Poster */
+        /* Grid & Poster Halaman Utama */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; }
         .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
         .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
@@ -41,23 +41,23 @@
         .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
         .poster:focus .poster-title { color: #00c54f; }
         
-        /* Popup Utama yang Sukses */
+        /* LAYER 2: Popup Kategori (Sesuai Logika yang Berhasil) */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:85%; max-width:600px; border:2px solid #00c54f; position: relative; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
         .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; font-size: 14px; font-weight: bold; cursor: pointer; }
         .eps-btn:focus { background:#00c54f; color:black; outline: none; }
 
-        /* AREA PLAYER YOUTUBE (TERSEMBUNYI SAAT BELUM MEMILIH KATEGORI) */
-        #player-wrapper { display: none; width: 100%; margin-top: 15px; background: #000; position: relative; }
-        .custom-controls { text-align: center; margin-top: 10px; }
-        .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 42px; height: 42px; border-radius: 50%; margin: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
-        .btn-ctrl:focus { background: #fff; color: #dc2626; outline: 2px solid #00c54f; }
+        /* LAYER 3: Player Fullscreen Terpisah (Di luar Popup) */
+        #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+        .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
+        .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .btn-ctrl:focus { background: #fff; color: #dc2626; outline: 2px solid #00c54f; opacity: 1; }
         
-        /* Logo Player Pojok Kiri Atas di dalam video */
-        .player-logo { position: absolute; top: 15px; left: 15px; height: 35px; width: auto; z-index: 10; pointer-events: none; }
+        /* Logo Player Pojok Kiri Atas */
+        .player-logo { position: absolute; top: 20px; left: 20px; height: 50px; width: auto; z-index: 10001; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -73,71 +73,79 @@
 
     <div class="grid" id="grid"></div>
 
-    <!-- POPUP UTAMA SINKRONISASI NATIVE -->
     <div id="popup">
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
             <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
-            
-            <!-- TEMPAT DAFTAR KATEGORI/EPISODE -->
             <div id="eps-list"></div>
-
-            <!-- JANTUNG MEDIA PLAYER (HANYA MUNCUL JIKA KATEGORI DIPILIH) -->
-            <div id="player-wrapper">
-                <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo">
-                <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
-                <div class="custom-controls" id="controls">
-                    <button class="btn-ctrl" onclick="putarKontenSampingnya(-1)">⏮</button>
-                    <button class="btn-ctrl" onclick="seek(-10)">-10</button>
-                    <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay()">||</button>
-                    <button class="btn-ctrl" onclick="seek(10)">+10</button>
-                    <button class="btn-ctrl" onclick="putarKontenSampingnya(1)">⏭</button>
-                    <button class="btn-ctrl" id="btnCC" onclick="toggleSubtitle()">CC</button>
-                </div>
-            </div>
-
         </div>
+    </div>
+
+    <div id="player-overlay">
+        <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
+        <div class="custom-controls" id="controls">
+            <button class="btn-ctrl" onclick="putarKontenSampingnya(-1); resetHideTimer()">⏮</button>
+            <button class="btn-ctrl" onclick="seek(-10); resetHideTimer()">-10</button>
+            <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay(); resetHideTimer()">||</button>
+            <button class="btn-ctrl" onclick="seek(10); resetHideTimer()">+10</button>
+            <button class="btn-ctrl" onclick="putarKontenSampingnya(1); resetHideTimer()">⏭</button>
+            <button class="btn-ctrl" id="btnCC" onclick="toggleSubtitle(); resetHideTimer()">CC</button>
+            <button class="btn-ctrl" onclick="window.tutupPopUpPoster()">X</button>
+        </div>
+        <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
     </div>
 
 <script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
 <script>
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
-    const jsonUrl = "data/youtube.json"; // Membaca file json bapak
+    const jsonUrl = "data/youtube.json"; // Path File Data JSON bapak
     var currentEpisodes = [];
+    var hideTimer;
     var subtitleAktif = false;
 
-    // Inisialisasi Player dengan Pemutus CC Otomatis di awal load
+    // Inisialisasi Player (Matikan CC otomatis di awal load)
     var player = plyr.setup(".js-player", { 
         controls: [],
         youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
     })[0];
 
     // ========================================================
-    // LOGIKA PENYELARASAN NATIVE TV & ANDROID BACK BACK
+    // LOGIKA PENGATURAN REMOTE BACK BERTINGKAT KETAT
     // ========================================================
     
     window.tutupPopUpPoster = function(){
-        // JIKA Player sedang menyala di dalam popup -> Matikan Player & Kembalikan ke daftar Kategori terakhir
-        if ($("#player-wrapper").is(":visible")) {
-            backToCategories();
-        } else {
-            // JIKA hanya daftar kategori yang terbuka -> Tutup Popup total kembali ke poster utama
+        // Tingkat 1: Jika Player Fullscreen Terbuka -> Tutup Player, Kembalikan ke Popup Kategori
+        if ($("#player-overlay").is(":visible")) {
+            closePlayer();
+            return;
+        }
+        // Tingkat 2: Jika Popup Kategori Terbuka -> Tutup Popup, Kembali ke Poster Utama
+        if ($("#popup").is(":visible")) {
             window.closePopup();
+            return;
         }
     };
 
+    // Deteksi Tombol Back Remote Fisik (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-            const popupElement = document.getElementById("popup");
-            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+            if ($("#player-overlay").is(":visible") || $("#popup").is(":visible")) {
                 event.preventDefault();
-                window.tutupPopUpPoster(); 
+                window.tutupPopUpPoster(); // Eksekusi fungsi penutupan resmi bertingkat
                 return;
             }
         }
-    }, true); 
+    }, true);
 
-    // Navigasi Remote Tambahan
+    // Kontrol Timer Sembunyi Panel Remote Player
+    function resetHideTimer() {
+        $("#controls").css("opacity", "1");
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
+    }
+    $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
+
+    // Navigasi Tombol Arah Atas/Bawah/Kiri/Kanan Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
@@ -153,17 +161,13 @@
         if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
             $('.close-x').focus();
         } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
-            if ($("#player-wrapper").is(":visible")) {
-                $("#btnPlayPause").focus();
-            } else {
-                const currentTitle = $("#modal-title").text();
-                const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
-                $(`.eps-btn[data-index="${lastIdx}"]`).focus();
-            }
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
     });
 
-    // Logika Bar Pencarian
+    // Logika Bar Pencarian Utama
     $("#search-box").on('keydown', function(e) {
         if (e.keyCode == 13) { e.preventDefault(); $("#search").removeAttr("disabled").focus(); return false; }
         else if (e.keyCode == 40) { e.preventDefault(); $(".poster").first().focus(); return false; }
@@ -190,7 +194,7 @@
         });
     });
 
-    // Memuat Data File JSON Utama Bapak
+    // Load Data JSON
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
@@ -200,14 +204,14 @@
             });
             setTimeout(() => { 
                 const popupElement = document.getElementById("popup");
-                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
                     $(".poster").first().focus(); 
                 }
             }, 600);
             checkLastSession();
         });
 
-    // FUNGSI BUKA POPUP UTAMA
+    // FUNGSI UTAMA: BUKA POPUP KATEGORI
     function openModal(id, title, epsEncoded) {
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_id", id);
@@ -220,14 +224,10 @@
 
         currentEpisodes = JSON.parse(decodeURIComponent(epsEncoded));
         $("#modal-title").text(title);
+        $("#eps-list").empty();
         
-        // Sembunyikan player dahulu, tampilkan daftar kategori
-        $("#player-wrapper").hide();
-        player.stop();
-        $("#eps-list").empty().show();
-
         currentEpisodes.forEach((e, index) => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playInPopup('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playFullscreen('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         
         $("#popup").css("display", "flex");
@@ -236,14 +236,14 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // FUNGSI JALANKAN VIDEO DI DALAM POPUP
-    function playInPopup(url, index, title) {
+    // FUNGSI JALANKAN VIDEO TERPISAH (PLAYER FULLSCREEN OVERLAY)
+    function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
 
-        // Alihkan pandangan layar dari daftar tombol ke Media Player
-        $("#eps-list").hide();
-        $("#player-wrapper").show();
+        // Beri jeda/sembunyikan popup kategori agar tidak dobel focus remote
+        $("#popup").css("visibility", "hidden"); 
+        $("#player-overlay").show();
 
         player.source({ type: "video", sources: [{ src: url, type: "youtube" }] });
         
@@ -251,40 +251,49 @@
             player.play();
             player.muted = false;
             player.setVolume(100);
-            $("#btnPlayPause").focus(); // Fokus remote langsung mendarat aman di kontrol player
+            $("#btnPlayPause").focus(); // Fokus remote dikunci aman di kontrol player
+            resetHideTimer();
 
-            // Blokade Teks Otomatis YouTube di awal putar
+            // Sikat habis teks otomatis CC bawaan YouTube di awal putar
             subtitleAktif = false;
             $("#btnCC").css("border", "none");
             setTimeout(() => {
                 if (player && player.captions && player.captions.active) player.toggleCaptions();
-                const iframe = document.querySelector('#popup iframe');
+                const iframe = document.querySelector('#player-overlay iframe');
                 if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
             }, 1200);
         }, 800);
     }
 
-    // FUNGSI KEMBALI KEDUA (PLAYER -> DAFTAR KATEGORI)
-    function backToCategories() {
+    // FUNGSI KEMBALI TINGKAT 1 (PLAYER FULLSCREEN -> POPUP KATEGORI)
+    function closePlayer() {
         player.stop();
-        $("#player-wrapper").hide();
-        $("#eps-list").show();
+        clearTimeout(hideTimer);
+        $("#player-overlay").hide();
+        
+        // Munculkan kembali Popup Kategori
+        $("#popup").css("visibility", "visible");
         
         const title = localStorage.getItem(pageTitle + "_judul_film");
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
-        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
+        
+        // Kembalikan fokus remote ke tombol kategori terakhir yang bapak putar
+        setTimeout(() => { 
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus(); 
+        }, 150);
     }
 
-    // FUNGSI TUTUP POPUP TOTAL (KEMBALI KE POSTER UTAMA)
+    // FUNGSI KEMBALI TINGKAT 2 (POPUP KATEGORI -> HALAMAN UTAMA POSTER)
     window.closePopup = function() { 
         player.stop();
-        $("#popup").css("display", "none"); 
+        $("#popup").css("display", "none").css("visibility", "visible"); 
         
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
         localStorage.removeItem(pageTitle + "_index_sekarang");
 
+        // Kembalikan fokus remote ke poster terakhir bapak di halaman utama
         const lastId = localStorage.getItem(pageTitle + "_last_poster_id");
         if (lastId) {
             setTimeout(() => {
@@ -297,7 +306,7 @@
         }
     };
 
-    // NAVIGASI PLAYER: KONTEN SEBELUMNYA / BERIKUTNYA
+    // NAVIGASI REMOTE: NEXT/PREV DI DALAM VIDEO PLAYER
     function putarKontenSampingnya(arah) {
         let curIdx = parseInt(localStorage.getItem(pageTitle + "_index_sekarang") || 0);
         let nextIdx = curIdx + arah;
@@ -306,16 +315,17 @@
             const title = localStorage.getItem(pageTitle + "_judul_film");
             const nextVideo = currentEpisodes[nextIdx];
             player.stop();
-            playInPopup(nextVideo.url, nextIdx, title);
+            playFullscreen(nextVideo.url, nextIdx, title);
         }
     }
 
-    // PENGENDALI PLAYER UTAMA
+    // SISTEM PENGONTROL FITUR UTAMA PLAYER 
     function togglePlay() { player.togglePlay(); }
     function seek(s) { player.seek(player.getCurrentTime() + s); }
+    
     function toggleSubtitle() {
         subtitleAktif = !subtitleAktif;
-        const iframe = document.querySelector('#popup iframe');
+        const iframe = document.querySelector('#player-overlay iframe');
         const func = subtitleAktif ? 'loadCaps' : 'unloadCaps';
         if (player && typeof player.toggleCaptions === "function") player.toggleCaptions();
         if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func }), '*');
@@ -333,7 +343,7 @@
 </script>
 
 <script>
-    // Efek Audio Navigasi Remote TV
+    // Efek Bunyi Suara Navigasi Klik Remote
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
     function playSound() { soundClick.currentTime = 0; soundClick.play().catch(e => {}); }
     document.addEventListener('focus', function(e) {
