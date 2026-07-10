@@ -74,19 +74,20 @@
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
 
-  // JEMBATAN PENUTUP RESMI SEPERTI CONTOH KODE SUKSES ANDA
-  window.tutupPlayerSaja = function(){
+  // DISAMAKAN PERSIS DENGAN FUNGSI JEMBATAN KODE SUKSES ANDA (denganpopup.txt)
+  window.tutupPopUpPoster = function(){
       window.closePlayer();
   };
 
-  // MENGGUNAKAN LOGIKA CAPTURING TRUE SAMA PERSIS DENGAN REFERENSI ANDA
+  // Event Listener tombol Back Remote global menggunakan capturing (true)
   window.addEventListener("keydown", function(event) {
       if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
           const overlay = document.getElementById("player-overlay");
           if (overlay && window.getComputedStyle(overlay).display !== "none") {
               event.preventDefault();
               event.stopPropagation();
-              window.tutupPlayerSaja(); // Jalankan fungsi penutupan resmi
+              event.stopImmediatePropagation();
+              window.tutupPopUpPoster(); // Memanggil nama jembatan resmi Anda
               return false;
           }
       }
@@ -99,8 +100,12 @@
   }
 
   function openPlayer(id, elementId) {
-    // Simpan id poster terakhir ke localStorage seperti referensi kode kedua Anda
     localStorage.setItem("iwan_idPosterTerakhir", elementId);
+    
+    // Kunci tombol Back Android agar tidak mental keluar aplikasi
+    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+        Android.setPopUpStatus(true);
+    }
     
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
@@ -122,7 +127,12 @@
     player.stop(); 
     clearTimeout(hideTimer); 
     
-    // Kembalikan fokus berdasarkan ID dari localStorage seperti kode referensi ke-2
+    // Buka gembok tombol Back di sisi Android secara instan saat player ditutup
+    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+        Android.setPopUpStatus(false);
+    }
+    
+    // Kembalikan fokus berdasarkan ID dari localStorage agar kursor remot tidak hilang
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (lastId) {
       setTimeout(() => {
