@@ -40,12 +40,10 @@
       .playlist-title { font-size: 10px; padding: 5px 3px; }
     }
 
-    /* PERBAIKAN STRUKTUR CSS KOTAK PENCARIAN */
     .search-box { position: relative; width: 90%; max-width: 500px; margin: auto; display: flex; align-items: center; }
     .search-box input { width: 100%; padding: 10px 45px 10px 15px; box-sizing: border-box; border-radius: 5px; border: none; font-size: 14px; background: #fff; color: #000; }
     .search-box input:focus { outline: 2px solid #dc2626; }
 
-    /* Tombol X Bisa Berubah Warna Merah saat di-Focus */
     #clearSearch { 
       position: absolute; 
       right: 15px; 
@@ -90,17 +88,8 @@
 <script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-  var myPlaylist = [
-    {id:"lagu-0", title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
-    {id:"lagu-1", title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
-    {id:"lagu-2", title:"Ibu", src:"d_uQ70o-N1g", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
-    {id:"lagu-3", title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"},
-    {id:"lagu-4", title:"Sarjana Muda", src:"example1", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
-    {id:"lagu-5", title:"Ujung Aspal", src:"example2", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
-    {id:"lagu-6", title:"Surat Buat Wakil Rakyat", src:"example3", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
-    {id:"lagu-7", title:"Kemesraan", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
-  ];
-
+  // Sekarang variabel global ini diinisialisasi sebagai array kosong
+  var myPlaylist = []; 
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
 
@@ -180,7 +169,6 @@
     renderPlaylist(myPlaylist);
   });
 
-  // Eksekusi klik tombol silang jika ditekan Enter (OK pada remote TV)
   $("#clearSearch").on("keydown", function(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
@@ -200,9 +188,23 @@
 
   $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
   
+  // PROSES LOADING DATA DARI FILE JSON EKSTERNAL
   $(document).ready(() => {
-    renderPlaylist(myPlaylist);
-    $("#searchInput").focus(); // Fokus awal otomatis ke kolom pencarian saat dibuka
+    fetch('data/youtube.json')
+      .then(response => response.json())
+      .then(data => {
+        myPlaylist = data; // Masukkan data json ke variabel playlist global
+        renderPlaylist(myPlaylist); // Gambar item playlist ke layar
+        
+        // Atur fokus awal setelah list dimuat
+        setTimeout(() => {
+          $("#searchInput").focus();
+        }, 150);
+      })
+      .catch(err => {
+        console.error("Gagal memuat daftar lagu dari JSON:", err);
+        $("#searchInput").focus();
+      });
   });
 </script>
 </body>
