@@ -77,6 +77,7 @@
 <ul class="plyr-playlist" id="playlist"></ul>
 
 <div id="player-overlay">
+  <!-- LOGO UTAMA POJOK KIRI ATAS -->
   <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
   
   <div class="custom-controls" id="controls">
@@ -96,11 +97,12 @@
 <script>
   var myPlaylist = []; 
   
-  // Setelan awal: Matikan CC/Teks otomatis di awal putar agar layar bersih
+  // PARAMETER KETAT: Mematikan CC dan memaksa menghilangkan pref bahasa di awal load
   var player = plyr.setup(".js-player", { 
     controls: [],
     youtube: {
       cc_load_policy: 0,
+      cc_lang_pref: 'none',
       hl: 'id'
     }
   })[0];
@@ -108,12 +110,12 @@
   var hideTimer;
   var subtitleAktif = false;
 
-  // JEMBATAN BACK KODE SUKSES ANDA
+  // JEMBATAN BACK REMOTE ANDROID
   window.tutupPopUpPoster = function(){
       window.closePlayer();
   };
 
-  // EVENT LISTENER BACK REMOTE GLOBAL
+  // EVENT LISTENER BACK GLOBAL
   window.addEventListener("keydown", function(event) {
       if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
           const overlay = document.getElementById("player-overlay");
@@ -136,13 +138,13 @@
   function openPlayer(id, elementId) {
     localStorage.setItem("iwan_idPosterTerakhir", elementId);
     
-    // Kunci tombol Back Android agar tidak mental keluar aplikasi
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(true);
     }
     
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
+    
     setTimeout(() => { 
       player.play(); 
       player.muted = false; 
@@ -150,9 +152,23 @@
       $("#btnPlayPause").focus(); 
       resetHideTimer(); 
       
-      // Reset status tombol CC tiap ganti konten baru
+      // Reset status tombol CC tampilan layar
       subtitleAktif = false;
       $("#btnCC").css("border", "none");
+
+      // TRICK UTAMA: Paksa matikan paksa CC setelah video sukses berputar
+      setTimeout(() => {
+        if (player && player.captions && player.captions.active) {
+          player.toggleCaptions();
+        }
+        
+        // Kirim perintah unload ke iframe YouTube terdalam
+        const iframe = document.querySelector('#player-overlay iframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
+        }
+      }, 1200);
+
     }, 1000);
   }
 
@@ -165,12 +181,10 @@
     player.stop(); 
     clearTimeout(hideTimer); 
     
-    // Matikan gembok tombol Back di sisi Android
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(false);
     }
     
-    // Kembalikan fokus berdasarkan ID dari localStorage agar kursor remot tidak ilang
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (lastId) {
       setTimeout(() => {
@@ -185,7 +199,7 @@
     }
   }
   
-  // NAVIGASI PINTAR PINDAH KONTEN SESUAI KATEGORI (Musik / Film)
+  // NAVIGASI PINTAR KATEGORI
   function putarKontenSampingnya(arah) {
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (!lastId || myPlaylist.length === 0) return;
@@ -210,20 +224,29 @@
     }
   }
 
-  // LOGIKA PENGONTROL SUBTITLE / CC 
+  // LOGIKA PENGONTROL MANUAL TOMBOL CC (Bisa mematikan/menghidupkan ulang)
   function toggleSubtitle() {
-    if (player && typeof player.toggleCaptions === "function") {
-      player.toggleCaptions();
-      subtitleAktif = !subtitleAktif;
-      $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
-    } else {
-      const iframe = document.querySelector('#player-overlay iframe');
-      if (iframe && iframe.contentWindow) {
-        subtitleAktif = !subtitleAktif;
-        const opsiCC = subtitleAktif ? 'loadCaps' : 'unloadCaps';
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: opsiCC }), '*');
-        $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
+    subtitleAktif = !subtitleAktif;
+    const iframe = document.querySelector('#player-overlay iframe');
+    
+    if (subtitleAktif) {
+      // Hidupkan CC
+      if (player && typeof player.toggleCaptions === "function" && (!player.captions || !player.captions.active)) {
+        player.toggleCaptions();
       }
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'loadCaps' }), '*');
+      }
+      $("#btnCC").css("border", "2px solid #00c54f");
+    } else {
+      // Matikan CC
+      if (player && typeof player.toggleCaptions === "function" && player.captions && player.captions.active) {
+        player.toggleCaptions();
+      }
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
+      }
+      $("#btnCC").css("border", "none");
     }
   }
   
@@ -259,7 +282,7 @@
 
   $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
   
-  // SEKARANG MEMBACA DARI PATH REPO YANG SAMA (data/youtube.json)
+  // MEMBACA DARI PATH REPO YANG SAMA (data/youtube.json)
   $(document).ready(() => {
     fetch('data/youtube.json')
       .then(response => response.json())
