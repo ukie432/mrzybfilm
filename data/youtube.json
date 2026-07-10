@@ -1,50 +1,19 @@
 [
   {
-    "id": "lagu-0",
-    "title": "Bento",
+    "id": "poster-rhoma",
+    "title": "Rhoma Irama Spesial",
+    "poster": "https://link-gambar-poster-rhoma.jpg",
+    "categories": [
+      { "name": "Film: Satria Bergitar", "src": "q7pL36FzeWk", "category": "film" },
+      { "name": "Film: Menggapai Matahari", "src": "UU-dTGy0ZGM", "category": "film" },
+      { "name": "Konser Live Soneta", "src": "g_sKDwbB5fc", "category": "musik" }
+    ]
+  },
+  {
+    "id": "poster-bento",
+    "title": "Iwan Fals - Bento",
+    "category": "musik",
     "src": "UU-dTGy0ZGM",
-    "poster": "https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"
-  },
-  {
-    "id": "lagu-1",
-    "title": "Yang Terlupakan",
-    "src": "q7pL36FzeWk",
-    "poster": "https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"
-  },
-  {
-    "id": "lagu-2",
-    "title": "Ibu",
-    "src": "g_sKDwbB5fc",
-    "poster": "https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"
-  },
-  {
-    "id": "lagu-3",
-    "title": "Pesawat Tempur",
-    "src": "p5u-8vR-u8k",
-    "poster": "https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"
-  },
-  {
-    "id": "lagu-4",
-    "title": "Sarjana Muda",
-    "src": "example1",
-    "poster": "https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"
-  },
-  {
-    "id": "lagu-5",
-    "title": "Ujung Aspal",
-    "src": "example2",
-    "poster": "https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"
-  },
-  {
-    "id": "lagu-6",
-    "title": "Surat Buat Wakil Rakyat",
-    "src": "example3",
-    "poster": "https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"
-  },
-  {
-    "id": "lagu-7",
-    "title": "Kemesraan",
-    "src": "UU-dTGy0ZGM",
-    "poster": "https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"
+    "poster": "https://link-gambar-bento.jpg"
   }
 ]
