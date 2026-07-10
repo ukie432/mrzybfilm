@@ -23,12 +23,20 @@
     .poster-container { width: 100%; position: relative; padding-bottom: 133.33%; overflow: hidden; border-radius: 6px 6px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     .playlist-title { display: block; padding: 6px 4px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  </style>
+  
+.search-box{position:relative;width:90%;margin:auto;}
+.search-box input{width:100%;padding:10px 40px 10px 10px;box-sizing:border-box;}
+#clearSearch{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;cursor:pointer;color:#888;font-size:18px;}
+
+</style>
 </head>
 <body>
 
 <div class="search-bar">
+  <div class="search-box">
   <input type="text" id="searchInput" placeholder="Cari lagu...">
+  <span id="clearSearch">✖</span>
+  </div>
 </div>
 
 <ul class="plyr-playlist" id="playlist"></ul>
@@ -59,6 +67,7 @@
 
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
+  var lastClickedItem = null; // Variabel untuk menyimpan elemen poster terakhir yang diklik
 
   window.addEventListener("keydown", function(e) {
       if (e.keyCode === 4 || e.keyCode === 27 || e.key === "Back") {
@@ -75,7 +84,10 @@
     hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
   }
 
-  function openPlayer(id) {
+  function openPlayer(id, element) {
+    if (element) {
+      lastClickedItem = element; // Simpan elemen poster yang memicu pemutar aktif
+    }
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
     setTimeout(() => { player.play(); player.muted = false; player.setVolume(100); $("#btnPlayPause").focus(); resetHideTimer(); }, 1000);
@@ -84,12 +96,26 @@
   $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
   function togglePlay() { player.togglePlay(); }
   function seek(s) { player.seek(player.getCurrentTime() + s); }
-  function closePlayer() { $("#player-overlay").hide(); player.stop(); clearTimeout(hideTimer); $("#playlist li:first").focus(); }
-  $("#searchInput").on("input", function() { let val = $(this).val().toLowerCase(); renderPlaylist(myPlaylist.filter(p => p.title.toLowerCase().includes(val))); });
+  
+  function closePlayer() { 
+    $("#player-overlay").hide(); 
+    player.stop(); 
+    clearTimeout(hideTimer); 
+    
+    // Kembalikan fokus ke poster terakhir yang diklik, jika tidak ada baru ke poster pertama
+    if (lastClickedItem) {
+      $(lastClickedItem).focus();
+    } else {
+      $("#playlist li:first").focus(); 
+    }
+  }
+  
+  $("#searchInput").on("input", function(){let val=$(this).val().toLowerCase();$("#clearSearch").toggle(val.length>0);renderPlaylist(myPlaylist.filter(p=>p.title.toLowerCase().includes(val)));});
+$("#clearSearch").on("click",function(){$("#searchInput").val("").focus();$(this).hide();renderPlaylist(myPlaylist);});
 
   function renderPlaylist(list) {
     let html = list.map(v => `
-      <li tabindex="0" onclick="openPlayer('${v.src}')">
+      <li tabindex="0" onclick="openPlayer('${v.src}', this)">
         <div class="poster-container"><img class="plyr-miniposter" src="${v.poster}"></div>
         <span class="playlist-title">${v.title}</span>
       </li>
@@ -98,7 +124,11 @@
   }
 
   $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
-  $(document).ready(() => renderPlaylist(myPlaylist));
+  
+  $(document).ready(() => {
+    renderPlaylist(myPlaylist);
+    $("#playlist li:first").focus();
+  });
 </script>
 </body>
 </html>
