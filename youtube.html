@@ -7,19 +7,17 @@
   <style>
     body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
     .search-bar { position: static; background: #111; padding: 10px; text-align: center; }
-    .search-bar input { width: 90%; padding: 10px; border-radius: 5px; border: none; font-size: 14px; }
     
     #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
     
-    /* STYLE LOGO DI POJOK KIRI ATAS PLAYER */
     .player-logo { 
       position: absolute; 
       top: 20px; 
       left: 20px; 
-      height: 50px; /* Atur tinggi logo sesuai kebutuhan */
+      height: 50px; 
       width: auto; 
       z-index: 10001; 
-      pointer-events: none; /* Supaya tidak mengganggu klik remote */
+      pointer-events: none; 
     }
 
     .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
@@ -42,17 +40,36 @@
       .playlist-title { font-size: 10px; padding: 5px 3px; }
     }
 
-    .search-box{position:relative;width:90%;margin:auto;}
-    .search-box input{width:100%;padding:10px 40px 10px 10px;box-sizing:border-box;}
-    #clearSearch{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none;cursor:pointer;color:#888;font-size:18px;}
+    /* PERBAIKAN STRUKTUR CSS KOTAK PENCARIAN */
+    .search-box { position: relative; width: 90%; max-width: 500px; margin: auto; display: flex; align-items: center; }
+    .search-box input { width: 100%; padding: 10px 45px 10px 15px; box-sizing: border-box; border-radius: 5px; border: none; font-size: 14px; background: #fff; color: #000; }
+    .search-box input:focus { outline: 2px solid #dc2626; }
+
+    /* Tombol X Bisa Berubah Warna Merah saat di-Focus */
+    #clearSearch { 
+      position: absolute; 
+      right: 15px; 
+      display: none; 
+      cursor: pointer; 
+      color: #888; 
+      font-size: 18px; 
+      outline: none; 
+      padding: 5px; 
+      border-radius: 50%;
+      user-select: none;
+    }
+    #clearSearch:focus { 
+      color: #dc2626; 
+      background: #eee; 
+    }
   </style>
 </head>
 <body>
 
 <div class="search-bar">
   <div class="search-box">
-  <input type="text" id="searchInput" placeholder="Cari lagu...">
-  <span id="clearSearch">✖</span>
+    <input type="text" id="searchInput" placeholder="Cari lagu...">
+    <span id="clearSearch" tabindex="0">✖</span>
   </div>
 </div>
 
@@ -112,11 +129,9 @@
 
   function openPlayer(id, elementId) {
     localStorage.setItem("iwan_idPosterTerakhir", elementId);
-    
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(true);
     }
-    
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
     setTimeout(() => { 
@@ -136,11 +151,9 @@
     $("#player-overlay").hide(); 
     player.stop(); 
     clearTimeout(hideTimer); 
-    
     if (typeof Android !== "undefined" && Android.setPopUpStatus) {
         Android.setPopUpStatus(false);
     }
-    
     const lastId = localStorage.getItem("iwan_idPosterTerakhir");
     if (lastId) {
       setTimeout(() => {
@@ -155,8 +168,25 @@
     }
   }
   
-  $("#searchInput").on("input", function(){let val=$(this).val().toLowerCase();$("#clearSearch").toggle(val.length>0);renderPlaylist(myPlaylist.filter(p=>p.title.toLowerCase().includes(val)));});
-  $("#clearSearch").on("click",function(){$("#searchInput").val("").focus();$(this).hide();renderPlaylist(myPlaylist);});
+  $("#searchInput").on("input", function(){
+    let val=$(this).val().toLowerCase();
+    $("#clearSearch").toggle(val.length > 0);
+    renderPlaylist(myPlaylist.filter(p=>p.title.toLowerCase().includes(val)));
+  });
+
+  $("#clearSearch").on("click", function(){
+    $("#searchInput").val("").focus();
+    $(this).hide();
+    renderPlaylist(myPlaylist);
+  });
+
+  // Eksekusi klik tombol silang jika ditekan Enter (OK pada remote TV)
+  $("#clearSearch").on("keydown", function(e) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      $(this).trigger("click");
+    }
+  });
 
   function renderPlaylist(list) {
     let html = list.map(v => `
@@ -172,7 +202,7 @@
   
   $(document).ready(() => {
     renderPlaylist(myPlaylist);
-    $("#playlist li:first").focus();
+    $("#searchInput").focus(); // Fokus awal otomatis ke kolom pencarian saat dibuka
   });
 </script>
 </body>
