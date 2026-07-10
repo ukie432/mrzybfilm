@@ -1,19 +1,19 @@
 [
   {
-    "id": "item-rhoma",
+    
     "title": "Rhoma Irama Spesial",
     "poster": "https://iptv-posterku.pages.dev/poster/rhoma.jpg",
-    "categories": [
+    "episodes": [
       { "ep": "Film: Satria Bergitar", "url": "q7pL36FzeWk" },
       { "ep": "Film: Menggapai Matahari", "url": "UU-dTGy0ZGM" },
       { "ep": "Musik: Live Soneta Konser", "url": "g_sKDwbB5fc" }
     ]
   },
   {
-    "id": "item-bento",
+    
     "title": "Iwan Fals - Bento",
     "poster": "https://iptv-posterku.pages.dev/poster/bento.jpg",
-    "categories": [
+    "episodes": [
       { "ep": "Mainkan Video", "url": "UU-dTGy0ZGM" }
     ]
   }
