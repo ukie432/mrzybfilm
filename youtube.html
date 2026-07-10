@@ -107,18 +107,21 @@
         youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
     })[0];
 
-    // Logika Struktur Remote Back Bertingkat Resmi
+    // Logika Jembatan Penutupan Remote Back Bertingkat Resmi
     window.tutupPopUpPoster = function(){
+        // JIKA sedang nonton player -> tutup player saja
         if ($("#player-overlay").is(":visible")) {
             closePlayer();
             return;
         }
-        if ($("#popup").is(":visible") && $("#popup").css("opacity") !== "0") {
+        // JIKA di posisi popup -> jalankan fungsi tutup resmi bawaan bapak
+        if ($("#popup").is(":visible")) {
             window.closePopup();
             return;
         }
     };
 
+    // Deteksi Tombol Back Remote Fisik (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             if ($("#player-overlay").is(":visible") || $("#popup").is(":visible")) {
@@ -136,7 +139,7 @@
     }
     $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
 
-    // Navigasi Remote
+    // Navigasi Remote Atas/Bawah/Kiri/Kanan
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
@@ -210,7 +213,7 @@
         });
     });
 
-    // LOAD DATA JSON SESUAI VARIABEL .categories
+    // LOAD DATA JSON - COCOK UNTUK FORMAT BARU (.categories)
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
@@ -227,13 +230,14 @@
             checkLastSession();
         });
 
-    // FUNGSI BUKA POPUP MODAL KATEGORI
+    // FUNGSI UTAMA: BUKA POPUP MODAL KATEGORI
     function openModal(title, epsEncoded) {
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title); 
         localStorage.setItem(pageTitle + "_judul_film", title);
         localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
 
+        // GEMBOK KENDALIKAN BACK ANDROID KE SISI WEB
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -246,20 +250,20 @@
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playFullscreen('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         
-        // Kembalikan posisi style normal jika baru dibuka
-        $("#popup").css("display", "flex").css("opacity", "1").css("pointer-events", "auto");
+        // Memastikan popup tampil utuh
+        $("#popup").css("display", "flex").css("visibility", "visible");
         
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // FUNGSI PLAYER FULLSCREEN
+    // FUNGSI UTAMA: MAINKAN VIDEO (PLAYER OVERLAY)
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
 
-        // TRIK UTAMA: Jangan pakai display none, melainkan sembunyikan tampilannya saja agar status gembok Android tidak lepas
-        $("#popup").css("opacity", "0").css("pointer-events", "none"); 
+        // Sembunyikan popup dengan menyamarkannya ke belakang agar display-nya tidak berubah menjadi none
+        $("#popup").css("visibility", "hidden"); 
         $("#player-overlay").show();
 
         player.source({ type: "video", sources: [{ src: url, type: "youtube" }] });
@@ -281,15 +285,20 @@
         }, 800);
     }
 
-    // BACK TINGKAT 1: PLAYER -> POPUP
+    // BACK TINGKAT 1: DARI PLAYER KEMBALI KE POPUP KATEGORI
     function closePlayer() {
         player.stop();
         clearTimeout(hideTimer);
         $("#player-overlay").hide();
         
-        // Kembalikan popup ke layar penuh
-        $("#popup").css("opacity", "1").css("pointer-events", "auto");
+        // Memunculkan kembali Popup Kategori ke layar depan
+        $("#popup").css("visibility", "visible");
         
+        // KUNCI ULANG STATUS GEMBOK ANDROID (Menghindari putus koneksi jembatan Back dari Android)
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
+
         const title = localStorage.getItem(pageTitle + "_judul_film");
         const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
         
@@ -298,10 +307,10 @@
         }, 150);
     }
 
-    // BACK TINGKAT 2: POPUP -> POSTER UTAMA
+    // BACK TINGKAT 2: DARI POPUP KATEGORI KEMBALI KE HALAMAN UTAMA POSTER (Asli Sesuai Berhasil)
     window.closePopup = function() { 
         player.stop();
-        $("#popup").css("display", "none").css("opacity", "1").css("pointer-events", "auto");
+        $("#popup").css("display", "none");
         
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
 
@@ -310,6 +319,7 @@
         localStorage.removeItem(pageTitle + "_eps_data");
         localStorage.removeItem(pageTitle + "_index_sekarang");
 
+        // Kembalikan fokus remote ke target poster asal bawaan bapak
         if (lastTitle) {
             setTimeout(() => {
                 const targetPoster = $(`.poster[data-title="${lastTitle}"]`);
@@ -320,6 +330,7 @@
             }, 150);
         }
 
+        // MATIKAN STATUS GEMBOK POPUP DI ANDROID SEPERTI FILE ASLI BERHASIL BAPAK
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
