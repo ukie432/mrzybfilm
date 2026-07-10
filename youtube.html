@@ -2,67 +2,47 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>MRZYB TV - Player All-in-One</title>
+  <title>MRZYB TV - Multi Layer Player</title>
   <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
   <style>
     body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
     .search-bar { position: static; background: #111; padding: 10px; text-align: center; }
     
-    #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
-    
-    /* LOGO MRZYB TV POJOK KIRI ATAS PLAYER */
-    .player-logo { 
-      position: absolute; 
-      top: 20px; 
-      left: 20px; 
-      height: 50px; 
-      width: auto; 
-      z-index: 10001; 
-      pointer-events: none; 
-    }
-
-    .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
-    .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
-    .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
-    
-    /* Playlist Grid */
+    /* Playlist Grid Halaman Utama */
     .plyr-playlist { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; list-style: none; margin: 0; }
     .plyr-playlist li { background: #222; border: 1px solid #fff; border-radius: 6px; text-align: center; cursor: pointer; outline: none; overflow: hidden; transition: all 0.2s ease; box-sizing: border-box; }
-    .plyr-playlist li:focus { border: 2px solid #dc2626; transform: scale(1.05); }
+    .plyr-playlist li:focus { border: 2px solid #00c54f; transform: scale(1.05); }
     
     .poster-container { width: 100%; position: relative; padding-bottom: 140%; overflow: hidden; border-radius: 5px 5px 0 0; }
     .plyr-miniposter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     .playlist-title { display: block; padding: 4px 2px; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-    /* KHUSUS LANDSCAPE (TAMPILAN TV) */
+    /* POPUP KATEGORI (LAYER 2) */
+    #category-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; text-align: center; box-sizing: border-box; padding-top: 50px; }
+    #category-popup h2 { margin-bottom: 30px; font-size: 20px; color: #00c54f; }
+    .category-list { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .btn-category { width: 80%; max-width: 400px; padding: 15px; background: #222; border: 2px solid #fff; color: #fff; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; outline: none; text-align: center; }
+    .btn-category:focus { background: #fff; color: #000; border-color: #00c54f; }
+
+    /* PLAYER OVERLAY (LAYER 3) */
+    #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+    .player-logo { position: absolute; top: 20px; left: 20px; height: 50px; width: auto; z-index: 10001; pointer-events: none; }
+    .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10000; transition: opacity 0.5s ease; }
+    .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .btn-ctrl:focus { background: #fff; color: #dc2626; outline: none; border: 2px solid #fff; opacity: 1; }
+
+    /* RESPONSIVE LANDSCAPE TV */
     @media (orientation: landscape) {
       .plyr-playlist { grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 12px; }
       .poster-container { padding-bottom: 140%; }
       .playlist-title { font-size: 10px; padding: 5px 3px; }
     }
 
-    /* KOTAK PENCARIAN PRESISI */
     .search-box { position: relative; width: 90%; max-width: 500px; margin: auto; display: flex; align-items: center; }
     .search-box input { width: 100%; padding: 10px 45px 10px 15px; box-sizing: border-box; border-radius: 5px; border: none; font-size: 14px; background: #fff; color: #000; }
-    .search-box input:focus { outline: 2px solid #dc2626; }
-
-    /* TOMBOL SILANG BISA DI-FOCUS REMOTE */
-    #clearSearch { 
-      position: absolute; 
-      right: 15px; 
-      display: none; 
-      cursor: pointer; 
-      color: #888; 
-      font-size: 18px; 
-      outline: none; 
-      padding: 5px; 
-      border-radius: 50%;
-      user-select: none;
-    }
-    #clearSearch:focus { 
-      color: #dc2626; 
-      background: #eee; 
-    }
+    .search-box input:focus { outline: 2px solid #00c54f; }
+    #clearSearch { position: absolute; right: 15px; display: none; cursor: pointer; color: #888; font-size: 18px; outline: none; padding: 5px; border-radius: 50%; user-select: none; }
+    #clearSearch:focus { color: #dc2626; background: #eee; }
   </style>
 </head>
 <body>
@@ -76,10 +56,13 @@
 
 <ul class="plyr-playlist" id="playlist"></ul>
 
+<div id="category-popup">
+  <h2 id="popup-title">Pilih Kategori</h2>
+  <div class="category-list" id="popup-options"></div>
+</div>
+
 <div id="player-overlay">
-  <!-- LOGO UTAMA POJOK KIRI ATAS -->
   <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
-  
   <div class="custom-controls" id="controls">
     <button class="btn-ctrl" onclick="putarKontenSampingnya(-1); resetHideTimer()">⏮</button>
     <button class="btn-ctrl" onclick="seek(-10); resetHideTimer()">-10</button>
@@ -87,7 +70,7 @@
     <button class="btn-ctrl" onclick="seek(10); resetHideTimer()">+10</button>
     <button class="btn-ctrl" onclick="putarKontenSampingnya(1); resetHideTimer()">⏭</button>
     <button class="btn-ctrl" id="btnCC" onclick="toggleSubtitle(); resetHideTimer()">CC</button>
-    <button class="btn-ctrl" onclick="closePlayer()">X</button>
+    <button class="btn-ctrl" onclick="window.tutupPopUpPoster()">X</button>
   </div>
   <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
 </div>
@@ -96,30 +79,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
   var myPlaylist = []; 
-  
-  // PARAMETER KETAT: Mematikan CC dan memaksa menghilangkan pref bahasa di awal load
   var player = plyr.setup(".js-player", { 
     controls: [],
-    youtube: {
-      cc_load_policy: 0,
-      cc_lang_pref: 'none',
-      hl: 'id'
-    }
+    youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
   })[0];
   
   var hideTimer;
   var subtitleAktif = false;
 
-  // JEMBATAN BACK REMOTE ANDROID
+  // JEMBATAN UTAMA REMOTE BACK (MENGURUS BACK BERTINGKAT)
   window.tutupPopUpPoster = function(){
-      window.closePlayer();
+      // JIKA PLAYER SEDANG BUKA (LAYER 3) -> TUTUP PLAYER, BALIK KE POPUP KATEGORI (LAYER 2)
+      if ($("#player-overlay").is(":visible")) {
+          closePlayer();
+          return;
+      }
+      // JIKA POPUP KATEGORI SEDANG BUKA (LAYER 2) -> TUTUP POPUP, BALIK KE POSTER (LAYER 1)
+      if ($("#category-popup").is(":visible")) {
+          closeCategoryPopup();
+          return;
+      }
   };
 
-  // EVENT LISTENER BACK GLOBAL
+  // MANAGEMENT TEKANAN TOMBOL BACK REMOTE (TV/STB)
   window.addEventListener("keydown", function(event) {
       if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-          const overlay = document.getElementById("player-overlay");
-          if (overlay && window.getComputedStyle(overlay).display !== "none") {
+          if ($("#player-overlay").is(":visible") || $("#category-popup").is(":visible")) {
               event.preventDefault();
               event.stopPropagation();
               event.stopImmediatePropagation();
@@ -129,21 +114,64 @@
       }
   }, true);
 
-  function resetHideTimer() {
-    $("#controls").css("opacity", "1");
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
+  // --- LOGIKA LAYER 2 (POPUP KATEGORI) ---
+  function openCategoryPopup(posterId) {
+    localStorage.setItem("iwan_idPosterTerakhir", posterId);
+    let masterData = myPlaylist.find(item => item.id === posterId);
+    if (!masterData) return;
+
+    $("#popup-title").text(masterData.title);
+    let htmlButton = "";
+
+    // Memeriksa jika konten ini bertipe multi-kategori (seperti Rhoma Irama)
+    if (masterData.categories && masterData.categories.length > 0) {
+      masterData.categories.forEach((cat, index) => {
+        htmlButton += `<button class="btn-category" id="cat-btn-${index}" onclick="openPlayer('${cat.src}', 'cat-btn-${index}', '${cat.category}')">${cat.name}</button>`;
+      });
+    } else {
+      // Jika poster biasa (tanpa sub-kategori), langsung tembak putar videonya
+      openPlayer(masterData.src, posterId, masterData.category);
+      return;
+    }
+
+    $("#popup-options").html(htmlButton);
+    $("#category-popup").show();
+
+    // Beri perlindungan gembok Android
+    if (typeof Android !== "undefined" && Android.setPopUpStatus) { Android.setPopUpStatus(true); }
+
+    // Fokuskan ke sub-kategori terakhir atau tombol pertama
+    const lastSubBtn = localStorage.getItem("iwan_idSubKategoriTerakhir");
+    setTimeout(() => {
+      if (lastSubBtn && document.getElementById(lastSubBtn)) {
+        $("#" + lastSubBtn).focus();
+      } else {
+        $(".btn-category:first").focus();
+      }
+    }, 150);
   }
 
-  function openPlayer(id, elementId) {
-    localStorage.setItem("iwan_idPosterTerakhir", elementId);
+  function closeCategoryPopup() {
+    $("#category-popup").hide();
+    if (typeof Android !== "undefined" && Android.setPopUpStatus) { Android.setPopUpStatus(false); }
     
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-        Android.setPopUpStatus(true);
+    // Kembalikan kursor ke poster utama terakhir yang dipilih
+    const lastPosterId = localStorage.getItem("iwan_idPosterTerakhir");
+    if (lastPosterId) {
+      setTimeout(() => {
+        const target = document.getElementById(lastPosterId);
+        if (target) { target.focus(); target.scrollIntoView({ behavior: "auto", block: "center" }); }
+      }, 150);
     }
-    
+  }
+
+  // --- LOGIKA LAYER 3 (PLAYER OVERLAY) ---
+  function openPlayer(src, subButtonId, categoryName) {
+    localStorage.setItem("iwan_idSubKategoriTerakhir", subButtonId);
+    localStorage.setItem("iwan_kategoriSekarang", categoryName || "musik");
+
     $("#player-overlay").show();
-    player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
+    player.source({ type: "video", sources: [{ src: src, type: "youtube" }] });
     
     setTimeout(() => { 
       player.play(); 
@@ -151,128 +179,85 @@
       player.setVolume(100); 
       $("#btnPlayPause").focus(); 
       resetHideTimer(); 
-      
-      // Reset status tombol CC tampilan layar
       subtitleAktif = false;
       $("#btnCC").css("border", "none");
 
-      // TRICK UTAMA: Paksa matikan paksa CC setelah video sukses berputar
+      // Paksa CC mati di awal
       setTimeout(() => {
-        if (player && player.captions && player.captions.active) {
-          player.toggleCaptions();
-        }
-        
-        // Kirim perintah unload ke iframe YouTube terdalam
+        if (player && player.captions && player.captions.active) player.toggleCaptions();
         const iframe = document.querySelector('#player-overlay iframe');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
-        }
+        if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
       }, 1200);
-
     }, 1000);
   }
 
+  function closePlayer() {
+    $("#player-overlay").hide();
+    player.stop();
+    clearTimeout(hideTimer);
+
+    // JIKA POPUP KATEGORI MASIH AKTIF, KEMBALIKAN FOKUS REMOTE KE TOMBOL POPUP KATEGORI TERAKHIR
+    if ($("#category-popup").is(":visible")) {
+      const lastSubBtn = localStorage.getItem("iwan_idSubKategoriTerakhir");
+      if (lastSubBtn) {
+        setTimeout(() => {
+          const targetSub = document.getElementById(lastSubBtn);
+          if (targetSub) targetSub.focus();
+        }, 150);
+      }
+    } else {
+      // Jika bukan multi-kategori, langsung oper balik ke Halaman Utama
+      closeCategoryPopup();
+    }
+  }
+
+  // NAVIGASI PINTAR PREV/NEXT
+  function putarKontenSampingnya(arah) {
+    let currentKat = localStorage.getItem("iwan_kategoriSekarang") || "musik";
+    let listSamaKategori = myPlaylist.filter(item => (item.category || "musik") === currentKat);
+    const lastPosterId = localStorage.getItem("iwan_idPosterTerakhir");
+    
+    let currentIndex = listSamaKategori.findIndex(item => item.id === lastPosterId);
+    if (currentIndex !== -1) {
+      let nextIndex = currentIndex + arah;
+      if (nextIndex >= listSamaKategori.length) nextIndex = 0;
+      if (nextIndex < 0) nextIndex = listSamaKategori.length - 1;
+
+      const kontenBaru = listSamaKategori[nextIndex];
+      player.stop();
+      // Update data poster terakhir
+      localStorage.setItem("iwan_idPosterTerakhir", kontenBaru.id);
+      openPlayer(kontenBaru.src, "", kontenBaru.category);
+    }
+  }
+
+  function resetHideTimer() { $("#controls").css("opacity", "1"); clearTimeout(hideTimer); hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000); }
   $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
   function togglePlay() { player.togglePlay(); }
   function seek(s) { player.seek(player.getCurrentTime() + s); }
-  
-  function closePlayer() { 
-    $("#player-overlay").hide(); 
-    player.stop(); 
-    clearTimeout(hideTimer); 
-    
-    if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-        Android.setPopUpStatus(false);
-    }
-    
-    const lastId = localStorage.getItem("iwan_idPosterTerakhir");
-    if (lastId) {
-      setTimeout(() => {
-        const target = document.getElementById(lastId);
-        if (target) {
-            target.focus();
-            target.scrollIntoView({ behavior: "auto", block: "center" });
-        }
-      }, 150);
-    } else {
-      $("#playlist li:first").focus(); 
-    }
-  }
-  
-  // NAVIGASI PINTAR KATEGORI
-  function putarKontenSampingnya(arah) {
-    const lastId = localStorage.getItem("iwan_idPosterTerakhir");
-    if (!lastId || myPlaylist.length === 0) return;
 
-    let currentKonten = myPlaylist.find(item => item.id === lastId);
-    if (!currentKonten) return;
-
-    let kategoriSekarang = currentKonten.category || "musik";
-    let playlistSamaKategori = myPlaylist.filter(item => (item.category || "musik") === kategoriSekarang);
-
-    let currentIndex = playlistSamaKategori.findIndex(item => item.id === lastId);
-    
-    if (currentIndex !== -1) {
-      let nextIndex = currentIndex + arah;
-
-      if (nextIndex >= playlistSamaKategori.length) nextIndex = 0;
-      if (nextIndex < 0) nextIndex = playlistSamaKategori.length - 1;
-
-      const kontenBaru = playlistSamaKategori[nextIndex];
-      player.stop();
-      openPlayer(kontenBaru.src, kontenBaru.id);
-    }
-  }
-
-  // LOGIKA PENGONTROL MANUAL TOMBOL CC (Bisa mematikan/menghidupkan ulang)
   function toggleSubtitle() {
     subtitleAktif = !subtitleAktif;
     const iframe = document.querySelector('#player-overlay iframe');
-    
-    if (subtitleAktif) {
-      // Hidupkan CC
-      if (player && typeof player.toggleCaptions === "function" && (!player.captions || !player.captions.active)) {
-        player.toggleCaptions();
-      }
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'loadCaps' }), '*');
-      }
-      $("#btnCC").css("border", "2px solid #00c54f");
-    } else {
-      // Matikan CC
-      if (player && typeof player.toggleCaptions === "function" && player.captions && player.captions.active) {
-        player.toggleCaptions();
-      }
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
-      }
-      $("#btnCC").css("border", "none");
-    }
+    const func = subtitleAktif ? 'loadCaps' : 'unloadCaps';
+    if (player && typeof player.toggleCaptions === "function") player.toggleCaptions();
+    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func }), '*');
+    $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
   }
-  
-  // PENCARIAN KONTEN
+
+  // FILTER PENCARIAN
   $("#searchInput").on("input", function(){
     let val=$(this).val().toLowerCase();
     $("#clearSearch").toggle(val.length > 0);
     renderPlaylist(myPlaylist.filter(p=>p.title.toLowerCase().includes(val)));
   });
-
-  $("#clearSearch").on("click", function(){
-    $("#searchInput").val("").focus();
-    $(this).hide();
-    renderPlaylist(myPlaylist);
-  });
-
-  $("#clearSearch").on("keydown", function(e) {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      $(this).trigger("click");
-    }
-  });
+  $("#clearSearch").on("click", function(){ $("#searchInput").val("").focus(); $(this).hide(); renderPlaylist(myPlaylist); });
+  $("#clearSearch").on("keydown", function(e) { if (e.keyCode === 13) { e.preventDefault(); $(this).trigger("click"); } });
 
   function renderPlaylist(list) {
+    // KETIK DIKLIK, SEKARANG MEMANGGIL openCategoryPopup BUKAN openPlayer LANGSUNG
     let html = list.map(v => `
-      <li tabindex="0" id="${v.id}" onclick="openPlayer('${v.src}', '${v.id}')">
+      <li tabindex="0" id="${v.id}" onclick="openCategoryPopup('${v.id}')">
         <div class="poster-container"><img class="plyr-miniposter" src="${v.poster}"></div>
         <span class="playlist-title">${v.title}</span>
       </li>
@@ -281,23 +266,17 @@
   }
 
   $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
-  
-  // MEMBACA DARI PATH REPO YANG SAMA (data/youtube.json)
+
+  // LOAD DATA KONTEN DARI FILE JSON REPO
   $(document).ready(() => {
     fetch('data/youtube.json')
       .then(response => response.json())
       .then(data => {
         myPlaylist = data; 
         renderPlaylist(myPlaylist); 
-        
-        setTimeout(() => {
-          $("#searchInput").focus();
-        }, 150);
+        setTimeout(() => { $("#searchInput").focus(); }, 150);
       })
-      .catch(err => {
-        console.error("Gagal memuat JSON dari folder data/ :", err);
-        $("#searchInput").focus();
-      });
+      .catch(err => { console.error("Gagal load JSON:", err); $("#searchInput").focus(); });
   });
 </script>
 </body>
