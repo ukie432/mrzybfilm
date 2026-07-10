@@ -61,30 +61,33 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
   var myPlaylist = [
-    {title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
-    {title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
-    {title:"Ibu", src:"d_uQ70o-N1g", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
-    {title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"},
-    {title:"Sarjana Muda", src:"example1", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
-    {title:"Ujung Aspal", src:"example2", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
-    {title:"Surat Buat Wakil Rakyat", src:"example3", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
-    {title:"Kemesraan", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
+    {id:"lagu-0", title:"Bento", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
+    {id:"lagu-1", title:"Yang Terlupakan", src:"cI5n5mP5h-Y", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
+    {id:"lagu-2", title:"Ibu", src:"d_uQ70o-N1g", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
+    {id:"lagu-3", title:"Pesawat Tempur", src:"p5u-8vR-u8k", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"},
+    {id:"lagu-4", title:"Sarjana Muda", src:"example1", poster:"https://i.pinimg.com/736x/8b/ac/10/8bac107a3861d3cb96ecf38cdb87fff2.jpg"},
+    {id:"lagu-5", title:"Ujung Aspal", src:"example2", poster:"https://i.pinimg.com/736x/80/2c/cb/802ccb0d49cfe08080871a8322a6d97e.jpg"},
+    {id:"lagu-6", title:"Surat Buat Wakil Rakyat", src:"example3", poster:"https://i.pinimg.com/736x/93/61/72/9361725970110e5e667a0931178869e3.jpg"},
+    {id:"lagu-7", title:"Kemesraan", src:"UU-dTGy0ZGM", poster:"https://i.pinimg.com/736x/c0/41/35/c041351d43549eb49810514dd6f63319.jpg"}
   ];
 
   var player = plyr.setup(".js-player", { controls: [] })[0];
   var hideTimer;
-  var lastClickedItem = null;
 
-  // Handler tombol Back yang diperketat agar tidak lolos ke sistem/aplikasi utama
-  window.addEventListener("keydown", function(e) {
-      var keyCode = e.keyCode || e.which;
-      // Deteksi tombol ESC (27), Back Android TV (4), atau text 'Back'
-      if (keyCode === 4 || keyCode === 27 || e.key === "Back" || e.key === "Escape") {
-          if ($("#player-overlay").is(":visible")) {
-              e.preventDefault(); 
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              closePlayer();
+  // JEMBATAN PENUTUP RESMI SEPERTI CONTOH KODE SUKSES ANDA
+  window.tutupPlayerSaja = function(){
+      window.closePlayer();
+  };
+
+  // MENGGUNAKAN LOGIKA CAPTURING TRUE SAMA PERSIS DENGAN REFERENSI ANDA
+  window.addEventListener("keydown", function(event) {
+      if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+          const overlay = document.getElementById("player-overlay");
+          if (overlay && window.getComputedStyle(overlay).display !== "none") {
+              event.preventDefault();
+              event.stopPropagation();
+              window.tutupPlayerSaja(); // Jalankan fungsi penutupan resmi
+              return false;
           }
       }
   }, true);
@@ -95,21 +98,22 @@
     hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
   }
 
-  function openPlayer(id, element) {
-    if (element) {
-      lastClickedItem = element;
-    }
+  function openPlayer(id, elementId) {
+    // Simpan id poster terakhir ke localStorage seperti referensi kode kedua Anda
+    localStorage.setItem("iwan_idPosterTerakhir", elementId);
+    
     $("#player-overlay").show();
     player.source({ type: "video", sources: [{ src: id, type: "youtube" }] });
-    setTimeout(() => { player.play(); player.muted = false; player.setVolume(100); $("#btnPlayPause").focus(); resetHideTimer(); }, 1000);
+    setTimeout(() => { 
+      player.play(); 
+      player.muted = false; 
+      player.setVolume(100); 
+      $("#btnPlayPause").focus(); 
+      resetHideTimer(); 
+    }, 1000);
   }
 
-  $(document).keydown(function(e) { 
-    if ($("#player-overlay").is(":visible")) {
-      resetHideTimer();
-    }
-  });
-
+  $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
   function togglePlay() { player.togglePlay(); }
   function seek(s) { player.seek(player.getCurrentTime() + s); }
   
@@ -117,8 +121,17 @@
     $("#player-overlay").hide(); 
     player.stop(); 
     clearTimeout(hideTimer); 
-    if (lastClickedItem) {
-      $(lastClickedItem).focus();
+    
+    // Kembalikan fokus berdasarkan ID dari localStorage seperti kode referensi ke-2
+    const lastId = localStorage.getItem("iwan_idPosterTerakhir");
+    if (lastId) {
+      setTimeout(() => {
+        const target = document.getElementById(lastId);
+        if (target) {
+            target.focus();
+            target.scrollIntoView({ behavior: "auto", block: "center" });
+        }
+      }, 150);
     } else {
       $("#playlist li:first").focus(); 
     }
@@ -129,7 +142,7 @@
 
   function renderPlaylist(list) {
     let html = list.map(v => `
-      <li tabindex="0" onclick="openPlayer('${v.src}', this)">
+      <li tabindex="0" id="${v.id}" onclick="openPlayer('${v.src}', '${v.id}')">
         <div class="poster-container"><img class="plyr-miniposter" src="${v.poster}"></div>
         <span class="playlist-title">${v.title}</span>
       </li>
@@ -137,9 +150,7 @@
     $("#playlist").html(html);
   }
 
-  $(document).on('keydown', 'li', function(e) { 
-    if (e.keyCode === 13) $(this).trigger('click'); 
-  });
+  $(document).on('keydown', 'li', function(e) { if (e.keyCode === 13) $(this).trigger('click'); });
   
   $(document).ready(() => {
     renderPlaylist(myPlaylist);
