@@ -90,7 +90,22 @@
         }
 
         /* Tata Letak Baru Kustom Kontrol Player */
-        .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 100000; transition: opacity 0.5s ease; }
+        
+        
+        .custom-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 100000;
+    transition: opacity .5s ease;
+    pointer-events: auto;
+}
+        
+        
+        
+
         
         /* Style Wadah Progress Bar */
         .progress-container {
@@ -209,10 +224,33 @@
     }, true);
 
     function resetHideTimer() {
-        $("#controls").css("opacity", "1");
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
+    $("#controls").css({
+        "opacity": "1",
+        "pointer-events": "auto"
+    });
+
+    clearTimeout(hideTimer);
+
+    hideTimer = setTimeout(function () {
+        $("#controls").css({
+            "opacity": "0",
+            "pointer-events": "none"
+        });
+    }, 5000);
+}
+    
+    
+// HP: tap di mana saja pada video untuk memunculkan kontrol
+$("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
+
+    // Jika kontrol sedang disembunyikan
+    if ($("#controls").css("opacity") == "0") {
+        e.preventDefault();
+        resetHideTimer();
     }
+});
+    
+    
     $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
 
     // Navigasi Kursor STB / Remote TV Halaman Depan
