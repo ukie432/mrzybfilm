@@ -1,6 +1,37 @@
 [
     {
-        
+            "id": "films2B",
+    "title": "Kafir: Bersekutu dengan Setan (Gerbang Sukma)",
+    "data_title": "Kafir: Bersekutu dengan Setan (Gerbang Sukma)",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Movies%20indo/kafir_gerbang_sukma_2026.mkv",
+    "img": "https://posterfilm.pages.dev/poster/film_indonesia/Kafir_gerbang_sukma.webp",
+    "poster_alt": "Kafir: Bersekutu dengan Setan (Gerbang Sukma)"
+  },
+  {
+    "id": "films3B",
+    "title": "Agak Laen 2: Menyala Pantiku (2025)",
+    "data_title": "Agak Laen 2: Menyala Pantiku (2025)",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Movies%20indo/agak_laen_menyala_pantiku_2025.mkv",
+    "img": "https://posterfilm.pages.dev/poster/film_indonesia/Agak_lain2.webp",
+    "poster_alt": "Agak Laen 2: Menyala Pantiku (2025)"
+  },
+  {
+    "id": "films4B",
+    "title": "Perempuan Pembawa Sial (The Queen of Witchcraft, 2024)",
+    "data_title": "Perempuan Pembawa Sial (The Queen of Witchcraft, 2024)",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Movies%20indo/The_Queen_of_Witchcraft_2024.mkv",
+    "img": "https://posterfilm.pages.dev/poster/film_indonesia/Perempuan_pembawa_sial.webp",
+    "poster_alt": "Perempuan Pembawa Sial (The Queen of Witchcraft, 2024)"
+  },
+  {
+    "id": "films5B",
+    "title": "Dosa Musyrik (2024)",
+    "data_title": "Dosa Musyrik (2024)",
+    "url": "https://mutia1503.ukielaki88.workers.dev/0:/Movies%20indo/dosa_musyrik_2024.mkv",
+    "img": "https://posterfilm.pages.dev/poster/film_indonesia/dosa-musyrik.webp",
+    "poster_alt": "Dosa Musyrik (2024)"
+  },
+  {
         "id": "film1B",
         "title": "Timur (2025)",
         "data_title": "Timur (2025)",
