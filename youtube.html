@@ -53,22 +53,6 @@
         /* LAYER 3: Player Fullscreen Overlay Terpisah */
         #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; }
         
-        
-/* Lapisan khusus penangkap Tap/Klik di HP */
-.touch-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: transparent;
-}
-        
-        
-        
-        
-        
         /* PERBAIKAN MUTLAK RASIO PLAYER AGAR 100% UTUH DI SEMUA LAYAR (STB & HP) */
         #player-overlay .plyr { 
             width: 100% !important; 
@@ -166,16 +150,7 @@
     </div>
 
     <div id="player-overlay">
-    
-    
-    <div id="player-overlay">
-    <div class="touch-overlay" onclick="resetHideTimer()"></div>
-
-    <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
-    
-    
-    
-
+        <img class="player-logo" src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="Logo MRZYB TV">
         
         <div class="custom-controls" id="controls">
             <div class="progress-container">
@@ -234,17 +209,10 @@
     }, true);
 
     function resetHideTimer() {
-    $("#controls").css({"opacity": "1", "pointer-events": "auto"});
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => { 
-        // Jika seek-bar tidak sedang difokuskan remote, sembunyikan kontrol
-        if (!$("#seek-bar").is(":focus") && document.activeElement.id !== "seek-bar") {
-            $("#controls").css({"opacity": "0", "pointer-events": "none"}); 
-        } else {
-            resetHideTimer(); // Ulangi timer jika user sedang menggeser durasi film
-        }
-    }, 5000);
-}
+        $("#controls").css("opacity", "1");
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { $("#controls").css("opacity", "0"); }, 5000);
+    }
     $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
 
     // Navigasi Kursor STB / Remote TV Halaman Depan
