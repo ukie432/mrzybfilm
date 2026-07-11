@@ -50,47 +50,8 @@
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; font-size: 14px; font-weight: bold; cursor: pointer; }
         .eps-btn:focus { background:#00c54f; color:black; outline: none; }
 
-        /* LAYER 3: Player Fullscreen Overlay Terpisah */
+        /* LAYER 3: Player Fullscreen Overlay Terpisah (Z-INDEX TERTINGGI AGAR STB LANCAR) */
         #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; }
-        
-/* ==========================================================================
-   PERBAIKAN MUTLAK RASIO PLAYER AGAR 100% UTUH DI SEMUA LAYAR (STB & HP)
-   ========================================================================== */
-#player-overlay .plyr { 
-    width: 100% !important; 
-    height: 100% !important; 
-    max-width: 100% !important; 
-    max-height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #000 !important;
-}
-
-/* Mematikan fungsi padding otomatis Plyr yang merusak rasio di HP */
-#player-overlay .plyr__video-wrapper,
-#player-overlay .plyr__video-embed {
-    width: 100% !important;
-    height: 100% !important;
-    padding-bottom: 0 !important; /* WAJIB 0: Matikan paksaan tinggi bawaan Plyr */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #000 !important;
-}
-
-/* Memaksa Video YouTube duduk manis di tengah tanpa melar/terpotong */
-#player-overlay iframe { 
-    position: relative !important;
-    width: 100% !important; 
-    height: auto !important; 
-    aspect-ratio: 16 / 9 !important; /* Kunci rasio standar bioskop/TV */
-    max-width: 100% !important;
-    max-height: 100% !important;
-    transform: scale(1) !important; 
-    object-fit: contain !important; /* Pastikan seluruh video muat di dalam layar */
-}
-
         .custom-controls { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 100000; transition: opacity 0.5s ease; }
         .btn-ctrl { background: #dc2626; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; margin: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
         .btn-ctrl:focus { background: #fff; color: #dc2626; outline: 2px solid #00c54f; opacity: 1; }
@@ -286,6 +247,7 @@
             $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playFullscreen('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
         });
         
+        // Kembalikan popup ke setelan utama
         $("#popup").css({
             "display": "flex",
             "z-index": "100",
@@ -296,11 +258,12 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-// FUNGSI UTAMA: MAINKAN VIDEO (PLAYER OVERLAY)
+    // FUNGSI UTAMA: MAINKAN VIDEO (PLAYER OVERLAY)
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
 
+        // MODIFIKASI STB: Turunkan z-index popup & matikan interaksinya agar tidak menghalangi tombol player
         $("#popup").css({
             "z-index": "1",
             "pointer-events": "none"
@@ -308,43 +271,23 @@
         
         $("#player-overlay").show();
 
-        // Menyuntikkan video dengan paksaan parameter API YouTube versi ketat
-        player.source({ 
-            type: "video", 
-            sources: [{ src: url, type: "youtube" }],
-            youtube: { 
-                cc_load_policy: 0, 
-                cc_lang_pref: 'none', 
-                hl: 'id',
-                iv_load_policy: 3,
-                enablejsapi: 1,
-                origin: window.location.origin
-            }
-        });
+        player.source({ type: "video", sources: [{ src: url, type: "youtube" }] });
         
         setTimeout(() => {
             player.play();
             player.muted = false;
             player.setVolume(100);
             
+            // Fokuskan langsung ke tombol Play/Pause player di STB
             $("#btnPlayPause").focus(); 
             resetHideTimer();
 
-            // Setelan awal: Matikan total subtitle sistem YouTube saat video pertama berputar
             subtitleAktif = false;
             $("#btnCC").css("border", "none");
-            
             setTimeout(() => {
-                // Eksekusi pembersihan teks lewat internal library Plyr
-                if (player && player.captions && typeof player.toggleCaptions === "function") {
-                    if (player.captions.active) player.toggleCaptions();
-                }
-                // Kirim perintah intervensi paksa langsung ke jantung Iframe YouTube
+                if (player && player.captions && player.captions.active) player.toggleCaptions();
                 const iframe = document.querySelector('#player-overlay iframe');
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'hideVideoControls' }), '*');
-                }
+                if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
             }, 1200);
         }, 800);
     }
@@ -355,13 +298,13 @@
         clearTimeout(hideTimer);
         $("#player-overlay").hide();
         
+        // MODIFIKASI STB: Kembalikan kasta z-index popup ke depan agar bisa di-fokus remote kembali
         $("#popup").css({
             "z-index": "100",
             "pointer-events": "auto"
         });
         
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            
             Android.setPopUpStatus(true);
         }
 
@@ -418,21 +361,9 @@
     function toggleSubtitle() {
         subtitleAktif = !subtitleAktif;
         const iframe = document.querySelector('#player-overlay iframe');
-        
-        // Menentukan perintah berdasarkan status aktif tombol CC
-        const funcCommand = subtitleAktif ? 'loadCaps' : 'unloadCaps';
-        
-        // 1. Eksekusi lewat jalur Plyr API
-        if (player && typeof player.toggleCaptions === "function") {
-            player.toggleCaptions(subtitleAktif);
-        }
-        
-        // 2. Eksekusi tembakan paksa langsung ke mesin Iframe YouTube
-        if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: funcCommand }), '*');
-        }
-        
-        // Ubah indikator warna border tombol CC hijau jika aktif, hapus jika mati
+        const func = subtitleAktif ? 'loadCaps' : 'unloadCaps';
+        if (player && typeof player.toggleCaptions === "function") player.toggleCaptions();
+        if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func }), '*');
         $("#btnCC").css("border", subtitleAktif ? "2px solid #00c54f" : "none");
     }
 
