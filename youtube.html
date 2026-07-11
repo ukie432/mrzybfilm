@@ -340,7 +340,7 @@
         
         $("#player-overlay").show();
         
-        // Reset progress bar secara instan saat ganti film
+        // Reset tampilan awal waktu ke 00:00
         $("#seek-bar").val(0);
         $("#current-time").text("00:00");
         $("#total-time").text("00:00");
@@ -482,7 +482,7 @@
         return mins + ":" + secs;
     }
 
-    // Perbaikan: Mengubah format method () menjadi property bawaan asli Plyr v2
+    // 1. MEMPERBAIKI DETEKSI WAKTU REAL-TIME DARI API YOUTUBE PLYR V2
     player.on('timeupdate', () => {
         const currentTime = player.currentTime;
         const duration = player.duration;
@@ -491,55 +491,58 @@
             $("#current-time").text(formatTime(currentTime));
             $("#total-time").text(formatTime(duration));
             
+            // Geser slider otomatis mengikuti film (jika remote tidak sedang fokus menggeser)
             if (!$("#seek-bar").is(":focus")) {
                 let value = (currentTime / duration) * 100;
                 $("#seek-bar").val(value);
             }
         } else {
             $("#current-time").text(formatTime(currentTime));
-            $("#total-time").text("--:--");
+            $("#total-time").text("00:00");
         }
     });
 
+    // 2. MEMPERBAIKI PERPINDAHAN VIDEO SAAT DIKLIK / SENTUH DI HP
     $("#seek-bar").on('input change', function() {
         resetHideTimer();
         const duration = player.duration;
         if (duration && duration > 0) {
             let seekTo = duration * ($(this).val() / 100);
-            player.currentTime = seekTo;
+            player.currentTime = seekTo; // Mengubah posisi menit video YouTube asli
         }
     });
 
+    // 3. MEMPERBAIKI TOMBOL REMOTE STB (KIRI-KANAN) BIAR BENAR-BENAR COCOK DENGAN VIDEO
     $("#seek-bar").on('keydown', function(e) {
         resetHideTimer();
         const duration = player.duration;
         if (!duration || duration <= 0) return;
 
         let currentTime = player.currentTime;
-        let lompatDetik = 15; 
+        let lompatDetik = 15; // Setelan jarak lompatan waktu (15 Detik sekali tekan remote)
 
-        if (e.keyCode == 37) { // KIRI
+        if (e.keyCode == 37) { // Tombol KIRI Remote STB (Mundur)
             e.preventDefault();
             let targetMundur = Math.max(0, currentTime - lompatDetik);
-            player.currentTime = targetMundur;
-            $(this).val((targetMundur / duration) * 100);
+            player.currentTime = targetMundur; // Pindahkan video YouTube
+            $(this).val((targetMundur / duration) * 100); // Sinkronkan gambar bar
             $("#current-time").text(formatTime(targetMundur));
         } 
-        else if (e.keyCode == 39) { // KANAN
+        else if (e.keyCode == 39) { // Tombol KANAN Remote STB (Maju)
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
-            player.currentTime = targetMaju;
-            $(this).val((targetMaju / duration) * 100);
+            player.currentTime = targetMaju; // Pindahkan video YouTube
+            $(this).val((targetMaju / duration) * 100); // Sinkronkan gambar bar
             $("#current-time").text(formatTime(targetMaju));
         }
-        else if (e.keyCode == 40) { // BAWAH
+        else if (e.keyCode == 40) { // Tombol BAWAH Remote STB (Kembali ke Play)
             e.preventDefault();
             $("#btnPlayPause").focus();
         }
     });
 
     $("#btnPlayPause").on('keydown', function(e) {
-        if (e.keyCode == 38) { // ATAS
+        if (e.keyCode == 38) { // Tombol ATAS Remote STB (Fokus ke Bar)
             e.preventDefault();
             $("#seek-bar").focus();
         }
