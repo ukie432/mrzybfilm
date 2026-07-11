@@ -5,7 +5,7 @@
     <link rel="preconnect" href="https://posterfilm.pages.dev">
     <link rel="preconnect" href="https://iptv-posterku.pages.dev">
     <meta charset="UTF-8">
-    <title>MRZYBtv Youtube</title>
+    <title>MRZYBtv Series Indo</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
     <style>
@@ -65,6 +65,7 @@
             background: #000 !important;
         }
 
+        /* Mematikan fungsi padding otomatis Plyr yang merusak rasio di HP */
         #player-overlay .plyr__video-wrapper,
         #player-overlay .plyr__video-embed {
             width: 100% !important;
@@ -76,6 +77,7 @@
             background: #000 !important;
         }
 
+        /* Memaksa Video YouTube duduk manis di tengah tanpa melar/terpotong */
         #player-overlay iframe { 
             position: relative !important;
             width: 100% !important; 
@@ -106,7 +108,7 @@
             flex: 1;
             margin: 0 15px;
             cursor: pointer;
-            accent-color: #00c54f; 
+            accent-color: #00c54f; /* Warna hijau identitas MRZYBtv */
             height: 6px;
         }
         #seek-bar:focus {
@@ -183,6 +185,7 @@
         youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
     })[0];
 
+    // Logika Jembatan Penutupan Remote Back Bertingkat Resmi
     window.tutupPopUpPoster = function(){
         if ($("#player-overlay").is(":visible")) {
             closePlayer();
@@ -194,6 +197,7 @@
         }
     };
 
+    // Deteksi Tombol Back Remote Fisik (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             if ($("#player-overlay").is(":visible") || $("#popup").is(":visible")) {
@@ -211,6 +215,7 @@
     }
     $(document).keydown(function() { if ($("#player-overlay").is(":visible")) resetHideTimer(); });
 
+    // Navigasi Kursor STB / Remote TV Halaman Depan
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
 
@@ -301,6 +306,7 @@
             checkLastSession();
         });
 
+    // FUNGSI UTAMA: BUKA POPUP MODAL KATEGORI
     function openModal(title, epsEncoded) {
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title); 
@@ -329,6 +335,7 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
+    // FUNGSI UTAMA: MAINKAN VIDEO (PLAYER OVERLAY)
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
@@ -340,10 +347,9 @@
         
         $("#player-overlay").show();
         
-        // Reset tampilan awal waktu ke 00:00
         $("#seek-bar").val(0);
-        $("#current-time").text("00:00");
-        $("#total-time").text("00:00");
+    $("#current-time").text("00:00");
+    $("#total-time").text("00:00");
 
         player.source({ 
             type: "video", 
@@ -358,6 +364,7 @@
             }
         });
         
+        // JEDA 1.5 DETIK DEMI KESTABILAN PEMINDAHAN FOKUS DI WEBVIEW STB
         setTimeout(() => {
             try {
                 player.play();
@@ -367,6 +374,7 @@
                 console.log("Autoplay ditahan browser");
             }
             
+            // Paksa fokus remote mendarat ke tombol Play Utama di STB
             $("#btnPlayPause").focus(); 
             resetHideTimer();
 
@@ -382,11 +390,13 @@
                     iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
                     iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'hideVideoControls' }), '*');
                 }
+                // Memastikan ulang fokus tetap aman pada tombol kontrol
                 $("#btnPlayPause").focus();
             }, 1200);
         }, 1500); 
     }
 
+    // BACK TINGKAT 1: DARI PLAYER KEMBALI KE POPUP KATEGORI
     function closePlayer() {
         player.stop();
         clearTimeout(hideTimer);
@@ -409,6 +419,7 @@
         }, 150);
     }
 
+    // BACK TINGKAT 2: DARI POPUP KATEGORI KEMBALI KE POSTER UTAMA
     window.closePopup = function() { 
         player.stop();
         $("#popup").css("display", "none");
@@ -448,6 +459,7 @@
     }
 
     function togglePlay() { player.togglePlay(); }
+    function seek(s) { player.seek(player.getCurrentTime() + s); }
     
     function toggleSubtitle() {
         subtitleAktif = !subtitleAktif;
@@ -473,8 +485,9 @@
     // ==========================================================================
     // LOGIKA SINKRONISASI KURSOR REMOTE STB DENGAN PROGRESS BAR (GARIS DURASI)
     // ==========================================================================
+    
     function formatTime(seconds) {
-        if (isNaN(seconds) || seconds === null || seconds < 0) return "00:00";
+        if (isNaN(seconds)) return "00:00";
         let mins = Math.floor(seconds / 60);
         let secs = Math.floor(seconds % 60);
         if (mins < 10) mins = "0" + mins;
@@ -482,67 +495,62 @@
         return mins + ":" + secs;
     }
 
-    // 1. MEMPERBAIKI DETEKSI WAKTU REAL-TIME DARI API YOUTUBE PLYR V2
+    // Melacak jalannya durasi video real-time
     player.on('timeupdate', () => {
-        const currentTime = player.currentTime;
-        const duration = player.duration;
+        if (!player.duration) return;
         
-        if (duration && duration > 0) {
-            $("#current-time").text(formatTime(currentTime));
-            $("#total-time").text(formatTime(duration));
-            
-            // Geser slider otomatis mengikuti film (jika remote tidak sedang fokus menggeser)
-            if (!$("#seek-bar").is(":focus")) {
-                let value = (currentTime / duration) * 100;
-                $("#seek-bar").val(value);
-            }
-        } else {
-            $("#current-time").text(formatTime(currentTime));
-            $("#total-time").text("00:00");
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        
+        $("#current-time").text(formatTime(currentTime));
+        $("#total-time").text(formatTime(duration));
+        
+        // Gerakkan penunjuk slider jika D-Pad tidak sedang berfokus menggeser manual
+        if (!$("#seek-bar").is(":focus")) {
+            let value = (currentTime / duration) * 100;
+            $("#seek-bar").val(value);
         }
     });
 
-    // 2. MEMPERBAIKI PERPINDAHAN VIDEO SAAT DIKLIK / SENTUH DI HP
+    // Geser manual via Klik/Sentuh di HP
     $("#seek-bar").on('input change', function() {
         resetHideTimer();
-        const duration = player.duration;
-        if (duration && duration > 0) {
-            let seekTo = duration * ($(this).val() / 100);
-            player.currentTime = seekTo; // Mengubah posisi menit video YouTube asli
+        if (player.getDuration()) {
+            let seekTo = player.getDuration() * ($(this).val() / 100);
+            player.seek(seekTo);
         }
     });
 
-    // 3. MEMPERBAIKI TOMBOL REMOTE STB (KIRI-KANAN) BIAR BENAR-BENAR COCOK DENGAN VIDEO
+    // Navigasi Remote STB saat berada di dalam komponen Progress Bar
     $("#seek-bar").on('keydown', function(e) {
         resetHideTimer();
-        const duration = player.duration;
-        if (!duration || duration <= 0) return;
+        let duration = player.getDuration();
+        if (!duration) return;
 
-        let currentTime = player.currentTime;
-        let lompatDetik = 15; // Setelan jarak lompatan waktu (15 Detik sekali tekan remote)
+        let currentTime = player.getCurrentTime();
+        let lompatDetik = 15; // Jeda lompatan waktu (15 detik sekali tekan arah)
 
-        if (e.keyCode == 37) { // Tombol KIRI Remote STB (Mundur)
+        if (e.keyCode == 37) { // Arah KIRI Remote STB (Mundur Film)
             e.preventDefault();
             let targetMundur = Math.max(0, currentTime - lompatDetik);
-            player.currentTime = targetMundur; // Pindahkan video YouTube
-            $(this).val((targetMundur / duration) * 100); // Sinkronkan gambar bar
-            $("#current-time").text(formatTime(targetMundur));
+            player.seek(targetMundur);
+            $(this).val((targetMundur / duration) * 100);
         } 
-        else if (e.keyCode == 39) { // Tombol KANAN Remote STB (Maju)
+        else if (e.keyCode == 39) { // Arah KANAN Remote STB (Maju Film)
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
-            player.currentTime = targetMaju; // Pindahkan video YouTube
-            $(this).val((targetMaju / duration) * 100); // Sinkronkan gambar bar
-            $("#current-time").text(formatTime(targetMaju));
+            player.seek(targetMaju);
+            $(this).val((targetMaju / duration) * 100);
         }
-        else if (e.keyCode == 40) { // Tombol BAWAH Remote STB (Kembali ke Play)
+        else if (e.keyCode == 40) { // Arah BAWAH Remote STB (Turun Fokus kembali ke tombol Play)
             e.preventDefault();
             $("#btnPlayPause").focus();
         }
     });
 
+    // Menghubungkan Tombol Play/Pause agar bisa melompat naik ke Progress Bar kembali
     $("#btnPlayPause").on('keydown', function(e) {
-        if (e.keyCode == 38) { // Tombol ATAS Remote STB (Fokus ke Bar)
+        if (e.keyCode == 38) { // Arah ATAS Remote STB
             e.preventDefault();
             $("#seek-bar").focus();
         }
