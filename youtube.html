@@ -297,57 +297,67 @@
     }
 
 // FUNGSI UTAMA: MAINKAN VIDEO (PLAYER OVERLAY)
-    function playFullscreen(url, index, title) {
-        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
-        localStorage.setItem(pageTitle + "_index_sekarang", index);
+function playFullscreen(url, index, title) {
+    localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+    localStorage.setItem(pageTitle + "_index_sekarang", index);
 
-        $("#popup").css({
-            "z-index": "1",
-            "pointer-events": "none"
-        }); 
-        
-        $("#player-overlay").show();
+    $("#popup").css({
+        "z-index": "1",
+        "pointer-events": "none"
+    }); 
+    
+    $("#player-overlay").show();
 
-        // Menyuntikkan video dengan paksaan parameter API YouTube versi ketat
-        player.source({ 
-            type: "video", 
-            sources: [{ src: url, type: "youtube" }],
-            youtube: { 
-                cc_load_policy: 0, 
-                cc_lang_pref: 'none', 
-                hl: 'id',
-                iv_load_policy: 3,
-                enablejsapi: 1,
-                origin: window.location.origin
-            }
-        });
-        
-        setTimeout(() => {
+    // Menyuntikkan video dengan paksaan parameter API YouTube versi ketat
+    player.source({ 
+        type: "video", 
+        sources: [{ src: url, type: "youtube" }],
+        youtube: { 
+            cc_load_policy: 0, 
+            cc_lang_pref: 'none', 
+            hl: 'id',
+            iv_load_policy: 3,
+            enablejsapi: 1,
+            origin: window.location.origin
+        }
+    });
+    
+    // BERIKAN JEDA AMAN AGAR IFRAME SELESAI MEREBUT FOKUS DI STB
+    setTimeout(() => {
+        try {
             player.play();
             player.muted = false;
             player.setVolume(100);
-            
-            $("#btnPlayPause").focus(); 
-            resetHideTimer();
+        } catch(e) {
+            console.log("Autoplay dicegah sistem, menunggu interaksi user.");
+        }
+        
+        // PAKSA FOKUS KE TOMBOL CONTROLLER STB SETELAH IFRAME STABIL
+        $("#btnPlayPause").focus(); 
+        resetHideTimer();
 
-            // Setelan awal: Matikan total subtitle sistem YouTube saat video pertama berputar
-            subtitleAktif = false;
-            $("#btnCC").css("border", "none");
+        // Setelan awal: Matikan total subtitle sistem YouTube saat video pertama berputar
+        subtitleAktif = false;
+        $("#btnCC").css("border", "none");
+        
+        setTimeout(() => {
+            // Eksekusi pembersihan teks lewat internal library Plyr
+            if (player && player.captions && typeof player.toggleCaptions === "function") {
+                if (player.captions.active) player.toggleCaptions();
+            }
+            // Kirim perintah intervensi paksa langsung ke jantung Iframe YouTube
+            const iframe = document.querySelector('#player-overlay iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'hideVideoControls' }), '*');
+            }
             
-            setTimeout(() => {
-                // Eksekusi pembersihan teks lewat internal library Plyr
-                if (player && player.captions && typeof player.toggleCaptions === "function") {
-                    if (player.captions.active) player.toggleCaptions();
-                }
-                // Kirim perintah intervensi paksa langsung ke jantung Iframe YouTube
-                const iframe = document.querySelector('#player-overlay iframe');
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unloadCaps' }), '*');
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'hideVideoControls' }), '*');
-                }
-            }, 1200);
-        }, 800);
-    }
+            // Jaminan ganda: pastikan fokus tidak hilang kembali ke iframe setelah pembersihan teks
+            $("#btnPlayPause").focus();
+        }, 1200);
+
+    }, 1500); // Jeda dinaikkan ke 1.5 detik khusus demi kestabilan webview STB
+}
 
     // BACK TINGKAT 1: DARI PLAYER KEMBALI KE POPUP KATEGORI
     function closePlayer() {
