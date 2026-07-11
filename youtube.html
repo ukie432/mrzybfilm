@@ -398,14 +398,17 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
         player.source({ 
             type: "video", 
             sources: [{ src: url, type: "youtube" }],
-            youtube: { 
-                cc_load_policy: 0, 
-                cc_lang_pref: 'none', 
-                hl: 'id',
-                iv_load_policy: 3,
-                enablejsapi: 1,
-                origin: window.location.origin
-            }
+            youtube: {
+    cc_load_policy: 0,
+    cc_lang_pref: '',
+    hl: 'id',
+    iv_load_policy: 3,
+    playsinline: 1,
+    rel: 0,
+    modestbranding: 1,
+    enablejsapi: 1,
+    origin: window.location.origin
+}
         });
         
         // JEDA 1.5 DETIK DEMI KESTABILAN PEMINDAHAN FOKUS DI WEBVIEW STB
