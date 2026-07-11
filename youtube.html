@@ -346,6 +346,11 @@
         }); 
         
         $("#player-overlay").show();
+        
+        
+        $("#seek-bar").val(0);
+    $("#current-time").text("00:00");
+    $("#total-time").text("00:00");
 
         player.source({ 
             type: "video", 
@@ -478,12 +483,12 @@
         }
     }
 
-    // ==========================================================================
-    // LOGIKA SINKRONISASI KURSOR REMOTE STB DENGAN PROGRESS BAR (GARIS DURASI)
+// ==========================================================================
+    // LOGIKA SINKRONISASI KURSOR REMOTE STB DENGAN PROGRESS BAR (GARIS DURASI) - FIXED
     // ==========================================================================
     
     function formatTime(seconds) {
-        if (isNaN(seconds)) return "00:00";
+        if (isNaN(seconds) || seconds === null || seconds < 0) return "00:00";
         let mins = Math.floor(seconds / 60);
         let secs = Math.floor(seconds % 60);
         if (mins < 10) mins = "0" + mins;
@@ -491,52 +496,61 @@
         return mins + ":" + secs;
     }
 
-    // Melacak jalannya durasi video real-time
+    // Melacak jalannya durasi video real-time secara berkala
     player.on('timeupdate', () => {
-        if (!player.duration) return;
+        // Menggunakan metode alternatif Plyr yang lebih aman untuk YouTube iframe
+        const currentTime = player.currentTime; 
+        const duration = player.duration;
         
-        const currentTime = player.getCurrentTime();
-        const duration = player.getDuration();
-        
-        $("#current-time").text(formatTime(currentTime));
-        $("#total-time").text(formatTime(duration));
-        
-        // Gerakkan penunjuk slider jika D-Pad tidak sedang berfokus menggeser manual
-        if (!$("#seek-bar").is(":focus")) {
-            let value = (currentTime / duration) * 100;
-            $("#seek-bar").val(value);
+        // Cek jika durasi sudah valid dan terdeteksi dari server YouTube
+        if (duration && duration > 0) {
+            $("#current-time").text(formatTime(currentTime));
+            $("#total-time").text(formatTime(duration));
+            
+            // Gerakkan penunjuk slider jika D-Pad remote STB tidak sedang berfokus menggeser manual
+            if (!$("#seek-bar").is(":focus")) {
+                let value = (currentTime / duration) * 100;
+                $("#seek-bar").val(value);
+            }
+        } else {
+            // Jika durasi belum siap, paksa teks bertuliskan loading/nol sementara
+            $("#current-time").text(formatTime(currentTime));
+            $("#total-time").text("--:--");
         }
     });
 
     // Geser manual via Klik/Sentuh di HP
     $("#seek-bar").on('input change', function() {
         resetHideTimer();
-        if (player.getDuration()) {
-            let seekTo = player.getDuration() * ($(this).val() / 100);
-            player.seek(seekTo);
+        const duration = player.duration;
+        if (duration && duration > 0) {
+            let seekTo = duration * ($(this).val() / 100);
+            player.currentTime = seekTo; // bypass langsung ke API core Plyr
         }
     });
 
     // Navigasi Remote STB saat berada di dalam komponen Progress Bar
     $("#seek-bar").on('keydown', function(e) {
         resetHideTimer();
-        let duration = player.getDuration();
-        if (!duration) return;
+        const duration = player.duration;
+        if (!duration || duration <= 0) return;
 
-        let currentTime = player.getCurrentTime();
+        let currentTime = player.currentTime;
         let lompatDetik = 15; // Jeda lompatan waktu (15 detik sekali tekan arah)
 
         if (e.keyCode == 37) { // Arah KIRI Remote STB (Mundur Film)
             e.preventDefault();
             let targetMundur = Math.max(0, currentTime - lompatDetik);
-            player.seek(targetMundur);
+            player.currentTime = targetMundur;
             $(this).val((targetMundur / duration) * 100);
+            $("#current-time").text(formatTime(targetMundur)); // Update teks instan
         } 
         else if (e.keyCode == 39) { // Arah KANAN Remote STB (Maju Film)
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
-            player.seek(targetMaju);
+            player.currentTime = targetMaju;
             $(this).val((targetMaju / duration) * 100);
+            $("#current-time").text(formatTime(targetMaju)); // Update teks instan
         }
         else if (e.keyCode == 40) { // Arah BAWAH Remote STB (Turun Fokus kembali ke tombol Play)
             e.preventDefault();
