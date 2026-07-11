@@ -1,6 +1,396 @@
 {
   "komik_list": [
     {
+      
+  "title": "Si Juki",
+  "poster": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-0.jpg?v=2",
+  "watermark": "MRZYBtv Comic",
+  "edisi": [
+    {
+      "nama": "Edisi Lengkap",
+      "slides": [
+        {
+          "type": "single",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-0.jpg?v=2", "alt": "Halaman 1" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-1.jpg?v=2", "alt": "Halaman 2" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-2.jpg?v=2", "alt": "Halaman 3" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-3.jpg?v=2", "alt": "Halaman 4" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-4.jpg?v=2", "alt": "Halaman 5" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-5.jpg?v=2", "alt": "Halaman 6" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-6.jpg?v=2", "alt": "Halaman 7" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-7.jpg?v=2", "alt": "Halaman 8" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-8.jpg?v=2", "alt": "Halaman 9" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-9.jpg?v=2", "alt": "Halaman 10" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-10.jpg?v=2", "alt": "Halaman 11" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-11.jpg?v=2", "alt": "Halaman 12" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-12.jpg?v=2", "alt": "Halaman 13" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-13.jpg?v=2", "alt": "Halaman 14" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-14.jpg?v=2", "alt": "Halaman 15" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-15.jpg?v=2", "alt": "Halaman 16" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-16.jpg?v=2", "alt": "Halaman 17" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-17.jpg?v=2", "alt": "Halaman 18" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-18.jpg?v=2", "alt": "Halaman 19" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-19.jpg?v=2", "alt": "Halaman 20" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-20.jpg?v=2", "alt": "Halaman 21" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-21.jpg?v=2", "alt": "Halaman 22" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-22.jpg?v=2", "alt": "Halaman 23" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-23.jpg?v=2", "alt": "Halaman 24" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-24.jpg?v=2", "alt": "Halaman 25" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-25.jpg?v=2", "alt": "Halaman 26" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-26.jpg?v=2", "alt": "Halaman 27" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-27.jpg?v=2", "alt": "Halaman 28" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-28.jpg?v=2", "alt": "Halaman 29" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-28.jpg?v=2", "alt": "Halaman 30" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-30.jpg?v=2", "alt": "Halaman 31" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-31.jpg?v=2", "alt": "Halaman 32" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-32.jpg?v=2", "alt": "Halaman 33" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-33.jpg?v=2", "alt": "Halaman 34" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-34.jpg?v=2", "alt": "Halaman 35" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-35.jpg?v=2", "alt": "Halaman 36" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-36.jpg?v=2", "alt": "Halaman 37" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-37.jpg?v=2", "alt": "Halaman 38" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-38.jpg?v=2", "alt": "Halaman 39" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-39.jpg?v=2", "alt": "Halaman 40" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-40.jpg?v=2", "alt": "Halaman 41" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-41.jpg?v=2", "alt": "Halaman 42" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-42.jpg?v=2", "alt": "Halaman 43" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-43.jpg?v=2", "alt": "Halaman 44" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-44.jpg?v=2", "alt": "Halaman 45" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-45.jpg?v=2", "alt": "Halaman 46" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-46.jpg?v=2", "alt": "Halaman 47" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-47.jpg?v=2", "alt": "Halaman 48" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-48.jpg?v=2", "alt": "Halaman 49" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-49.jpg?v=2", "alt": "Halaman 50" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-50.jpg?v=2", "alt": "Halaman 51" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-51.jpg?v=2", "alt": "Halaman 52" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-52.jpg?v=2", "alt": "Halaman 53" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-53.jpg?v=2", "alt": "Halaman 54" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-54.jpg?v=2", "alt": "Halaman 55" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-55.jpg?v=2", "alt": "Halaman 56" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-56.jpg?v=2", "alt": "Halaman 57" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-57.jpg?v=2", "alt": "Halaman 58" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-58.jpg?v=2", "alt": "Halaman 59" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-59.jpg?v=2", "alt": "Halaman 60" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-60.jpg?v=2", "alt": "Halaman 61" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-61.jpg?v=2", "alt": "Halaman 62" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-62.jpg?v=2", "alt": "Halaman 63" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-63.jpg?v=2", "alt": "Halaman 64" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-64.jpg?v=2", "alt": "Halaman 65" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-65.jpg?v=2", "alt": "Halaman 66" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-66.jpg?v=2", "alt": "Halaman 67" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-67.jpg?v=2", "alt": "Halaman 68" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-68.jpg?v=2", "alt": "Halaman 69" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-69.jpg?v=2", "alt": "Halaman 70" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-70.jpg?v=2", "alt": "Halaman 71" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-71.jpg?v=2", "alt": "Halaman 72" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-72.jpg?v=2", "alt": "Halaman 73" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-73.jpg?v=2", "alt": "Halaman 74" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-74.jpg?v=2", "alt": "Halaman 75" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-75.jpg?v=2", "alt": "Halaman 76" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-76.jpg?v=2", "alt": "Halaman 77" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-77.jpg?v=2", "alt": "Halaman 78" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-78.jpg?v=2", "alt": "Halaman 79" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-79.jpg?v=2", "alt": "Halaman 80" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-80.jpg?v=2", "alt": "Halaman 81" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-81.jpg?v=2", "alt": "Halaman 82" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-82.jpg?v=2", "alt": "Halaman 83" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-83.jpg?v=2", "alt": "Halaman 84" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-84.jpg?v=2", "alt": "Halaman 85" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-85.jpg?v=2", "alt": "Halaman 86" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-86.jpg?v=2", "alt": "Halaman 87" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-87.jpg?v=2", "alt": "Halaman 88" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-88.jpg?v=2", "alt": "Halaman 89" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-89.jpg?v=2", "alt": "Halaman 90" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-90.jpg?v=2", "alt": "Halaman 91" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-91.jpg?v=2", "alt": "Halaman 92" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-92.jpg?v=2", "alt": "Halaman 93" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-93.jpg?v=2", "alt": "Halaman 94" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-94.jpg?v=2", "alt": "Halaman 95" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-95.jpg?v=2", "alt": "Halaman 96" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-96.jpg?v=2", "alt": "Halaman 97" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-97.jpg?v=2", "alt": "Halaman 98" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-98.jpg?v=2", "alt": "Halaman 99" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-99.jpg?v=2", "alt": "Halaman 100" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-100.jpg?v=2", "alt": "Halaman 101" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-101.jpg?v=2", "alt": "Halaman 102" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-102.jpg?v=2", "alt": "Halaman 103" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-103.jpg?v=2", "alt": "Halaman 104" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-104.jpg?v=2", "alt": "Halaman 105" }
+          ]
+        },
+        {
+          "type": "double",
+          "pages": [
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-105.jpg?v=2", "alt": "Halaman 106" },
+            { "image_url": "https://image-v2.free-ebook.my.id/sketch/si-juki-komik/si-juki-komik-106.jpg?v=2", "alt": "Halaman 107" }
+          ]
+        }
+      ]
+    }
+  ]
+},
+{
       "title": "Doraemon Awal",
       "poster": "https://iptv-posterku.pages.dev/poster/film_lawas/0.webp",
       "watermark": "MRZYBtv Comic",
