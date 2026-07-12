@@ -154,7 +154,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     
     <script>
     
-    const jsonUrl = "data/komik.json";
+    const API = "https://mrzyb-comic.raihanbalqis64.workers.dev";
     let swiperInstance = null;
 
     // ========================================================
@@ -275,14 +275,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     });
 
     // 4. Proses Ambil Data JSON Murni & Gambar Grid Poster
-    fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            const catalogList = data.komik_list || data;
+    fetch(API + "/api/list")
+    .then(response => response.json())
+    .then(data => {
+            const catalogList = data;
             catalogList.forEach(item => {
-                const edDataEncoded = encodeURIComponent(JSON.stringify(item.edisi));
                 $("#grid").append(`
-                    <div class="poster" tabindex="0" data-title="${item.title}" data-watermark="${item.watermark || 'mrzyb'}" onclick='openModal("${item.title}", "${edDataEncoded}")'>
+<div class="poster"
+tabindex="0"
+data-id="${item.id}"
+data-title="${item.title}"
+onclick='openModal("${item.id}")'>
                         <img src="${item.poster}">
                         <div class="poster-title">${item.title}</div>
                     </div>
