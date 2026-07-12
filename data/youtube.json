@@ -1,7 +1,33 @@
 [
   {
 
-    
+         "title": "Nadia Omara",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Nadia_Omara.webp",
+    "categories": [
+      { "ep": "Bekas restoran", "url": "RMJ4kvEf-ws" },
+      { "ep": "Nasib punya Pacar curigaan", "url": "gJZ_ZRQRXZE" },
+      { "ep": "Kkn 1994", "url": "_BpfTsq0jxQ" },
+      { "ep": "Nyi ageng serang", "url": "b1lK2eOyZVk" },
+      { "ep": "Lukisan perpus", "url": "FO5u-dPBZu4" },
+      { "ep": "Tumbal buta", "url": "L3FoF7_f5xs" },
+      { "ep": "Juli kliwon", "url": "Qg9vFMOcg88" },
+      { "ep": "Ibu tiri", "url": "6qtLHAXJFeM" },
+      { "ep": "Stasiun manggarai", "url": "1unIUw5HS84" },
+      { "ep": "Baby sister", "url": "Zm2wlqjVk48" },
+      { "ep": "Reuni", "url": "fuT40pH9p90" },
+      { "ep": "Desa getih", "url": "Esc9Hy4KeH4" },
+      { "ep": "Guru les", "url": "z6g7qYWWIHM" },
+      { "ep": "Otopsi dan nyanyian", "url": "OfD7kBEYUZI" },
+      { "ep": "Kos darma", "url": "OSgVPo6i9Ro" },
+      { "ep": "Teror suro", "url": "LQKPEC-iU8I" },
+      { "ep": "Resort tersembunyi", "url": "ZCesvRje2u8" },
+      { "ep": "Ritual pengantin baru", "url": "iO8FYt46_Ik" },
+      { "ep": "Kasian bapak", "url": "SmeheuUqYiw" },
+      { "ep": "Goa", "url": "aJuGlZAZMjk" }
+
+    ]
+  },
+  {
     "title": "Dhot Design",
     "poster": "https://posterfilm.pages.dev/poster/film_animasi/Dhot_disend.webp",
     "categories": [
