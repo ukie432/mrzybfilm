@@ -154,7 +154,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     
     <script>
     
-    const jsonUrl = "https://mrzyb-comic.raihanbalqis64.workers.dev";
+    const API = "https://mrzyb-comic.raihanbalqis64.workers.dev";
     let swiperInstance = null;
 
     // ========================================================
@@ -288,7 +288,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
              data-title="${item.title}"
              onclick="openComic('${item.id}')">
 
-            <img src="${item.poster}">
+            <img src="${API}${item.poster}">
             <div class="poster-title">${item.title}</div>
 
         </div>
