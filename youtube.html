@@ -197,7 +197,17 @@
     // Inisialisasi Player Utama
     var player = plyr.setup(".js-player", { 
         controls: [],
-        youtube: { cc_load_policy: 0, cc_lang_pref: 'none', hl: 'id' }
+        youtube: {
+    cc_load_policy: 0,
+    cc_lang_pref: '',
+    hl: 'id',
+    iv_load_policy: 3,
+    rel: 0,
+    modestbranding: 1,
+    playsinline: 1,
+    controls: 0,
+    disablekb: 1
+}
     })[0];
 
     // Logika Jembatan Penutupan Remote Back Bertingkat Resmi
@@ -406,6 +416,8 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
     playsinline: 1,
     rel: 0,
     modestbranding: 1,
+    controls: 0,
+    disablekb: 1,
     enablejsapi: 1,
     origin: window.location.origin
 }
@@ -415,6 +427,9 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
         setTimeout(() => {
             try {
                 player.play();
+                
+                
+                
                 player.muted = false;
                 player.setVolume(100);
             } catch(e) {
