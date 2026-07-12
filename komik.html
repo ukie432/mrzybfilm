@@ -154,7 +154,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     
     <script>
     
-    const API = "https://mrzyb-comic.raihanbalqis64.workers.dev";
+    const jsonUrl = "https://mrzyb-comic.raihanbalqis64.workers.dev";
     let swiperInstance = null;
 
     // ========================================================
@@ -280,17 +280,21 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     .then(data => {
             const catalogList = data;
             catalogList.forEach(item => {
-                $("#grid").append(`
-<div class="poster"
-tabindex="0"
-data-id="${item.id}"
-data-title="${item.title}"
-onclick='openModal("${item.id}")'>
-                        <img src="${item.poster}">
-                        <div class="poster-title">${item.title}</div>
-                    </div>
-                `);
-            });
+
+    $("#grid").append(`
+        <div class="poster"
+             tabindex="0"
+             data-id="${item.id}"
+             data-title="${item.title}"
+             onclick="openComic('${item.id}')">
+
+            <img src="${item.poster}">
+            <div class="poster-title">${item.title}</div>
+
+        </div>
+    `);
+
+});
             
             setTimeout(() => { 
                 if (localStorage.getItem("status_popup") !== "open") {
@@ -422,6 +426,27 @@ onclick='openModal("${item.id}")'>
             openModal(title, eps);
         }
     });
+
+
+async function openComic(id){
+
+    const res = await fetch(
+        "https://mrzyb-comic.raihanbalqis64.workers.dev/api/detail?id=" + id
+    );
+
+    const komik = await res.json();
+
+    localStorage.setItem(
+        "eps_data",
+        encodeURIComponent(JSON.stringify(komik.edisi))
+    );
+
+    openModal(
+        komik.title,
+        encodeURIComponent(JSON.stringify(komik.edisi))
+    );
+
+}
 
     // 8. Sistem Penutup Modal
     window.closePopup = function() { 
