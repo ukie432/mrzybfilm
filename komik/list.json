@@ -1,8 +1,14 @@
-[
+"edisi":[
   {
-    "id": "mata-malaikat",
-    "title": "Mata Malaikat",
-    "poster": "https://posterfilm.pages.dev/mata_malaikat.jpg",
-    "pdf": "Mata_Malaikat_01.PDF"
+    "nama":"Volume 1",
+    "pdf":"Mata_Malaikat_01.PDF"
+  },
+  {
+    "nama":"Volume 2",
+    "pdf":"Mata_Malaikat_02.PDF"
+  },
+  {
+    "nama":"Volume 3",
+    "pdf":"Mata_Malaikat_03.PDF"
   }
 ]
