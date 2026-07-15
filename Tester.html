@@ -194,7 +194,6 @@
             scrollbar-width: none;
         }
 
-        /* Mode grid responsif saat membuka satu kategori penuh */
         .movies-slider-horizontal.grid-layout {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
@@ -216,7 +215,6 @@
             border: 2px solid transparent;
         }
 
-        /* Atur lebar default hanya jika di dalam slider horizontal biasa */
         .movies-slider-horizontal:not(.grid-layout) .movie-card-horizontal {
             flex: 0 0 175px; 
         }
@@ -595,8 +593,9 @@
         let activeView = 'home';
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         
-        // MENYIMPAN KARTU FILM TERAKHIR YANG DIKLIK SEBELUM MASUK MODAL
+        // PENCEGAHAN DOUBLE EVENT (DEBOUNCE PROTECTOR)
         let lastFocusedElement = null; 
+        let isReturningFromPlayer = false; 
 
         function switchView(viewName) {
             activeView = viewName;
@@ -864,7 +863,10 @@
         });
 
         function bukaModalDetail(judulKonten) {
-            // SIMPAN ELEMENT CARD YANG AKTIF SEBELUM MEMBUKA MODAL
+            // JANGAN MEMBUKA MODAL APABILA SEDANG DALAM COOLDOWN SETELAH PLAYER DITUTUP
+            if (isReturningFromPlayer) return;
+
+            // Catat elemen kartu yang sedang aktif
             lastFocusedElement = document.activeElement; 
 
             const item = databaseFilm.find(m => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
@@ -920,25 +922,45 @@
                 } else {
                     btnPlayUtama.focus();
                 }
-            }, 200);
+            }, 150);
         }
 
         function closeModal() { 
-            document.getElementById('movieModal').style.display = 'none'; 
-            // KEMBALIKAN FOKUS REMOTE KE KARTU FILM SEBELUMNYA AGAR REMOTE TIDAK HILANG ARAH
+            const modal = document.getElementById('movieModal');
+            modal.style.display = 'none'; 
+            
+            // KEMBALIKAN FOKUS SECARA INSTAN KE KARTU SEBELUMNYA AGAR REMOTE TIDAK BLANK/MENYEBABKAN CRASH
             if (lastFocusedElement) {
-                setTimeout(() => {
-                    lastFocusedElement.focus();
-                }, 50);
+                lastFocusedElement.focus();
+            } else {
+                const firstCard = document.querySelector('.movie-card-horizontal');
+                if (firstCard) firstCard.focus();
             }
         }
 
         function putarFilmTunggal() { if (dataFilmAktif) putarVideo(dataFilmAktif.video); }
         
         function putarVideo(url) {
-            if (!url) return alert("Link video rusak!");
-            if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
-            else window.open(url, '_blank');
+            if (!url) return alert("Link video tidak ditemukan!");
+            
+            // Kunci navigasi back dari player sementara waktu agar tidak double-fire ke webview
+            isReturningFromPlayer = true;
+
+            if (typeof Android !== "undefined" && Android.playVideo) {
+                Android.playVideo(url);
+            } else {
+                window.open(url, '_blank');
+            }
+
+            // Setelah Player tertutup, beri jeda cooldown 1 detik untuk membersihkan sinyal 'Back' palsu dari sistem
+            setTimeout(() => {
+                isReturningFromPlayer = false;
+                // Pastikan fokus setelah kembali dari player tertuju ke tombol "Putar Film" di modal detail
+                const btnPlayUtama = document.getElementById('main-play-btn');
+                if (btnPlayUtama && btnPlayUtama.offsetHeight > 0) {
+                    btnPlayUtama.focus();
+                }
+            }, 1200);
         }
 
         // --- NAVIGATION D-PAD ENGINE ---
@@ -946,37 +968,48 @@
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
 
-            // Daftarkan semua kode tombol Back TV OS yang umum (Backspace, Escape, Back, dll)
             const isBackKey = e.key === 'Backspace' || e.key === 'Escape' || e.key === 'Back' || e.keyCode === 8 || e.keyCode === 27 || e.keyCode === 10009;
+            const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'];
 
-            const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Backspace', 'Escape', 'Back'];
             if (!navigasiKeys.includes(e.key) && !isBackKey) return;
 
-            // Izinkan input pencarian memproses tombol arah kiri/kanan bawaan untuk navigasi kursor teks
             const isInputMode = active && active.id === 'search-main-input';
             if (isInputMode && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
                 return; 
             }
 
-            // PERBAIKAN NAVIGASI UTAMA TOMBOL BACK (MENCEGAH CRASH/EXIT APLIKASI)
+            // --- PROTEKSI & INTERSEPSI TOMBOL BACK ---
             if (isBackKey) {
-                // Skenario A: Jika modal sedang terbuka -> Tutup modal saja & kembalikan fokus ke list film
+                e.preventDefault(); // Matikan aksi default TV OS agar kita bisa mengendalikan navigasi secara mulus
+
+                // 1. Jika baru kembali dari player, abaikan trigger back acak ini (Debounce cooldown)
+                if (isReturningFromPlayer) {
+                    return;
+                }
+
+                // 2. Skenario A: Jika modal detail sedang terbuka -> Cukup tutup modal secara lokal dan kembalikan fokus ke card
                 if (modal.style.display === 'block') {
-                    e.preventDefault();
                     closeModal();
                     return;
                 }
-                // Skenario B: Jika di halaman Cari/VIP/Koleksi -> Kembalikan ke halaman Home
+
+                // 3. Skenario B: Jika berada di halaman sub-menu (Cari/VIP/Koleksi/Filter khusus) -> Kembali ke Home
                 if (activeView !== 'home') {
-                    e.preventDefault();
                     switchView('home');
                     return;
                 }
-                // Skenario C: Jika sudah di Home dan tidak ada modal -> Biarkan default TV (Keluar aplikasi dengan aman)
+
+                // 4. Skenario C: Jika sudah di Home, biarkan system menangani penutupan aplikasi (Exit normal)
+                if (typeof Android !== "undefined" && Android.exitApp) {
+                    Android.exitApp();
+                } else {
+                    // Jika di web browser, biarkan browser mengendalikan history back bawaan
+                    history.back();
+                }
                 return; 
             }
 
-            // PERBAIKAN UTAMA ENTER: Jangan matikan event click bawaan jika tombol interaktif sedang aktif
+            // Matikan perilaku preventDefault default kecuali elemen tombol aktif
             const isButtonActive = active && (active.classList.contains('action-button') || active.classList.contains('episode-btn') || active.classList.contains('close-modal') || active.id === 'search-main-input');
             if (!(isButtonActive && e.key === 'Enter')) {
                 e.preventDefault(); 
@@ -1053,7 +1086,6 @@
                 const isSidebar = active.classList.contains('sidebar-item');
                 const isPoster = active.classList.contains('movie-card-horizontal');
 
-                // DARI SIDEBAR PENCET KANAN -> DIARAHKAN KE ELEMEN TERDEKAT YANG SEJAJAR VISUAL
                 if (isSidebar && e.key === 'ArrowRight') {
                     const sidebar = document.getElementById('main-sidebar');
                     sidebar.classList.remove('expanded'); 
@@ -1104,7 +1136,6 @@
             let nextIdx = -1;
             switch(e.key) {
                 case 'ArrowLeft':
-                    // DI GRID MANAPUN DIKLIK KIRI -> PAKSA KE MENU SIDEBAR YANG SEJAJAR VISUAL
                     if (active && !active.classList.contains('sidebar-item')) {
                         const rA = active.getBoundingClientRect();
                         const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
