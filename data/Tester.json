@@ -1,623 +1,85 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRZYB Premium TV</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100;300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #000000;
-            --secondary-color: #141414;
-            --accent-color: #222222;
-            --highlight-color: #E50914;
-            --text-color: #f1f1f1;
-            --text-secondary: #b8b8b8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Smooch Sans', sans-serif;
-        }
-
-        body {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            padding-bottom: 50px;
-        }
-
-        header {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--highlight-color);
-            letter-spacing: 2px;
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .user-actions i {
-            font-size: 1.5rem;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .user-actions i:hover {
-            color: var(--highlight-color);
-        }
-
-        .search-container {
-            position: relative;
-            display: none;
-            width: 250px;
-        }
-
-        .search-container.active {
-            display: block;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            border: 1px solid #333;
-            background-color: rgba(0, 0, 0, 0.85);
-            color: white;
-            font-size: 1.1rem;
-            outline: none;
-        }
-
-        /* --- STYLING GAYA WETV / NETFLIX HORIZONTAL ROW --- */
-        .movies-section {
-            padding: 0 2rem;
-            margin-top: 10px;
-        }
-
-        /* Wadah Baris Kategori */
-        .category-row {
-            margin-bottom: 2rem;
-            display: none; /* Akan diset menjadi 'block' via JS jika ada isinya */
-        }
-
-        .row-header {
-            margin-bottom: 0.8rem;
-            border-left: 4px solid var(--highlight-color);
-            padding-left: 10px;
-        }
-
-        .row-title {
-            font-size: 2rem;
-            color: var(--text-color);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Container Geser Horizontal */
-        .movies-slider-horizontal {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 5px;
-            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
-        }
-
-        .movies-slider-horizontal::-webkit-scrollbar {
-            display: none; /* Sembunyikan scrollbar di Chrome/Android WebView */
-        }
-
-        /* Card Bertipe Landscape / Horizontal */
-        .movie-card-horizontal {
-            background-color: var(--secondary-color);
-            border-radius: 6px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            flex: 0 0 260px; /* Lebar poster horizontal tetap */
-            position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .movie-card-horizontal:hover, .movie-card-horizontal:focus {
-            transform: scale(1.06);
-            z-index: 10;
-            box-shadow: 0 0 15px var(--highlight-color);
-            outline: none;
-        }
-
-        /* Gambar Poster Horizontal aspect ratio 16:9 */
-        .movie-poster-horizontal {
-            width: 100%;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-            background-color: #2a2a2a;
-            display: block;
-        }
-
-        .movie-info {
-            padding: 8px 10px;
-            background-color: var(--secondary-color);
-        }
-
-        .movie-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #fff;
-        }
-
-        .movie-meta {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-top: 3px;
-        }
-
-        .movie-rating {
-            color: gold;
-        }
-
-        /* Wadah khusus jika user melakukan pencarian (Search Grid Mode) */
-        #search-results-section {
-            display: none;
-            margin-bottom: 2rem;
-        }
-        .search-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        /* Modal Area */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background-color: var(--secondary-color);
-            margin: 2rem auto;
-            width: 90%;
-            max-width: 1000px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #222;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background-color: var(--accent-color);
-            border-bottom: 1px solid #333;
-        }
-
-        .modal-title {
-            font-size: 2rem;
-            color: var(--text-color);
-        }
-
-        .close-modal {
-            font-size: 2.5rem;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .movie-details {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .movie-poster-large {
-            width: 250px;
-            height: 375px;
-            object-fit: cover;
-            border-radius: 6px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
-
-        .movie-info-large {
-            flex: 1;
-        }
-
-        .movie-title-large {
-            font-size: 2.8rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-
-        .movie-meta-large {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-        }
-
-        .movie-description {
-            font-size: 1.2rem;
-            line-height: 1.5;
-            margin-bottom: 2rem;
-            color: #ccc;
-        }
-
-        .movie-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .action-button {
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 4px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-        }
-
-        .play-button {
-            background-color: var(--highlight-color);
-            color: white;
-        }
-
-        .play-button:hover {
-            background-color: #ff2d4f;
-        }
-
-        .episode-section {
-            margin-top: 2rem;
-            border-top: 1px solid #333;
-            padding-top: 1.5rem;
-        }
-
-        .episode-headline {
-            color: var(--highlight-color);
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .episode-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .episode-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: 1px solid #333;
-            padding: 0.8rem 1.5rem;
-            width: 100%;
-            text-align: left;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .episode-btn:hover {
-            background-color: var(--highlight-color);
-            border-color: var(--highlight-color);
-        }
-
-        .episode-btn i {
-            margin-right: 15px;
-            font-size: 1.3rem;
-        }
-
-        @media (max-width: 900px) { .movie-details { flex-direction: column; } .movie-poster-large { width: 100%; height: auto; max-height: 350px; } }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo">MRZYB TV</div>
-        <div class="user-actions">
-            <i class="fas fa-search" id="search-icon"></i>
-            <div class="search-container" id="search-container">
-                <input type="text" class="search-input" placeholder="Cari film atau seri..." id="search-input">
-            </div>
-            <i class="fas fa-user"></i>
-        </div>
-    </header>
-
-    <main class="movies-section" id="main-content-wrapper">
-        
-        <div class="category-row" id="search-results-section">
-            <div class="row-header"><h2 class="row-title" id="search-title-text">Hasil Pencarian</h2></div>
-            <div class="search-grid" id="search-grid-container"></div>
-        </div>
-
-        <div class="category-row" id="row-dubbing">
-            <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
-            <div class="movies-slider-horizontal" id="slider-dubbing"></div>
-        </div>
-
-        <div class="category-row" id="row-indo">
-            <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
-            <div class="movies-slider-horizontal" id="slider-indo"></div>
-        </div>
-
-        <div class="category-row" id="row-animasi">
-            <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
-            <div class="movies-slider-horizontal" id="slider-animasi"></div>
-        </div>
-
-        <div class="category-row" id="row-lawas">
-            <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
-            <div class="movies-slider-horizontal" id="slider-lawas"></div>
-        </div>
-
-        <div class="category-row" id="row-series">
-            <div class="row-header"><h2 class="row-title">Film Series Eksklusif</h2></div>
-            <div class="movies-slider-horizontal" id="slider-series"></div>
-        </div>
-
-    </main>
-
-    <div id="movieModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTypeBadge">Detail Konten</h2>
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="movie-details">
-                    <img src="" alt="Poster" class="movie-poster-large" id="modalPoster">
-                    <div class="movie-info-large">
-                        <h3 class="movie-title-large" id="modalMovieTitle">Judul</h3>
-                        <div class="movie-meta-large">
-                            <span id="modalYear">Tahun</span>
-                            <span id="modalDuration">Durasi</span>
-                            <span id="modalRating">Rating</span>
-                            <span id="modalGenre">Genre</span>
-                        </div>
-                        <p class="movie-description" id="modalDescription">Deskripsi...</p>
-                        
-                        <div class="movie-actions">
-                            <button class="action-button play-button" id="main-play-btn" onclick="putarFilmTunggal()">
-                                <i class="fas fa-play"></i> Putar Film
-                            </button>
-                        </div>
-
-                        <div class="episode-section" id="episode-list-wrapper" style="display: none;">
-                            <h4 class="episode-headline">Daftar Episode</h4>
-                            <div class="episode-grid" id="episode-grid"></div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const JSON_URL = 'data/Tester.json'; 
-        let databaseFilm = [];
-        let dataFilmAktif = null;
-
-        // Ambil Data dari JSON
-        async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                
-                // Distribusikan data ke masing-masing baris kategori horizontal
-                kelolaBarisKategori();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
-
-        // Memilah dan merender film ke slider horizontalnya masing-masing
-        function kelolaBarisKategori() {
-            // 1. Film Dubbing
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing");
-            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
-
-            // 2. Film Indonesia
-            const indoData = databaseFilm.filter(m => m.categoria === "film_indo");
-            renderSlider(indoData, 'slider-indo', 'row-indo');
-
-            // 3. Film Animasi
-            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi");
-            renderSlider(animasiData, 'slider-animasi', 'row-animasi');
-
-            // 4. Film Lawas
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas");
-            renderSlider(lawasData, 'slider-lawas', 'row-lawas');
-
-            // 5. Film Series (Berdasarkan parameter is_series)
-            const seriesData = databaseFilm.filter(m => m.is_series === true);
-            renderSlider(seriesData, 'slider-series', 'row-series');
-        }
-
-        // Pembuat komponen kartu html di dalam slider horizontal
-        function renderSlider(dataList, sliderId, rowId) {
-            const slider = document.getElementById(sliderId);
-            const row = document.getElementById(rowId);
-
-            if (dataList.length === 0) {
-                row.style.display = 'none'; // Sembunyikan baris jika tidak ada film
-                return;
-            }
-
-            row.style.display = 'block'; // Tampilkan baris jika terisi data
-            slider.innerHTML = dataList.map(item => `
-                <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${item.titulo}</h3>
-                        <div class="movie-meta">
-                            <span>${item.year}</span>
-                            <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Buka Panel Modal Deskripsi Konten
-        function bukaModalDetail(judulKonten) {
-            const item = databaseFilm.find(m => m.titulo === judulKonten);
-            if (!item) return;
-
-            dataFilmAktif = item; 
-
-            document.getElementById('modalMovieTitle').textContent = item.titulo;
-            document.getElementById('modalPoster').src = item.poster;
-            document.getElementById('modalYear').textContent = item.year;
-            document.getElementById('modalDuration').textContent = item.duration;
-            document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${item.rating}`;
-            document.getElementById('modalGenre').textContent = item.genre;
-            document.getElementById('modalDescription').textContent = item.description;
-
-            const btnPlayUtama = document.getElementById('main-play-btn');
-            const areaSeri = document.getElementById('episode-list-wrapper');
-            const gridEpisode = document.getElementById('episode-grid');
-
-            if (item.is_series === true && item.episodes) {
-                document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-                btnPlayUtama.style.display = 'none'; 
-                areaSeri.style.display = 'block';    
-                
-                gridEpisode.innerHTML = item.episodes.map(eps => `
-                    <button class="episode-btn" onclick="kirimKeAndroidStudio('${eps.video}')">
-                        <i class="fas fa-play-circle"></i>
-                        <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
-                    </button>
-                `).join('');
-            } else {
-                document.getElementById('modalTypeBadge').textContent = "Detail Film";
-                btnPlayUtama.style.display = 'flex'; 
-                areaSeri.style.display = 'none';     
-                gridEpisode.innerHTML = '';
-            }
-
-            document.getElementById('movieModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('movieModal').style.display = 'none';
-        }
-
-        function putarFilmTunggal() {
-            if (dataFilmAktif && dataFilmAktif.video) {
-                kirimKeAndroidStudio(dataFilmAktif.video);
-            } else {
-                alert("Link video film tidak tersedia!");
-            }
-        }
-
-        function kirimKeAndroidStudio(urlMedia) {
-            if (urlMedia) {
-                if (typeof Android !== "undefined" && Android.playVideo) {
-                    Android.playVideo(urlMedia); 
-                } else {
-                    window.open(urlMedia, '_blank'); 
-                }
-            }
-        }
-
-        // Mekanisme Fitur Pencarian Pintar (Search Mode Toggle)
-        const searchInput = document.getElementById('search-input');
-        const searchSection = document.getElementById('search-results-section');
-        const searchGridContainer = document.getElementById('search-grid-container');
-        const searchTitleText = document.getElementById('search-title-text');
-
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase().trim();
-            
-            // Mengambil semua ID baris reguler untuk disembunyikan saat mode pencarian aktif
-            const barisReguler = ['row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
-
-            if (keyword === "") {
-                // Sembunyikan grid search, munculkan kembali baris horizontal
-                searchSection.style.display = 'none';
-                kelolaBarisKategori(); 
-            } else {
-                // Sembunyikan semua baris berkategori reguler
-                barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
-                
-                // Cari kecocokan data
-                const hasilFilter = databaseFilm.filter(item => 
-                    item.titulo.toLowerCase().includes(keyword) || 
-                    item.genre.toLowerCase().includes(keyword)
-                );
-
-                searchSection.style.display = 'block';
-                searchTitleText.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
-
-                if(hasilFilter.length === 0) {
-                    searchGridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten yang Anda cari tidak ditemukan...</p>`;
-                } else {
-                    searchGridContainer.innerHTML = hasilFilter.map(item => `
-                        <div class="movie-card-horizontal" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
-                            <div class="movie-info">
-                                <h3 class="movie-title">${item.titulo}</h3>
-                                <div class="movie-meta">
-                                    <span>${item.year}</span>
-                                    <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-        });
-
-        const searchIcon = document.getElementById('search-icon');
-        const searchContainer = document.getElementById('search-container');
-        searchIcon.addEventListener('click', () => {
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) searchInput.focus();
-        });
-
-        window.addEventListener('load', loadDataKonten);
-    </script>
-</body>
-</html>
+[
+  {
+    "id": "indo-001",
+    "titulo": "KKN di Desa Penari",
+    "poster": "https://image.tmdb.org/t/p/w500/75G7N8rFw4uMvW7qM6g8H9a9z5K.jpg",
+    "year": "2022",
+    "duration": "2h 10m",
+    "rating": "7.8",
+    "genre": "Horror, Mystery",
+    "categoria": "film_indo",
+    "description": "Enam mahasiswa yang melaksanakan KKN di desa terpencil diperingatkan untuk tidak melewati batas gapura terlarang, yang ternyata membawa petaka bagi mereka.",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006DubIndo.mp4",
+    "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "seri-dub-001",
+    "titulo": "Avatar: The Last Airbender (Dub Indo)",
+    "poster": "https://image.tmdb.org/t/p/w500/c1HQ5p81nI141z1up2Vofm4j18c.jpg",
+    "year": "2024",
+    "duration": "1 Musim",
+    "rating": "8.9",
+    "genre": "Aventura, Fantasía",
+    "categoria": "seri_dubbing",
+    "description": "Seorang anak laki-laki yang dikenal sebagai Avatar harus menguasai empat elemen mistik untuk menyelamatkan dunia yang sedang dilanda perang melawan Negara Api.",
+    "halaman_depan": true,
+    "is_series": true,
+    "episodes": [
+      {
+        "eps_num": "Eps 1",
+        "eps_title": "Anak di dalam Bongkahan Es",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E01%20IndoDub.mp4"
+      },
+      {
+        "eps_num": "Eps 2",
+        "eps_title": "Kembalinya Sang Pengendali Api",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E02%20IndoDub.mp4"
+      },
+      {
+        "eps_num": "Eps 3",
+        "eps_title": "Kuil Udara Selatan",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps3.mp4"
+      }
+    ]
+  },
+  {
+    "id": "ani-001",
+    "titulo": "Cars (Sub Indo)",
+    "poster": "https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg",
+    "year": "2006",
+    "duration": "1h 57m",
+    "rating": "8.0",
+    "genre": "Animación, Comedia",
+    "categoria": "film_animasi",
+    "description": "Lightning McQueen, sebuah mobil balap pemula yang sombong, terdampar di kota kecil bernama Radiator Springs dan belajar tentang arti persahabatan yang sesungguhnya.",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006.mp4",
+    "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "seri-ani-001",
+    "titulo": "Naruto Shippuden (Dub Indo)",
+    "poster": "https://image.tmdb.org/t/p/w500/3n2YjV2J1Ycx5Wd43G1h1xptD2O.jpg",
+    "year": "2007",
+    "duration": "20 Musim",
+    "rating": "8.7",
+    "genre": "Animación, Acción",
+    "categoria": "seri_animasi",
+    "description": "Naruto Uzumaki kembali ke desa Konoha setelah dua setengah tahun berlatih demi menyelamatkan temannya, Sasuke Uchiha, dari kegelapan.",
+    "halaman_depan": true,
+    "is_series": true,
+    "episodes": [
+      {
+        "eps_num": "Eps 1",
+        "eps_title": "Pulang Kampung",
+        "video": "https://server-video.com/naruto_eps1.mp4"
+      },
+      {
+        "eps_num": "Eps 2",
+        "eps_title": "Akatsuki Mulai Bergerak",
+        "video": "https://server-video.com/naruto_eps2.mp4"
+      }
+    ]
+  }
+]
