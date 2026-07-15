@@ -28,12 +28,12 @@
         body {
             background-color: var(--primary-color);
             color: var(--text-color);
-            overflow-x: hidden;
-            padding-bottom: 30px;
+            overflow: hidden; /* Mengunci scroll utama body agar banner tetap full */
+            height: 100vh;
             display: flex;
         }
 
-        /* --- STYLING SIDEBAR TRANSPARAN TOTAL --- */
+        /* --- STYLING SIDEBAR --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -123,15 +123,17 @@
             margin-left: var(--sidebar-width-collapsed);
             flex: 1;
             width: calc(100% - var(--sidebar-width-collapsed));
+            height: 100vh;
             position: relative;
+            overflow-y: auto; /* Mengaktifkan scroll internal di sini sehingga banner di belakangnya aman */
         }
 
-        /* --- HERO BACKGROUND FULL --- */
+        /* --- HERO BACKGROUND FULL FIX --- */
         .hero-container {
-            position: absolute;
+            position: fixed; /* Diubah dari absolute ke fixed agar menempel kokoh di layar latar belakang */
             top: 0;
-            left: 0;
-            width: 100%;
+            left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
             height: 100vh;
             overflow: hidden;
             background-color: #000;
@@ -161,19 +163,21 @@
 
         /* --- STRUKTUR POSISI SLIDER POSTER --- */
         .movies-section {
-            padding: 0 2.5rem;
-            margin-top: 52vh;
+            padding: 0 3.5rem; /* Ditambahkan padding agar space samping lebih aman */
+            margin-top: 55vh;
             position: relative;
             z-index: 4;
+            padding-bottom: 50px;
         }
 
         .category-row {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             display: none;
         }
 
         .row-header {
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.4rem;
+            padding-left: 10px;
         }
 
         .row-title {
@@ -186,9 +190,9 @@
 
         .movies-slider-horizontal {
             display: flex;
-            gap: 14px;
+            gap: 16px;
             overflow-x: auto;
-            padding: 5px 2px;
+            padding: 15px 10px; /* Ditambahkan padding atas-bawah & kiri-kanan agar saat zoom fokus tidak terpotong edge */
             scrollbar-width: none;
         }
 
@@ -196,12 +200,12 @@
             display: none;
         }
 
-        /* PROPORSI KONTENER POSTER (LANDSCAPE DI HOME) */
+        /* PROPORSI KONTENER POSTER (LANDSCAPE) */
         .movie-card-horizontal {
             background-color: #1c1c1c;
             border-radius: 6px;
             overflow: hidden;
-            transition: all 0.25s cubic-bezier(0.2, 1, 0.2, 1);
+            transition: transform 0.25s cubic-bezier(0.2, 1, 0.2, 1), box-shadow 0.25s, border-color 0.25s;
             cursor: pointer;
             flex: 0 0 175px; 
             position: relative;
@@ -359,16 +363,7 @@
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
         .movie-details { display: flex; gap: 2rem; }
-        
-        /* POSTER PORTRAIT DI MODAL DETAIL */
-        .movie-poster-large { 
-            width: 220px; 
-            height: 330px; 
-            object-fit: cover; 
-            border-radius: 4px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-        }
-        
+        .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
         .movie-info-large { flex: 1; }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
@@ -382,6 +377,11 @@
     </style>
 </head>
 <body>
+
+    <div class="hero-container" id="hero-display-area">
+        <div class="hero-background" id="hero-bg-image"></div>
+        <div class="hero-overlay"></div>
+    </div>
 
     <nav class="sidebar" id="main-sidebar">
         <div class="sidebar-menu-wrapper">
@@ -414,11 +414,6 @@
     <div class="main-wrapper">
         
         <div id="page-home-view">
-            <div class="hero-container" id="hero-display-area">
-                <div class="hero-background" id="hero-bg-image"></div>
-                <div class="hero-overlay"></div>
-            </div>
-
             <main class="movies-section" id="main-content-wrapper">
                 <div class="category-row" id="row-pilihan">
                     <div class="movies-slider-horizontal" id="slider-pilihan"></div>
@@ -564,7 +559,6 @@
             if (dataList.length === 0) { row.style.display = 'none'; return; }
             row.style.display = 'block';
             
-            // Render menggunakan data .poster asli (Landscape)
             if (isPilihanAtas) {
                 slider.innerHTML = dataList.map(item => `
                     <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
@@ -643,17 +637,13 @@
             }
         });
 
-        // KUNCI PERUBAHAN: Buka modal detail dengan mendeteksi properti 'poster_portrait'
         function bukaModalDetail(judulKonten) {
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
             dataFilmAktif = item; 
 
             document.getElementById('modalMovieTitle').textContent = item.titulo;
-            
-            // Sistem Fallback: Jika 'poster_portrait' kosong di JSON, otomatis pakai link 'poster' landscape agar tidak error.
             document.getElementById('modalPoster').src = item.poster_portrait ? item.poster_portrait : item.poster;
-            
             document.getElementById('modalYear').textContent = item.year;
             document.getElementById('modalDuration').textContent = item.duration;
             document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${item.rating}`;
@@ -692,7 +682,7 @@
             else window.open(url, '_blank');
         }
 
-        // --- NAVIGATION D-PAD LOGIC ---
+        // --- NAVIGATION D-PAD ENGINE (DENGAN KLIP DAN PENGUNCI BARIS ATAS) ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
             if (modal.style.display === 'block') {
@@ -724,6 +714,11 @@
                     nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
                     break;
                 case 'ArrowUp':
+                    // PERBAIKAN PROTEKSI ATAS: Cegah pencarian ke sidebar jika berada di poster baris teratas
+                    if (active && active.closest('#row-pilihan')) {
+                        e.preventDefault();
+                        return; // Dikunci agar bar tidak terbuka/sidebar tidak terpilih secara otomatis
+                    }
                     nextIdx = cariElemenTerdekat(active, focusable, 'atas');
                     break;
                 case 'ArrowDown':
