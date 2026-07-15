@@ -2,44 +2,53 @@
   {
     "id": "indo-001",
     "titulo": "KKN di Desa Penari",
-    "poster": "https://image.tmdb.org/t/p/w500/75G7N8rFw4uMvW7qM6g8H9a9z5K.jpg",
+    "poster": "https://iptv-posterku.pages.dev/poster/film_animasi/Mariogalaxy.webp",
     "year": "2022",
     "duration": "2h 10m",
     "rating": "7.8",
     "genre": "Horror, Mystery",
     "categoria": "film_indo",
-    "description": "Enam mahasiswa yang melaksanakan KKN di desa terpencil diperingatkan untuk tidak melewati batas gapura terlarang, yang ternyata membawa petaka bagi mereka.",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006DubIndo.mp4",
+    "description": "Enam mahasiswa yang melaksanakan KKN di desa terpencil diperingatkan untuk tidak melewati batas gapura terlarang.",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/mario_galaxy_movie_2026.mp4",
     "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "indo-002",
+    "titulo": "Gundala",
+    "poster": "https://image.tmdb.org/t/p/w500/3wZ0W45Gq17B6tB9rFw4uMvW7qM.jpg",
+    "year": "2019",
+    "duration": "2h 3m",
+    "rating": "7.5",
+    "genre": "Action, Sci-Fi",
+    "categoria": "film_indo",
+    "description": "Sancaka hidup di jalanan sejak ditinggal orang tuanya. Menghadapi keadaan kota yang makin aman, ia harus memilih: tetap aman atau keluar membela yang tertindas.",
+    "video": "https://server-video.com/gundala.mp4",
+    "halaman_depan": false,
     "is_series": false
   },
   {
     "id": "seri-dub-001",
     "titulo": "Avatar: The Last Airbender (Dub Indo)",
-    "poster": "https://image.tmdb.org/t/p/w500/c1HQ5p81nI141z1up2Vofm4j18c.jpg",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxOhnwhV-cgZ5yw2T9JKn-pUGn_FUT-IR3QzNRFqOE4A&s=10",
     "year": "2024",
     "duration": "1 Musim",
     "rating": "8.9",
     "genre": "Aventura, Fantasía",
-    "categoria": "seri_dubbing",
-    "description": "Seorang anak laki-laki yang dikenal sebagai Avatar harus menguasai empat elemen mistik untuk menyelamatkan dunia yang sedang dilanda perang melawan Negara Api.",
+    "categoria": "film_dubbing",
+    "description": "Seorang anak laki-laki bernama Aang harus menguasai empat elemen mistik untuk menyelamatkan dunia dari kekejaman Negara Api.",
     "halaman_depan": true,
     "is_series": true,
     "episodes": [
       {
         "eps_num": "Eps 1",
         "eps_title": "Anak di dalam Bongkahan Es",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E01%20IndoDub.mp4"
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Film%20anak%20lagi/panji_tengkorak_2025.mp4"
       },
       {
         "eps_num": "Eps 2",
         "eps_title": "Kembalinya Sang Pengendali Api",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E02%20IndoDub.mp4"
-      },
-      {
-        "eps_num": "Eps 3",
-        "eps_title": "Kuil Udara Selatan",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps3.mp4"
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps2.mp4"
       }
     ]
   },
@@ -52,33 +61,47 @@
     "rating": "8.0",
     "genre": "Animación, Comedia",
     "categoria": "film_animasi",
-    "description": "Lightning McQueen, sebuah mobil balap pemula yang sombong, terdampar di kota kecil bernama Radiator Springs dan belajar tentang arti persahabatan yang sesungguhnya.",
+    "description": "Lightning McQueen, sebuah mobil balap pemula yang sombong, terdampar di kota kecil bernama Radiator Springs.",
     "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006.mp4",
     "halaman_depan": true,
     "is_series": false
   },
   {
-    "id": "seri-ani-001",
-    "titulo": "Naruto Shippuden (Dub Indo)",
-    "poster": "https://image.tmdb.org/t/p/w500/3n2YjV2J1Ycx5Wd43G1h1xptD2O.jpg",
-    "year": "2007",
-    "duration": "20 Musim",
-    "rating": "8.7",
-    "genre": "Animación, Acción",
-    "categoria": "seri_animasi",
-    "description": "Naruto Uzumaki kembali ke desa Konoha setelah dua setengah tahun berlatih demi menyelamatkan temannya, Sasuke Uchiha, dari kegelapan.",
+    "id": "lawas-001",
+    "titulo": "Warkop DKI: Pintar Pintar Bodoh",
+    "poster": "https://image.tmdb.org/t/p/w500/yyyyyy.jpg",
+    "year": "1980",
+    "duration": "1h 30m",
+    "rating": "8.9",
+    "genre": "Comedia, Clásico",
+    "categoria": "indo_lawas",
+    "description": "Dono, Kasino, Indro, dan Slamet mendirikan sebuah kantor detektif swasta yang berujung pada kesalahpahaman kocak.",
+    "video": "https://server-video.com/warkop_lawas.mp4",
+    "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "seri-indo-001",
+    "titulo": "Layangan Putus (Original Seri)",
+    "poster": "https://image.tmdb.org/t/p/w500/layanganputus.jpg",
+    "year": "2021",
+    "duration": "1 Musim",
+    "rating": "8.6",
+    "genre": "Drama, Romance",
+    "categoria": "film_indo",
+    "description": "Kemelut rumah tangga Kinan dan Aris yang semula harmonis, kini berada di ambang kehancuran akibat kehadiran orang ketiga.",
     "halaman_depan": true,
     "is_series": true,
     "episodes": [
       {
         "eps_num": "Eps 1",
-        "eps_title": "Pulang Kampung",
-        "video": "https://server-video.com/naruto_eps1.mp4"
+        "eps_title": "Kecurigaan Awal",
+        "video": "https://server-video.com/layangan_eps1.mp4"
       },
       {
         "eps_num": "Eps 2",
-        "eps_title": "Akatsuki Mulai Bergerak",
-        "video": "https://server-video.com/naruto_eps2.mp4"
+        "eps_title": "Menemukan Bukti",
+        "video": "https://server-video.com/layangan_eps2.mp4"
       }
     ]
   }
