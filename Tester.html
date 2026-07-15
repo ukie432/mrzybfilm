@@ -176,9 +176,6 @@
         .row-header {
             margin-bottom: 0.4rem;
             padding-left: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .row-title {
@@ -225,20 +222,12 @@
             z-index: 99;
         }
 
-        /* TINGGI CADANGAN UNTUK WEBVIEW SMART TV JADUL */
         .movie-poster-horizontal {
             width: 100%;
-            height: 110px; 
+            aspect-ratio: 16/10;
             object-fit: cover;
             background-color: #252525;
             display: block;
-        }
-
-        @supports (aspect-ratio: 16/10) {
-            .movie-poster-horizontal {
-                aspect-ratio: 16/10;
-                height: auto;
-            }
         }
 
         .movie-info {
@@ -258,36 +247,6 @@
         #row-pilihan {
             margin-top: 0;
             margin-bottom: 2rem;
-        }
-
-        /* --- LAYOUT HALAMAN KATEGORI KHUSUS (GRID VERTICAL KEBANAKAN FILM) --- */
-        .category-page-view {
-            display: none;
-            padding: 3rem;
-            width: 100%;
-            min-height: 100vh;
-            position: relative;
-            z-index: 10;
-            background-color: #000;
-        }
-        .category-page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: #fff;
-            text-transform: uppercase;
-            border-left: 5px solid var(--highlight-color);
-            padding-left: 15px;
-        }
-        .category-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding-bottom: 60px;
-        }
-        .category-grid .movie-card-horizontal {
-            flex: 0 0 calc(14.28% - 18px); 
-            min-width: 140px;
         }
 
         /* --- LAYOUT PENCARIAN --- */
@@ -423,7 +382,7 @@
         .action-button { padding: 0.7rem 1.8rem; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border: 2px solid transparent; }
         .play-button { background-color: var(--highlight-color); color: white; }
         
-        /* --- LAYOUT EPISODE HORIZONTAL --- */
+        /* --- UPDATE LAYOUT EPISODE HORIZONTAL --- */
         .episode-section { 
             margin-top: 2rem;
             border-top: 1px solid #333; 
@@ -502,17 +461,17 @@
             <button class="sidebar-item active" id="menu-home" tabindex="0" onclick="switchView('home')">
                 <i class="fas fa-home"></i> <span>Home</span>
             </button>
-            <button class="sidebar-item" id="menu-film" tabindex="0" onclick="bukaHalamanKategori('film_dubbing', 'Film Dubbing')">
-                <i class="fas fa-film"></i> <span>Film Dubbing</span>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-film"></i> <span>Film</span>
             </button>
-            <button class="sidebar-item" id="menu-indo" tabindex="0" onclick="bukaHalamanKategori('film_indo', 'Film Indonesia')">
-                <i class="fas fa-flag"></i> <span>Film Indonesia</span>
-            </button>
-            <button class="sidebar-item" id="menu-anime" tabindex="0" onclick="bukaHalamanKategori('film_animasi', 'Film Animasi')">
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
                 <i class="fas fa-cat"></i> <span>Anime</span>
             </button>
-            <button class="sidebar-item" id="menu-series" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Film Series Pilihan')">
-                <i class="fas fa-star"></i> <span>Series</span>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-star"></i> <span>Koleksi Saya</span>
+            </button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-gem"></i> <span>Pusat VIP</span>
             </button>
         </div>
         <div class="sidebar-footer">
@@ -531,45 +490,30 @@
                 </div>
 
                 <div class="category-row" id="row-dubbing">
-                    <div class="row-header">
-                        <h2 class="row-title">Film Dubbing</h2>
-                    </div>
+                    <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
                     <div class="movies-slider-horizontal" id="slider-dubbing"></div>
                 </div>
 
                 <div class="category-row" id="row-indo">
-                    <div class="row-header">
-                        <h2 class="row-title">Film Indonesia</h2>
-                    </div>
+                    <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
                     <div class="movies-slider-horizontal" id="slider-indo"></div>
                 </div>
 
                 <div class="category-row" id="row-animasi">
-                    <div class="row-header">
-                        <h2 class="row-title">Film Animasi</h2>
-                    </div>
+                    <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
                     <div class="movies-slider-horizontal" id="slider-animasi"></div>
                 </div>
 
                 <div class="category-row" id="row-lawas">
-                    <div class="row-header">
-                        <h2 class="row-title">Film Indo Lawas</h2>
-                    </div>
+                    <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
                     <div class="movies-slider-horizontal" id="slider-lawas"></div>
                 </div>
 
                 <div class="category-row" id="row-series">
-                    <div class="row-header">
-                        <h2 class="row-title">Film Series Pilihan</h2>
-                    </div>
+                    <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
                     <div class="movies-slider-horizontal" id="slider-series"></div>
                 </div>
             </main>
-        </div>
-
-        <div id="page-category-view" class="category-page-view">
-            <h2 class="category-page-title" id="current-category-title">Nama Kategori</h2>
-            <div class="category-grid" id="category-items-grid"></div>
         </div>
 
         <div id="page-search-view" class="search-page-view">
@@ -626,71 +570,21 @@
             activeView = viewName;
             const homeView = document.getElementById('page-home-view');
             const searchView = document.getElementById('page-search-view');
-            const catView = document.getElementById('page-category-view');
             
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            
-            homeView.style.display = 'none';
-            searchView.style.display = 'none';
-            catView.style.display = 'none';
-
             if (viewName === 'search') {
+                homeView.style.display = 'none';
                 searchView.style.display = 'block';
                 document.getElementById('menu-cari').classList.add('active');
                 renderPencarianPopuler();
                 setTimeout(() => document.getElementById('search-main-input').focus(), 100);
             } else {
                 homeView.style.display = 'block';
+                searchView.style.display = 'none';
                 document.getElementById('menu-home').classList.add('active');
                 document.getElementById('search-main-input').value = "";
                 kelolaBarisKategori();
             }
-        }
-
-        function bukaHalamanKategori(kategoriKey, namaLabel) {
-            activeView = 'category';
-            
-            document.getElementById('page-home-view').style.display = 'none';
-            document.getElementById('page-search-view').style.display = 'none';
-            document.getElementById('page-category-view').style.display = 'block';
-
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            if(kategoriKey === 'film_dubbing') document.getElementById('menu-film').classList.add('active');
-            else if(kategoriKey === 'film_indo') document.getElementById('menu-indo').classList.add('active');
-            else if(kategoriKey === 'film_animasi') document.getElementById('menu-anime').classList.add('active');
-            else if(kategoriKey === 'series_all') document.getElementById('menu-series').classList.add('active');
-
-            document.getElementById('current-category-title').textContent = namaLabel;
-
-            let filteredData = [];
-            if (kategoriKey === 'series_all') {
-                filteredData = databaseFilm.filter(m => m.is_series === true || String(m.is_series) === 'true');
-            } else {
-                filteredData = databaseFilm.filter(m => m.categoria === kategoriKey);
-            }
-
-            const gridContainer = document.getElementById('category-items-grid');
-            if(filteredData.length === 0) {
-                gridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary); font-size:1.5rem;">Belum ada konten di kategori ini.</p>`;
-                return;
-            }
-
-            gridContainer.innerHTML = filteredData.map(item => {
-                const posterUrl = item.poster || item.poster_portrait || '';
-                return `
-                    <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                        <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                        <div class="movie-info">
-                            <h3 class="movie-title">${item.titulo}</h3>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            setTimeout(() => {
-                const firstItem = gridContainer.querySelector('.movie-card-horizontal');
-                if(firstItem) firstItem.focus();
-            }, 200);
         }
 
         async function loadDataKonten() {
@@ -704,7 +598,7 @@
             }
         }
 
-        // Membantu interaksi focus/blur sidebar secara dynamic
+        // Membantu interaksi focus/blur sidebar secara dinamis
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.addEventListener('focus', () => {
@@ -722,26 +616,19 @@
         }
 
         function kelolaBarisKategori() {
-            const isHome = (m) => m.halaman_depan === true || String(m.halaman_depan) === 'true';
-
-            const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && isHome(m)).slice(0, 6);
+            const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
             renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
 
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && isHome(m)).slice(0, 15);
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
-
-            const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && isHome(m)).slice(0, 15);
+            const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
-
-            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && isHome(m)).slice(0, 15);
+            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && isHome(m)).slice(0, 15);
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
-
-            const seriesData = databaseFilm.filter(m => (m.is_series === true || String(m.is_series) === 'true') && isHome(m)).slice(0, 15);
+            const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
-
             setTimeout(() => {
                 const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
                 if (cards.length > 0) cards[0].focus();
@@ -753,28 +640,21 @@
             const row = document.getElementById(rowId);
             if (dataList.length === 0) { row.style.display = 'none'; return; }
             row.style.display = 'block';
-            
             if (isPilihanAtas) {
-                slider.innerHTML = dataList.map(item => {
-                    const posterUrl = item.poster || item.poster_portrait || '';
-                    return `
-                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${posterUrl}" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                        </div>
-                    `;
-                }).join('');
+                slider.innerHTML = dataList.map(item => `
+                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
+                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                    </div>
+                `).join('');
             } else {
-                slider.innerHTML = dataList.map(item => {
-                    const posterUrl = item.poster || item.poster_portrait || '';
-                    return `
-                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${posterUrl}" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                            <div class="movie-info">
-                                <h3 class="movie-title">${item.titulo}</h3>
-                            </div>
+                slider.innerHTML = dataList.map(item => `
+                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
+                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.titulo}</h3>
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                `).join('');
             }
 
             if (sliderId === 'slider-pilihan') {
@@ -787,8 +667,7 @@
                     });
                     const firstCard = slider.querySelector('.movie-card-horizontal');
                     if(firstCard) {
-                        const firstBg = firstCard.getAttribute('data-bg');
-                        if (firstBg) document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstBg}')`;
+                        document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstCard.getAttribute('data-bg')}')`;
                     }
                 }, 100);
             }
@@ -798,18 +677,15 @@
             const grid = document.getElementById('search-results-grid');
             const dataPopuler = databaseFilm.slice(0, 7); 
             
-            grid.innerHTML = dataPopuler.map((item, idx) => {
-                const posterUrl = item.poster || item.poster_portrait || '';
-                return `
-                    <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                        <div class="popular-badge">${idx + 1}</div>
-                        <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal">
-                        <div class="movie-info">
-                            <h3 class="movie-title">${item.titulo}</h3>
-                        </div>
+            grid.innerHTML = dataPopuler.map((item, idx) => `
+                <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                    <div class="popular-badge">${idx + 1}</div>
+                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${item.titulo}</h3>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         }
 
         document.getElementById('search-main-input').addEventListener('input', (e) => {
@@ -830,17 +706,14 @@
                 if(filtered.length === 0) {
                     grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 } else {
-                    grid.innerHTML = filtered.map(item => {
-                        const posterUrl = item.poster || item.poster_portrait || '';
-                        return `
-                            <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                                <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal">
-                                <div class="movie-info">
-                                    <h3 class="movie-title">${item.titulo}</h3>
-                                </div>
+                    grid.innerHTML = filtered.map(item => `
+                        <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                            <div class="movie-info">
+                                <h3 class="movie-title">${item.titulo}</h3>
                             </div>
-                        `;
-                    }).join('');
+                        </div>
+                    `).join('');
                 }
             }
         });
@@ -862,9 +735,7 @@
             const areaSeri = document.getElementById('episode-list-wrapper');
             const gridEpisode = document.getElementById('episode-grid');
 
-            const isSeries = item.is_series === true || String(item.is_series) === 'true';
-
-            if (isSeries && item.episodes) {
+            if (item.is_series === true && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
                 btnPlayUtama.style.display = 'none'; 
                 areaSeri.style.display = 'block';    
@@ -883,7 +754,7 @@
             
             document.getElementById('movieModal').style.display = 'block';
             setTimeout(() => {
-                if (isSeries) {
+                if (item.is_series) {
                     const firstEps = document.querySelector('.episode-btn');
                     if(firstEps) firstEps.focus();
                 } else {
@@ -901,7 +772,7 @@
             else window.open(url, '_blank');
         }
 
-        // --- NAVIGATION D-PAD ENGINE SMART TV ---
+        // --- NAVIGATION D-PAD ENGINE ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
@@ -964,15 +835,11 @@
                 return;
             }
 
-            // MENGHINDARI TOMBOL LIHAT SEMUA YANG SUDAH DIHAPUS DARI DAFTAR ELEMEN FOKUS
             const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
             const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
-                if (activeView === 'search' || activeView === 'category') { 
-                    switchView('home');
-                    e.preventDefault(); 
-                }
+                if (activeView === 'search') { switchView('home'); e.preventDefault(); }
                 return;
             }
 
@@ -980,16 +847,14 @@
                 const isSidebar = active.classList.contains('sidebar-item');
                 const isPoster = active.classList.contains('movie-card-horizontal');
 
-                // PERBAIKAN: JIKA BERADA DI SIDEBAR DAN DITEKAN KANAN, SIDEBAR MENUTUP DAN KEMBALI KE KONTEN
+                // FIX UTAMA: PAKSA SIDEBAR MENUTUP DAN PINDAHKAN FOKUS KE KARTU FILM JIKA PENGGUNA MENEKAN TOMBOL KANAN (ARROWRIGHT)
                 if (isSidebar && e.key === 'ArrowRight') {
                     const sidebar = document.getElementById('main-sidebar');
-                    sidebar.classList.remove('expanded'); // Tutup sidebar secara paksa
+                    sidebar.classList.remove('expanded'); 
                     
                     let target = null;
                     if (activeView === 'home') {
                         target = document.querySelector('#page-home-view .movie-card-horizontal');
-                    } else if (activeView === 'category') {
-                        target = document.querySelector('#page-category-view .movie-card-horizontal');
                     } else if (activeView === 'search') {
                         target = document.getElementById('search-main-input');
                     }
@@ -1082,9 +947,9 @@
                 const dx = cB.x - cA.x; const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 2.0) {
+                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 2.0) {
+                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
                 } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.6) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
