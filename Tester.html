@@ -127,7 +127,7 @@
             background-color: var(--secondary-color);
             border-radius: 6px;
             overflow: hidden;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
             flex: 0 0 260px;
             position: relative;
@@ -139,7 +139,8 @@
         .movie-card-horizontal:focus,
         .action-button:focus,
         .episode-btn:focus,
-        .close-modal:focus {
+        .close-modal:focus,
+        .user-actions i:focus {
             outline: none;
             transform: scale(1.08);
             box-shadow: 0 0 20px var(--highlight-color);
@@ -359,7 +360,6 @@
     <header>
         <div class="logo">MRZYB TV</div>
         <div class="user-actions">
-            <!-- Berikan tabindex pada ikon pencarian agar remote TV bisa memicu pencarian -->
             <i class="fas fa-search" id="search-icon" tabindex="0"></i>
             <div class="search-container" id="search-container">
                 <input type="text" class="search-input" placeholder="Cari judul..." id="search-input" tabindex="0">
@@ -370,37 +370,31 @@
 
     <main class="movies-section" id="main-content-wrapper">
         
-        <!-- Wadah Mode Pencarian Global -->
         <div class="category-row" id="search-results-section">
             <div class="row-header"><h2 class="row-title" id="search-title-text">Hasil Pencarian</h2></div>
             <div class="search-grid" id="search-grid-container"></div>
         </div>
 
-        <!-- BARIS KATEGORI 1: FILM DUBBING -->
         <div class="category-row" id="row-dubbing">
             <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
             <div class="movies-slider-horizontal" id="slider-dubbing"></div>
         </div>
 
-        <!-- BARIS KATEGORI 2: FILM INDONESIA -->
         <div class="category-row" id="row-indo">
             <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
             <div class="movies-slider-horizontal" id="slider-indo"></div>
         </div>
 
-        <!-- BARIS KATEGORI 3: FILM ANIMASI -->
         <div class="category-row" id="row-animasi">
             <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
             <div class="movies-slider-horizontal" id="slider-animasi"></div>
         </div>
 
-        <!-- BARIS KATEGORI 4: FILM INDONESIA LAWAS -->
         <div class="category-row" id="row-lawas">
             <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
             <div class="movies-slider-horizontal" id="slider-lawas"></div>
         </div>
 
-        <!-- BARIS KATEGORI 5: FILM SERIES -->
         <div class="category-row" id="row-series">
             <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
             <div class="movies-slider-horizontal" id="slider-series"></div>
@@ -408,12 +402,10 @@
 
     </main>
 
-    <!-- Modal Detail Deskripsi -->
     <div id="movieModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTypeBadge">Detail Konten</h2>
-                <!-- Tombol keluar modal wajib memiliki tabindex agar bisa ditarget remote -->
                 <span class="close-modal" tabindex="0" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -429,14 +421,12 @@
                         </div>
                         <p class="movie-description" id="modalDescription">Deskripsi...</p>
                         
-                        <!-- Tombol Play Tunggal -->
                         <div class="movie-actions">
                             <button class="action-button play-button" id="main-play-btn" tabindex="0" onclick="putarFilmTunggal()">
                                 <i class="fas fa-play"></i> Putar Film
                             </button>
                         </div>
 
-                        <!-- Daftar Episode Khusus Seri -->
                         <div class="episode-section" id="episode-list-wrapper" style="display: none;">
                             <h4 class="episode-headline">Daftar Episode</h4>
                             <div class="episode-grid" id="episode-grid"></div>
@@ -452,20 +442,18 @@
         const JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
         let dataFilmAktif = null;
-        let lastFocusedElementBeforeModal = null; // Menyimpan histori kursor sebelum modal terbuka
+        let lastFocusedElementBeforeModal = null; 
 
         async function loadDataKonten() {
             try {
                 const response = await fetch(JSON_URL);
                 databaseFilm = await response.json();
-                
                 kelolaBarisKategori();
             } catch (error) {
                 console.error("Gagal mengambil database JSON:", error);
             }
         }
 
-        // PENYARINGAN HALAMAN UTAMA (Hanya meload yang ditandai halaman_depan === true)
         function kelolaBarisKategori() {
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
@@ -482,7 +470,6 @@
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series');
 
-            // Set fokus otomatis ke kartu pertama di layar setelah render selesai
             setTimeout(() => {
                 const firstCard = document.querySelector('.movie-card-horizontal');
                 if (firstCard) firstCard.focus();
@@ -499,7 +486,6 @@
             }
 
             row.style.display = 'block';
-            // Pastikan ada atribut tabindex="0" pada setiap kartu
             slider.innerHTML = dataList.map(item => `
                 <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
                     <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
@@ -518,7 +504,6 @@
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
 
-            // Simpan element aktif saat ini agar saat modal ditutup, fokusnya kembali kesini
             lastFocusedElementBeforeModal = document.activeElement;
             dataFilmAktif = item; 
 
@@ -539,7 +524,6 @@
                 btnPlayUtama.style.display = 'none'; 
                 areaSeri.style.display = 'block';    
                 
-                // Tambahkan tabindex="0" ke seluruh tombol episode agar bisa diarahkan dengan remote
                 gridEpisode.innerHTML = item.episodes.map(eps => `
                     <button class="episode-btn" tabindex="0" onclick="kirimKeAndroidStudio('${eps.video}')">
                         <i class="fas fa-play-circle"></i>
@@ -555,7 +539,6 @@
 
             document.getElementById('movieModal').style.display = 'block';
 
-            // Auto-focus remote langsung ke tombol fungsional utama di dalam modal
             setTimeout(() => {
                 if (item.is_series === true) {
                     const firstEps = document.querySelector('.episode-btn');
@@ -568,7 +551,6 @@
 
         function closeModal() {
             document.getElementById('movieModal').style.display = 'none';
-            // Kembalikan fokus remote ke kartu film terakhir sebelum modal dibuka
             if (lastFocusedElementBeforeModal) {
                 lastFocusedElementBeforeModal.focus();
             }
@@ -592,7 +574,7 @@
             }
         }
 
-        // PENCARIAN GLOBAL MENYELURUH (Dapat menyaring ribuan data sekaligus)
+        // PENCARIAN GLOBAL MENYELURUH
         const searchInput = document.getElementById('search-input');
         const searchSection = document.getElementById('search-results-section');
         const searchGridContainer = document.getElementById('search-grid-container');
@@ -643,13 +625,11 @@
         });
 
 
-        // ==================== ENGINE NAVIGASI REMOTE CONTROL (D-PAD) ====================
+        // ==================== ENGINE NAVIGASI REMOTE CONTROL (D-PAD) + FIX AUTO-SCROLL ====================
         document.addEventListener('keydown', function(e) {
-            // Deteksi semua komponen terdaftar yang diizinkan untuk menerima navigasi remote
             const focusableElements = Array.from(document.querySelectorAll('[tabindex="0"], .action-button, .episode-btn, .close-modal'));
             const activeEl = document.activeElement;
 
-            // Jika belum ada elemen terfokus sama sekali, otomatis kunci ke komponen pertama di layar
             if (!focusableElements.includes(activeEl)) {
                 if (focusableElements.length > 0) {
                     focusableElements[0].focus();
@@ -664,6 +644,7 @@
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kiri');
                     if (nextIndex !== -1) {
                         focusableElements[nextIndex].focus();
+                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                         e.preventDefault();
                     }
                     break;
@@ -672,6 +653,7 @@
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kanan');
                     if (nextIndex !== -1) {
                         focusableElements[nextIndex].focus();
+                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                         e.preventDefault();
                     }
                     break;
@@ -680,6 +662,8 @@
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'atas');
                     if (nextIndex !== -1) {
                         focusableElements[nextIndex].focus();
+                        // Dorong layar bergulir ke arah atas secara presisi
+                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
                         e.preventDefault();
                     }
                     break;
@@ -688,19 +672,19 @@
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'bawah');
                     if (nextIndex !== -1) {
                         focusableElements[nextIndex].focus();
+                        // Dorong layar bergulir ke arah bawah secara presisi
+                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
                         e.preventDefault();
                     }
                     break;
 
                 case 'Enter':
-                    // Mensimulasikan klik fisik saat menekan tombol OK/Enter di remote TV
                     activeEl.click();
                     e.preventDefault();
                     break;
 
                 case 'Escape':
                 case 'Backspace':
-                    // Tombol Back di remote akan otomatis menutup modal yang aktif
                     const modal = document.getElementById('movieModal');
                     if (modal.style.display === 'block') {
                         closeModal();
@@ -710,7 +694,7 @@
             }
         });
 
-        // Rumus koordinat navigasi spasial TV
+        // RUMUS DETEKSI SPASIAL YANG LEBIH LUAS AGAR ANTI-NYANGKUT
         function cariElemenTerdekat(activeEl, elements, arah) {
             const rA = activeEl.getBoundingClientRect();
             const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
@@ -721,6 +705,12 @@
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
                 
+                // Cegah kursor menargetkan elemen di dalam modal jika modal sedang tertutup
+                const modal = document.getElementById('movieModal');
+                if (modal.style.display !== 'block' && el.closest('.modal')) {
+                    return;
+                }
+
                 const rB = el.getBoundingClientRect();
                 const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
 
@@ -728,14 +718,14 @@
                 const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                // Filter matematika untuk mencegah cursor lompat sembarangan
+                // Aturan seleksi spasial yang dilonggarkan agar fleksibel melintasi baris di TV
                 if (arah === 'kanan' && dx > 10 && Math.abs(dy) < rA.height * 1.5) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
                 } else if (arah === 'kiri' && dx < -10 && Math.abs(dy) < rA.height * 1.5) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'bawah' && dy > 10) {
+                } else if (arah === 'bawah' && dy > 10 && Math.abs(dx) < window.innerWidth * 0.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'atas' && dy < -10) {
+                } else if (arah === 'atas' && dy < -10 && Math.abs(dx) < window.innerWidth * 0.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
                 }
             });
