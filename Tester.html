@@ -334,7 +334,7 @@
             align-items: center; 
         }
 
-        /* --- TOMBOL FAVORIT BARU --- */
+        /* --- TOMBOL FAVORIT --- */
         .favorite-btn {
             background-color: #2a2a2a;
             color: white;
@@ -397,7 +397,7 @@
         .action-button { padding: 0.7rem 1.8rem; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
         .play-button { background-color: var(--highlight-color); color: white; }
         
-        /* --- UPDATE LAYOUT EPISODE HORIZONTAL --- */
+        /* --- LAYOUT EPISODE HORIZONTAL --- */
         .episode-section { 
             margin-top: 2rem; 
             border-top: 1px solid #333; 
@@ -609,7 +609,6 @@
                 document.getElementById('menu-home').classList.add('active');
                 document.getElementById('search-main-input').value = "";
                 
-                // Kembalikan header "Koleksi Saya" menjadi normal/hilang saat kembali ke Home
                 const rowPilihan = document.getElementById('row-pilihan');
                 const existingHeader = rowPilihan.querySelector('.row-header');
                 if (existingHeader) existingHeader.remove();
@@ -712,7 +711,6 @@
 
             localStorage.setItem('mrzyb_favorites', JSON.stringify(listFavorit));
             
-            // Jika modal ditutup saat berada di halaman Koleksi Saya, segarkan tampilan listnya
             if (activeView === 'favorites') {
                 tampilkanKoleksiSaya();
             }
@@ -722,7 +720,6 @@
             const sliderPilihan = document.getElementById('slider-pilihan');
             const rowPilihan = document.getElementById('row-pilihan');
             
-            // Hapus header lama jika ada agar tidak duplikat
             const existingHeader = rowPilihan.querySelector('.row-header');
             if (existingHeader) existingHeader.remove();
 
@@ -735,10 +732,10 @@
                 sliderPilihan.innerHTML = `<p style="padding: 1.5rem; color: var(--text-secondary); font-size:1.3rem;">Belum ada film yang disimpan ke Koleksi Saya.</p>`;
                 rowPilihan.style.display = 'block';
             } else {
-                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', false);
+                // Diubah menjadi true agar layout poster murni bekerja tanpa bentrok text-box landscape
+                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', true);
             }
 
-            // Sembunyikan kategori default lainnya di Home
             document.getElementById('row-dubbing').style.display = 'none';
             document.getElementById('row-indo').style.display = 'none';
             document.getElementById('row-animasi').style.display = 'none';
@@ -797,7 +794,8 @@
         });
 
         function bukaModalDetail(judulKonten) {
-            const item = databaseFilm.find(m => m.titulo === presidential => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
+            // Perbaikan typo engine dari 'presidential =>' menjadi 'm =>'
+            const item = databaseFilm.find(m => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
             if (!item) return;
             dataFilmAktif = item; 
 
@@ -809,7 +807,6 @@
             document.getElementById('modalGenre').textContent = item.genre;
             document.getElementById('modalDescription').textContent = item.description;
 
-            // --- SYNC STATE TOMBOL FAVORIT ---
             const btnFav = document.getElementById('main-fav-btn');
             const sudahFavorit = listFavorit.some(fav => fav.titulo === item.titulo);
 
@@ -869,11 +866,9 @@
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
 
-            // KONTROL KHUSUS KETIKA MODAL BUKA
             if (modal.style.display === 'block') {
                 if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); return; }
                 
-                // Navigasi horizontal antara Tombol Putar & Tombol Favorit
                 if (active && (active.id === 'main-play-btn' || active.id === 'main-fav-btn')) {
                     if (e.key === 'ArrowRight' && active.id === 'main-play-btn') {
                         document.getElementById('main-fav-btn').focus();
@@ -948,7 +943,6 @@
                 return; 
             }
 
-            // NAVIGASI UTAMA HALAMAN HOME & SEARCH (DI LUAR MODAL)
             const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
             const currIdx = focusable.indexOf(active);
 
