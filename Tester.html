@@ -625,11 +625,25 @@
         });
 
 
-        // ==================== ENGINE NAVIGASI REMOTE CONTROL (D-PAD) + FIX AUTO-SCROLL ====================
+// ==================== ENGINE NAVIGASI REMOTE CONTROL (D-PAD) TERBARU (ANTI-NYANGKUT) ====================
         document.addEventListener('keydown', function(e) {
-            const focusableElements = Array.from(document.querySelectorAll('[tabindex="0"], .action-button, .episode-btn, .close-modal'));
+            const modal = document.getElementById('movieModal');
+            const isModalOpen = (modal.style.display === 'block');
+            
+            // Selector dibedakan secara tegas: jika modal buka, hanya ambil elemen di dalam modal saja!
+            let selector = '[tabindex="0"], #search-icon, #search-input, .movie-card-horizontal';
+            if (isModalOpen) {
+                selector = '#movieModal .close-modal, #movieModal .action-button, #movieModal .episode-btn';
+            }
+            
+            const focusableElements = Array.from(document.querySelectorAll(selector)).filter(el => {
+                // Pastikan elemen tersebut memang terlihat secara fisik di layar
+                return el.offsetWidth > 0 || el.offsetHeight > 0;
+            });
+            
             const activeEl = document.activeElement;
 
+            // Jika belum ada elemen terfokus atau fokus kesasar, kunci ke elemen pertama yang tersedia
             if (!focusableElements.includes(activeEl)) {
                 if (focusableElements.length > 0) {
                     focusableElements[0].focus();
@@ -637,64 +651,78 @@
                 return;
             }
 
+            const currentIndex = focusableElements.indexOf(activeEl);
             let nextIndex = -1;
 
+            // AKSI TOMBOL BACK / KEMBALI
+            if (e.key === 'Escape' || e.key === 'Backspace') {
+                if (isModalOpen) {
+                    closeModal();
+                    e.preventDefault();
+                }
+                return;
+            }
+
+            // AKSI TOMBOL ENTER / OK
+            if (e.key === 'Enter') {
+                activeEl.click();
+                e.preventDefault();
+                return;
+            }
+
+            // NAVIGASI KHUSUS DAFTAR EPISODE SERI (Navigasi Vertikal Murni / List Index)
+            if (isModalOpen && activeEl.classList.contains('episode-btn')) {
+                if (e.key === 'ArrowDown') {
+                    if (currentIndex < focusableElements.length - 1) {
+                        focusableElements[currentIndex + 1].focus();
+                        focusableElements[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    e.preventDefault();
+                    return;
+                } else if (e.key === 'ArrowUp') {
+                    if (currentIndex > 0) {
+                        // Jika berada di episode pertama dan tekan atas, naik ke tombol X (close-modal) yang merupakan index 0
+                        focusableElements[currentIndex - 1].focus();
+                        focusableElements[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            // NAVIGASI SPASIAL UMUM (Untuk Beranda Utama & Menu Atas/Pencarian)
             switch(e.key) {
                 case 'ArrowLeft':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kiri');
-                    if (nextIndex !== -1) {
-                        focusableElements[nextIndex].focus();
-                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        e.preventDefault();
-                    }
                     break;
-
                 case 'ArrowRight':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kanan');
-                    if (nextIndex !== -1) {
-                        focusableElements[nextIndex].focus();
-                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        e.preventDefault();
-                    }
                     break;
-
                 case 'ArrowUp':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'atas');
-                    if (nextIndex !== -1) {
-                        focusableElements[nextIndex].focus();
-                        // Dorong layar bergulir ke arah atas secara presisi
-                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        e.preventDefault();
-                    }
                     break;
-
                 case 'ArrowDown':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'bawah');
-                    if (nextIndex !== -1) {
-                        focusableElements[nextIndex].focus();
-                        // Dorong layar bergulir ke arah bawah secara presisi
-                        focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        e.preventDefault();
-                    }
                     break;
+                default:
+                    return;
+            }
 
-                case 'Enter':
-                    activeEl.click();
-                    e.preventDefault();
-                    break;
-
-                case 'Escape':
-                case 'Backspace':
-                    const modal = document.getElementById('movieModal');
-                    if (modal.style.display === 'block') {
-                        closeModal();
-                        e.preventDefault();
-                    }
-                    break;
+            // Eksekusi pemindahan fokus jika elemen tujuan ditemukan
+            if (nextIndex !== -1) {
+                focusableElements[nextIndex].focus();
+                
+                // Set sistem scroll otomatis agar posisi kursor selalu di tengah/terlihat
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                e.preventDefault();
             }
         });
 
-        // RUMUS DETEKSI SPASIAL YANG LEBIH LUAS AGAR ANTI-NYANGKUT
+        // RUMUS AKURASI KOORDINAT SPASIAL TV
         function cariElemenTerdekat(activeEl, elements, arah) {
             const rA = activeEl.getBoundingClientRect();
             const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
@@ -704,12 +732,6 @@
 
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
-                
-                // Cegah kursor menargetkan elemen di dalam modal jika modal sedang tertutup
-                const modal = document.getElementById('movieModal');
-                if (modal.style.display !== 'block' && el.closest('.modal')) {
-                    return;
-                }
 
                 const rB = el.getBoundingClientRect();
                 const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
@@ -718,14 +740,14 @@
                 const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                // Aturan seleksi spasial yang dilonggarkan agar fleksibel melintasi baris di TV
-                if (arah === 'kanan' && dx > 10 && Math.abs(dy) < rA.height * 1.5) {
+                // Aturan penyaringan sudut arah D-pad secara ketat agar tidak salah lompat
+                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.5) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'kiri' && dx < -10 && Math.abs(dy) < rA.height * 1.5) {
+                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.5) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'bawah' && dy > 10 && Math.abs(dx) < window.innerWidth * 0.8) {
+                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'atas' && dy < -10 && Math.abs(dx) < window.innerWidth * 0.8) {
+                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.8) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
                 }
             });
