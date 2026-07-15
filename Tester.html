@@ -931,17 +931,21 @@
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
 
-            // Kunci semua tombol arah utama dari fungsi default browser TV
+            // Daftarkan tombol arah utama
             const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Backspace', 'Escape'];
             if (!navigasiKeys.includes(e.key)) return;
 
-            // Jika sedang mengetik di pencarian, biarkan tombol Kiri/Kanan browser bekerja untuk kursor tulisan
+            // Izinkan input pencarian memproses tombol arah kiri/kanan bawaan untuk navigasi kursor teks
             const isInputMode = active && active.id === 'search-main-input';
             if (isInputMode && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
                 return; 
             }
 
-            e.preventDefault(); // Matikan default scroll bawaan TV total!
+            // PERBAIKAN UTAMA: Jangan block default action jika tombol yang aktif adalah tombol interaktif dan tombol yang ditekan adalah Enter!
+            const isButtonActive = active && (active.classList.contains('action-button') || active.classList.contains('episode-btn') || active.classList.contains('close-modal') || active.id === 'search-main-input');
+            if (!(isButtonActive && e.key === 'Enter')) {
+                e.preventDefault(); // Hanya matikan scroll bawaan browser, biarkan click event tetap hidup
+            }
 
             if (modal.style.display === 'block') {
                 if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); return; }
@@ -1136,7 +1140,6 @@
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
                 
-                // JIKA sedang di poster/konten, menekan UP/DOWN TIDAK boleh pindah ke sidebar
                 if ((arah === 'bawah' || arah === 'atas') && !isCurrentlyInSidebar) {
                     if (el.classList.contains('sidebar-item')) return;
                 }
