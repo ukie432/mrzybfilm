@@ -1,26 +1,85 @@
 [
   {
-    "titulo": "Dune: Parte Dos",
-    "poster": "https://image.tmdb.org/t/p/w500/8Y43POKjjKDGI9MH89NW0NAzzp8.jpg",
-    "year": "2024",
-    "duration": "2h 46m",
-    "rating": "8.8",
-    "genre": "Ciencia ficción, Aventura",
-    "description": "Paul Atreides se une a Chani y los Fremen mientras busca venganza...",
-    "cast": "Timothée Chalamet, Zendaya",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/How%20to%20Train%20Your%20Dragon_%20The%20Hidden%20World%20Dubbing.mp4",
-    "halaman_depan": true
+    "id": "indo-001",
+    "titulo": "KKN di Desa Penari",
+    "poster": "https://image.tmdb.org/t/p/w500/75G7N8rFw4uMvW7qM6g8H9a9z5K.jpg",
+    "year": "2022",
+    "duration": "2h 10m",
+    "rating": "7.8",
+    "genre": "Horror, Mystery",
+    "categoria": "film_indo",
+    "description": "Enam mahasiswa yang melaksanakan KKN di desa terpencil diperingatkan untuk tidak melewati batas gapura terlarang, yang ternyata membawa petaka bagi mereka.",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006DubIndo.mp4",
+    "halaman_depan": true,
+    "is_series": false
   },
   {
-    "titulo": "Film Rahasia Yang Tersembunyi",
+    "id": "seri-dub-001",
+    "titulo": "Avatar: The Last Airbender (Dub Indo)",
+    "poster": "https://image.tmdb.org/t/p/w500/c1HQ5p81nI141z1up2Vofm4j18c.jpg",
+    "year": "2024",
+    "duration": "1 Musim",
+    "rating": "8.9",
+    "genre": "Aventura, Fantasía",
+    "categoria": "seri_dubbing",
+    "description": "Seorang anak laki-laki yang dikenal sebagai Avatar harus menguasai empat elemen mistik untuk menyelamatkan dunia yang sedang dilanda perang melawan Negara Api.",
+    "halaman_depan": true,
+    "is_series": true,
+    "episodes": [
+      {
+        "eps_num": "Eps 1",
+        "eps_title": "Anak di dalam Bongkahan Es",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E01%20IndoDub.mp4"
+      },
+      {
+        "eps_num": "Eps 2",
+        "eps_title": "Kembalinya Sang Pengendali Api",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%20seris%20A/Baymax%20seris/Baymax%20S01E02%20IndoDub.mp4"
+      },
+      {
+        "eps_num": "Eps 3",
+        "eps_title": "Kuil Udara Selatan",
+        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps3.mp4"
+      }
+    ]
+  },
+  {
+    "id": "ani-001",
+    "titulo": "Cars (Sub Indo)",
     "poster": "https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg",
-    "year": "2025",
-    "duration": "2h 00m",
-    "rating": "7.5",
-    "genre": "Terror",
-    "description": "Film ini tidak ada di halaman depan, tapi bisa dicari.",
-    "cast": "Aktor Rahasia",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006DubIndo.mp4",
-    "halaman_depan": false
+    "year": "2006",
+    "duration": "1h 57m",
+    "rating": "8.0",
+    "genre": "Animación, Comedia",
+    "categoria": "film_animasi",
+    "description": "Lightning McQueen, sebuah mobil balap pemula yang sombong, terdampar di kota kecil bernama Radiator Springs dan belajar tentang arti persahabatan yang sesungguhnya.",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006.mp4",
+    "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "seri-ani-001",
+    "titulo": "Naruto Shippuden (Dub Indo)",
+    "poster": "https://image.tmdb.org/t/p/w500/3n2YjV2J1Ycx5Wd43G1h1xptD2O.jpg",
+    "year": "2007",
+    "duration": "20 Musim",
+    "rating": "8.7",
+    "genre": "Animación, Acción",
+    "categoria": "seri_animasi",
+    "description": "Naruto Uzumaki kembali ke desa Konoha setelah dua setengah tahun berlatih demi menyelamatkan temannya, Sasuke Uchiha, dari kegelapan.",
+    "halaman_depan": true,
+    "is_series": true,
+    "episodes": [
+      {
+        "eps_num": "Eps 1",
+        "eps_title": "Pulang Kampung",
+        "video": "https://server-video.com/naruto_eps1.mp4"
+      },
+      {
+        "eps_num": "Eps 2",
+        "eps_title": "Akatsuki Mulai Bergerak",
+        "video": "https://server-video.com/naruto_eps2.mp4"
+      }
+    ]
   }
 ]
