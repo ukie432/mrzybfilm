@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYB Premium TV</title>
@@ -313,27 +314,6 @@
             gap: 18px;
         }
 
-        .popular-card {
-            position: relative;
-        }
-
-        .popular-badge {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            background-color: rgba(229, 9, 20, 0.9);
-            color: white;
-            font-size: 1rem;
-            font-weight: 700;
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            z-index: 10;
-        }
-
         .movie-actions {
             margin-left: 20px;
             margin-top: 15px;    
@@ -505,33 +485,27 @@
     </nav>
 
     <div class="main-wrapper">
-        
         <div id="page-home-view">
             <main class="movies-section" id="main-content-wrapper">
                 <div class="category-row" id="row-pilihan">
                     <div class="movies-slider-horizontal" id="slider-pilihan"></div>
                 </div>
-
                 <div class="category-row" id="row-dubbing">
                     <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
                     <div class="movies-slider-horizontal" id="slider-dubbing"></div>
                 </div>
-
                 <div class="category-row" id="row-indo">
                     <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
                     <div class="movies-slider-horizontal" id="slider-indo"></div>
                 </div>
-
                 <div class="category-row" id="row-animasi">
                     <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
                     <div class="movies-slider-horizontal" id="slider-animasi"></div>
                 </div>
-
                 <div class="category-row" id="row-lawas">
                     <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
                     <div class="movies-slider-horizontal" id="slider-lawas"></div>
                 </div>
-
                 <div class="category-row" id="row-series">
                     <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
                     <div class="movies-slider-horizontal" id="slider-series"></div>
@@ -547,7 +521,6 @@
             <h2 class="search-popular-title" id="search-dynamic-title">Pencarian Populer</h2>
             <div class="popular-grid" id="search-results-grid"></div>
         </div>
-
     </div>
 
     <div id="movieModal" class="modal">
@@ -588,14 +561,43 @@
 
     <script>
         const JSON_URL = 'data/Tester.json';
+        const pageTitle = "mrzyb_premium"; 
         let databaseFilm = [];
         let dataFilmAktif = null;
         let activeView = 'home';
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
-        
-        // PENCEGAHAN DOUBLE EVENT (DEBOUNCE PROTECTOR)
-        let lastFocusedElement = null; 
-        let isReturningFromPlayer = false; 
+
+        // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
+        window.tutupPopUpPoster = function() {
+            window.closeModal();
+        };
+
+        // EVENT KEYDOWN GLOBAL UTUK BLOCK KEY BACK FISIK DARI PLAYER/SISTEM (CONTEKAN 100% SUKSES)
+        window.addEventListener('keydown', function(event) {
+            if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009 || event.key === "Back" || event.key === "Escape") {
+                const modalElement = document.getElementById("movieModal");
+                
+                // 1. Jika modal detail sedang aktif terbuka di layar, jalankan fungsi penutupan resmi
+                if (modalElement && window.getComputedStyle(modalElement).display !== "none") {
+                    event.preventDefault();
+                    window.tutupPopUpPoster();
+                    return;
+                }
+
+                // 2. Jika berada di sub-halaman, lempar ke Home view
+                if (activeView !== 'home') {
+                    event.preventDefault();
+                    switchView('home');
+                    return;
+                }
+
+                // 3. Jika sudah di home, keluar aplikasi secara aman
+                if (typeof Android !== "undefined" && Android.exitApp) {
+                    event.preventDefault();
+                    Android.exitApp();
+                }
+            }
+        }, true);
 
         function switchView(viewName) {
             activeView = viewName;
@@ -683,10 +685,8 @@
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
 
-            setTimeout(() => {
-                const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
-                if (cards.length > 0) cards[0].focus();
-            }, 300);
+            // JALANKAN CHECK LAST SESSION UNTUK MERESTORE JIKA KEMBALI DARI PLAYER STB
+            checkLastSessionPremium();
         }
 
         function tampilkanKategoriKhusus(filterFunc, judulKategori) {
@@ -822,8 +822,7 @@
             const dataPopuler = databaseFilm.slice(0, 7); 
             
             grid.innerHTML = dataPopuler.map((item, idx) => `
-                <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                    <div class="popular-badge">${idx + 1}</div>
+                <div class="movie-card-horizontal popular-card" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
                     <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
@@ -851,7 +850,7 @@
                     grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 } else {
                     grid.innerHTML = filtered.map(item => `
-                        <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
                             <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
                             <div class="movie-info">
                                 <h3 class="movie-title">${item.titulo}</h3>
@@ -862,12 +861,10 @@
             }
         });
 
+        // FUNGSI BUKA MODAL - MENERAPKAN LOGIKA LOCK DATA PERSIS SEPERTI DENGANPOPUP
         function bukaModalDetail(judulKonten) {
-            // JANGAN MEMBUKA MODAL APABILA SEDANG DALAM COOLDOWN SETELAH PLAYER DITUTUP
-            if (isReturningFromPlayer) return;
-
-            // Catat elemen kartu yang sedang aktif
-            lastFocusedElement = document.activeElement; 
+            localStorage.setItem(pageTitle + "_status_popup", "open");
+            localStorage.setItem(pageTitle + "_last_poster_title", judulKonten);
 
             const item = databaseFilm.find(m => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
             if (!item) return;
@@ -903,7 +900,7 @@
                 areaSeri.style.display = 'block';    
                 
                 gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
-                    <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarVideo('${eps.video}')">
+                    <button class="episode-btn" tabindex="0" id="eps-btn-${idx}" data-index="${idx}" onclick="playAndSave('${eps.video}', ${idx}, '${item.titulo.replace(/'/g, "\\'")}')">
                         <div>${eps.eps_num}</div>
                         <span>${eps.eps_title}</span>
                     </button>
@@ -915,8 +912,18 @@
             }
             
             document.getElementById('movieModal').style.display = 'block';
+
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+                Android.setPopUpStatus(true);
+            }
+            
+            // Atur fokus awal ke episode / tombol main
             setTimeout(() => {
-                if (item.is_series) {
+                const lastEps = localStorage.getItem(pageTitle + "_last_eps_" + judulKonten);
+                if (item.is_series && lastEps !== null) {
+                    const targetEps = document.getElementById(`eps-btn-${lastEps}`);
+                    if (targetEps) targetEps.focus();
+                } else if (item.is_series) {
                     const firstEps = document.querySelector('.episode-btn');
                     if(firstEps) firstEps.focus();
                 } else {
@@ -925,91 +932,77 @@
             }, 150);
         }
 
-        function closeModal() { 
-            const modal = document.getElementById('movieModal');
-            modal.style.display = 'none'; 
+        // FUNGSI TUTUP MODAL POPUP SECARA RESMI (BERSIH DARI LOMPATAN KURSOR)
+        window.closeModal = function() { 
+            document.getElementById('movieModal').style.display = 'none'; 
             
-            // KEMBALIKAN FOKUS SECARA INSTAN KE KARTU SEBELUMNYA AGAR REMOTE TIDAK BLANK/MENYEBABKAN CRASH
-            if (lastFocusedElement) {
-                lastFocusedElement.focus();
-            } else {
-                const firstCard = document.querySelector('.movie-card-horizontal');
-                if (firstCard) firstCard.focus();
-            }
-        }
+            localStorage.removeItem(pageTitle + "_status_popup");
+            localStorage.removeItem(pageTitle + "_sedangNontonVideoSTB");
 
-        function putarFilmTunggal() { if (dataFilmAktif) putarVideo(dataFilmAktif.video); }
+            const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+            if (lastTitle) {
+                setTimeout(() => {
+                    const targetCard = document.querySelector(`.movie-card-horizontal[data-title="${lastTitle}"]`);
+                    if (targetCard) {
+                        targetCard.focus();
+                        targetCard.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
+                    }
+                }, 150);
+            }
+
+            if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+                Android.setPopUpStatus(false);
+            }
+        };
+
+        function putarFilmTunggal() { 
+            if (dataFilmAktif) playAndSave(dataFilmAktif.video, -1, dataFilmAktif.titulo); 
+        }
         
-        function putarVideo(url) {
+        // FUNGSI PLAY VIDEO YANG MENYIMPAN HISTORI KE LOCALSTORAGE (100% STRATEGI STB ANDA)
+        function playAndSave(url, index, title) {
             if (!url) return alert("Link video tidak ditemukan!");
-            
-            // Kunci navigasi back dari player sementara waktu agar tidak double-fire ke webview
-            isReturningFromPlayer = true;
+
+            if (index !== -1) {
+                localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+            }
+            localStorage.setItem(pageTitle + "_sedangNontonVideoSTB", "ya");
 
             if (typeof Android !== "undefined" && Android.playVideo) {
                 Android.playVideo(url);
             } else {
                 window.open(url, '_blank');
             }
+        }
 
-            // Setelah Player tertutup, beri jeda cooldown 1 detik untuk membersihkan sinyal 'Back' palsu dari sistem
-            setTimeout(() => {
-                isReturningFromPlayer = false;
-                // Pastikan fokus setelah kembali dari player tertuju ke tombol "Putar Film" di modal detail
-                const btnPlayUtama = document.getElementById('main-play-btn');
-                if (btnPlayUtama && btnPlayUtama.offsetHeight > 0) {
-                    btnPlayUtama.focus();
-                }
-            }, 1200);
+        // MEMERIKSA INSTAN SESI TERAKHIR SETELAH KEMBALI DARI PLAYER AKTIF (ANTI-REFRESH LOSS FOCUS)
+        function checkLastSessionPremium() {
+            const statusPopup = localStorage.getItem(pageTitle + "_status_popup");
+            const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+            const sedangNonton = localStorage.getItem(pageTitle + "_sedangNontonVideoSTB");
+
+            if (statusPopup === "open" && lastTitle && sedangNonton === "ya") {
+                bukaModalDetail(lastTitle);
+                localStorage.removeItem(pageTitle + "_sedangNontonVideoSTB");
+            } else {
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
+                    if (cards.length > 0) cards[0].focus();
+                }, 300);
+            }
         }
 
         // --- NAVIGATION D-PAD ENGINE ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
-
-            const isBackKey = e.key === 'Backspace' || e.key === 'Escape' || e.key === 'Back' || e.keyCode === 8 || e.keyCode === 27 || e.keyCode === 10009;
             const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'];
 
-            if (!navigasiKeys.includes(e.key) && !isBackKey) return;
+            if (!navigasiKeys.includes(e.key)) return;
 
             const isInputMode = active && active.id === 'search-main-input';
-            if (isInputMode && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
-                return; 
-            }
+            if (isInputMode && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
 
-            // --- PROTEKSI & INTERSEPSI TOMBOL BACK ---
-            if (isBackKey) {
-                e.preventDefault(); // Matikan aksi default TV OS agar kita bisa mengendalikan navigasi secara mulus
-
-                // 1. Jika baru kembali dari player, abaikan trigger back acak ini (Debounce cooldown)
-                if (isReturningFromPlayer) {
-                    return;
-                }
-
-                // 2. Skenario A: Jika modal detail sedang terbuka -> Cukup tutup modal secara lokal dan kembalikan fokus ke card
-                if (modal.style.display === 'block') {
-                    closeModal();
-                    return;
-                }
-
-                // 3. Skenario B: Jika berada di halaman sub-menu (Cari/VIP/Koleksi/Filter khusus) -> Kembali ke Home
-                if (activeView !== 'home') {
-                    switchView('home');
-                    return;
-                }
-
-                // 4. Skenario C: Jika sudah di Home, biarkan system menangani penutupan aplikasi (Exit normal)
-                if (typeof Android !== "undefined" && Android.exitApp) {
-                    Android.exitApp();
-                } else {
-                    // Jika di web browser, biarkan browser mengendalikan history back bawaan
-                    history.back();
-                }
-                return; 
-            }
-
-            // Matikan perilaku preventDefault default kecuali elemen tombol aktif
             const isButtonActive = active && (active.classList.contains('action-button') || active.classList.contains('episode-btn') || active.classList.contains('close-modal') || active.id === 'search-main-input');
             if (!(isButtonActive && e.key === 'Enter')) {
                 e.preventDefault(); 
@@ -1036,27 +1029,13 @@
                     if (e.key === 'ArrowRight' && currEpsIdx < episodes.length - 1) {
                         const nextEps = episodes[currEpsIdx + 1];
                         nextEps.focus();
-                        
-                        const containerWidth = gridEpisode.clientWidth;
-                        const elementLeft = nextEps.offsetLeft;
-                        const elementWidth = nextEps.clientWidth;
-                        gridEpisode.scrollTo({
-                            left: elementLeft - (containerWidth / 2) + (elementWidth / 2),
-                            behavior: 'smooth'
-                        });
+                        gridEpisode.scrollTo({ left: nextEps.offsetLeft - (gridEpisode.clientWidth / 2) + (nextEps.clientWidth / 2), behavior: 'smooth' });
                         return;
                     }
                     if (e.key === 'ArrowLeft' && currEpsIdx > 0) {
                         const prevEps = episodes[currEpsIdx - 1];
                         prevEps.focus();
-                        
-                        const containerWidth = gridEpisode.clientWidth;
-                        const elementLeft = prevEps.offsetLeft;
-                        const elementWidth = prevEps.clientWidth;
-                        gridEpisode.scrollTo({
-                            left: elementLeft - (containerWidth / 2) + (elementWidth / 2),
-                            behavior: 'smooth'
-                        });
+                        gridEpisode.scrollTo({ left: prevEps.offsetLeft - (gridEpisode.clientWidth / 2) + (prevEps.clientWidth / 2), behavior: 'smooth' });
                         return;
                     }
                     if (e.key === 'ArrowUp') {
@@ -1087,9 +1066,7 @@
                 const isPoster = active.classList.contains('movie-card-horizontal');
 
                 if (isSidebar && e.key === 'ArrowRight') {
-                    const sidebar = document.getElementById('main-sidebar');
-                    sidebar.classList.remove('expanded'); 
-                    
+                    document.getElementById('main-sidebar').classList.remove('expanded'); 
                     let target = null;
                     if (activeView === 'search') {
                         target = document.getElementById('search-main-input');
@@ -1097,39 +1074,19 @@
                         const cards = Array.from(document.querySelectorAll('#page-home-view .movie-card-horizontal')).filter(el => el.offsetWidth > 0);
                         const sidebarRect = active.getBoundingClientRect();
                         let minDiff = Infinity;
-                        
                         cards.forEach(card => {
                             const cardRect = card.getBoundingClientRect();
                             const diff = Math.abs((cardRect.top + cardRect.height/2) - (sidebarRect.top + sidebarRect.height/2));
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                target = card;
-                            }
+                            if (diff < minDiff) { minDiff = diff; target = card; }
                         });
                         if (!target && cards.length > 0) target = cards[0];
                     }
-                    
-                    if (target) {
-                        target.focus();
-                        target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                        return;
-                    }
-                }
-
-                if (isSidebar && e.key === 'ArrowDown') {
-                    const settingBtn = document.getElementById('menu-pengaturan');
-                    if (active === settingBtn) {
-                        return; 
-                    }
+                    if (target) { target.focus(); target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' }); return; }
                 }
 
                 if (activeView === 'home' && isPoster) {
-                    if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) {
-                        return; 
-                    }
-                    if (e.key === 'ArrowDown' && active.closest('#row-series')) {
-                        return; 
-                    }
+                    if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) return; 
+                    if (e.key === 'ArrowDown' && active.closest('#row-series')) return; 
                 }
             }
 
@@ -1139,52 +1096,30 @@
                     if (active && !active.classList.contains('sidebar-item')) {
                         const rA = active.getBoundingClientRect();
                         const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
-                        let targetSidebar = null;
-                        let minDiff = Infinity;
-
+                        let targetSidebar = null; let minDiff = Infinity;
                         sideItems.forEach(item => {
                             const rI = item.getBoundingClientRect();
                             const diff = Math.abs((rI.top + rI.height/2) - (rA.top + rA.height/2));
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                targetSidebar = item;
-                            }
+                            if (diff < minDiff) { minDiff = diff; targetSidebar = item; }
                         });
-
-                        if (targetSidebar) {
-                            targetSidebar.focus();
-                            const sidebar = document.getElementById('main-sidebar');
-                            sidebar.classList.add('expanded');
-                            return;
-                        }
+                        if (targetSidebar) { targetSidebar.focus(); document.getElementById('main-sidebar').classList.add('expanded'); return; }
                     }
                     nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
                     break;
-                case 'ArrowRight':
-                    nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
-                    break;
-                case 'ArrowUp':
-                    nextIdx = cariElemenTerdekat(active, focusable, 'atas');
-                    break;
-                case 'ArrowDown':
-                    nextIdx = cariElemenTerdekat(active, focusable, 'bawah');
-                    break;
-                case 'Enter':
-                    active.click();
-                    return;
+                case 'ArrowRight': nextIdx = cariElemenTerdekat(active, focusable, 'kanan'); break;
+                case 'ArrowUp': nextIdx = cariElemenTerdekat(active, focusable, 'atas'); break;
+                case 'ArrowDown': nextIdx = cariElemenTerdekat(active, focusable, 'bawah'); break;
+                case 'Enter': active.click(); return;
             }
 
             if (nextIdx !== -1) {
                 const nextActiveElement = focusable[nextIdx];
                 nextActiveElement.focus();
-                
-                const sidebar = document.getElementById('main-sidebar');
                 if (nextActiveElement.classList.contains('sidebar-item')) {
-                    sidebar.classList.add('expanded');
+                    document.getElementById('main-sidebar').classList.add('expanded');
                 } else {
-                    sidebar.classList.remove('expanded');
+                    document.getElementById('main-sidebar').classList.remove('expanded');
                 }
-
                 nextActiveElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
             }
         });
@@ -1198,11 +1133,9 @@
             
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
-                
                 if ((arah === 'bawah' || arah === 'atas') && !isCurrentlyInSidebar) {
                     if (el.classList.contains('sidebar-item')) return;
                 }
-
                 const rB = el.getBoundingClientRect();
                 const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
                 const dx = cB.x - cA.x; const dy = cB.y - cA.y;
