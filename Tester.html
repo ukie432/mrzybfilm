@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CinePremium - Películas Exclusivas</title>
+    <title>MRZYB Premium TV - Movies & Series</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100;300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a1a2e;
-            --secondary-color: #16213e;
-            --accent-color: #0f3460;
-            --highlight-color: #e94560;
+            --primary-color: #000000;
+            --secondary-color: #141414;
+            --accent-color: #222222;
+            --highlight-color: #E50914;
             --text-color: #f1f1f1;
             --text-secondary: #b8b8b8;
         }
@@ -27,58 +27,24 @@
             background-color: var(--primary-color);
             color: var(--text-color);
             overflow-x: hidden;
+            padding-bottom: 50px;
         }
 
-        /* Cabecera */
         header {
-            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
-            padding: 1rem 2rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 100;
         }
 
         .logo {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: var(--highlight-color);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-menu a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 300;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-menu a:hover {
-            color: var(--highlight-color);
-        }
-
-        .nav-menu a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--highlight-color);
-            transition: width 0.3s ease;
-        }
-
-        .nav-menu a:hover::after {
-            width: 100%;
+            letter-spacing: 2px;
         }
 
         .user-actions {
@@ -96,14 +62,12 @@
 
         .user-actions i:hover {
             color: var(--highlight-color);
-            transform: scale(1.1);
         }
 
-        /* Search bar */
         .search-container {
             position: relative;
             display: none;
-            width: 300px;
+            width: 250px;
         }
 
         .search-container.active {
@@ -113,179 +77,89 @@
         .search-input {
             width: 100%;
             padding: 0.5rem 1rem;
-            border-radius: 30px;
-            border: none;
-            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: rgba(0, 0, 0, 0.85);
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
         }
 
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Slider principal */
-        .slider-container {
-            width: 100%;
-            height: 70vh;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 3rem;
-        }
-
-        .slider {
-            display: flex;
-            width: 300%;
-            height: 100%;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .slide {
-            width: 33.33%;
-            height: 100%;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .slide::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
-        }
-
-        .slide-content {
-            position: absolute;
-            bottom: 20%;
-            left: 5%;
-            max-width: 50%;
-            z-index: 10;
-        }
-
-        .slide-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--highlight-color);
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
-        }
-
-        .slide-description {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-color);
-            line-height: 1.5;
-        }
-
-        .slide-button {
-            padding: 0.8rem 2rem;
-            background-color: var(--highlight-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .slide-button:hover {
-            background-color: #ff2d4f;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Sección de películas */
+        /* Movies Section */
         .movies-section {
-            padding: 2rem;
+            padding: 0 2rem;
+            margin-top: 20px;
         }
 
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 1.5rem;
+            border-left: 4px solid var(--highlight-color);
+            padding-left: 10px;
         }
 
         .section-title {
-            font-size: 2.5rem;
-            color: var(--highlight-color);
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 50%;
-            height: 3px;
-            background-color: var(--highlight-color);
+            font-size: 2.2rem;
+            color: var(--text-color);
+            font-weight: 700;
         }
 
         .movies-container {
             display: flex;
-            overflow-x: auto;
-            gap: 1.5rem;
-            padding-bottom: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--highlight-color) var(--secondary-color);
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-start;
         }
 
         .movie-card {
             background-color: var(--secondary-color);
-            border-radius: 10px;
+            border-radius: 6px;
             overflow: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
             cursor: pointer;
-            flex: 0 0 180px;
+            width: calc(16.66% - 13px);
+            position: relative;
         }
 
         .movie-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 15px var(--highlight-color);
         }
 
         .movie-poster {
             width: 100%;
-            height: 250px;
+            aspect-ratio: 2/3;
             object-fit: cover;
+            background-color: #2a2a2a;
         }
 
         .movie-info {
-            padding: 1rem;
+            padding: 10px;
+            background-color: var(--secondary-color);
         }
 
         .movie-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #fff;
         }
 
         .movie-meta {
             display: flex;
             justify-content: space-between;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 1rem;
+            margin-top: 5px;
         }
 
         .movie-rating {
             color: gold;
         }
 
-        /* Ventana modal */
+        /* Modal Overlay */
         .modal {
             display: none;
             position: fixed;
@@ -293,7 +167,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             overflow-y: auto;
         }
@@ -301,11 +175,11 @@
         .modal-content {
             background-color: var(--secondary-color);
             margin: 2rem auto;
-            width: 80%;
-            max-width: 1200px;
-            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
         }
 
         .modal-header {
@@ -314,36 +188,35 @@
             align-items: center;
             padding: 1rem 2rem;
             background-color: var(--accent-color);
+            border-bottom: 1px solid #333;
         }
 
         .modal-title {
             font-size: 2rem;
-            color: var(--highlight-color);
+            color: var(--text-color);
         }
 
         .close-modal {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: var(--text-color);
             cursor: pointer;
         }
 
         .modal-body {
-            display: flex;
-            flex-direction: column;
             padding: 2rem;
         }
 
         .movie-details {
             display: flex;
             gap: 2rem;
-            margin-bottom: 2rem;
         }
 
         .movie-poster-large {
-            width: 300px;
-            height: 450px;
+            width: 250px;
+            height: 375px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
         .movie-info-large {
@@ -351,9 +224,9 @@
         }
 
         .movie-title-large {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--highlight-color);
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
         }
 
         .movie-meta-large {
@@ -361,13 +234,14 @@
             gap: 1.5rem;
             margin-bottom: 1.5rem;
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         .movie-description {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            color: #ccc;
         }
 
         .movie-actions {
@@ -376,89 +250,131 @@
         }
 
         .action-button {
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 2rem;
             border: none;
-            border-radius: 30px;
-            font-size: 1rem;
+            border-radius: 4px;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
+            transition: background 0.2s;
         }
 
         .play-button {
             background-color: var(--highlight-color);
-            color: var(--text-color);
+            color: white;
         }
 
         .play-button:hover {
             background-color: #ff2d4f;
-            transform: translateY(-3px);
         }
+
+        /* Episode List Styles */
+        .episode-section {
+            margin-top: 2rem;
+            border-top: 1px solid #333;
+            padding-top: 1.5rem;
+        }
+
+        .episode-headline {
+            color: var(--highlight-color);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .episode-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .episode-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: 1px solid #333;
+            padding: 0.8rem 1.5rem;
+            width: 100%;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .episode-btn:hover {
+            background-color: var(--highlight-color);
+            border-color: var(--highlight-color);
+        }
+
+        .episode-btn i {
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) { .movie-card { width: calc(20% - 12px); } }
+        @media (max-width: 900px) { .movie-card { width: calc(25% - 12px); } .movie-details { flex-direction: column; } .movie-poster-large { width: 100%; height: auto; max-height: 400px; } }
+        @media (max-width: 600px) { .movie-card { width: calc(33.33% - 10px); } }
     </style>
 </head>
 <body>
+
     <header>
-        <div class="logo">CinePremium</div>
-        <nav class="nav-menu">
-            <a href="#">Inicio</a>
-            <a href="#">Películas</a>
-            <a href="#">Series</a>
-        </nav>
+        <div class="logo">MRZYB TV</div>
         <div class="user-actions">
             <i class="fas fa-search" id="search-icon"></i>
             <div class="search-container" id="search-container">
-                <input type="text" class="search-input" placeholder="Buscar películas..." id="search-input">
+                <input type="text" class="search-input" placeholder="Cari film atau seri..." id="search-input">
             </div>
-            <i class="fas fa-user" id="user-icon"></i>
+            <i class="fas fa-user"></i>
         </div>
     </header>
 
-    <div class="slider-container">
-        <div class="slider" id="slider">
-            <div class="slide" style="background-image: url('https://image.tmdb.org/t/p/original/8Y43POKjjKDGI9MH89NW0NAzzp8.jpg');">
-                <div class="slide-content">
-                    <h2 class="slide-title">Dune: Parte Dos</h2>
-                    <p class="slide-description">Paul Atreides se une a Chani y los Fremen mientras busca venganza contra los conspiradores.</p>
-                    <button class="slide-button" onclick="openModal('Dune: Parte Dos')">
-                        <i class="fas fa-play"></i> Ver ahora
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="movies-section">
+    <main class="movies-section">
         <div class="section-header">
-            <h2 class="section-title" id="section-main-title">Películas populares</h2>
+            <h2 class="section-title" id="section-main-title">Koleksi Terpopuler</h2>
         </div>
-        <div class="movies-container" id="movies-display-grid" style="flex-wrap: wrap; overflow-x: hidden;"></div>
-    </section>
+        <div class="movies-container" id="movies-grid"></div>
+    </main>
 
     <div id="movieModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Detalles de la Película</h2>
+                <h2 class="modal-title" id="modalTypeBadge">Detail Konten</h2>
                 <span class="close-modal" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="movie-details">
                     <img src="" alt="Poster" class="movie-poster-large" id="modalPoster">
                     <div class="movie-info-large">
-                        <h3 class="movie-title-large" id="modalMovieTitle">Título</h3>
+                        <h3 class="movie-title-large" id="modalMovieTitle">Judul</h3>
                         <div class="movie-meta-large">
-                            <span id="modalYear">Año</span>
-                            <span id="modalDuration">Duración</span>
-                            <span id="modalRating" style="color: gold;">Rating</span>
-                            <span id="modalGenre">Género</span>
+                            <span id="modalYear">Tahun</span>
+                            <span id="modalDuration">Durasi</span>
+                            <span id="modalRating">Rating</span>
+                            <span id="modalGenre">Genre</span>
                         </div>
-                        <p class="movie-description" id="modalDescription">Descripción...</p>
+                        <p class="movie-description" id="modalDescription">Deskripsi...</p>
+                        
                         <div class="movie-actions">
-                            <button class="action-button play-button" onclick="kirimKeExoPlayer()">
-                                <i class="fas fa-play"></i> Reproducir (ExoPlayer)
+                            <button class="action-button play-button" id="main-play-btn" onclick="putarFilmTunggal()">
+                                <i class="fas fa-play"></i> Putar Film
                             </button>
                         </div>
+
+                        <div class="episode-section" id="episode-list-wrapper" style="display: none;">
+                            <h4 class="episode-headline">Daftar Episode</h4>
+                            <div class="episode-grid" id="episode-grid"></div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -466,78 +382,82 @@
     </div>
 
     <script>
-        const GITHUB_JSON_URL = 'data/Tester.json'; 
+        const JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
-        let filmTerpilih = null;
+        let dataFilmAktif = null;
 
-        // Ambil data otomatis saat web dibuka
-        async function fetchMoviesData() {
+        // Ambil Data dari JSON saat halaman dimuat
+        async function loadDataKonten() {
             try {
-                const response = await fetch(GITHUB_JSON_URL);
+                const response = await fetch(JSON_URL);
                 databaseFilm = await response.json();
-                
-                // Filter film halaman depan
-                renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
+                renderKonten(databaseFilm.filter(m => m.halaman_depan === true));
             } catch (error) {
-                console.error("Gagal memuat JSON:", error);
+                console.error("Gagal mengambil database JSON:", error);
             }
         }
 
-        function renderMovies(moviesList) {
-            const grid = document.getElementById('movies-display-grid');
-            if (moviesList.length === 0) {
-                grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">No se encontraron películas.</p>`;
+        // Tampilkan Poster ke Layar
+        function renderKonten(daftarKonten) {
+            const grid = document.getElementById('movies-grid');
+            if (daftarKonten.length === 0) {
+                grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 return;
             }
 
-            grid.innerHTML = moviesList.map(movie => `
-                <div class="movie-card" onclick="openModal('${movie.titulo}')">
-                    <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster">
+            grid.innerHTML = daftarKonten.map(item => `
+                <div class="movie-card" onclick="bukaModalDetail('${item.titulo}')">
+                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster" loading="lazy">
                     <div class="movie-info">
-                        <h3 class="movie-title">${movie.titulo}</h3>
+                        <h3 class="movie-title">${item.titulo}</h3>
                         <div class="movie-meta">
-                            <span>${movie.year}</span>
-                            <span class="movie-rating"><i class="fas fa-star"></i> ${movie.rating}</span>
+                            <span>${item.year}</span>
+                            <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Fungsi Pencarian Global
-        const searchInput = document.getElementById('search-input');
-        const sectionTitle = document.getElementById('section-main-title');
+        // Buka Panel Modal Deskripsi Konten
+        function bukaModalDetail(judulKonten) {
+            const item = databaseFilm.find(m => m.titulo === judulKonten);
+            if (!item) return;
 
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase().trim();
-            if (keyword === "") {
-                sectionTitle.textContent = "Películas populares";
-                renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
+            dataFilmAktif = item; // Simpan data item yang sedang aktif di-klik
+
+            // Pasang metadata dasar
+            document.getElementById('modalMovieTitle').textContent = item.titulo;
+            document.getElementById('modalPoster').src = item.poster;
+            document.getElementById('modalYear').textContent = item.year;
+            document.getElementById('modalDuration').textContent = item.duration;
+            document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${item.rating}`;
+            document.getElementById('modalGenre').textContent = item.genre;
+            document.getElementById('modalDescription').textContent = item.description;
+
+            const btnPlayUtama = document.getElementById('main-play-btn');
+            const areaSeri = document.getElementById('episode-list-wrapper');
+            const gridEpisode = document.getElementById('episode-grid');
+
+            // LOGIKA PEMBEDA: Apakah film seri atau film tunggal biasa?
+            if (item.is_series === true && item.episodes) {
+                document.getElementById('modalTypeBadge').textContent = "Detail Seri";
+                btnPlayUtama.style.display = 'none'; // Sembunyikan tombol play utama langsung
+                areaSeri.style.display = 'block';    // Munculkan kontainer daftar episode
+                
+                // Render kumpulan tombol episode beserta link-nya masing-masing
+                gridEpisode.innerHTML = item.episodes.map(eps => `
+                    <button class="episode-btn" onclick="kirimKeAndroidStudio('${eps.video}')">
+                        <i class="fas fa-play-circle"></i>
+                        <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
+                    </button>
+                `).join('');
             } else {
-                sectionTitle.textContent = `Resultados para: "${e.target.value}"`;
-                const searchResults = databaseFilm.filter(movie => 
-                    movie.titulo.toLowerCase().includes(keyword) || 
-                    (movie.genre && movie.genre.toLowerCase().includes(keyword))
-                );
-                renderMovies(searchResults);
+                document.getElementById('modalTypeBadge').textContent = "Detail Film";
+                btnPlayUtama.style.display = 'flex'; // Munculkan tombol play utama
+                areaSeri.style.display = 'none';     // Sembunyikan kontainer list episode
+                gridEpisode.innerHTML = '';
             }
-        });
-
-        // Buka deskripsi film
-        function openModal(movieTitle) {
-            const movieData = databaseFilm.find(m => m.titulo === movieTitle);
-            if (!movieData) return;
-
-            filmTerpilih = movieData; // Simpan data film yang sedang aktif dibuka
-
-            document.getElementById('modalTitle').textContent = movieTitle;
-            document.getElementById('modalMovieTitle').textContent = movieTitle;
-            document.getElementById('modalPoster').src = movieData.poster;
-            document.getElementById('modalYear').textContent = movieData.year;
-            document.getElementById('modalDuration').textContent = movieData.duration;
-            document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${movieData.rating}`;
-            document.getElementById('modalGenre').textContent = movieData.genre;
-            document.getElementById('modalDescription').textContent = movieData.description;
 
             document.getElementById('movieModal').style.display = 'block';
         }
@@ -546,19 +466,45 @@
             document.getElementById('movieModal').style.display = 'none';
         }
 
-        // FUNGSI JEMBATAN DISESUAIKAN PERSIS DENGAN FITUR APLIKASI ASLI ANDA
-        function kirimKeExoPlayer() {
-            if (filmTerpilih && filmTerpilih.video) {
-                // DIUBAH MENJADI "Android.playVideo" DENGAN 1 PARAMETER AGAR COCOK DENGAN MAINACTIVITY ANDA
-                if (typeof Android != "undefined" && Android.playVideo) {
-                    Android.playVideo(filmTerpilih.video);
-                } else {
-                    window.open(filmTerpilih.video, '_blank');
-                }
+        // Fungsi Aksi Pemutaran Film Tunggal
+        function putarFilmTunggal() {
+            if (dataFilmAktif && dataFilmAktif.video) {
+                kirimKeAndroidStudio(dataFilmAktif.video);
             } else {
-                alert("URL Video tidak ditemukan!");
+                alert("Link video film tidak tersedia!");
             }
         }
+
+        // Jembatan Komunikasi Utama Ke ExoPlayer Android Studio Anda
+        function kirimKeAndroidStudio(urlMedia) {
+            if (urlMedia) {
+                if (typeof Android !== "undefined" && Android.playVideo) {
+                    Android.playVideo(urlMedia); // Panggil fungsi Java Android Studio Anda
+                } else {
+                    window.open(urlMedia, '_blank'); // Backup jika dibuka via browser biasa
+                }
+            }
+        }
+
+        // Fitur Filter Pencarian
+        const searchInput = document.getElementById('search-input');
+        const mainTitle = document.getElementById('section-main-title');
+
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
+            if (keyword === "") {
+                mainTitle.textContent = "Koleksi Terpopuler";
+                renderKonten(databaseFilm.filter(m => m.halaman_depan === true));
+            } else {
+                mainTitle.textContent = `Hasil Pencarian: "${e.target.value}"`;
+                const filterResult = databaseFilm.filter(item => 
+                    item.titulo.toLowerCase().includes(keyword) || 
+                    item.genre.toLowerCase().includes(keyword) ||
+                    item.categoria.toLowerCase().includes(keyword)
+                );
+                renderKonten(filterResult);
+            }
+        });
 
         const searchIcon = document.getElementById('search-icon');
         const searchContainer = document.getElementById('search-container');
@@ -567,7 +513,7 @@
             if (searchContainer.classList.contains('active')) searchInput.focus();
         });
 
-        window.addEventListener('load', fetchMoviesData);
+        window.addEventListener('load', loadDataKonten);
     </script>
 </body>
 </html>
