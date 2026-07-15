@@ -362,18 +362,9 @@
         .modal-title { font-size: 1.8rem; }
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
-        .movie-details { 
-            display: flex; 
-            gap: 2rem; 
-            width: 100%;
-            overflow: hidden; /* Mengunci elemen di dalam border modal */
-        }
+        .movie-details { display: flex; gap: 2rem; }
         .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-       .movie-info-large { 
-            flex: 1; 
-            min-width: 0; /* Mengizinkan container mengecil mengikuti flex parent */
-            overflow: hidden;
-        }
+        .movie-info-large { flex: 1; }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
         .movie-description { font-size: 1.1rem; line-height: 1.5; margin-bottom: 2rem; color: #bbb; }
@@ -393,15 +384,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-     .episode-grid { 
+        .episode-grid { 
             display: flex; 
             gap: 12px; 
             overflow-x: auto; 
-            white-space: nowrap; 
-            padding: 10px 5px;
-            scrollbar-width: none;
+            white-space: nowrap;
+            padding: 10px 5px; /* Padding agar efek zoom focus tidak terpotong */
+            scrollbar-width: none; /* Hilangkan scrollbar di Firefox */
             width: 100%;
-            position: relative;
         }
         .episode-grid::-webkit-scrollbar { 
             display: none; /* Hilangkan scrollbar di Chrome/Safari */
@@ -758,11 +748,22 @@
             if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
             else window.open(url, '_blank');
         }
-// KONTROL KHUSUS DALAM MODAL
+// ==========================================
+        // ENGINE NAVIGASI UTAMA (D-PAD & REMOTE TV)
+        // ==========================================
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('movieModal');
+            const active = document.activeElement;
+
+            // 1. JIKA MODAL DETAIL FILM/SERI SEDANG TERBUKA
             if (modal.style.display === 'block') {
-                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); return; }
+                if (e.key === 'Escape' || e.key === 'Backspace') { 
+                    closeModal(); 
+                    e.preventDefault(); 
+                    return; 
+                }
                 
-                // Jika sedang fokus di dalam tombol episode, jalankan scroll internal container
+                // Jika sedang fokus di dalam tombol episode (Navigasi Horizontal)
                 if (active && active.classList.contains('episode-btn')) {
                     const episodes = Array.from(document.querySelectorAll('.episode-btn'));
                     const gridEpisode = document.getElementById('episode-grid');
@@ -772,7 +773,7 @@
                         const nextEps = episodes[currEpsIdx + 1];
                         nextEps.focus();
                         
-                        // Hitung pergeseran scroll hanya di dalam area grid episode saja
+                        // Scroll internal tanpa menggeser modal utama
                         const containerWidth = gridEpisode.clientWidth;
                         const elementLeft = nextEps.offsetLeft;
                         const elementWidth = nextEps.clientWidth;
@@ -785,10 +786,12 @@
                         e.preventDefault();
                         return;
                     }
+                    
                     if (e.key === 'ArrowLeft' && currEpsIdx > 0) {
                         const prevEps = episodes[currEpsIdx - 1];
                         prevEps.focus();
                         
+                        // Scroll internal ke kiri
                         const containerWidth = gridEpisode.clientWidth;
                         const elementLeft = prevEps.offsetLeft;
                         const elementWidth = prevEps.clientWidth;
@@ -801,21 +804,77 @@
                         e.preventDefault();
                         return;
                     }
+                    
                     if (e.key === 'ArrowUp') {
+                        // Fokus kembali ke tombol close modal di atas
                         const closeBtn = document.querySelector('.close-modal');
-                        if(closeBtn) closeBtn.focus();
+                        if (closeBtn) closeBtn.focus();
                         e.preventDefault();
                         return;
                     }
+                    
                     if (e.key === 'Enter') {
                         active.click();
                         e.preventDefault();
                         return;
                     }
-                    return;
+                    return; 
                 }
                 
-                // Navigasi standar modal untuk elemen non-episode (seperti tombol close)
+                // Jika sedang fokus di tombol close modal, tekan bawah untuk ke episode
+                if (e.key === 'ArrowDown') {
+                    const firstEps = document.querySelector('.episode-btn');
+                    if (firstEps) { 
+                        firstEps.focus(); 
+                        e.preventDefault(); 
+                    }
+                }
+                return; 
+            }
+
+            // 2. NAVIGASI UTAMA HALAMAN HOME & SEARCH (DI LUAR MODAL)
+            const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
+            let nextIdx = -1;
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
+                    if (nextIdx === -1 && !active.classList.contains('sidebar-item')) {
+                        const sideItems = document.querySelectorAll('.sidebar-item');
+                        if (sideItems.length > 0) sideItems[1].focus(); // Fokus ke menu Home di sidebar
+                        e.preventDefault();
+                        return;
+                    }
+                    break;
+                case 'ArrowRight':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
+                    break;
+                case 'ArrowUp':
+                    if (active && active.closest('#row-pilihan')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    nextIdx = cariElemenTerdekat(active, focusable, 'atas');
+                    break;
+                case 'ArrowDown':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'bawah');
+                    break;
+                case 'Enter':
+                    active.click();
+                    e.preventDefault();
+                    return;
+            }
+
+            if (nextIdx !== -1) {
+                focusable[nextIdx].focus();
+                focusable[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                e.preventDefault();
+            }
+        });
+                
+                // Navigasi standar untuk elemen modal non-episode (tombol close / play utama)
+                const modalFocusable = Array.from(modal.querySelectorAll('[tabindex="0"], .episode-btn, .close-modal, .play-button')).filter(el => el.offsetWidth > 0);
+                let mIdx = modalFocusable.indexOf(active);
                 if (e.key === 'ArrowDown') {
                     const firstEps = document.querySelector('.episode-btn');
                     if(firstEps) { firstEps.focus(); e.preventDefault(); }
