@@ -1,5 +1,30 @@
 [
   {
+    "titulo": "Dune: Parte Dos",
+    "poster": "https://image.tmdb.org/t/p/w500/8Y43POKjjKDGI9MH89NW0NAzzp8.jpg",
+    "year": "2024",
+    "duration": "2h 46m",
+    "rating": "8.8",
+    "genre": "Ciencia ficción, Aventura",
+    "description": "Paul Atreides se une a Chani y los Fremen mientras busca venganza...",
+    "cast": "Timothée Chalamet, Zendaya",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006DubIndo.mp4",
+    "halaman_depan": true
+  },
+  {
+    "titulo": "Film Rahasia Yang Tersembunyi",
+    "poster": "https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg",
+    "year": "2025",
+    "duration": "2h 00m",
+    "rating": "7.5",
+    "genre": "Terror",
+    "description": "Film ini tidak ada di halaman depan, tapi bisa dicari.",
+    "cast": "Aktor Rahasia",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/How%20to%20Train%20Your%20Dragon_%20The%20Hidden%20World%20Dubbing.mp4",
+    "halaman_depan": false
+  }
+][
+  {
     "judul": "Avatar 3",
     "url_film": "https://movieku.ukielaki8387.workers.dev/0:/Campuran%20link/My%20name%20is%20vendetta%20(2022).mkv",
     "poster": "https://posterfilm.pages.dev/poster/film_dubbing/Vendetta.webp",
