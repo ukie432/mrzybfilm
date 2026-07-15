@@ -165,7 +165,7 @@
             margin-top: 55vh;
             position: relative;
             z-index: 4;
-            padding-bottom: 80px; /* Ditambah ruang bawah sedikit agar scrolling terasa pas */
+            padding-bottom: 80px; 
         }
 
         .category-row {
@@ -402,7 +402,7 @@
             </button>
         </div>
         <div class="sidebar-footer">
-            <button class="sidebar-item" tabindex="0">
+            <button class="sidebar-item" id="menu-pengaturan" tabindex="0">
                 <i class="fas fa-cog"></i> <span>Pengaturan</span>
             </button>
         </div>
@@ -755,18 +755,30 @@
                 return;
             }
 
-            // --- PROTEKSI KHUSUS UNTUK HALAMAN HOME (BATAS ATAS & BAWAH POSTER) ---
-            if (activeView === 'home' && active && active.classList.contains('movie-card-horizontal')) {
-                // 1. Kunci Batas Atas (Jika berada di row-pilihan, ArrowUp tidak boleh bekerja)
-                if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) {
-                    e.preventDefault();
-                    return; 
+            // --- PROTEKSI KHUSUS UNTUK SIDEBAR & POSTER ---
+            if (active) {
+                const isSidebar = active.classList.contains('sidebar-item');
+                const isPoster = active.classList.contains('movie-card-horizontal');
+
+                // 1. Cegah fokus melompat dari sidebar ke poster saat scroll mentok bawah di sidebar
+                if (isSidebar && e.key === 'ArrowDown') {
+                    const settingBtn = document.getElementById('menu-pengaturan');
+                    if (active === settingBtn) {
+                        e.preventDefault(); // Kunci pergerakan ke bawah di pengaturan agar tidak lompat ke poster bawah
+                        return; 
+                    }
                 }
-                
-                // 2. Kunci Batas Bawah (Jika berada di baris paling bawah/slider-series, ArrowDown tidak boleh melompat ke sidebar)
-                if (e.key === 'ArrowDown' && active.closest('#row-series')) {
-                    e.preventDefault();
-                    return; 
+
+                // 2. Cegah lompatan tidak masuk akal jika berada di area poster
+                if (activeView === 'home' && isPoster) {
+                    if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) {
+                        e.preventDefault();
+                        return; 
+                    }
+                    if (e.key === 'ArrowDown' && active.closest('#row-series')) {
+                        e.preventDefault();
+                        return; 
+                    }
                 }
             }
 
@@ -774,8 +786,8 @@
             switch(e.key) {
                 case 'ArrowLeft':
                     nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
-                    // Jika di paling kiri poster, tekan kiri akan fokus ke Menu Home di sidebar
-                    if (nextIdx === -1 && !active.classList.contains('sidebar-item')) {
+                    // Jika di ujung kiri poster utama, lompat ke Menu Home Aktif di sidebar
+                    if (nextIdx === -1 && active && !active.classList.contains('sidebar-item')) {
                         const sideItems = document.querySelectorAll('.sidebar-item');
                         if(sideItems.length > 0) sideItems[1].focus(); 
                         e.preventDefault();
@@ -801,12 +813,12 @@
                 const nextActiveElement = focusable[nextIdx];
                 nextActiveElement.focus();
                 
-                // --- MANAJEMEN BUKA/TUTUP SIDEBAR ---
+                // --- INTEGRASI PENGATURAN BUKA-TUTUP SIDEBAR ---
                 const sidebar = document.getElementById('main-sidebar');
                 if (nextActiveElement.classList.contains('sidebar-item')) {
-                    sidebar.classList.add('expanded'); 
+                    sidebar.classList.add('expanded'); // Buka lebar bar ketika fokus masuk sidebar
                 } else {
-                    sidebar.classList.remove('expanded'); 
+                    sidebar.classList.remove('expanded'); // Tutup bar kembali saat navigasi ke arah poster (kanan)
                 }
 
                 nextActiveElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
@@ -823,7 +835,7 @@
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
                 
-                // Jika sedang di area poster, cegah lompatan vertikal tidak sengaja langsung ke sidebar
+                // Jika sedang di area poster, cegah lompatan vertikal tidak sengaja langsung ke sidebar tengah/bawah
                 if ((arah === 'bawah' || arah === 'atas') && !isCurrentlyInSidebar) {
                     if (el.classList.contains('sidebar-item')) return;
                 }
