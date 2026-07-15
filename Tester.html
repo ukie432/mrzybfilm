@@ -36,7 +36,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 100;
         }
 
@@ -85,18 +88,78 @@
             outline: none;
         }
 
+        /* --- STYLE DYNAMIC HERO BACKGROUND TAMPILAN ATAS --- */
+        .hero-container {
+            position: relative;
+            width: 100%;
+            height: 75vh;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center 20%;
+            transition: background-image 0.5s ease-in-out;
+            z-index: 1;
+        }
+
+        /* Efek Gelap Gradasi (Vignette) ala Netflix/WeTV agar Teks dan Poster Jelas */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,1) 100%),
+                        linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%);
+            z-index: 2;
+        }
+
+        /* Konten Melayang di Atas Background */
+        .hero-content-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 2rem 2rem 2rem;
+            z-index: 3;
+        }
+
+        .hero-title-display {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            text-transform: uppercase;
+            max-width: 60%;
+            line-height: 0.95;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT UTAMA BARIS FILM --- */
         .movies-section {
             padding: 0 2rem;
             margin-top: 10px;
+            position: relative;
+            z-index: 4;
         }
 
         .category-row {
-            margin-bottom: 2rem;
+            margin-bottom: 2.2rem;
             display: none;
         }
 
         .row-header {
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem;
             border-left: 4px solid var(--highlight-color);
             padding-left: 10px;
         }
@@ -127,9 +190,9 @@
             overflow: hidden;
             transition: all 0.2s ease;
             cursor: pointer;
-            flex: 0 0 260px;
+            flex: 0 0 240px; /* Lebar poster sedikit disesuaikan agar pas berjejer */
             position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
             border: 2px solid transparent;
         }
 
@@ -190,6 +253,7 @@
             gap: 15px;
         }
 
+        /* MODAL STYLING */
         .modal {
             display: none;
             position: fixed;
@@ -352,6 +416,14 @@
 </head>
 <body>
 
+    <div class="hero-container" id="hero-display-area">
+        <div class="hero-background" id="hero-bg-image"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content-wrapper">
+            <h1 class="hero-title-display" id="hero-title-text">-</h1>
+        </div>
+    </div>
+
     <header>
         <div class="logo">MRZYB TV</div>
         <div class="user-actions">
@@ -369,8 +441,8 @@
             <div class="search-grid" id="search-grid-container"></div>
         </div>
 
-        <div class="category-row" id="row-dubbing">
-            <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
+        <div class="category-row" id="row-dubbing" style="margin-top: -180px;">
+            <div class="row-header"><h2 class="row-title">Rilisan Baru</h2></div>
             <div class="movies-slider-horizontal" id="slider-dubbing"></div>
         </div>
 
@@ -446,7 +518,8 @@
         }
 
         function kelolaBarisKategori() {
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
+            // Ambil maksimal 6 film teratas untuk baris pertama
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true).slice(0, 6);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
 
             const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
@@ -461,12 +534,11 @@
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series');
 
-            // PEMULIHAN FOKUS OTOMATIS BERBASIS LOCALSTORAGE UNTUK STB/TV
+            // PEMULIHAN FOKUS LOCALSTORAGE STB
             setTimeout(() => {
                 const savedMovieTitle = localStorage.getItem('activeMovieTitle');
                 
                 if (savedMovieTitle) {
-                    // Jika STB me-refresh halaman setelah keluar player, paksa buka modal kembali
                     bukaModalDetail(savedMovieTitle);
                 } else {
                     const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
@@ -491,8 +563,10 @@
             }
 
             row.style.display = 'block';
+            
+            // Masukkan data base64/url poster ke atribut data-bg agar bisa dibaca saat remote fokus
             slider.innerHTML = dataList.map(item => `
-                <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
                     <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
@@ -503,20 +577,33 @@
                     </div>
                 </div>
             `).join('');
+
+            // DAFTARKAN LISTENER FOKUS UNTUK EFEK BACKGROUND BERUBAH
+            setTimeout(() => {
+                const cards = slider.querySelectorAll('.movie-card-horizontal');
+                cards.forEach(card => {
+                    card.addEventListener('focus', function() {
+                        const bgUrl = this.getAttribute('data-bg');
+                        const titleText = this.getAttribute('data-title');
+                        
+                        // Ubah Latar Belakang & Judul Besar di Atas
+                        if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
+                        if(titleText) document.getElementById('hero-title-text').textContent = titleText;
+                    });
+                });
+            }, 100);
         }
 
         function bukaModalDetail(judulKonten) {
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
 
-            // Catat nomor urutan index kartu beranda ke Storage sebelum masuk modal
             const cards = Array.from(document.querySelectorAll('.movie-card-horizontal'));
             const cardIndex = cards.indexOf(document.activeElement);
             if (cardIndex !== -1) {
                 localStorage.setItem('lastFocusedCardIndex', cardIndex);
             }
             
-            // Tandai judul film aktif ke Storage agar diingat STB
             localStorage.setItem('activeMovieTitle', judulKonten);
             dataFilmAktif = item; 
 
@@ -617,9 +704,11 @@
 
             if (keyword === "") {
                 searchSection.style.display = 'none';
+                document.getElementById('hero-display-area').style.display = 'block'; // Tampilkan kembali hero area
                 kelolaBarisKategori(); 
             } else {
                 barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
+                document.getElementById('hero-display-area').style.display = 'none'; // Sembunyikan hero area saat cari film
                 
                 const hasilFilter = databaseFilm.filter(item => 
                     item.titulo.toLowerCase().includes(keyword) || 
