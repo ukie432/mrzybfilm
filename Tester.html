@@ -362,9 +362,18 @@
         .modal-title { font-size: 1.8rem; }
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
-        .movie-details { display: flex; gap: 2rem; }
+        .movie-details { 
+            display: flex; 
+            gap: 2rem; 
+            width: 100%;
+            overflow: hidden; /* Mengunci elemen di dalam border modal */
+        }
         .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-        .movie-info-large { flex: 1; }
+      .movie-info-large { 
+            flex: 1; 
+            min-width: 0; /* Mengizinkan container mengecil mengikuti flex parent */
+            overflow: hidden;
+        }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
         .movie-description { font-size: 1.1rem; line-height: 1.5; margin-bottom: 2rem; color: #bbb; }
@@ -384,14 +393,15 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .episode-grid { 
+      .episode-grid { 
             display: flex; 
             gap: 12px; 
             overflow-x: auto; 
-            white-space: nowrap;
-            padding: 10px 5px; /* Padding agar efek zoom focus tidak terpotong */
-            scrollbar-width: none; /* Hilangkan scrollbar di Firefox */
+            white-space: nowrap; 
+            padding: 10px 5px;
+            scrollbar-width: none;
             width: 100%;
+            position: relative;
         }
         .episode-grid::-webkit-scrollbar { 
             display: none; /* Hilangkan scrollbar di Chrome/Safari */
