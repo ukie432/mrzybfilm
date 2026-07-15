@@ -33,7 +33,7 @@
             display: flex;
         }
 
-        /* --- STYLING SIDEBAR TRANSPARAN TOTAL SIFAT GAMBAR 1 & 2 --- */
+        /* --- STYLING SIDEBAR TRANSPARAN TOTAL --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -49,7 +49,6 @@
             overflow: hidden;
         }
 
-        /* Saat dibuka / remote masuk ke area menu (Gambar 2) */
         .sidebar:hover,
         .sidebar.expanded,
         .sidebar:focus-within {
@@ -127,7 +126,7 @@
             position: relative;
         }
 
-        /* --- HERO BACKGROUND FULL TANPA SCROLL --- */
+        /* --- HERO BACKGROUND FULL --- */
         .hero-container {
             position: absolute;
             top: 0;
@@ -197,7 +196,7 @@
             display: none;
         }
 
-        /* PROPORSI KONTENER POSTER */
+        /* PROPORSI KONTENER POSTER (LANDSCAPE DI HOME) */
         .movie-card-horizontal {
             background-color: #1c1c1c;
             border-radius: 6px;
@@ -244,7 +243,6 @@
             color: #e0e0e0;
         }
 
-        /* BARIS KHUSUS PALING ATAS */
         #row-pilihan {
             margin-top: 0;
             margin-bottom: 2rem;
@@ -361,7 +359,16 @@
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
         .movie-details { display: flex; gap: 2rem; }
-        .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; }
+        
+        /* POSTER PORTRAIT DI MODAL DETAIL */
+        .movie-poster-large { 
+            width: 220px; 
+            height: 330px; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        
         .movie-info-large { flex: 1; }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
@@ -463,7 +470,7 @@
             </div>
             <div class="modal-body">
                 <div class="movie-details">
-                    <img src="" alt="Poster" class="movie-poster-large" id="modalPoster">
+                    <img src="" alt="Poster Portrait" class="movie-poster-large" id="modalPoster">
                     <div class="movie-info-large">
                         <h3 class="movie-title-large" id="modalMovieTitle">Judul</h3>
                         <div class="movie-meta-large">
@@ -557,6 +564,7 @@
             if (dataList.length === 0) { row.style.display = 'none'; return; }
             row.style.display = 'block';
             
+            // Render menggunakan data .poster asli (Landscape)
             if (isPilihanAtas) {
                 slider.innerHTML = dataList.map(item => `
                     <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
@@ -635,13 +643,17 @@
             }
         });
 
+        // KUNCI PERUBAHAN: Buka modal detail dengan mendeteksi properti 'poster_portrait'
         function bukaModalDetail(judulKonten) {
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
             dataFilmAktif = item; 
 
             document.getElementById('modalMovieTitle').textContent = item.titulo;
-            document.getElementById('modalPoster').src = item.poster;
+            
+            // Sistem Fallback: Jika 'poster_portrait' kosong di JSON, otomatis pakai link 'poster' landscape agar tidak error.
+            document.getElementById('modalPoster').src = item.poster_portrait ? item.poster_portrait : item.poster;
+            
             document.getElementById('modalYear').textContent = item.year;
             document.getElementById('modalDuration').textContent = item.duration;
             document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${item.rating}`;
@@ -680,7 +692,7 @@
             else window.open(url, '_blank');
         }
 
-        // ================= D-PAD SECURITY ENGINE & SMART TRACKING =================
+        // --- NAVIGATION D-PAD LOGIC ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
             if (modal.style.display === 'block') {
