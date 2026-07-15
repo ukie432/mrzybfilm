@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRZYB Premium TV - Movies & Series</title>
+    <title>MRZYB Premium TV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100;300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -85,61 +85,80 @@
             outline: none;
         }
 
-        /* Movies Section */
+        /* --- STYLING GAYA WETV / NETFLIX HORIZONTAL ROW --- */
         .movies-section {
             padding: 0 2rem;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
-        .section-header {
-            margin-bottom: 1.5rem;
+        /* Wadah Baris Kategori */
+        .category-row {
+            margin-bottom: 2rem;
+            display: none; /* Akan diset menjadi 'block' via JS jika ada isinya */
+        }
+
+        .row-header {
+            margin-bottom: 0.8rem;
             border-left: 4px solid var(--highlight-color);
             padding-left: 10px;
         }
 
-        .section-title {
-            font-size: 2.2rem;
+        .row-title {
+            font-size: 2rem;
             color: var(--text-color);
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .movies-container {
+        /* Container Geser Horizontal */
+        .movies-slider-horizontal {
             display: flex;
-            flex-wrap: wrap;
             gap: 15px;
-            justify-content: flex-start;
+            overflow-x: auto;
+            padding: 10px 5px;
+            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
         }
 
-        .movie-card {
+        .movies-slider-horizontal::-webkit-scrollbar {
+            display: none; /* Sembunyikan scrollbar di Chrome/Android WebView */
+        }
+
+        /* Card Bertipe Landscape / Horizontal */
+        .movie-card-horizontal {
             background-color: var(--secondary-color);
             border-radius: 6px;
             overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
-            width: calc(16.66% - 13px);
+            flex: 0 0 260px; /* Lebar poster horizontal tetap */
             position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        .movie-card:hover {
-            transform: scale(1.05);
+        .movie-card-horizontal:hover, .movie-card-horizontal:focus {
+            transform: scale(1.06);
             z-index: 10;
             box-shadow: 0 0 15px var(--highlight-color);
+            outline: none;
         }
 
-        .movie-poster {
+        /* Gambar Poster Horizontal aspect ratio 16:9 */
+        .movie-poster-horizontal {
             width: 100%;
-            aspect-ratio: 2/3;
+            aspect-ratio: 16/9;
             object-fit: cover;
             background-color: #2a2a2a;
+            display: block;
         }
 
         .movie-info {
-            padding: 10px;
+            padding: 8px 10px;
             background-color: var(--secondary-color);
         }
 
         .movie-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -151,15 +170,26 @@
             display: flex;
             justify-content: space-between;
             color: var(--text-secondary);
-            font-size: 1rem;
-            margin-top: 5px;
+            font-size: 0.95rem;
+            margin-top: 3px;
         }
 
         .movie-rating {
             color: gold;
         }
 
-        /* Modal Overlay */
+        /* Wadah khusus jika user melakukan pencarian (Search Grid Mode) */
+        #search-results-section {
+            display: none;
+            margin-bottom: 2rem;
+        }
+        .search-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Modal Area */
         .modal {
             display: none;
             position: fixed;
@@ -271,7 +301,6 @@
             background-color: #ff2d4f;
         }
 
-        /* Episode List Styles */
         .episode-section {
             margin-top: 2rem;
             border-top: 1px solid #333;
@@ -319,10 +348,7 @@
             font-size: 1.3rem;
         }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 1200px) { .movie-card { width: calc(20% - 12px); } }
-        @media (max-width: 900px) { .movie-card { width: calc(25% - 12px); } .movie-details { flex-direction: column; } .movie-poster-large { width: 100%; height: auto; max-height: 400px; } }
-        @media (max-width: 600px) { .movie-card { width: calc(33.33% - 10px); } }
+        @media (max-width: 900px) { .movie-details { flex-direction: column; } .movie-poster-large { width: 100%; height: auto; max-height: 350px; } }
     </style>
 </head>
 <body>
@@ -338,11 +364,38 @@
         </div>
     </header>
 
-    <main class="movies-section">
-        <div class="section-header">
-            <h2 class="section-title" id="section-main-title">Koleksi Terpopuler</h2>
+    <main class="movies-section" id="main-content-wrapper">
+        
+        <div class="category-row" id="search-results-section">
+            <div class="row-header"><h2 class="row-title" id="search-title-text">Hasil Pencarian</h2></div>
+            <div class="search-grid" id="search-grid-container"></div>
         </div>
-        <div class="movies-container" id="movies-grid"></div>
+
+        <div class="category-row" id="row-dubbing">
+            <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
+            <div class="movies-slider-horizontal" id="slider-dubbing"></div>
+        </div>
+
+        <div class="category-row" id="row-indo">
+            <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
+            <div class="movies-slider-horizontal" id="slider-indo"></div>
+        </div>
+
+        <div class="category-row" id="row-animasi">
+            <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
+            <div class="movies-slider-horizontal" id="slider-animasi"></div>
+        </div>
+
+        <div class="category-row" id="row-lawas">
+            <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
+            <div class="movies-slider-horizontal" id="slider-lawas"></div>
+        </div>
+
+        <div class="category-row" id="row-series">
+            <div class="row-header"><h2 class="row-title">Film Series Eksklusif</h2></div>
+            <div class="movies-slider-horizontal" id="slider-series"></div>
+        </div>
+
     </main>
 
     <div id="movieModal" class="modal">
@@ -386,28 +439,56 @@
         let databaseFilm = [];
         let dataFilmAktif = null;
 
-        // Ambil Data dari JSON saat halaman dimuat
+        // Ambil Data dari JSON
         async function loadDataKonten() {
             try {
                 const response = await fetch(JSON_URL);
                 databaseFilm = await response.json();
-                renderKonten(databaseFilm.filter(m => m.halaman_depan === true));
+                
+                // Distribusikan data ke masing-masing baris kategori horizontal
+                kelolaBarisKategori();
             } catch (error) {
                 console.error("Gagal mengambil database JSON:", error);
             }
         }
 
-        // Tampilkan Poster ke Layar
-        function renderKonten(daftarKonten) {
-            const grid = document.getElementById('movies-grid');
-            if (daftarKonten.length === 0) {
-                grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
+        // Memilah dan merender film ke slider horizontalnya masing-masing
+        function kelolaBarisKategori() {
+            // 1. Film Dubbing
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing");
+            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
+
+            // 2. Film Indonesia
+            const indoData = databaseFilm.filter(m => m.categoria === "film_indo");
+            renderSlider(indoData, 'slider-indo', 'row-indo');
+
+            // 3. Film Animasi
+            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi");
+            renderSlider(animasiData, 'slider-animasi', 'row-animasi');
+
+            // 4. Film Lawas
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas");
+            renderSlider(lawasData, 'slider-lawas', 'row-lawas');
+
+            // 5. Film Series (Berdasarkan parameter is_series)
+            const seriesData = databaseFilm.filter(m => m.is_series === true);
+            renderSlider(seriesData, 'slider-series', 'row-series');
+        }
+
+        // Pembuat komponen kartu html di dalam slider horizontal
+        function renderSlider(dataList, sliderId, rowId) {
+            const slider = document.getElementById(sliderId);
+            const row = document.getElementById(rowId);
+
+            if (dataList.length === 0) {
+                row.style.display = 'none'; // Sembunyikan baris jika tidak ada film
                 return;
             }
 
-            grid.innerHTML = daftarKonten.map(item => `
-                <div class="movie-card" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster" loading="lazy">
+            row.style.display = 'block'; // Tampilkan baris jika terisi data
+            slider.innerHTML = dataList.map(item => `
+                <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
                         <div class="movie-meta">
@@ -424,9 +505,8 @@
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
 
-            dataFilmAktif = item; // Simpan data item yang sedang aktif di-klik
+            dataFilmAktif = item; 
 
-            // Pasang metadata dasar
             document.getElementById('modalMovieTitle').textContent = item.titulo;
             document.getElementById('modalPoster').src = item.poster;
             document.getElementById('modalYear').textContent = item.year;
@@ -439,13 +519,11 @@
             const areaSeri = document.getElementById('episode-list-wrapper');
             const gridEpisode = document.getElementById('episode-grid');
 
-            // LOGIKA PEMBEDA: Apakah film seri atau film tunggal biasa?
             if (item.is_series === true && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-                btnPlayUtama.style.display = 'none'; // Sembunyikan tombol play utama langsung
-                areaSeri.style.display = 'block';    // Munculkan kontainer daftar episode
+                btnPlayUtama.style.display = 'none'; 
+                areaSeri.style.display = 'block';    
                 
-                // Render kumpulan tombol episode beserta link-nya masing-masing
                 gridEpisode.innerHTML = item.episodes.map(eps => `
                     <button class="episode-btn" onclick="kirimKeAndroidStudio('${eps.video}')">
                         <i class="fas fa-play-circle"></i>
@@ -454,8 +532,8 @@
                 `).join('');
             } else {
                 document.getElementById('modalTypeBadge').textContent = "Detail Film";
-                btnPlayUtama.style.display = 'flex'; // Munculkan tombol play utama
-                areaSeri.style.display = 'none';     // Sembunyikan kontainer list episode
+                btnPlayUtama.style.display = 'flex'; 
+                areaSeri.style.display = 'none';     
                 gridEpisode.innerHTML = '';
             }
 
@@ -466,7 +544,6 @@
             document.getElementById('movieModal').style.display = 'none';
         }
 
-        // Fungsi Aksi Pemutaran Film Tunggal
         function putarFilmTunggal() {
             if (dataFilmAktif && dataFilmAktif.video) {
                 kirimKeAndroidStudio(dataFilmAktif.video);
@@ -475,34 +552,61 @@
             }
         }
 
-        // Jembatan Komunikasi Utama Ke ExoPlayer Android Studio Anda
         function kirimKeAndroidStudio(urlMedia) {
             if (urlMedia) {
                 if (typeof Android !== "undefined" && Android.playVideo) {
-                    Android.playVideo(urlMedia); // Panggil fungsi Java Android Studio Anda
+                    Android.playVideo(urlMedia); 
                 } else {
-                    window.open(urlMedia, '_blank'); // Backup jika dibuka via browser biasa
+                    window.open(urlMedia, '_blank'); 
                 }
             }
         }
 
-        // Fitur Filter Pencarian
+        // Mekanisme Fitur Pencarian Pintar (Search Mode Toggle)
         const searchInput = document.getElementById('search-input');
-        const mainTitle = document.getElementById('section-main-title');
+        const searchSection = document.getElementById('search-results-section');
+        const searchGridContainer = document.getElementById('search-grid-container');
+        const searchTitleText = document.getElementById('search-title-text');
 
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase().trim();
+            
+            // Mengambil semua ID baris reguler untuk disembunyikan saat mode pencarian aktif
+            const barisReguler = ['row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
+
             if (keyword === "") {
-                mainTitle.textContent = "Koleksi Terpopuler";
-                renderKonten(databaseFilm.filter(m => m.halaman_depan === true));
+                // Sembunyikan grid search, munculkan kembali baris horizontal
+                searchSection.style.display = 'none';
+                kelolaBarisKategori(); 
             } else {
-                mainTitle.textContent = `Hasil Pencarian: "${e.target.value}"`;
-                const filterResult = databaseFilm.filter(item => 
+                // Sembunyikan semua baris berkategori reguler
+                barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
+                
+                // Cari kecocokan data
+                const hasilFilter = databaseFilm.filter(item => 
                     item.titulo.toLowerCase().includes(keyword) || 
-                    item.genre.toLowerCase().includes(keyword) ||
-                    item.categoria.toLowerCase().includes(keyword)
+                    item.genre.toLowerCase().includes(keyword)
                 );
-                renderKonten(filterResult);
+
+                searchSection.style.display = 'block';
+                searchTitleText.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
+
+                if(hasilFilter.length === 0) {
+                    searchGridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten yang Anda cari tidak ditemukan...</p>`;
+                } else {
+                    searchGridContainer.innerHTML = hasilFilter.map(item => `
+                        <div class="movie-card-horizontal" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                            <div class="movie-info">
+                                <h3 class="movie-title">${item.titulo}</h3>
+                                <div class="movie-meta">
+                                    <span>${item.year}</span>
+                                    <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
             }
         });
 
