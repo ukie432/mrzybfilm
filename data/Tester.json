@@ -1,52 +1,85 @@
 [
   {
   
-  "titulo": "Elio",
-  "categoria": "pilihan_atas",
-  "halaman_depan": true,
-  "poster": "https://disney.images.edge.bamgrid.com/ripcut-delivery/v2/variant/disney/448ab21c-afca-4bf3-abb9-1e47e8ccdc43/compose?aspectRatio=1.78&format=webp&width=1200",
-  "video": "https://mutia1503.ukielaki88.workers.dev/0:/Movie%20anak%20baru/Elio%20(2025).mp4",
-  "year": "2026",
-  "rating": "8.5",
-  "genre": "Action",
-  "duration": "2h 10m",
-  "description": "Deskripsi film di sini...",
-  "is_series": false
+  
+    "titulo": "Elio",
+    "poster": "https://disney.images.edge.bamgrid.com/ripcut-delivery/v2/variant/disney/448ab21c-afca-4bf3-abb9-1e47e8ccdc43/compose?aspectRatio=1.78&format=webp&width=1200", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_5JrgDcPtJXtzJQwiXaX7p8OHgKtvXGPXfg_2nAZ9Vk8yk4CI7yLS6Ck&s=10",
+     "year": "2025"
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Movie%20anak%20baru/Elio%20(2025).mp4",
+    "description": "..."
+  },
+{
+  
+   "titulo": "Shinchan",
+    "poster": "https://cms.dmpcdn.com/moviearticle/2024/06/07/f43164a0-24ab-11ef-b2ef-f9e9659c46b2_webp_original.webp", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9DGEh3sRZEulLup-PNr-8RXryLBuGhLDIKWCASJ8J9W0vUL6Z5WErEs5m&s=10",
+     "year": "2024"
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/New%20Dimension%20Crayon%20Shinchan%20The%20Movie%203D%20(2024).mp4",
+    "description": "..."
 },
 
 
 
-{
-  "titulo": "Shinchan",
-  "categoria": "pilihan_atas",
-  "halaman_depan": true,
-  "poster": "https://upload.wikimedia.org/wikipedia/id/thumb/9/92/Shin_Jigen%21_Crayon_Shin-chan_the_Movie_Poster.jpg/250px-Shin_Jigen%21_Crayon_Shin-chan_the_Movie_Poster",
-  "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/New%20Dimension%20Crayon%20Shinchan%20The%20Movie%203D%20(2024).mp4",
-  "year": "2026",
-  "rating": "8.5",
-  "genre": "Action",
-  "duration": "2h 10m",
-  "description": "Deskripsi film di sini...",
-  "is_series": false
-},
-
-
 
 {
-  "titulo": "Robin hood",
-  "categoria": "pilihan_atas",
-  "halaman_depan": true,
-  "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrvq3Szik6ph7-Qp2JfiQwvUYa3zCmKIAsvQUz2okTwIsbt6xBTzf5L9w&s=10",
-  "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/Robin%20Hood%20(1973)%20Dubbing%20Indonesia.mp4",
-  "year": "2026",
-  "rating": "8.5",
-  "genre": "Action",
-  "duration": "2h 10m",
-  "description": "Deskripsi film di sini...",
-  "is_series": false
-},
 
-{
+
+   "titulo": "Robin hood",
+    "poster": "https://cms.dmpcdn.com/moviearticle/2024/06/07/f43164a0-24ab-11ef-b2ef-f9e9659c46b2_webp_original.webp", 
+    "poster_portrait": "https://i.ytimg.com/vi/gzESAbBo08c/maxresdefault.jpg",
+    "year": "1973"
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/Robin%20Hood%20(1973)%20Dubbing%20Indonesia.mp4",
+    "description": "..."
+    },
+    {
+    
+       "titulo": "Frankenstein",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3AFOVEf7siTamOeDyUiDsG6NJwThoPkGzhjtfa36dLQ&s=10", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaj9Smnk5VkncTsUotxfOtiyNrDemblZA1RJL6g1w-XY4dDi36Oj4R_qHb&s=10",
+    "year": "2025",
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20dubbing/Frankenstein%20(2025).mp4",
+    "description": "..."
+    },
+    {
+    
+           "titulo": "Avengers Endgame",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkaMxxw2JRS8R0fNY0BeWEcb9bsU_2ajF-F3knYJFqRA&s=10", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnjhb07sNvtZHH4ZA2V9Co6yDTjdCuX9JDgnOeJhKCdw&s=10",
+    "year": "2019",
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Avengers_%20Endgame%20(2019)%20[Dub%20Indo].mp4",
+    "description": "..."
+    },
+    {
+    
+               "titulo": "Janji Joni",
+    "poster": "https://cms.disway.id/uploads/0ec18f3668db997a910ebfa9805da15f.jpg", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrBcJw-XHjOKqCdU3VIg96JIV87S442saY_LqglzOBhg&s=10",
+    "year": "2005",
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": false,
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indo%20lagi/Janji%20joni%20(2005).mp4",
+    "description": "..."
+    },
+    {
+
+
     "id": "indo-001",
     "titulo": "KKN di Desa Penari",
     "poster": "https://iptv-posterku.pages.dev/poster/film_animasi/Mariogalaxy.webp",
