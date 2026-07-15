@@ -201,30 +201,6 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
 
-        .slider-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-            z-index: 10;
-        }
-
-        .slider-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .slider-dot.active {
-            background-color: var(--highlight-color);
-            transform: scale(1.2);
-        }
-
         /* Sección de películas */
         .movies-section {
             padding: 2rem;
@@ -254,17 +230,6 @@
             background-color: var(--highlight-color);
         }
 
-        .view-more {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .view-more:hover {
-            color: var(--highlight-color);
-        }
-
         .movies-container {
             display: flex;
             overflow-x: auto;
@@ -272,20 +237,6 @@
             padding-bottom: 1rem;
             scrollbar-width: thin;
             scrollbar-color: var(--highlight-color) var(--secondary-color);
-        }
-
-        .movies-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .movies-container::-webkit-scrollbar-track {
-            background: var(--secondary-color);
-            border-radius: 10px;
-        }
-
-        .movies-container::-webkit-scrollbar-thumb {
-            background-color: var(--highlight-color);
-            border-radius: 10px;
         }
 
         .movie-card {
@@ -382,28 +333,6 @@
             padding-right: 5px;
         }
 
-        /* Categorías */
-        .categories {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .category {
-            padding: 0.5rem 1.5rem;
-            background-color: var(--accent-color);
-            border-radius: 30px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .category:hover, .category.active {
-            background-color: var(--highlight-color);
-            transform: translateY(-3px);
-        }
-
         /* Ventana modal */
         .modal {
             display: none;
@@ -425,18 +354,6 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: modalFadeIn 0.5s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .modal-header {
@@ -456,12 +373,6 @@
             font-size: 2rem;
             color: var(--text-color);
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: var(--highlight-color);
-            transform: rotate(90deg);
         }
 
         .modal-body {
@@ -481,7 +392,6 @@
             height: 450px;
             object-fit: cover;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .movie-info-large {
@@ -508,12 +418,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .movie-cast {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
         .movie-actions {
             display: flex;
             gap: 1rem;
@@ -526,7 +430,6 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -542,118 +445,6 @@
             transform: translateY(-3px);
         }
 
-        .add-button {
-            background-color: transparent;
-            color: var(--text-color);
-            border: 2px solid var(--text-color);
-        }
-
-        .add-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-
-        /* Reproductor de video */
-        .video-container {
-            width: 100%;
-            background-color: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 2rem;
-            position: relative;
-        }
-
-        .video-player {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .video-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 1.5rem;
-            background-color: rgba(0, 0, 0, 0.7);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .video-container:hover .video-controls {
-            opacity: 1;
-        }
-
-        .controls-left, .controls-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .control-button {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .control-button:hover {
-            color: var(--highlight-color);
-            transform: scale(1.1);
-        }
-
-        .progress-container {
-            flex-grow: 1;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.2);
-            margin: 0 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--highlight-color);
-            border-radius: 5px;
-            width: 0%;
-        }
-
-        .time-display {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            white-space: nowrap;
-        }
-
-        .volume-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .volume-slider {
-            width: 80px;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            cursor: pointer;
-            appearance: none;
-            outline: none;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--highlight-color);
-            cursor: pointer;
-        }
-
         /* Submenú */
         .submenu {
             display: none;
@@ -662,9 +453,7 @@
             right: 0;
             background-color: var(--secondary-color);
             border-radius: 0 0 10px 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
             width: 250px;
-            overflow: hidden;
             z-index: 100;
         }
 
@@ -679,101 +468,6 @@
             gap: 1rem;
             color: var(--text-color);
             text-decoration: none;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .submenu-item:hover {
-            background-color: var(--accent-color);
-            color: var(--highlight-color);
-        }
-
-        .submenu-item i {
-            font-size: 1.2rem;
-        }
-
-        /* Notificaciones */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--highlight-color);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1100;
-            transform: translateX(200%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .movie-details {
-                flex-direction: column;
-            }
-            
-            .movie-poster-large {
-                width: 100%;
-                height: auto;
-                max-height: 500px;
-            }
-            
-            .slide-content {
-                max-width: 80%;
-            }
-            
-            .slide-title {
-                font-size: 2.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-            
-            .modal-content {
-                width: 95%;
-            }
-            
-            .movie-actions {
-                flex-direction: column;
-            }
-            
-            .slide-title {
-                font-size: 2rem;
-            }
-            
-            .slide-description {
-                font-size: 1rem;
-            }
-
-            .search-container {
-                width: 200px;
-            }
-        }
-
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--secondary-color);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--highlight-color);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff2d4f;
         }
     </style>
 </head>
@@ -784,48 +478,22 @@
             <a href="#">Inicio</a>
             <a href="#">Películas</a>
             <a href="#">Series</a>
-            <a href="#">Novedades</a>
-            <a href="#">Mi lista</a>
         </nav>
         <div class="user-actions">
             <i class="fas fa-search" id="search-icon"></i>
             <div class="search-container" id="search-container">
                 <input type="text" class="search-input" placeholder="Buscar películas..." id="search-input">
             </div>
-            <i class="fas fa-bell" id="bell-icon"></i>
             <i class="fas fa-user" id="user-icon"></i>
         </div>
-        
-        <div class="submenu" id="submenu">
-            <a href="#" class="submenu-item" id="profile-btn">
-                <i class="fas fa-user-circle"></i>
-                <span>Mi perfil</span>
-            </a>
-            <a href="#" class="submenu-item" id="settings-btn">
-                <i class="fas fa-cog"></i>
-                <span>Configuración</span>
-            </a>
-            <a href="#" class="submenu-item" id="favorites-btn">
-                <i class="fas fa-heart"></i>
-                <span>Favoritos</span>
-            </a>
-            <a href="#" class="submenu-item" id="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar sesión</span>
-            </a>
-        </div>
     </header>
-
-    <div class="notification" id="notification">
-        Acción realizada con éxito
-    </div>
 
     <div class="slider-container">
         <div class="slider" id="slider">
             <div class="slide" style="background-image: url('https://image.tmdb.org/t/p/original/8Y43POKjjKDGI9MH89NW0NAzzp8.jpg');">
                 <div class="slide-content">
                     <h2 class="slide-title">Dune: Parte Dos</h2>
-                    <p class="slide-description">Paul Atreides se une a Chani y los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.</p>
+                    <p class="slide-description">Paul Atreides se une a Chani y los Fremen mientras busca venganza contra los conspiradores.</p>
                     <button class="slide-button" onclick="openModal('Dune: Parte Dos')">
                         <i class="fas fa-play"></i> Ver ahora
                     </button>
@@ -838,8 +506,7 @@
         <div class="section-header">
             <h2 class="section-title" id="section-main-title">Películas populares</h2>
         </div>
-        <div class="movies-container" id="movies-display-grid" style="flex-wrap: wrap; overflow-x: hidden;">
-            </div>
+        <div class="movies-container" id="movies-display-grid" style="flex-wrap: wrap; overflow-x: hidden;"></div>
     </section>
 
     <div id="movieModal" class="modal">
@@ -860,30 +527,22 @@
                             <span id="modalGenre">Género</span>
                         </div>
                         <p class="movie-description" id="modalDescription">Descripción...</p>
-                        <p class="movie-cast" id="modalCast">Reparto...</p>
                         <div class="movie-actions">
-                            <button class="action-button play-button" onclick="playVideo()">
-                                <i class="fas fa-play"></i> Reproducir
-                            </button>
-                            <button class="action-button add-button" id="addToListBtn" onclick="toggleFavorite()">
-                                <i class="fas fa-plus"></i> Mi lista
+                            <button class="action-button play-button" onclick="kirimKeExoPlayer()">
+                                <i class="fas fa-play"></i> Reproducir (ExoPlayer)
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <div class="video-container" id="videoContainer">
-                    <video class="video-player" id="videoPlayer" controls></video>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // MASUKKAN URL RAW JSON GITHUB ANDA DI SINI
+        // Menggunakan path lokal data/Tester.json sesuai permintaan Anda
         const GITHUB_JSON_URL = 'data/Tester.json'; 
-
         let databaseFilm = [];
+        let filmTerpilih = null;
 
         // Ambil data otomatis saat web dibuka
         async function fetchMoviesData() {
@@ -891,14 +550,13 @@
                 const response = await fetch(GITHUB_JSON_URL);
                 databaseFilm = await response.json();
                 
-                // Tampilkan film-film default untuk Halaman Depan
+                // Filter film yang dipajang di halaman depan (halaman_depan === true)
                 renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
             } catch (error) {
-                console.error("Gagal memuat JSON GitHub:", error);
+                console.error("Gagal memuat JSON:", error);
             }
         }
 
-        // Fungsi mencetak Card Film menggunakan struktur tag HTML asli milik Anda
         function renderMovies(moviesList) {
             const grid = document.getElementById('movies-display-grid');
             if (moviesList.length === 0) {
@@ -916,49 +574,35 @@
                             <span class="movie-rating"><i class="fas fa-star"></i> ${movie.rating}</span>
                         </div>
                     </div>
-                    <div class="movie-overlay">
-                        <div class="overlay-icons">
-                            <i class="fas fa-play" onclick="event.stopPropagation(); openModal('${movie.titulo}')"></i>
-                            <i class="fas fa-plus" onclick="event.stopPropagation(); addToFavorites('${movie.titulo}')"></i>
-                            <i class="fas fa-info-circle" onclick="event.stopPropagation(); openModal('${movie.titulo}')"></i>
-                        </div>
-                        <p class="overlay-description">${movie.description}</p>
-                    </div>
                 </div>
             `).join('');
         }
 
-        // FUNGSI UTAMA PENCARIAN GLOBAL (Mencari di seluruh isi JSON)
+        // Fungsi Pencarian Global
         const searchInput = document.getElementById('search-input');
         const sectionTitle = document.getElementById('section-main-title');
 
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase().trim();
-
             if (keyword === "") {
-                // Jika input pencarian dihapus / kosong, kembalikan ke setelan film halaman depan
                 sectionTitle.textContent = "Películas populares";
                 renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
             } else {
-                // Jika sedang mengetik, cari ke RIBUAN data film di file JSON secara real-time
                 sectionTitle.textContent = `Resultados para: "${e.target.value}"`;
                 const searchResults = databaseFilm.filter(movie => 
                     movie.titulo.toLowerCase().includes(keyword) || 
-                    movie.genre.toLowerCase().includes(keyword)
+                    (movie.genre && movie.genre.toLowerCase().includes(keyword))
                 );
                 renderMovies(searchResults);
             }
         });
 
-        // Fungsi Membuka Modal Deskripsi Film
+        // Buka deskripsi film
         function openModal(movieTitle) {
-            // Cari data film berdasarkan judul di array databaseFilm hasil fetch
             const movieData = databaseFilm.find(m => m.titulo === movieTitle);
-            
             if (!movieData) return;
 
-            const modal = document.getElementById('movieModal');
-            const videoPlayer = document.getElementById('videoPlayer');
+            filmTerpilih = movieData; // Simpan data film yang sedang dibuka
 
             document.getElementById('modalTitle').textContent = movieTitle;
             document.getElementById('modalMovieTitle').textContent = movieTitle;
@@ -968,40 +612,29 @@
             document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${movieData.rating}`;
             document.getElementById('modalGenre').textContent = movieData.genre;
             document.getElementById('modalDescription').textContent = movieData.description;
-            document.getElementById('modalCast').innerHTML = `<strong>Reparto:</strong> ${movieData.cast}`;
-            
-            // Masukkan URL Video secara dinamis dari file JSON
-            videoPlayer.src = movieData.video || "";
-            videoPlayer.load();
 
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            document.getElementById('movieModal').style.display = 'block';
         }
 
         function closeModal() {
-            const modal = document.getElementById('movieModal');
-            const videoPlayer = document.getElementById('videoPlayer');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            if (videoPlayer) videoPlayer.pause();
+            document.getElementById('movieModal').style.display = 'none';
         }
 
-        function playVideo() {
-            const videoPlayer = document.getElementById('videoPlayer');
-            if (videoPlayer) videoPlayer.play();
+        // FUNGSI JEMBATAN KE ANDROID EXOPLAYER
+        function kirimKeExoPlayer() {
+            if (filmTerpilih && filmTerpilih.video) {
+                // Memeriksa apakah aplikasi berjalan di dalam Android WebView yang memiliki interface "AndroidApp"
+                if (window.AndroidApp && window.AndroidApp.putarVideo) {
+                    window.AndroidApp.putarVideo(filmTerpilih.video, filmTerpilih.titulo);
+                } else {
+                    // Jika dibuka di browser laptop biasa, buka link videonya langsung di tab baru
+                    window.open(filmTerpilih.video, '_blank');
+                }
+            } else {
+                alert("URL Video tidak ditemukan!");
+            }
         }
 
-        // Lógica Slider bawaan Anda
-        const slider = document.getElementById('slider');
-        let currentSlide = 0;
-        function startSlider() {
-            setInterval(() => {
-                currentSlide = (currentSlide + 1) % 1; 
-                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-            }, 5000);
-        }
-
-        // Search bar animation toggle bawaan Anda
         const searchIcon = document.getElementById('search-icon');
         const searchContainer = document.getElementById('search-container');
         searchIcon.addEventListener('click', () => {
@@ -1009,16 +642,7 @@
             if (searchContainer.classList.contains('active')) searchInput.focus();
         });
 
-        window.addEventListener('click', (e) => {
-            const modal = document.getElementById('movieModal');
-            if (e.target === modal) closeModal();
-        });
-
-        // Jalankan fetch saat dokumen siap
-        window.addEventListener('load', () => {
-            fetchMoviesData();
-            startSlider();
-        });
+        window.addEventListener('load', fetchMoviesData);
     </script>
 </body>
 </html>
