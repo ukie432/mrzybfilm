@@ -33,14 +33,14 @@
         header {
             background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
             padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
@@ -88,7 +88,7 @@
             outline: none;
         }
 
-        /* --- STYLE DYNAMIC HERO BACKGROUND TAMPILAN ATAS --- */
+        /* --- DYNAMIC HERO BACKGROUND --- */
         .hero-container {
             position: relative;
             width: 100%;
@@ -109,7 +109,6 @@
             z-index: 1;
         }
 
-        /* Efek Gelap Gradasi (Vignette) ala Netflix/WeTV agar Teks dan Poster Jelas */
         .hero-overlay {
             position: absolute;
             top: 0;
@@ -121,7 +120,6 @@
             z-index: 2;
         }
 
-        /* Konten Melayang di Atas Background */
         .hero-content-wrapper {
             position: absolute;
             bottom: 0;
@@ -190,7 +188,7 @@
             overflow: hidden;
             transition: all 0.2s ease;
             cursor: pointer;
-            flex: 0 0 240px; /* Lebar poster sedikit disesuaikan agar pas berjejer */
+            flex: 0 0 240px;
             position: relative;
             box-shadow: 0 4px 10px rgba(0,0,0,0.7);
             border: 2px solid transparent;
@@ -441,8 +439,13 @@
             <div class="search-grid" id="search-grid-container"></div>
         </div>
 
-        <div class="category-row" id="row-dubbing" style="margin-top: -180px;">
-            <div class="row-header"><h2 class="row-title">Rilisan Baru</h2></div>
+        <div class="category-row" id="row-pilihan" style="margin-top: -180px;">
+            <div class="row-header"><h2 class="row-title">Pilihan Utama</h2></div>
+            <div class="movies-slider-horizontal" id="slider-pilihan"></div>
+        </div>
+
+        <div class="category-row" id="row-dubbing">
+            <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
             <div class="movies-slider-horizontal" id="slider-dubbing"></div>
         </div>
 
@@ -518,8 +521,12 @@
         }
 
         function kelolaBarisKategori() {
-            // Ambil maksimal 6 film teratas untuk baris pertama
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true).slice(0, 6);
+            // 1. BARIS ATAS KHUSUS: Mengambil film dengan categoria "pilihan_atas" (Maksimal 6 film)
+            const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
+            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan');
+
+            // 2. Baris-baris standar di bawahnya
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
 
             const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
@@ -564,7 +571,6 @@
 
             row.style.display = 'block';
             
-            // Masukkan data base64/url poster ke atribut data-bg agar bisa dibaca saat remote fokus
             slider.innerHTML = dataList.map(item => `
                 <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
                     <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
@@ -578,20 +584,21 @@
                 </div>
             `).join('');
 
-            // DAFTARKAN LISTENER FOKUS UNTUK EFEK BACKGROUND BERUBAH
-            setTimeout(() => {
-                const cards = slider.querySelectorAll('.movie-card-horizontal');
-                cards.forEach(card => {
-                    card.addEventListener('focus', function() {
-                        const bgUrl = this.getAttribute('data-bg');
-                        const titleText = this.getAttribute('data-title');
-                        
-                        // Ubah Latar Belakang & Judul Besar di Atas
-                        if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
-                        if(titleText) document.getElementById('hero-title-text').textContent = titleText;
+            // EFEK DYNAMIC BACKGROUND HANYA DIKUNCI DI SLIDER PALING ATAS ('slider-pilihan')
+            if (sliderId === 'slider-pilihan') {
+                setTimeout(() => {
+                    const cards = slider.querySelectorAll('.movie-card-horizontal');
+                    cards.forEach(card => {
+                        card.addEventListener('focus', function() {
+                            const bgUrl = this.getAttribute('data-bg');
+                            const titleText = this.getAttribute('data-title');
+                            
+                            if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
+                            if(titleText) document.getElementById('hero-title-text').textContent = titleText;
+                        });
                     });
-                });
-            }, 100);
+                }, 100);
+            }
         }
 
         function bukaModalDetail(judulKonten) {
@@ -692,7 +699,7 @@
             }
         }
 
-        // PENCARIAN GLOBAL MENYELURUH
+        // PENCARIAN GLOBAL
         const searchInput = document.getElementById('search-input');
         const searchSection = document.getElementById('search-results-section');
         const searchGridContainer = document.getElementById('search-grid-container');
@@ -700,15 +707,15 @@
 
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase().trim();
-            const barisReguler = ['row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
+            const barisReguler = ['row-pilihan', 'row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
 
             if (keyword === "") {
                 searchSection.style.display = 'none';
-                document.getElementById('hero-display-area').style.display = 'block'; // Tampilkan kembali hero area
+                document.getElementById('hero-display-area').style.display = 'block';
                 kelolaBarisKategori(); 
             } else {
                 barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
-                document.getElementById('hero-display-area').style.display = 'none'; // Sembunyikan hero area saat cari film
+                document.getElementById('hero-display-area').style.display = 'none';
                 
                 const hasilFilter = databaseFilm.filter(item => 
                     item.titulo.toLowerCase().includes(keyword) || 
@@ -745,7 +752,7 @@
         });
 
 
-        // ==================== ENGINE NAVIGASI REMOTE CONTROL + PEMULIHAN D-PAD PERMANEN ====================
+        // ==================== ENGINE NAVIGASI D-PAD STB ====================
         
         setInterval(() => {
             const modal = document.getElementById('movieModal');
