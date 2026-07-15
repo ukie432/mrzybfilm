@@ -126,7 +126,7 @@
             overflow-y: auto;
         }
 
-        /* --- HERO BACKGROUND FULL --- */
+        /* --- HERO BACKGROUND FULL FIX --- */
         .hero-container {
             position: fixed;
             top: 0;
@@ -165,7 +165,7 @@
             margin-top: 55vh;
             position: relative;
             z-index: 4;
-            padding-bottom: 80px;
+            padding-bottom: 80px; 
         }
 
         .category-row {
@@ -211,7 +211,7 @@
             display: flex;
             gap: 16px;
             overflow-x: auto;
-            padding: 15px 10px;
+            padding: 15px 10px; 
             scrollbar-width: none;
         }
 
@@ -225,7 +225,7 @@
             overflow: hidden;
             transition: transform 0.25s cubic-bezier(0.2, 1, 0.2, 1), box-shadow 0.25s, border-color 0.25s;
             cursor: pointer;
-            flex: 0 0 175px;
+            flex: 0 0 175px; 
             position: relative;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border: 2px solid transparent;
@@ -243,12 +243,21 @@
             z-index: 99;
         }
 
+        /* PERBAIKAN POSTER: Ditambahkan tinggi cadangan (fallback) untuk Android TV jadul */
         .movie-poster-horizontal {
             width: 100%;
-            aspect-ratio: 16/10;
+            height: 110px; 
             object-fit: cover;
             background-color: #252525;
             display: block;
+        }
+
+        /* TV modern yang mendukung aspect ratio akan memakai standar 16/10 agar tetap proporsional */
+        @supports (aspect-ratio: 16/10) {
+            .movie-poster-horizontal {
+                aspect-ratio: 16/10;
+                height: auto;
+            }
         }
 
         .movie-info {
@@ -270,7 +279,7 @@
             margin-bottom: 2rem;
         }
 
-        /* --- LAYOUT HALAMAN KATEGORI KHUSUS (GRID VERTICAL UNTUK RATUSAN FILM) --- */
+        /* --- LAYOUT HALAMAN KATEGORI KHUSUS (GRID VERTICAL KEBANAKAN FILM) --- */
         .category-page-view {
             display: none;
             padding: 3rem;
@@ -296,8 +305,8 @@
             padding-bottom: 60px;
         }
         .category-grid .movie-card-horizontal {
-            flex: 0 0 calc(14.28% - 18px); /* Mengatur baris rapi berisi sekitar 7 poster per baris */
-            min-width: 150px;
+            flex: 0 0 calc(14.28% - 18px); /* 7 poster rapi sejajar ke kanan */
+            min-width: 140px;
         }
 
         /* --- LAYOUT PENCARIAN --- */
@@ -519,10 +528,10 @@
                 <i class="fas fa-flag"></i> <span>Film Indonesia</span>
             </button>
             <button class="sidebar-item" id="menu-anime" tabindex="0" onclick="bukaHalamanKategori('film_animasi', 'Film Animasi')">
-                <i class="fas fa-cat"></i> <span>Anime / Animasi</span>
+                <i class="fas fa-cat"></i> <span>Anime</span>
             </button>
-            <button class="sidebar-item" id="menu-series" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Semua Drama & Series')">
-                <i class="fas fa-tv"></i> <span>Series Pilihan</span>
+            <button class="sidebar-item" id="menu-series" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Film Series Pilihan')">
+                <i class="fas fa-star"></i> <span>Series</span>
             </button>
         </div>
         <div class="sidebar-footer">
@@ -575,7 +584,7 @@
                 <div class="category-row" id="row-series">
                     <div class="row-header">
                         <h2 class="row-title">Film Series Pilihan</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Semua Drama & Series')">Lihat Semua</button>
+                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Film Series Pilihan')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-series"></div>
                 </div>
@@ -645,7 +654,6 @@
             
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
             
-            // Sembunyikan semua page view terlebih dahulu
             homeView.style.display = 'none';
             searchView.style.display = 'none';
             catView.style.display = 'none';
@@ -655,7 +663,7 @@
                 document.getElementById('menu-cari').classList.add('active');
                 renderPencarianPopuler();
                 setTimeout(() => document.getElementById('search-main-input').focus(), 100);
-            } else if (viewName === 'home') {
+            } else {
                 homeView.style.display = 'block';
                 document.getElementById('menu-home').classList.add('active');
                 document.getElementById('search-main-input').value = "";
@@ -663,15 +671,14 @@
             }
         }
 
-        // --- FUNGSI UTAMA PINDAH KE MENU / HALAMAN KATEGORI KHUSUS ---
-        function bukaHalamanKategori(kategoriKey, namaLabel Kategori) {
+        // Beralih ke halaman list film per kategori (Mendukung 500+ film tanpa lag)
+        function bukaHalamanKategori(kategoriKey, namaLabel) {
             activeView = 'category';
             
             document.getElementById('page-home-view').style.display = 'none';
             document.getElementById('page-search-view').style.display = 'none';
             document.getElementById('page-category-view').style.display = 'block';
 
-            // Menghapus tanda active sidebar lama & sesuaikan highlight menu
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
             if(kategoriKey === 'film_dubbing') document.getElementById('menu-film').classList.add('active');
             else if(kategoriKey === 'film_indo') document.getElementById('menu-indo').classList.add('active');
@@ -680,10 +687,10 @@
 
             document.getElementById('current-category-title').textContent = namaLabel;
 
-            // Saring semua data dari database (Menampilkan SELURUH DATA 500+ FILM)
+            // Saring semua data dari database (Mendukung string "true" / boolean true)
             let filteredData = [];
             if (kategoriKey === 'series_all') {
-                filteredData = databaseFilm.filter(m => m.is_series === true);
+                filteredData = databaseFilm.filter(m => m.is_series === true || String(m.is_series) === 'true');
             } else {
                 filteredData = databaseFilm.filter(m => m.categoria === kategoriKey);
             }
@@ -694,17 +701,19 @@
                 return;
             }
 
-            // Render menjadi grid vertikal ke bawah yang bersih
-            gridContainer.innerHTML = filteredData.map(item => `
-                <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${item.titulo}</h3>
+            // Render menjadi layout Grid Vertikal agar TV lancar mengolah ratusan data
+            gridContainer.innerHTML = filteredData.map(item => {
+                const posterUrl = item.poster || item.poster_portrait || '';
+                return `
+                    <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                        <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.titulo}</h3>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            // Set focus otomatis remote ke item pertama di halaman kategori baru
             setTimeout(() => {
                 const firstItem = gridContainer.querySelector('.movie-card-horizontal');
                 if(firstItem) firstItem.focus();
@@ -721,24 +730,26 @@
             }
         }
 
-        // --- PENGATURAN BARIS HOME: DIBATASI HANYA 15 BIJI BIAR RINGAN ---
+        // Home View: Dibatasi maksimal 15 film di halaman utama agar aplikasi enteng
         function kelolaBarisKategori() {
-            const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas").slice(0, 6);
+            const isHome = (m) => m.halaman_depan === true || String(m.halaman_depan) === 'true';
+
+            const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && isHome(m)).slice(0, 6);
             renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
 
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing").slice(0, 15);
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && isHome(m)).slice(0, 15);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
 
-            const indoData = databaseFilm.filter(m => m.categoria === "film_indo").slice(0, 15);
+            const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && isHome(m)).slice(0, 15);
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
 
-            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi").slice(0, 15);
+            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && isHome(m)).slice(0, 15);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
 
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas").slice(0, 15);
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && isHome(m)).slice(0, 15);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
 
-            const seriesData = databaseFilm.filter(m => m.is_series === true).slice(0, 15);
+            const seriesData = databaseFilm.filter(m => (m.is_series === true || String(m.is_series) === 'true') && isHome(m)).slice(0, 15);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
 
             setTimeout(() => {
@@ -754,20 +765,26 @@
             row.style.display = 'block';
             
             if (isPilihanAtas) {
-                slider.innerHTML = dataList.map(item => `
-                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
-                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                    </div>
-                `).join('');
-            } else {
-                slider.innerHTML = dataList.map(item => `
-                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
-                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                        <div class="movie-info">
-                            <h3 class="movie-title">${item.titulo}</h3>
+                slider.innerHTML = dataList.map(item => {
+                    const posterUrl = item.poster || item.poster_portrait || '';
+                    return `
+                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${posterUrl}" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
+            } else {
+                slider.innerHTML = dataList.map(item => {
+                    const posterUrl = item.poster || item.poster_portrait || '';
+                    return `
+                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${posterUrl}" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                            <div class="movie-info">
+                                <h3 class="movie-title">${item.titulo}</h3>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             if (sliderId === 'slider-pilihan') {
@@ -780,7 +797,8 @@
                     });
                     const firstCard = slider.querySelector('.movie-card-horizontal');
                     if(firstCard) {
-                        document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstCard.getAttribute('data-bg')}')`;
+                        const firstBg = firstCard.getAttribute('data-bg');
+                        if (firstBg) document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstBg}')`;
                     }
                 }, 100);
             }
@@ -790,15 +808,18 @@
             const grid = document.getElementById('search-results-grid');
             const dataPopuler = databaseFilm.slice(0, 7); 
             
-            grid.innerHTML = dataPopuler.map((item, idx) => `
-                <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                    <div class="popular-badge">${idx + 1}</div>
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${item.titulo}</h3>
+            grid.innerHTML = dataPopuler.map((item, idx) => {
+                const posterUrl = item.poster || item.poster_portrait || '';
+                return `
+                    <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                        <div class="popular-badge">${idx + 1}</div>
+                        <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.titulo}</h3>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         document.getElementById('search-main-input').addEventListener('input', (e) => {
@@ -819,14 +840,17 @@
                 if(filtered.length === 0) {
                     grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 } else {
-                    grid.innerHTML = filtered.map(item => `
-                        <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
-                            <div class="movie-info">
-                                <h3 class="movie-title">${item.titulo}</h3>
+                    grid.innerHTML = filtered.map(item => {
+                        const posterUrl = item.poster || item.poster_portrait || '';
+                        return `
+                            <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                                <img src="${posterUrl}" alt="${item.titulo}" class="movie-poster-horizontal">
+                                <div class="movie-info">
+                                    <h3 class="movie-title">${item.titulo}</h3>
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 }
             }
         });
@@ -848,7 +872,9 @@
             const areaSeri = document.getElementById('episode-list-wrapper');
             const gridEpisode = document.getElementById('episode-grid');
 
-            if (item.is_series === true && item.episodes) {
+            const isSeries = item.is_series === true || String(item.is_series) === 'true';
+
+            if (isSeries && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
                 btnPlayUtama.style.display = 'none'; 
                 areaSeri.style.display = 'block';    
@@ -867,7 +893,7 @@
             
             document.getElementById('movieModal').style.display = 'block';
             setTimeout(() => {
-                if (item.is_series) {
+                if (isSeries) {
                     const firstEps = document.querySelector('.episode-btn');
                     if(firstEps) firstEps.focus();
                 } else {
@@ -906,8 +932,12 @@
                         const elementLeft = nextEps.offsetLeft;
                         const elementWidth = nextEps.clientWidth;
                         
-                        gridEpisode.scrollTo({ left: elementLeft - (containerWidth / 2) + (elementWidth / 2), behavior: 'smooth' });
-                        e.preventDefault(); return;
+                        gridEpisode.scrollTo({
+                            left: elementLeft - (containerWidth / 2) + (elementWidth / 2),
+                            behavior: 'smooth'
+                        });
+                        e.preventDefault();
+                        return;
                     }
                     if (e.key === 'ArrowLeft' && currEpsIdx > 0) {
                         const prevEps = episodes[currEpsIdx - 1];
@@ -916,15 +946,24 @@
                         const containerWidth = gridEpisode.clientWidth;
                         const elementLeft = prevEps.offsetLeft;
                         const elementWidth = prevEps.clientWidth;
-                        gridEpisode.scrollTo({ left: elementLeft - (containerWidth / 2) + (elementWidth / 2), behavior: 'smooth' });
-                        e.preventDefault(); return;
+                        gridEpisode.scrollTo({
+                            left: elementLeft - (containerWidth / 2) + (elementWidth / 2),
+                            behavior: 'smooth'
+                        });
+                        e.preventDefault();
+                        return;
                     }
                     if (e.key === 'ArrowUp') {
                         const closeBtn = document.querySelector('.close-modal');
                         if(closeBtn) closeBtn.focus();
-                        e.preventDefault(); return;
+                        e.preventDefault();
+                        return;
                     }
-                    if (e.key === 'Enter') { active.click(); e.preventDefault(); return; }
+                    if (e.key === 'Enter') {
+                        active.click();
+                        e.preventDefault();
+                        return;
+                    }
                     return;
                 }
                 
@@ -939,7 +978,10 @@
             const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
-                if (activeView === 'search' || activeView === 'category') { switchView('home'); e.preventDefault(); }
+                if (activeView === 'search' || activeView === 'category') { 
+                    switchView('home');
+                    e.preventDefault(); 
+                }
                 return;
             }
 
@@ -949,12 +991,21 @@
 
                 if (isSidebar && e.key === 'ArrowDown') {
                     const settingBtn = document.getElementById('menu-pengaturan');
-                    if (active === settingBtn) { e.preventDefault(); return; }
+                    if (active === settingBtn) {
+                        e.preventDefault();
+                        return;
+                    }
                 }
 
                 if (activeView === 'home' && isPoster) {
-                    if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) { e.preventDefault(); return; }
-                    if (e.key === 'ArrowDown' && active.closest('#row-series')) { e.preventDefault(); return; }
+                    if (e.key === 'ArrowUp' && active.closest('#row-pilihan')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.key === 'ArrowDown' && active.closest('#row-series')) {
+                        e.preventDefault();
+                        return; 
+                    }
                 }
             }
 
@@ -965,15 +1016,23 @@
                     if (nextIdx === -1 && active && !active.classList.contains('sidebar-item')) {
                         const sideItems = document.querySelectorAll('.sidebar-item');
                         if(sideItems.length > 0) sideItems[1].focus(); 
-                        e.preventDefault(); return;
+                        e.preventDefault();
+                        return;
                     }
                     break;
-                case 'ArrowRight': nextIdx = cariElemenTerdekat(active, focusable, 'kanan'); break;
-                case 'ArrowUp': nextIdx = cariElemenTerdekat(active, focusable, 'atas'); break;
-                case 'ArrowDown': nextIdx = cariElemenTerdekat(active, focusable, 'bawah'); break;
+                case 'ArrowRight':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
+                    break;
+                case 'ArrowUp':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'atas');
+                    break;
+                case 'ArrowDown':
+                    nextIdx = cariElemenTerdekat(active, focusable, 'bawah');
+                    break;
                 case 'Enter':
                     active.click();
-                    e.preventDefault(); return;
+                    e.preventDefault();
+                    return;
             }
 
             if (nextIdx !== -1) {
@@ -997,7 +1056,7 @@
             const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
             let terdekatIdx = -1; let jarakTerkecil = Infinity;
             const isCurrentlyInSidebar = activeEl.classList.contains('sidebar-item');
-
+            
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
                 
@@ -1011,13 +1070,13 @@
                 const dx = cB.x - cA.x; const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 2) {
+                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 2.0) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 2) {
+                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 2.0) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.5) {
+                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.6) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.5) {
+                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.6) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
                 }
             });
