@@ -594,6 +594,9 @@
         let dataFilmAktif = null;
         let activeView = 'home';
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+        
+        // MENYIMPAN KARTU FILM TERAKHIR YANG DIKLIK SEBELUM MASUK MODAL
+        let lastFocusedElement = null; 
 
         function switchView(viewName) {
             activeView = viewName;
@@ -861,6 +864,9 @@
         });
 
         function bukaModalDetail(judulKonten) {
+            // SIMPAN ELEMENT CARD YANG AKTIF SEBELUM MEMBUKA MODAL
+            lastFocusedElement = document.activeElement; 
+
             const item = databaseFilm.find(m => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
             if (!item) return;
             dataFilmAktif = item; 
@@ -917,7 +923,16 @@
             }, 200);
         }
 
-        function closeModal() { document.getElementById('movieModal').style.display = 'none'; }
+        function closeModal() { 
+            document.getElementById('movieModal').style.display = 'none'; 
+            // KEMBALIKAN FOKUS REMOTE KE KARTU FILM SEBELUMNYA AGAR REMOTE TIDAK HILANG ARAH
+            if (lastFocusedElement) {
+                setTimeout(() => {
+                    lastFocusedElement.focus();
+                }, 50);
+            }
+        }
+
         function putarFilmTunggal() { if (dataFilmAktif) putarVideo(dataFilmAktif.video); }
         
         function putarVideo(url) {
@@ -931,9 +946,11 @@
             const modal = document.getElementById('movieModal');
             const active = document.activeElement;
 
-            // Daftarkan tombol arah utama
-            const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Backspace', 'Escape'];
-            if (!navigasiKeys.includes(e.key)) return;
+            // Daftarkan semua kode tombol Back TV OS yang umum (Backspace, Escape, Back, dll)
+            const isBackKey = e.key === 'Backspace' || e.key === 'Escape' || e.key === 'Back' || e.keyCode === 8 || e.keyCode === 27 || e.keyCode === 10009;
+
+            const navigasiKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Backspace', 'Escape', 'Back'];
+            if (!navigasiKeys.includes(e.key) && !isBackKey) return;
 
             // Izinkan input pencarian memproses tombol arah kiri/kanan bawaan untuk navigasi kursor teks
             const isInputMode = active && active.id === 'search-main-input';
@@ -941,15 +958,31 @@
                 return; 
             }
 
-            // PERBAIKAN UTAMA: Jangan block default action jika tombol yang aktif adalah tombol interaktif dan tombol yang ditekan adalah Enter!
+            // PERBAIKAN NAVIGASI UTAMA TOMBOL BACK (MENCEGAH CRASH/EXIT APLIKASI)
+            if (isBackKey) {
+                // Skenario A: Jika modal sedang terbuka -> Tutup modal saja & kembalikan fokus ke list film
+                if (modal.style.display === 'block') {
+                    e.preventDefault();
+                    closeModal();
+                    return;
+                }
+                // Skenario B: Jika di halaman Cari/VIP/Koleksi -> Kembalikan ke halaman Home
+                if (activeView !== 'home') {
+                    e.preventDefault();
+                    switchView('home');
+                    return;
+                }
+                // Skenario C: Jika sudah di Home dan tidak ada modal -> Biarkan default TV (Keluar aplikasi dengan aman)
+                return; 
+            }
+
+            // PERBAIKAN UTAMA ENTER: Jangan matikan event click bawaan jika tombol interaktif sedang aktif
             const isButtonActive = active && (active.classList.contains('action-button') || active.classList.contains('episode-btn') || active.classList.contains('close-modal') || active.id === 'search-main-input');
             if (!(isButtonActive && e.key === 'Enter')) {
-                e.preventDefault(); // Hanya matikan scroll bawaan browser, biarkan click event tetap hidup
+                e.preventDefault(); 
             }
 
             if (modal.style.display === 'block') {
-                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); return; }
-                
                 if (active && (active.id === 'main-play-btn' || active.id === 'main-fav-btn')) {
                     if (e.key === 'ArrowRight' && active.id === 'main-play-btn') {
                         document.getElementById('main-fav-btn').focus();
@@ -1015,11 +1048,6 @@
 
             const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
             const currIdx = focusable.indexOf(active);
-
-            if (e.key === 'Escape' || e.key === 'Backspace') {
-                if (activeView !== 'home') { switchView('home'); }
-                return;
-            }
 
             if (active) {
                 const isSidebar = active.classList.contains('sidebar-item');
