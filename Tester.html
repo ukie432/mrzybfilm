@@ -285,54 +285,6 @@
             color: gold;
         }
 
-        .movie-card:hover .movie-overlay {
-            opacity: 1;
-        }
-
-        .movie-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            padding: 1rem;
-        }
-
-        .overlay-icons {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .overlay-icons i {
-            font-size: 1.5rem;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .overlay-icons i:hover {
-            color: var(--highlight-color);
-            transform: scale(1.2);
-        }
-
-        .overlay-description {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            line-height: 1.5;
-            max-height: 100px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
         /* Ventana modal */
         .modal {
             display: none;
@@ -444,31 +396,6 @@
             background-color: #ff2d4f;
             transform: translateY(-3px);
         }
-
-        /* Submenú */
-        .submenu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--secondary-color);
-            border-radius: 0 0 10px 10px;
-            width: 250px;
-            z-index: 100;
-        }
-
-        .submenu.active {
-            display: block;
-        }
-
-        .submenu-item {
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--text-color);
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
@@ -539,7 +466,6 @@
     </div>
 
     <script>
-        // Menggunakan path lokal data/Tester.json sesuai permintaan Anda
         const GITHUB_JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
         let filmTerpilih = null;
@@ -550,7 +476,7 @@
                 const response = await fetch(GITHUB_JSON_URL);
                 databaseFilm = await response.json();
                 
-                // Filter film yang dipajang di halaman depan (halaman_depan === true)
+                // Filter film halaman depan
                 renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
             } catch (error) {
                 console.error("Gagal memuat JSON:", error);
@@ -602,7 +528,7 @@
             const movieData = databaseFilm.find(m => m.titulo === movieTitle);
             if (!movieData) return;
 
-            filmTerpilih = movieData; // Simpan data film yang sedang dibuka
+            filmTerpilih = movieData; // Simpan data film yang sedang aktif dibuka
 
             document.getElementById('modalTitle').textContent = movieTitle;
             document.getElementById('modalMovieTitle').textContent = movieTitle;
@@ -620,14 +546,13 @@
             document.getElementById('movieModal').style.display = 'none';
         }
 
-        // FUNGSI JEMBATAN KE ANDROID EXOPLAYER
+        // FUNGSI JEMBATAN DISESUAIKAN PERSIS DENGAN FITUR APLIKASI ASLI ANDA
         function kirimKeExoPlayer() {
             if (filmTerpilih && filmTerpilih.video) {
-                // Memeriksa apakah aplikasi berjalan di dalam Android WebView yang memiliki interface "AndroidApp"
-                if (window.AndroidApp && window.AndroidApp.putarVideo) {
-                    window.AndroidApp.putarVideo(filmTerpilih.video, filmTerpilih.titulo);
+                // DIUBAH MENJADI "Android.playVideo" DENGAN 1 PARAMETER AGAR COCOK DENGAN MAINACTIVITY ANDA
+                if (typeof Android != "undefined" && Android.playVideo) {
+                    Android.playVideo(filmTerpilih.video);
                 } else {
-                    // Jika dibuka di browser laptop biasa, buka link videonya langsung di tab baru
                     window.open(filmTerpilih.video, '_blank');
                 }
             } else {
