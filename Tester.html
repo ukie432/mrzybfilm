@@ -85,16 +85,15 @@
             outline: none;
         }
 
-        /* --- STYLING GAYA WETV / NETFLIX HORIZONTAL ROW --- */
+        /* --- STYLING ROW HORIZONTAL GAYA WETV --- */
         .movies-section {
             padding: 0 2rem;
             margin-top: 10px;
         }
 
-        /* Wadah Baris Kategori */
         .category-row {
             margin-bottom: 2rem;
-            display: none; /* Akan diset menjadi 'block' via JS jika ada isinya */
+            display: none; /* Otomatis aktif via JavaScript */
         }
 
         .row-header {
@@ -111,27 +110,25 @@
             letter-spacing: 1px;
         }
 
-        /* Container Geser Horizontal */
         .movies-slider-horizontal {
             display: flex;
             gap: 15px;
             overflow-x: auto;
             padding: 10px 5px;
-            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
+            scrollbar-width: none;
         }
 
         .movies-slider-horizontal::-webkit-scrollbar {
-            display: none; /* Sembunyikan scrollbar di Chrome/Android WebView */
+            display: none;
         }
 
-        /* Card Bertipe Landscape / Horizontal */
         .movie-card-horizontal {
             background-color: var(--secondary-color);
             border-radius: 6px;
             overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
-            flex: 0 0 260px; /* Lebar poster horizontal tetap */
+            flex: 0 0 260px; /* Ukuran poster horizontal */
             position: relative;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
@@ -143,7 +140,6 @@
             outline: none;
         }
 
-        /* Gambar Poster Horizontal aspect ratio 16:9 */
         .movie-poster-horizontal {
             width: 100%;
             aspect-ratio: 16/9;
@@ -178,7 +174,7 @@
             color: gold;
         }
 
-        /* Wadah khusus jika user melakukan pencarian (Search Grid Mode) */
+        /* Wadah Khusus Hasil Pencarian Globals */
         #search-results-section {
             display: none;
             margin-bottom: 2rem;
@@ -189,7 +185,7 @@
             gap: 15px;
         }
 
-        /* Modal Area */
+        /* Modal Detail Box */
         .modal {
             display: none;
             position: fixed;
@@ -358,7 +354,7 @@
         <div class="user-actions">
             <i class="fas fa-search" id="search-icon"></i>
             <div class="search-container" id="search-container">
-                <input type="text" class="search-input" placeholder="Cari film atau seri..." id="search-input">
+                <input type="text" class="search-input" placeholder="Cari judul film atau seri..." id="search-input">
             </div>
             <i class="fas fa-user"></i>
         </div>
@@ -392,7 +388,7 @@
         </div>
 
         <div class="category-row" id="row-series">
-            <div class="row-header"><h2 class="row-title">Film Series Eksklusif</h2></div>
+            <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
             <div class="movies-slider-horizontal" id="slider-series"></div>
         </div>
 
@@ -439,55 +435,53 @@
         let databaseFilm = [];
         let dataFilmAktif = null;
 
-        // Ambil Data dari JSON
         async function loadDataKonten() {
             try {
                 const response = await fetch(JSON_URL);
                 databaseFilm = await response.json();
                 
-                // Distribusikan data ke masing-masing baris kategori horizontal
+                // Panggil manajemen penyaringan halaman utama
                 kelolaBarisKategori();
             } catch (error) {
                 console.error("Gagal mengambil database JSON:", error);
             }
         }
 
-        // Memilah dan merender film ke slider horizontalnya masing-masing
+        // MENYARING DATA BERDASARKAN KATEGORI & HALAMAN DEPAN = TRUE
         function kelolaBarisKategori() {
-            // 1. Film Dubbing
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing");
+            // 1. Film Dubbing (Halaman Depan)
+            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
 
-            // 2. Film Indonesia
-            const indoData = databaseFilm.filter(m => m.categoria === "film_indo");
+            // 2. Film Indonesia (Halaman Depan)
+            const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
             renderSlider(indoData, 'slider-indo', 'row-indo');
 
-            // 3. Film Animasi
-            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi");
+            // 3. Film Animasi (Halaman Depan)
+            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi');
 
-            // 4. Film Lawas
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas");
+            // 4. Film Lawas (Halaman Depan)
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas');
 
-            // 5. Film Series (Berdasarkan parameter is_series)
-            const seriesData = databaseFilm.filter(m => m.is_series === true);
+            // 5. Film Series (Halaman Depan)
+            const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series');
         }
 
-        // Pembuat komponen kartu html di dalam slider horizontal
         function renderSlider(dataList, sliderId, rowId) {
             const slider = document.getElementById(sliderId);
             const row = document.getElementById(rowId);
 
             if (dataList.length === 0) {
-                row.style.display = 'none'; // Sembunyikan baris jika tidak ada film
+                row.style.display = 'none';
                 return;
             }
 
-            row.style.display = 'block'; // Tampilkan baris jika terisi data
+            row.style.display = 'block';
             slider.innerHTML = dataList.map(item => `
-                <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                <div class="movie-card-horizontal" onclick="bukaModalDetail('${item.titulo}')">
                     <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
@@ -500,7 +494,6 @@
             `).join('');
         }
 
-        // Buka Panel Modal Deskripsi Konten
         function bukaModalDetail(judulKonten) {
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
@@ -562,7 +555,7 @@
             }
         }
 
-        // Mekanisme Fitur Pencarian Pintar (Search Mode Toggle)
+        // PENCARIAN GLOBAL (MENCARI HINGGA RIBUAN DATA DARI KESELURUHAN DATA JSON)
         const searchInput = document.getElementById('search-input');
         const searchSection = document.getElementById('search-results-section');
         const searchGridContainer = document.getElementById('search-grid-container');
@@ -570,19 +563,16 @@
 
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase().trim();
-            
-            // Mengambil semua ID baris reguler untuk disembunyikan saat mode pencarian aktif
             const barisReguler = ['row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
 
             if (keyword === "") {
-                // Sembunyikan grid search, munculkan kembali baris horizontal
                 searchSection.style.display = 'none';
                 kelolaBarisKategori(); 
             } else {
-                // Sembunyikan semua baris berkategori reguler
+                // Sembunyikan baris-baris beranda agar fokus ke hasil pencarian
                 barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
                 
-                // Cari kecocokan data
+                // Cari film secara menyeluruh di databaseFilm (Tanpa memedulikan status halaman_depan)
                 const hasilFilter = databaseFilm.filter(item => 
                     item.titulo.toLowerCase().includes(keyword) || 
                     item.genre.toLowerCase().includes(keyword)
@@ -592,7 +582,7 @@
                 searchTitleText.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
 
                 if(hasilFilter.length === 0) {
-                    searchGridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten yang Anda cari tidak ditemukan...</p>`;
+                    searchGridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 } else {
                     searchGridContainer.innerHTML = hasilFilter.map(item => `
                         <div class="movie-card-horizontal" onclick="bukaModalDetail('${item.titulo}')">
