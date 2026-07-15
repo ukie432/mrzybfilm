@@ -1,5 +1,52 @@
 [
   {
+  
+  "titulo": "Elio",
+  "categoria": "pilihan_atas",
+  "halaman_depan": true,
+  "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQI_2j3qBOLR-uFhADDdxUESJLXcaaa2wEa3MvIrE2MA&s=10",
+  "video": "https://mutia1503.ukielaki88.workers.dev/0:/Movie%20anak%20baru/Elio%20(2025).mp4",
+  "year": "2026",
+  "rating": "8.5",
+  "genre": "Action",
+  "duration": "2h 10m",
+  "description": "Deskripsi film di sini...",
+  "is_series": false
+},
+
+
+
+{
+  "titulo": "Shinchan",
+  "categoria": "pilihan_atas",
+  "halaman_depan": true,
+  "poster": "https://upload.wikimedia.org/wikipedia/id/thumb/9/92/Shin_Jigen%21_Crayon_Shin-chan_the_Movie_Poster.jpg/250px-Shin_Jigen%21_Crayon_Shin-chan_the_Movie_Poster",
+  "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/New%20Dimension%20Crayon%20Shinchan%20The%20Movie%203D%20(2024).mp4",
+  "year": "2026",
+  "rating": "8.5",
+  "genre": "Action",
+  "duration": "2h 10m",
+  "description": "Deskripsi film di sini...",
+  "is_series": false
+},
+
+
+
+{
+  "titulo": "Robin hood",
+  "categoria": "pilihan_atas",
+  "halaman_depan": true,
+  "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrvq3Szik6ph7-Qp2JfiQwvUYa3zCmKIAsvQUz2okTwIsbt6xBTzf5L9w&s=10",
+  "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/Robin%20Hood%20(1973)%20Dubbing%20Indonesia.mp4",
+  "year": "2026",
+  "rating": "8.5",
+  "genre": "Action",
+  "duration": "2h 10m",
+  "description": "Deskripsi film di sini...",
+  "is_series": false
+},
+
+{
     "id": "indo-001",
     "titulo": "KKN di Desa Penari",
     "poster": "https://iptv-posterku.pages.dev/poster/film_animasi/Mariogalaxy.webp",
