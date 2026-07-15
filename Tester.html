@@ -40,7 +40,7 @@
             left: 0;
             height: 100vh;
             width: var(--sidebar-width-collapsed);
-            background: transparent; /* Awalnya transparan total seperti Gambar 1 */
+            background: transparent;
             z-index: 999;
             display: flex;
             flex-direction: column;
@@ -54,7 +54,7 @@
         .sidebar.expanded,
         .sidebar:focus-within {
             width: var(--sidebar-width-expanded);
-            background: rgba(0, 0, 0, 0.85); /* Gelap transparan elegan */
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             box-shadow: 15px 0 35px rgba(0,0,0,0.9);
         }
@@ -133,7 +133,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh; /* Set langsung full tinggi layar kaca TV */
+            height: 100vh;
             overflow: hidden;
             background-color: #000;
             z-index: 1;
@@ -180,7 +180,7 @@
         /* --- STRUKTUR POSISI SLIDER POSTER --- */
         .movies-section {
             padding: 0 2.5rem;
-            margin-top: 52vh; /* Menempatkan baris pertama pas di paruh bawah layar TV saat pertama kali dibuka */
+            margin-top: 52vh;
             position: relative;
             z-index: 4;
         }
@@ -214,7 +214,7 @@
             display: none;
         }
 
-        /* PROPORSI KONTENER POSTER DIKECILKAN AGAR RAPI */
+        /* PROPORSI KONTENER POSTER */
         .movie-card-horizontal {
             background-color: #1c1c1c;
             border-radius: 6px;
@@ -261,19 +261,7 @@
             color: #e0e0e0;
         }
 
-        .movie-meta {
-            display: flex;
-            justify-content: space-between;
-            color: #888;
-            font-size: 0.8rem;
-            margin-top: 1px;
-        }
-
-        .movie-rating {
-            color: #ffcc00;
-        }
-
-        /* BARIS KHUSUS PALING ATAS (TANPA MARGIN MINUS AGAR TAMPILAN MATANG) */
+        /* BARIS KHUSUS PALING ATAS (TANPA MARGIN MINUS) */
         #row-pilihan {
             margin-top: 0;
             margin-bottom: 2rem;
@@ -560,22 +548,22 @@
 
         function kelolaBarisKategori() {
             const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
-            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan');
+            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true); // Kirim parameter true khusus slider atas
 
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
-            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
+            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
 
             const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
-            renderSlider(indoData, 'slider-indo', 'row-indo');
+            renderSlider(indoData, 'slider-indo', 'row-indo', false);
 
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
-            renderSlider(animasiData, 'slider-animasi', 'row-animasi');
+            renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
 
             const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
-            renderSlider(lawasData, 'slider-lawas', 'row-lawas');
+            renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
 
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
-            renderSlider(seriesData, 'slider-series', 'row-series');
+            renderSlider(seriesData, 'slider-series', 'row-series', false);
 
             setTimeout(() => {
                 const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
@@ -583,24 +571,31 @@
             }, 300);
         }
 
-        function renderSlider(dataList, sliderId, rowId) {
+        // Ditambahkan parameteris "isPilihanAtas" untuk memisahkan logika tampilan
+        function renderSlider(dataList, sliderId, rowId, isPilihanAtas) {
             const slider = document.getElementById(sliderId);
             const row = document.getElementById(rowId);
             if (dataList.length === 0) { row.style.display = 'none'; return; }
             row.style.display = 'block';
             
-            slider.innerHTML = dataList.map(item => `
-                <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${item.titulo}</h3>
-                        <div class="movie-meta">
-                            <span>${item.year}</span>
-                            <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
+            if (isPilihanAtas) {
+                // Slider atas: Hanya poster murni saja
+                slider.innerHTML = dataList.map(item => `
+                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
+                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                    </div>
+                `).join('');
+            } else {
+                // Slider bawah: Poster dan hanya teks judul saja
+                slider.innerHTML = dataList.map(item => `
+                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
+                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.titulo}</h3>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
 
             if (sliderId === 'slider-pilihan') {
                 setTimeout(() => {
@@ -612,7 +607,6 @@
                             if(titleText) document.getElementById('hero-title-text').textContent = titleText;
                         });
                     });
-                    // Set poster pertama sebagai background default awal
                     const firstCard = slider.querySelector('.movie-card-horizontal');
                     if(firstCard) {
                         document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstCard.getAttribute('data-bg')}')`;
@@ -771,7 +765,6 @@
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
                 
-                // Mencegah lompatan vertikal liar ke arah sidebar saat browsing poster
                 if ((arah === 'bawah' || arah === 'atas') && !isCurrentlyInSidebar) {
                     if (el.classList.contains('sidebar-item')) return;
                 }
