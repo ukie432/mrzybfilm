@@ -434,10 +434,6 @@
         const JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
         let dataFilmAktif = null;
-        
-        // VARIABLE MEMORI SISTEM FOKUS REMOTE
-        let lastFocusedCard = null;       // Mengingat kartu film terakhir di home
-        let lastFocusedEpisodeIndex = -1;  // Mengingat index episode terakhir yang diputar
 
         async function loadDataKonten() {
             try {
@@ -465,9 +461,23 @@
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series');
 
+            // PEMULIHAN FOKUS OTOMATIS BERBASIS LOCALSTORAGE UNTUK STB/TV
             setTimeout(() => {
-                const firstCard = document.querySelector('.movie-card-horizontal');
-                if (firstCard) firstCard.focus();
+                const savedMovieTitle = localStorage.getItem('activeMovieTitle');
+                
+                if (savedMovieTitle) {
+                    // Jika STB me-refresh halaman setelah keluar player, paksa buka modal kembali
+                    bukaModalDetail(savedMovieTitle);
+                } else {
+                    const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
+                    const cards = document.querySelectorAll('.movie-card-horizontal');
+                    if (savedCardIdx !== null && cards[savedCardIdx]) {
+                        cards[savedCardIdx].focus();
+                        cards[savedCardIdx].scrollIntoView({ behavior: 'auto', block: 'center' });
+                    } else if (cards.length > 0) {
+                        cards[0].focus();
+                    }
+                }
             }, 500);
         }
 
@@ -499,10 +509,16 @@
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
 
-            // Simpan kartu beranda ke memori sebelum masuk modal
-            lastFocusedCard = document.activeElement;
+            // Catat nomor urutan index kartu beranda ke Storage sebelum masuk modal
+            const cards = Array.from(document.querySelectorAll('.movie-card-horizontal'));
+            const cardIndex = cards.indexOf(document.activeElement);
+            if (cardIndex !== -1) {
+                localStorage.setItem('lastFocusedCardIndex', cardIndex);
+            }
+            
+            // Tandai judul film aktif ke Storage agar diingat STB
+            localStorage.setItem('activeMovieTitle', judulKonten);
             dataFilmAktif = item; 
-            lastFocusedEpisodeIndex = -1; // Reset memori episode lama
 
             document.getElementById('modalMovieTitle').textContent = item.titulo;
             document.getElementById('modalPoster').src = item.poster;
@@ -537,7 +553,12 @@
             document.getElementById('movieModal').style.display = 'block';
 
             setTimeout(() => {
+                const savedEpsIdx = localStorage.getItem('lastFocusedEpisodeIndex');
                 if (item.is_series === true) {
+                    if (savedEpsIdx !== null) {
+                        const targetEps = document.querySelector(`.episode-btn[data-index="${savedEpsIdx}"]`);
+                        if (targetEps) { targetEps.focus(); return; }
+                    }
                     const firstEps = document.querySelector('.episode-btn');
                     if (firstEps) firstEps.focus();
                 } else {
@@ -546,9 +567,8 @@
             }, 200);
         }
 
-        // FUNGSI MEMUTAR EPISODE KATEGORI SERI + SIMPAN REKAMAN FOKUS INDEX
         function putarEpisodeDariRemote(index, urlVideo) {
-            lastFocusedEpisodeIndex = index; // Ingat episode mana yang sedang diputar
+            localStorage.setItem('lastFocusedEpisodeIndex', index);
             kirimKeAndroidStudio(urlVideo);
         }
 
@@ -562,10 +582,16 @@
 
         function closeModal() {
             document.getElementById('movieModal').style.display = 'none';
-            // Paksa fokus kembali ke kartu film asal di beranda utama
-            if (lastFocusedCard) {
-                lastFocusedCard.focus();
-                lastFocusedCard.scrollIntoView({ behavior: 'auto', block: 'center' });
+            localStorage.removeItem('activeMovieTitle');
+            localStorage.removeItem('lastFocusedEpisodeIndex');
+
+            const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
+            if (savedCardIdx !== null) {
+                const cards = document.querySelectorAll('.movie-card-horizontal');
+                if (cards[savedCardIdx]) {
+                    cards[savedCardIdx].focus();
+                    cards[savedCardIdx].scrollIntoView({ behavior: 'auto', block: 'center' });
+                }
             }
         }
 
@@ -630,9 +656,8 @@
         });
 
 
-        // ==================== ENGINE NAVIGASI REMOTE CONTROL + PEMULIHAN FOKUS OTOMATIS ====================
+        // ==================== ENGINE NAVIGASI REMOTE CONTROL + PEMULIHAN D-PAD PERMANEN ====================
         
-        // Cek secara berkala (setiap 0.5 detik), jika fokus hilang akibat keluar player, paksa pulihkan ke target asli!
         setInterval(() => {
             const modal = document.getElementById('movieModal');
             const isModalOpen = (modal.style.display === 'block');
@@ -640,18 +665,19 @@
 
             if (!activeEl || activeEl === document.body || activeEl === window) {
                 if (isModalOpen) {
-                    // Jika modal terbuka, kembalikan ke episode terakhir atau tombol play utama
-                    if (lastFocusedEpisodeIndex !== -1) {
-                        const targetEps = document.querySelector(`.episode-btn[data-index="${lastFocusedEpisodeIndex}"]`);
+                    const savedEpsIdx = localStorage.getItem('lastFocusedEpisodeIndex');
+                    if (savedEpsIdx !== null) {
+                        const targetEps = document.querySelector(`.episode-btn[data-index="${savedEpsIdx}"]`);
                         if (targetEps) targetEps.focus();
                     } else {
                         const btnPlay = document.getElementById('main-play-btn');
                         if (btnPlay && btnPlay.style.display !== 'none') btnPlay.focus();
                     }
                 } else {
-                    // Jika di beranda utama, kembalikan ke kartu film yang terakhir diklik
-                    if (lastFocusedCard) {
-                        lastFocusedCard.focus();
+                    const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
+                    const cards = document.querySelectorAll('.movie-card-horizontal');
+                    if (savedCardIdx !== null && cards[savedCardIdx]) {
+                        cards[savedCardIdx].focus();
                     }
                 }
             }
@@ -696,7 +722,6 @@
                 return;
             }
 
-            // NAVIGASI URUTAN PADA DAFTAR EPISODE SERI
             if (isModalOpen && activeEl.classList.contains('episode-btn')) {
                 if (e.key === 'ArrowDown') {
                     if (currentIndex < focusableElements.length - 1) {
@@ -715,7 +740,6 @@
                 }
             }
 
-            // NAVIGASI SPASIAL UMUM BERANDA
             switch(e.key) {
                 case 'ArrowLeft':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kiri');
