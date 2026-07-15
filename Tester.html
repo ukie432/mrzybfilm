@@ -189,24 +189,6 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-lihat-semua {
-            background: transparent;
-            border: none;
-            color: var(--highlight-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 4px 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            border-radius: 4px;
-        }
-        .btn-lihat-semua:focus {
-            outline: none;
-            background-color: var(--highlight-color);
-            color: white;
-            box-shadow: 0 0 10px var(--highlight-color);
-        }
-
         .movies-slider-horizontal {
             display: flex;
             gap: 16px;
@@ -243,7 +225,7 @@
             z-index: 99;
         }
 
-        /* PERBAIKAN POSTER: Ditambahkan tinggi cadangan (fallback) untuk Android TV jadul */
+        /* TINGGI CADANGAN UNTUK WEBVIEW SMART TV JADUL */
         .movie-poster-horizontal {
             width: 100%;
             height: 110px; 
@@ -252,7 +234,6 @@
             display: block;
         }
 
-        /* TV modern yang mendukung aspect ratio akan memakai standar 16/10 agar tetap proporsional */
         @supports (aspect-ratio: 16/10) {
             .movie-poster-horizontal {
                 aspect-ratio: 16/10;
@@ -305,7 +286,7 @@
             padding-bottom: 60px;
         }
         .category-grid .movie-card-horizontal {
-            flex: 0 0 calc(14.28% - 18px); /* 7 poster rapi sejajar ke kanan */
+            flex: 0 0 calc(14.28% - 18px); 
             min-width: 140px;
         }
 
@@ -552,7 +533,6 @@
                 <div class="category-row" id="row-dubbing">
                     <div class="row-header">
                         <h2 class="row-title">Film Dubbing</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('film_dubbing', 'Film Dubbing')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-dubbing"></div>
                 </div>
@@ -560,7 +540,6 @@
                 <div class="category-row" id="row-indo">
                     <div class="row-header">
                         <h2 class="row-title">Film Indonesia</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('film_indo', 'Film Indonesia')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-indo"></div>
                 </div>
@@ -568,7 +547,6 @@
                 <div class="category-row" id="row-animasi">
                     <div class="row-header">
                         <h2 class="row-title">Film Animasi</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('film_animasi', 'Film Animasi')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-animasi"></div>
                 </div>
@@ -576,7 +554,6 @@
                 <div class="category-row" id="row-lawas">
                     <div class="row-header">
                         <h2 class="row-title">Film Indo Lawas</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('indo_lawas', 'Film Indo Lawas')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-lawas"></div>
                 </div>
@@ -584,7 +561,6 @@
                 <div class="category-row" id="row-series">
                     <div class="row-header">
                         <h2 class="row-title">Film Series Pilihan</h2>
-                        <button class="btn-lihat-semua" tabindex="0" onclick="bukaHalamanKategori('series_all', 'Film Series Pilihan')">Lihat Semua</button>
                     </div>
                     <div class="movies-slider-horizontal" id="slider-series"></div>
                 </div>
@@ -671,7 +647,6 @@
             }
         }
 
-        // Beralih ke halaman list film per kategori (Mendukung 500+ film tanpa lag)
         function bukaHalamanKategori(kategoriKey, namaLabel) {
             activeView = 'category';
             
@@ -687,7 +662,6 @@
 
             document.getElementById('current-category-title').textContent = namaLabel;
 
-            // Saring semua data dari database (Mendukung string "true" / boolean true)
             let filteredData = [];
             if (kategoriKey === 'series_all') {
                 filteredData = databaseFilm.filter(m => m.is_series === true || String(m.is_series) === 'true');
@@ -701,7 +675,6 @@
                 return;
             }
 
-            // Render menjadi layout Grid Vertikal agar TV lancar mengolah ratusan data
             gridContainer.innerHTML = filteredData.map(item => {
                 const posterUrl = item.poster || item.poster_portrait || '';
                 return `
@@ -725,12 +698,29 @@
                 const response = await fetch(JSON_URL);
                 databaseFilm = await response.json();
                 kelolaBarisKategori();
+                buatEventSidebarFocus();
             } catch (error) {
                 console.error("Gagal mengambil database JSON:", error);
             }
         }
 
-        // Home View: Dibatasi maksimal 15 film di halaman utama agar aplikasi enteng
+        // Membantu interaksi focus/blur sidebar secara dynamic
+        function buatEventSidebarFocus() {
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('focus', () => {
+                    document.getElementById('main-sidebar').classList.add('expanded');
+                });
+                item.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const active = document.activeElement;
+                        if (!active || !active.classList.contains('sidebar-item')) {
+                            document.getElementById('main-sidebar').classList.remove('expanded');
+                        }
+                    }, 50);
+                });
+            });
+        }
+
         function kelolaBarisKategori() {
             const isHome = (m) => m.halaman_depan === true || String(m.halaman_depan) === 'true';
 
@@ -974,7 +964,8 @@
                 return;
             }
 
-            const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item, .btn-lihat-semua')).filter(el => el.offsetWidth > 0);
+            // MENGHINDARI TOMBOL LIHAT SEMUA YANG SUDAH DIHAPUS DARI DAFTAR ELEMEN FOKUS
+            const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
             const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
@@ -988,6 +979,27 @@
             if (active) {
                 const isSidebar = active.classList.contains('sidebar-item');
                 const isPoster = active.classList.contains('movie-card-horizontal');
+
+                // PERBAIKAN: JIKA BERADA DI SIDEBAR DAN DITEKAN KANAN, SIDEBAR MENUTUP DAN KEMBALI KE KONTEN
+                if (isSidebar && e.key === 'ArrowRight') {
+                    const sidebar = document.getElementById('main-sidebar');
+                    sidebar.classList.remove('expanded'); // Tutup sidebar secara paksa
+                    
+                    let target = null;
+                    if (activeView === 'home') {
+                        target = document.querySelector('#page-home-view .movie-card-horizontal');
+                    } else if (activeView === 'category') {
+                        target = document.querySelector('#page-category-view .movie-card-horizontal');
+                    } else if (activeView === 'search') {
+                        target = document.getElementById('search-main-input');
+                    }
+                    
+                    if (target) {
+                        target.focus();
+                        e.preventDefault();
+                        return;
+                    }
+                }
 
                 if (isSidebar && e.key === 'ArrowDown') {
                     const settingBtn = document.getElementById('menu-pengaturan');
