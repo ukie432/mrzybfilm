@@ -362,85 +362,18 @@
         .modal-title { font-size: 1.8rem; }
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
-        .movie-details { 
-            display: flex; 
-            gap: 2rem; 
-            width: 100%;
-            overflow: hidden; /* Mengunci elemen di dalam border modal */
-        }
+        .movie-details { display: flex; gap: 2rem; }
         .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-      .movie-info-large { 
-            flex: 1; 
-            min-width: 0; /* Mengizinkan container mengecil mengikuti flex parent */
-            overflow: hidden;
-        }
+        .movie-info-large { flex: 1; }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
         .movie-description { font-size: 1.1rem; line-height: 1.5; margin-bottom: 2rem; color: #bbb; }
         .action-button { padding: 0.7rem 1.8rem; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border: 2px solid transparent; }
         .play-button { background-color: var(--highlight-color); color: white; }
-        ./* --- UPDATE LAYOUT EPISODE HORIZONTAL --- */
-        .episode-section { 
-            margin-top: 2rem; 
-            border-top: 1px solid #333; 
-            padding-top: 1.5rem; 
-            width: 100%;
-        }
-        .episode-headline { 
-            color: var(--highlight-color); 
-            font-size: 1.4rem; 
-            margin-bottom: 0.8rem; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-      .episode-grid { 
-            display: flex; 
-            gap: 12px; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            padding: 10px 5px;
-            scrollbar-width: none;
-            width: 100%;
-            position: relative;
-        }
-        .episode-grid::-webkit-scrollbar { 
-            display: none; /* Hilangkan scrollbar di Chrome/Safari */
-        }
-        .episode-btn { 
-            background-color: var(--accent-color); 
-            color: white; 
-            border: 2px solid #333; 
-            padding: 1rem; 
-            min-width: 110px; /* Lebar kotak episode berbentuk persegi/sedikit landscape */
-            height: 75px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 6px; 
-            font-size: 1.3rem; 
-            font-weight: 600;
-            cursor: pointer;
-            flex-shrink: 0; /* Mencegah kotak menyusut */
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-        }
-        .episode-btn span {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90px;
-            margin-top: 2px;
-        }
-        .episode-btn:focus {
-            outline: none;
-            transform: scale(1.08);
-            border-color: #ffffff;
-            box-shadow: 0 0 15px var(--highlight-color);
-            background-color: #1a1a1a;
-        }
+        .episode-section { margin-top: 1.5rem; border-top: 1px solid #333; padding-top: 1rem; }
+        .episode-headline { color: var(--highlight-color); font-size: 1.4rem; margin-bottom: 0.8rem; }
+        .episode-grid { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
+        .episode-btn { background-color: var(--accent-color); color: white; border: 2px solid #333; padding: 0.7rem 1.2rem; width: 100%; text-align: left; border-radius: 4px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -723,30 +656,20 @@
 
             if (item.is_series === true && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-                btnPlayUtama.style.display = 'none'; 
-                areaSeri.style.display = 'block';    
-                
-                // Merubah isi menjadi kotak berjejer ke samping (Hanya nomor EPS besar & judul kecil di bawahnya)
+                btnPlayUtama.style.display = 'none'; areaSeri.style.display = 'block';    
                 gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
                     <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarVideo('${eps.video}')">
-                        <div>${eps.eps_num}</div>
-                        <span>${eps.eps_title}</span>
+                        <i class="fas fa-play-circle"></i> <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
                     </button>
                 `).join('');
             } else {
                 document.getElementById('modalTypeBadge').textContent = "Detail Film";
-                btnPlayUtama.style.display = 'flex'; 
-                areaSeri.style.display = 'none';     
+                btnPlayUtama.style.display = 'flex'; areaSeri.style.display = 'none';     
             }
-            
             document.getElementById('movieModal').style.display = 'block';
             setTimeout(() => {
-                if (item.is_series) {
-                    const firstEps = document.querySelector('.episode-btn');
-                    if(firstEps) firstEps.focus();
-                } else {
-                    btnPlayUtama.focus();
-                }
+                if (item.is_series) document.querySelector('.episode-btn').focus();
+                else btnPlayUtama.focus();
             }, 200);
         }
 
@@ -759,61 +682,16 @@
             else window.open(url, '_blank');
         }
 
-// --- NAVIGATION D-PAD ENGINE (PERBAIKAN EPISODE HORIZONTAL SCROLL) ---
+        // --- NAVIGATION D-PAD ENGINE (DENGAN KLIP DAN PENGUNCI BARIS ATAS) ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
-            const active = document.activeElement;
-
-            // KONTROL KHUSUS DALAM MODAL
             if (modal.style.display === 'block') {
-                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); return; }
-                
-                // Jika sedang fokus di tombol episode, jalankan navigasi linear khusus horizontal
-                if (active && active.classList.contains('episode-btn')) {
-                    const episodes = Array.from(document.querySelectorAll('.episode-btn'));
-                    const currEpsIdx = episodes.indexOf(active);
-
-                    if (e.key === 'ArrowRight' && currEpsIdx < episodes.length - 1) {
-                        const nextEps = episodes[currEpsIdx + 1];
-                        nextEps.focus();
-                        nextEps.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        e.preventDefault();
-                        return;
-                    }
-                    if (e.key === 'ArrowLeft' && currEpsIdx > 0) {
-                        const prevEps = episodes[currEpsIdx - 1];
-                        prevEps.focus();
-                        prevEps.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        e.preventDefault();
-                        return;
-                    }
-                    if (e.key === 'ArrowUp') {
-                        // Kembali ke tombol silang atau elemen atas modal jika ada
-                        const closeBtn = document.querySelector('.close-modal');
-                        if(closeBtn) closeBtn.focus();
-                        e.preventDefault();
-                        return;
-                    }
-                    if (e.key === 'Enter') {
-                        active.click();
-                        e.preventDefault();
-                        return;
-                    }
-                    return; // Blokir navigasi global saat di area episode agar tidak acak
-                }
-                
-                // Navigasi standar untuk elemen modal non-episode (tombol close / play utama)
-                const modalFocusable = Array.from(modal.querySelectorAll('[tabindex="0"], .episode-btn, .close-modal, .play-button')).filter(el => el.offsetWidth > 0);
-                let mIdx = modalFocusable.indexOf(active);
-                if (e.key === 'ArrowDown') {
-                    const firstEps = document.querySelector('.episode-btn');
-                    if(firstEps) { firstEps.focus(); e.preventDefault(); }
-                }
+                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); }
                 return; 
             }
 
-            // KONTROL HALAMAN UTAMA (HOME & SEARCH)
             const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
+            const active = document.activeElement;
             const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
@@ -836,9 +714,10 @@
                     nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
                     break;
                 case 'ArrowUp':
+                    // PERBAIKAN PROTEKSI ATAS: Cegah pencarian ke sidebar jika berada di poster baris teratas
                     if (active && active.closest('#row-pilihan')) {
                         e.preventDefault();
-                        return;
+                        return; // Dikunci agar bar tidak terbuka/sidebar tidak terpilih secara otomatis
                     }
                     nextIdx = cariElemenTerdekat(active, focusable, 'atas');
                     break;
