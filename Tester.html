@@ -881,49 +881,91 @@
 
     <script>
         // MASUKKAN URL RAW JSON GITHUB ANDA DI SINI
-        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/data/Tester.json'; 
+        // 1. Variabel global untuk menampung data film dari JSON lokal
+let allMovies = [];
 
-        let databaseFilm = [];
+// 2. Fungsi untuk mengambil data dari folder data/Tester.json
+async function loadMoviesFromJSON() {
+    // Menggunakan path lokal/relatif sesuai permintaan Anda
+    const url = 'data/Tester.json'; 
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Gagal memuat file data/Tester.json. Pastikan folder dan file sudah ada.');
+        
+        allMovies = await response.json();
+        console.log('Data film berhasil dimuat dari lokal:', allMovies);
+        
+        // Render semua film pertama kali saat halaman dibuka
+        renderMovies(allMovies); 
+    } catch (error) {
+        console.error('Error saat mengambil data:', error);
+    }
+}
 
-        // Ambil data otomatis saat web dibuka
-        async function fetchMoviesData() {
-            try {
-                const response = await fetch(GITHUB_JSON_URL);
-                databaseFilm = await response.json();
-                
-                // Tampilkan film-film default untuk Halaman Depan
-                renderMovies(databaseFilm.filter(m => m.halaman_depan === true));
-            } catch (error) {
-                console.error("Gagal memuat JSON GitHub:", error);
-            }
-        }
+// Jalankan fungsi setelah seluruh dokumen HTML selesai dimuat browser
+window.addEventListener('DOMContentLoaded', loadMoviesFromJSON);
 
-        // Fungsi mencetak Card Film menggunakan struktur tag HTML asli milik Anda
-        function renderMovies(moviesList) {
-            const grid = document.getElementById('movies-display-grid');
-            if (moviesList.length === 0) {
-                grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">No se encontraron películas.</p>`;
-                return;
-            }
+// 3. Logika Fitur Pencarian Dinamis
+const searchInput = document.getElementById('search-input');
 
-            grid.innerHTML = moviesList.map(movie => `
-                <div class="movie-card" onclick="openModal('${movie.titulo}')">
-                    <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${movie.titulo}</h3>
-                        <div class="movie-meta">
-                            <span>${movie.year}</span>
-                            <span class="movie-rating"><i class="fas fa-star"></i> ${movie.rating}</span>
-                        </div>
-                    </div>
-                    <div class="movie-overlay">
-                        <div class="overlay-icons">
-                            <i class="fas fa-play" onclick="event.stopPropagation(); openModal('${movie.titulo}')"></i>
-                            <i class="fas fa-plus" onclick="event.stopPropagation(); addToFavorites('${movie.titulo}')"></i>
-                            <i class="fas fa-info-circle" onclick="event.stopPropagation(); openModal('${movie.titulo}')"></i>
-                        </div>
-                        <p class="overlay-description">${movie.description}</p>
-                    </div>
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.trim().toLowerCase();
+    
+    // Jika kolom pencarian kosong, tampilkan kembali seluruh film
+    if (searchTerm === '') {
+        renderMovies(allMovies); 
+        return;
+    }
+
+    // Lakukan filter pencarian berdasarkan judul (title) atau deskripsi (description)
+    const filteredMovies = allMovies.filter(movie => {
+        const titleMatch = movie.title && movie.title.toLowerCase().includes(searchTerm);
+        const descMatch = movie.description && movie.description.toLowerCase().includes(searchTerm);
+        return titleMatch || descMatch;
+    });
+
+    // Tampilkan hasil pencarian ke container HTML
+    if (filteredMovies.length > 0) {
+        renderMovies(filteredMovies);
+    } else {
+        // Tampilkan pesan jika film yang dicari tidak ditemukan
+        const container = document.getElementById('popular-movies');
+        container.innerHTML = `<div class="no-results" style="padding: 2rem; color: #b8b8b8; text-align: center; width: 100%;">Film "${e.target.value}" tidak ditemukan.</div>`;
+    }
+});
+
+// 4. Fungsi untuk Merender/Membuat Kartu Film Secara Otomatis ke HTML
+function renderMovies(moviesList) {
+    const container = document.getElementById('popular-movies'); 
+    container.innerHTML = ''; // Bersihkan kontainer lama sebelum menulis data baru
+
+    moviesList.forEach(movie => {
+        const movieCard = document.createElement('div');
+        movieCard.className = 'movie-card';
+        movieCard.onclick = () => openModal(movie.title);
+
+        // Menyesuaikan properti yang diambil (title, poster, year, rating, description)
+        movieCard.innerHTML = `
+            <img src="${movie.poster || movie.image || 'https://via.placeholder.com/500x750?text=No+Poster'}" alt="${movie.title}" class="movie-poster">
+            <div class="movie-info">
+                <h3 class="movie-title">${movie.title}</h3>
+                <div class="movie-meta">
+                    <span>${movie.year || ''}</span>
+                    <span class="movie-rating"><i class="fas fa-star"></i> ${movie.rating || '0.0'}</span>
+                </div>
+            </div>
+            <div class="movie-overlay">
+                <div class="overlay-icons">
+                    <i class="fas fa-play" onclick="event.stopPropagation(); openModal('${movie.title}')"></i>
+                    <i class="fas fa-plus" onclick="event.stopPropagation(); addToFavorites('${movie.title}')"></i>
+                    <i class="fas fa-info-circle" onclick="event.stopPropagation(); openModal('${movie.title}')"></i>
+                </div>
+                <p class="overlay-description">${movie.description || ''}</p>
+            </div>
+        `;
+        container.appendChild(movieCard);
+    });
+}
                 </div>
             `).join('');
         }
