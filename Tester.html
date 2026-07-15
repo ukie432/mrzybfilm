@@ -443,47 +443,22 @@
             box-shadow: 0 0 15px var(--highlight-color);
             background-color: #1a1a1a;
         }
-        
-        
-        
-        
-        
-       /* Efek Tombol Favorit / Rating */
-.favorite-btn {
-    background: transparent;
-    border: 2px solid transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 1.1rem;
-    transition: all 0.2s ease;
-}
-
-/* Saat tombol favorit disorot/fokus menggunakan D-pad */
-.favorite-btn:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: #ffffff;
-    color: #fff;
-    transform: scale(1.08);
-    box-shadow: 0 0 15px var(--highlight-color);
-}
-
-/* Warna bintang ketika film ini sudah difavoritkan */
-.favorite-btn.is-active i {
-    color: #FFD700; /* Warna Emas */
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-}
-.favorite-btn.is-active span {
-    color: #ffffff;
-} 
-        
-        
     </style>
+    
+    
+    /* Tombol Favorit Baru */
+.favorite-btn {
+    background-color: #2a2a2a;
+    color: white;
+    margin-left: 15px; /* Memberikan jarak dari tombol Putar Film */
+}
+
+/* Warna merah premium saat film sudah masuk daftar favorit */
+.favorite-btn.is-active {
+    background-color: var(--highlight-color); /* Merah */
+    color: white;
+}
+    
 </head>
 <body>
 
@@ -506,9 +481,9 @@
             <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
                 <i class="fas fa-cat"></i> <span>Anime</span>
             </button>
-           <button class="sidebar-item" id="menu-koleksi" tabindex="0" onclick="tampilkanKoleksiSaya()">
-    <i class="fas fa-star"></i> <span>Koleksi Saya</span>
-</button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-star"></i> <span>Koleksi Saya</span>
+            </button>
             <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
                 <i class="fas fa-gem"></i> <span>Pusat VIP</span>
             </button>
@@ -580,17 +555,21 @@
                         <div class="movie-meta-large">
                             <span id="modalYear">Tahun</span>
                             <span id="modalDuration">Durasi</span>
-<button class="favorite-btn" id="modalRating" tabindex="0" onclick="toggleFavorit()">
-    <i class="fas fa-star"></i> <span id="rating-text">Rating</span>
-</button>
+                            <span id="modalRating">Rating</span>
                             <span id="modalGenre">Genre</span>
                         </div>
                         <p class="movie-description" id="modalDescription">Deskripsi...</p>
-                        <div class="movie-actions">
-                            <button class="action-button play-button" id="main-play-btn" tabindex="0" onclick="putarFilmTunggal()">
-                                <i class="fas fa-play"></i> Putar Film
-                            </button>
-                        </div>
+                       <div class="movie-actions">
+    <!-- Tombol Putar -->
+    <button class="action-button play-button" id="main-play-btn" tabindex="0" onclick="putarFilmTunggal()">
+        <i class="fas fa-play"></i> Putar Film
+    </button>
+    
+    <!-- Tombol Favorit Baru (Bukan dari rating) -->
+    <button class="action-button favorite-btn" id="main-fav-btn" tabindex="0" onclick="toggleFavorit()">
+        <i class="far fa-heart"></i> <span>Tambah Favorit</span>
+    </button>
+</div>
                         <div class="episode-section" id="episode-list-wrapper" style="display: none;">
                             <h4 class="episode-headline">Daftar Episode</h4>
                             <div class="episode-grid" id="episode-grid"></div>
@@ -758,21 +737,22 @@
     document.getElementById('modalPoster').src = item.poster_portrait ? item.poster_portrait : item.poster;
     document.getElementById('modalYear').textContent = item.year;
     document.getElementById('modalDuration').textContent = item.duration;
+    document.getElementById('modalRating').innerHTML = `<i class="fas fa-star"></i> ${item.rating}`; // Kembali ke rating asli
     document.getElementById('modalGenre').textContent = item.genre;
     document.getElementById('modalDescription').textContent = item.description;
 
-    // --- LOGIKA TOMBOL FAVORIT ---
-    const tombolFav = document.getElementById('modalRating');
-    const teksRating = document.getElementById('rating-text');
-    
-    teksRating.textContent = item.rating; // Tetap menampilkan angka rating asli
-
-    // Cek apakah film ini sudah ada di daftar favorit
+    // --- LOGIKA TOMBOL FAVORIT BARU ---
+    const btnFav = document.getElementById('main-fav-btn');
     const sudahFavorit = listFavorit.some(fav => fav.titulo === item.titulo);
+
     if (sudahFavorit) {
-        tombolFav.classList.add('is-active');
+        btnFav.classList.add('is-active');
+        btnFav.querySelector('span').textContent = "Hapus Favorit";
+        btnFav.querySelector('i').className = "fas fa-heart"; // Ikon hati penuh
     } else {
-        tombolFav.classList.remove('is-active');
+        btnFav.classList.remove('is-active');
+        btnFav.querySelector('span').textContent = "Tambah Favorit";
+        btnFav.querySelector('i').className = "far fa-heart"; // Ikon hati kosong
     }
 
     const btnPlayUtama = document.getElementById('main-play-btn');
@@ -781,7 +761,8 @@
 
     if (item.is_series === true && item.episodes) {
         document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-        btnPlayUtama.style.display = 'none'; areaSeri.style.display = 'block';    
+        btnPlayUtama.style.display = 'none'; 
+        areaSeri.style.display = 'block';    
         gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
             <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarVideo('${eps.video}')">
                 <i class="fas fa-play-circle"></i> <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
@@ -789,53 +770,51 @@
         `).join('');
     } else {
         document.getElementById('modalTypeBadge').textContent = "Detail Film";
-        btnPlayUtama.style.display = 'flex'; areaSeri.style.display = 'none';     
+        btnPlayUtama.style.display = 'flex'; 
+        areaSeri.style.display = 'none';     
     }
+    
     document.getElementById('movieModal').style.display = 'block';
     setTimeout(() => {
-        // Fokuskan langsung ke tombol favorit agar mudah diakses remote
-        tombolFav.focus();
+        if (item.is_series) {
+            document.querySelector('.episode-btn').focus();
+        } else {
+            btnPlayUtama.focus();
+        }
     }, 200);
 }
 
         function closeModal() { document.getElementById('movieModal').style.display = 'none'; }
         function putarFilmTunggal() { if (dataFilmAktif) putarVideo(dataFilmAktif.video); }
         
-        function putarVideo(url) {
-            if (!url) return alert("Link video rusak!");
-            if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
-            else window.open(url, '_blank');
-        }
-        
-        // Fungsi untuk menambah atau menghapus film dari daftar favorit
-function toggleFavorit() {
+        function toggleFavorit() {
     if (!dataFilmAktif) return;
 
     const index = listFavorit.findIndex(fav => fav.titulo === dataFilmAktif.titulo);
-    const tombolFav = document.getElementById('modalRating');
+    const btnFav = document.getElementById('main-fav-btn');
 
     if (index === -1) {
-        // Jika belum ada, tambahkan ke list
+        // Tambahkan ke favorit
         listFavorit.push(dataFilmAktif);
-        tombolFav.classList.add('is-active');
+        btnFav.classList.add('is-active');
+        btnFav.querySelector('span').textContent = "Hapus Favorit";
+        btnFav.querySelector('i').className = "fas fa-heart";
     } else {
-        // Jika sudah ada, hapus dari list
+        // Hapus dari favorit
         listFavorit.splice(index, 1);
-        tombolFav.classList.remove('is-active');
+        btnFav.classList.remove('is-active');
+        btnFav.querySelector('span').textContent = "Tambah Favorit";
+        btnFav.querySelector('i').className = "far fa-heart";
     }
 
-    // Simpan perubahan ke penyimpanan lokal browser
     localStorage.setItem('mrzyb_favorites', JSON.stringify(listFavorit));
 }
 
-// Fungsi untuk merender daftar favorit di Halaman Home ketika menu "Koleksi Saya" di-klik
 function tampilkanKoleksiSaya() {
-    // Kita ubah susunan slider halaman depan agar fokus menampilkan koleksi favorit Anda
     const sliderPilihan = document.getElementById('slider-pilihan');
     const rowPilihan = document.getElementById('row-pilihan');
     const rowHeader = rowPilihan.querySelector('.row-header') || document.createElement('div');
     
-    // Set judul baris paling atas menjadi "Koleksi Saya"
     rowHeader.className = "row-header";
     rowHeader.innerHTML = `<h2 class="row-title">Koleksi Saya (${listFavorit.length})</h2>`;
     if (!rowPilihan.contains(rowHeader)) {
@@ -849,16 +828,21 @@ function tampilkanKoleksiSaya() {
         renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', false);
     }
 
-    // Sembunyikan baris kategori lainnya agar fokus ke Koleksi Saya
+    // Sembunyikan kategori lainnya
     document.getElementById('row-dubbing').style.display = 'none';
     document.getElementById('row-indo').style.display = 'none';
     document.getElementById('row-animasi').style.display = 'none';
     document.getElementById('row-lawas').style.display = 'none';
     document.getElementById('row-series').style.display = 'none';
 
-    // Kembalikan ke tampilan Home
     switchView('home');
 }
+        
+        function putarVideo(url) {
+            if (!url) return alert("Link video rusak!");
+            if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
+            else window.open(url, '_blank');
+        }
 
         // --- NAVIGATION D-PAD ENGINE ---
         document.addEventListener('keydown', function(e) {
