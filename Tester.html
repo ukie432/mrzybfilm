@@ -160,23 +160,6 @@
                         linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 40%);
         }
 
-        .hero-content-wrapper {
-            position: absolute;
-            top: 15vh;
-            right: 5%;
-            z-index: 3;
-            text-align: right;
-            max-width: 50%;
-        }
-
-        .hero-title-display {
-            font-size: 5.5rem;
-            font-weight: 700;
-            text-shadow: 3px 3px 15px rgba(0,0,0,0.9);
-            text-transform: uppercase;
-            line-height: 0.9;
-        }
-
         /* --- STRUKTUR POSISI SLIDER POSTER --- */
         .movies-section {
             padding: 0 2.5rem;
@@ -261,13 +244,13 @@
             color: #e0e0e0;
         }
 
-        /* BARIS KHUSUS PALING ATAS (TANPA MARGIN MINUS) */
+        /* BARIS KHUSUS PALING ATAS */
         #row-pilihan {
             margin-top: 0;
             margin-bottom: 2rem;
         }
 
-        /* --- LAYOUT PENCARIAN (GAMBAR 4) --- */
+        /* --- LAYOUT PENCARIAN --- */
         .search-page-view {
             display: none;
             padding: 3rem;
@@ -427,9 +410,6 @@
             <div class="hero-container" id="hero-display-area">
                 <div class="hero-background" id="hero-bg-image"></div>
                 <div class="hero-overlay"></div>
-                <div class="hero-content-wrapper">
-                    <h1 class="hero-title-display" id="hero-title-text">-</h1>
-                </div>
             </div>
 
             <main class="movies-section" id="main-content-wrapper">
@@ -548,7 +528,7 @@
 
         function kelolaBarisKategori() {
             const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
-            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true); // Kirim parameter true khusus slider atas
+            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
 
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
@@ -571,7 +551,6 @@
             }, 300);
         }
 
-        // Ditambahkan parameteris "isPilihanAtas" untuk memisahkan logika tampilan
         function renderSlider(dataList, sliderId, rowId, isPilihanAtas) {
             const slider = document.getElementById(sliderId);
             const row = document.getElementById(rowId);
@@ -579,14 +558,12 @@
             row.style.display = 'block';
             
             if (isPilihanAtas) {
-                // Slider atas: Hanya poster murni saja
                 slider.innerHTML = dataList.map(item => `
                     <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
                         <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
                     </div>
                 `).join('');
             } else {
-                // Slider bawah: Poster dan hanya teks judul saja
                 slider.innerHTML = dataList.map(item => `
                     <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
                         <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
@@ -602,15 +579,12 @@
                     slider.querySelectorAll('.movie-card-horizontal').forEach(card => {
                         card.addEventListener('focus', function() {
                             const bgUrl = this.getAttribute('data-bg');
-                            const titleText = this.getAttribute('data-title');
                             if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
-                            if(titleText) document.getElementById('hero-title-text').textContent = titleText;
                         });
                     });
                     const firstCard = slider.querySelector('.movie-card-horizontal');
                     if(firstCard) {
                         document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstCard.getAttribute('data-bg')}')`;
-                        document.getElementById('hero-title-text').textContent = firstCard.getAttribute('data-title');
                     }
                 }, 100);
             }
