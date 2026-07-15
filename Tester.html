@@ -870,29 +870,40 @@
         });
 
         function cariElemenTerdekat(activeEl, elements, arah) {
-            const rA = activeEl.getBoundingClientRect();
-            const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
-            let terdekatIdx = -1; let jarakTerkecil = Infinity;
+    const rA = activeEl.getBoundingClientRect();
+    const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
+    let terdekatIdx = -1; let jarakTerkecil = Infinity;
 
-            elements.forEach((el, index) => {
-                if (el === activeEl) return;
-                const rB = el.getBoundingClientRect();
-                const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
-                const dx = cB.x - cA.x; const dy = cB.y - cA.y;
-                const jarak = Math.sqrt(dx * dx + dy * dy);
+    // Cek apakah elemen aktif saat ini berada di dalam Sidebar
+    const isCurrentlyInSidebar = activeEl.classList.contains('sidebar-item');
 
-                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.8) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.8) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.6) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.6) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
-                }
-            });
-            return terdekatIdx;
+    elements.forEach((el, index) => {
+        if (el === activeEl) return;
+        
+        // Proteksi: Jika menekan Atas/Bawah di area poster, JANGAN biarkan fokus melompat ke Sidebar
+        if ((arah === 'bawah' || arah === 'atas') && !isCurrentlyInSidebar) {
+            if (el.classList.contains('sidebar-item')) {
+                return; // Lewati elemen ini, jangan dihitung
+            }
         }
+
+        const rB = el.getBoundingClientRect();
+        const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
+        const dx = cB.x - cA.x; const dy = cB.y - cA.y;
+        const jarak = Math.sqrt(dx * dx + dy * dy);
+
+        if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.8) {
+            if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+        } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.8) {
+            if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+        } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.6) {
+            if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+        } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.6) {
+            if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+        }
+    });
+    return terdekatIdx;
+}
 
         window.addEventListener('load', loadDataKonten);
     </script>
