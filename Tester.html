@@ -14,6 +14,8 @@
             --highlight-color: #E50914;
             --text-color: #f1f1f1;
             --text-secondary: #b8b8b8;
+            --sidebar-width-collapsed: 70px;
+            --sidebar-width-expanded: 220px;
         }
 
         * {
@@ -28,71 +30,109 @@
             color: var(--text-color);
             overflow-x: hidden;
             padding-bottom: 50px;
+            display: flex;
         }
 
-        header {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
-            padding: 1.5rem 2rem;
-            position: absolute;
+        /* --- STYLING SIDEBAR BARU --- */
+        .sidebar {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            z-index: 100;
+            height: 100vh;
+            width: var(--sidebar-width-collapsed);
+            background: linear-gradient(to right, rgba(0,0,0,0.95), rgba(15,15,15,0.9));
+            z-index: 999;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            padding: 2rem 0;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        .logo {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--highlight-color);
-            letter-spacing: 2px;
+        /* Terbuka ketika ada class .expanded atau ketika salah satu elemen di dalamnya mendapat fokus remote */
+        .sidebar:hover,
+        .sidebar.expanded,
+        .sidebar:focus-within {
+            width: var(--sidebar-width-expanded);
+            background: rgba(10, 10, 10, 0.98);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
         }
 
-        .user-actions {
+        .sidebar-menu-wrapper {
             display: flex;
-            gap: 1.5rem;
-            align-items: center;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex: 1;
         }
 
-        .user-actions i {
-            font-size: 1.5rem;
-            color: var(--text-color);
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.3rem;
+            color: var(--text-secondary);
+            text-decoration: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .user-actions i:hover {
-            color: var(--highlight-color);
-        }
-
-        .search-container {
-            position: relative;
-            display: none;
-            width: 250px;
-        }
-
-        .search-container.active {
-            display: block;
-        }
-
-        .search-input {
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            background: transparent;
+            border-top: none; border-right: none; border-bottom: none;
             width: 100%;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            border: 1px solid #333;
-            background-color: rgba(0, 0, 0, 0.85);
-            color: white;
-            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .sidebar-item i {
+            font-size: 1.4rem;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .sidebar-item span {
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar:hover .sidebar-item span,
+        .sidebar.expanded .sidebar-item span,
+        .sidebar:focus-within .sidebar-item span {
+            opacity: 1;
+        }
+
+        .sidebar-item:focus {
             outline: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-left-color: var(--highlight-color);
+            transform: scale(1.03);
+        }
+
+        .sidebar-item.active {
+            color: var(--highlight-color);
+            font-weight: 700;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+        }
+
+        /* --- KONTEN UTAMA DIGESER KE KANAN AGAR TIDAK TERTUTUP SIDEBAR --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width-collapsed);
+            flex: 1;
+            width: calc(100% - var(--sidebar-width-collapsed));
+            transition: blur 0.3s;
         }
 
         /* --- DYNAMIC HERO BACKGROUND --- */
         .hero-container {
             position: relative;
             width: 100%;
-            height: 75vh;
+            height: 70vh;
             overflow: hidden;
             background-color: #000;
         }
@@ -115,8 +155,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,1) 100%),
-                        linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.7) 75%, rgba(0,0,0,1) 100%),
+                        linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
             z-index: 2;
         }
 
@@ -162,7 +202,6 @@
             padding-left: 8px;
         }
 
-        /* UKURAN TEKS KATEGORI DIKECILKAN */
         .row-title {
             font-size: 1.5rem; 
             color: var(--text-color);
@@ -183,7 +222,6 @@
             display: none;
         }
 
-        /* UKURAN KONTENER POSTER DIKECILKAN (Dari 240px ke 190px) */
         .movie-card-horizontal {
             background-color: var(--secondary-color);
             border-radius: 6px;
@@ -200,7 +238,7 @@
         .action-button:focus,
         .episode-btn:focus,
         .close-modal:focus,
-        .user-actions i:focus {
+        .search-input-box:focus {
             outline: none;
             transform: scale(1.08);
             box-shadow: 0 0 18px var(--highlight-color);
@@ -243,14 +281,76 @@
             color: gold;
         }
 
-        #search-results-section {
+        /* --- HALAMAN PENCARIAN BARU (GAMBAR 4) --- */
+        .search-page-view {
             display: none;
-            margin-bottom: 2rem;
+            padding: 2rem;
+            width: 100%;
+            min-height: 100vh;
         }
-        .search-grid {
+
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: #1a1a1a;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            max-width: 700px;
+            margin-bottom: 3rem;
+            border: 2px solid transparent;
+        }
+
+        .search-input-wrapper:focus-within {
+            border-color: var(--highlight-color);
+        }
+
+        .search-input-wrapper i {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .search-input-box {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 1.6rem;
+            width: 100%;
+        }
+
+        .search-popular-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        /* GRID URUTAN POPULER ANGKA (GAMBAR 4) */
+        .popular-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 20px;
+        }
+
+        .popular-card {
+            flex: 0 0 180px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background-color: var(--highlight-color);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         /* MODAL STYLING */
@@ -407,69 +507,93 @@
             margin-right: 15px;
             font-size: 1.3rem;
         }
-
-        @media (max-width: 900px) { 
-            .movie-details { flex-direction: column; } 
-            .movie-poster-large { width: 100%; height: auto; max-height: 350px; } 
-        }
     </style>
 </head>
 <body>
 
-    <div class="hero-container" id="hero-display-area">
-        <div class="hero-background" id="hero-bg-image"></div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content-wrapper">
-            <h1 class="hero-title-display" id="hero-title-text">-</h1>
+    <nav class="sidebar" id="main-sidebar">
+        <div class="sidebar-menu-wrapper">
+            <button class="sidebar-item" id="menu-cari" tabindex="0" onclick="switchView('search')">
+                <i class="fas fa-search"></i> <span>Cari</span>
+            </button>
+            <button class="sidebar-item active" id="menu-home" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-home"></i> <span>Home</span>
+            </button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-film"></i> <span>Film</span>
+            </button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-cat"></i> <span>Anime</span>
+            </button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-star"></i> <span>Koleksi Saya</span>
+            </button>
+            <button class="sidebar-item" tabindex="0" onclick="switchView('home')">
+                <i class="fas fa-gem"></i> <span>Pusat VIP</span>
+            </button>
         </div>
-    </div>
+        <div class="sidebar-footer">
+            <button class="sidebar-item" tabindex="0">
+                <i class="fas fa-cog"></i> <span>Pengaturan</span>
+            </button>
+        </div>
+    </nav>
 
-    <header>
-        <div class="logo">MRZYB TV</div>
-        <div class="user-actions">
-            <i class="fas fa-search" id="search-icon" tabindex="0"></i>
-            <div class="search-container" id="search-container">
-                <input type="text" class="search-input" placeholder="Cari judul..." id="search-input" tabindex="0">
+    <div class="main-wrapper">
+        
+        <div id="page-home-view">
+            <div class="hero-container" id="hero-display-area">
+                <div class="hero-background" id="hero-bg-image"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content-wrapper">
+                    <h1 class="hero-title-display" id="hero-title-text">-</h1>
+                </div>
             </div>
-            <i class="fas fa-user" tabindex="0"></i>
-        </div>
-    </header>
 
-    <main class="movies-section" id="main-content-wrapper">
-        <div class="category-row" id="search-results-section">
-            <div class="row-header"><h2 class="row-title" id="search-title-text">Hasil Pencarian</h2></div>
-            <div class="search-grid" id="search-grid-container"></div>
+            <main class="movies-section" id="main-content-wrapper">
+                <div class="category-row" id="row-pilihan" style="margin-top: -180px;">
+                    <div class="movies-slider-horizontal" id="slider-pilihan"></div>
+                </div>
+
+                <div class="category-row" id="row-dubbing">
+                    <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
+                    <div class="movies-slider-horizontal" id="slider-dubbing"></div>
+                </div>
+
+                <div class="category-row" id="row-indo">
+                    <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
+                    <div class="movies-slider-horizontal" id="slider-indo"></div>
+                </div>
+
+                <div class="category-row" id="row-animasi">
+                    <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
+                    <div class="movies-slider-horizontal" id="slider-animasi"></div>
+                </div>
+
+                <div class="category-row" id="row-lawas">
+                    <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
+                    <div class="movies-slider-horizontal" id="slider-lawas"></div>
+                </div>
+
+                <div class="category-row" id="row-series">
+                    <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
+                    <div class="movies-slider-horizontal" id="slider-series"></div>
+                </div>
+            </main>
         </div>
 
-        <div class="category-row" id="row-pilihan" style="margin-top: -180px;">
-            <div class="movies-slider-horizontal" id="slider-pilihan"></div>
+        <div id="page-search-view" class="search-page-view">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input-box" placeholder="Cari judul film atau genre..." id="search-main-input" tabindex="0">
+            </div>
+
+            <h2 class="search-popular-title" id="search-dynamic-title">Pencarian Populer</h2>
+            <div class="popular-grid" id="search-results-grid">
+                </div>
         </div>
 
-        <div class="category-row" id="row-dubbing">
-            <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
-            <div class="movies-slider-horizontal" id="slider-dubbing"></div>
-        </div>
-
-        <div class="category-row" id="row-indo">
-            <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
-            <div class="movies-slider-horizontal" id="slider-indo"></div>
-        </div>
-
-        <div class="category-row" id="row-animasi">
-            <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
-            <div class="movies-slider-horizontal" id="slider-animasi"></div>
-        </div>
-
-        <div class="category-row" id="row-lawas">
-            <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
-            <div class="movies-slider-horizontal" id="slider-lawas"></div>
-        </div>
-
-        <div class="category-row" id="row-series">
-            <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
-            <div class="movies-slider-horizontal" id="slider-series"></div>
-        </div>
-    </main>
+    </div>
 
     <div id="movieModal" class="modal">
         <div class="modal-content">
@@ -489,13 +613,11 @@
                             <span id="modalGenre">Genre</span>
                         </div>
                         <p class="movie-description" id="modalDescription">Deskripsi...</p>
-                        
                         <div class="movie-actions">
                             <button class="action-button play-button" id="main-play-btn" tabindex="0" onclick="putarFilmTunggal()">
                                 <i class="fas fa-play"></i> Putar Film
                             </button>
                         </div>
-
                         <div class="episode-section" id="episode-list-wrapper" style="display: none;">
                             <h4 class="episode-headline">Daftar Episode</h4>
                             <div class="episode-grid" id="episode-grid"></div>
@@ -510,6 +632,30 @@
         const JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
         let dataFilmAktif = null;
+        let activeView = 'home';
+
+        // Ganti Tampilan View Antara Home dan Pencarian
+        function switchView(viewName) {
+            activeView = viewName;
+            const homeView = document.getElementById('page-home-view');
+            const searchView = document.getElementById('page-search-view');
+            
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+
+            if (viewName === 'search') {
+                homeView.style.display = 'none';
+                searchView.style.display = 'block';
+                document.getElementById('menu-cari').classList.add('active');
+                renderPencarianPopuler();
+                setTimeout(() => document.getElementById('search-main-input').focus(), 100);
+            } else {
+                homeView.style.display = 'block';
+                searchView.style.display = 'none';
+                document.getElementById('menu-home').classList.add('active');
+                document.getElementById('search-main-input').value = "";
+                kelolaBarisKategori();
+            }
+        }
 
         async function loadDataKonten() {
             try {
@@ -541,32 +687,15 @@
             renderSlider(seriesData, 'slider-series', 'row-series');
 
             setTimeout(() => {
-                const savedMovieTitle = localStorage.getItem('activeMovieTitle');
-                
-                if (savedMovieTitle) {
-                    bukaModalDetail(savedMovieTitle);
-                } else {
-                    const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
-                    const cards = document.querySelectorAll('.movie-card-horizontal');
-                    if (savedCardIdx !== null && cards[savedCardIdx]) {
-                        cards[savedCardIdx].focus();
-                        cards[savedCardIdx].scrollIntoView({ behavior: 'auto', block: 'center' });
-                    } else if (cards.length > 0) {
-                        cards[0].focus();
-                    }
-                }
-            }, 500);
+                const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
+                if (cards.length > 0) cards[0].focus();
+            }, 300);
         }
 
         function renderSlider(dataList, sliderId, rowId) {
             const slider = document.getElementById(sliderId);
             const row = document.getElementById(rowId);
-
-            if (dataList.length === 0) {
-                row.style.display = 'none';
-                return;
-            }
-
+            if (dataList.length === 0) { row.style.display = 'none'; return; }
             row.style.display = 'block';
             
             slider.innerHTML = dataList.map(item => `
@@ -584,12 +713,10 @@
 
             if (sliderId === 'slider-pilihan') {
                 setTimeout(() => {
-                    const cards = slider.querySelectorAll('.movie-card-horizontal');
-                    cards.forEach(card => {
+                    slider.querySelectorAll('.movie-card-horizontal').forEach(card => {
                         card.addEventListener('focus', function() {
                             const bgUrl = this.getAttribute('data-bg');
                             const titleText = this.getAttribute('data-title');
-                            
                             if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
                             if(titleText) document.getElementById('hero-title-text').textContent = titleText;
                         });
@@ -598,17 +725,57 @@
             }
         }
 
+        // TAMPILAN PENCARIAN POPULER MENGGUNAKAN INDEKS NOMOR (GAMBAR 4)
+        function renderPencarianPopuler() {
+            const grid = document.getElementById('search-results-grid');
+            const dataPopuler = databaseFilm.slice(0, 7); // Ambil 7 film pertama untuk list populer
+            
+            grid.innerHTML = dataPopuler.map((item, idx) => `
+                <div class="movie-card-horizontal popular-card" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                    <div class="popular-badge">${idx + 1}</div>
+                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${item.titulo}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // FUNGSI INPUT STRING DI PENCARIAN
+        document.getElementById('search-main-input').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
+            const grid = document.getElementById('search-results-grid');
+            const title = document.getElementById('search-dynamic-title');
+
+            if (keyword === "") {
+                title.textContent = "Pencarian Populer";
+                renderPencarianPopuler();
+            } else {
+                title.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
+                const filtered = databaseFilm.filter(item => 
+                    item.titulo.toLowerCase().includes(keyword) || 
+                    item.genre.toLowerCase().includes(keyword)
+                );
+
+                if(filtered.length === 0) {
+                    grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
+                } else {
+                    grid.innerHTML = filtered.map(item => `
+                        <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                            <div class="movie-info">
+                                <h3 class="movie-title">${item.titulo}</h3>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        });
+
+        // SYSTEM DETAIL MODAL & VIDEO PLAYER
         function bukaModalDetail(judulKonten) {
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
-
-            const cards = Array.from(document.querySelectorAll('.movie-card-horizontal'));
-            const cardIndex = cards.indexOf(document.activeElement);
-            if (cardIndex !== -1) {
-                localStorage.setItem('lastFocusedCardIndex', cardIndex);
-            }
-            
-            localStorage.setItem('activeMovieTitle', judulKonten);
             dataFilmAktif = item; 
 
             document.getElementById('modalMovieTitle').textContent = item.titulo;
@@ -625,238 +792,79 @@
 
             if (item.is_series === true && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-                btnPlayUtama.style.display = 'none'; 
-                areaSeri.style.display = 'block';    
-                
+                btnPlayUtama.style.display = 'none'; areaSeri.style.display = 'block';    
                 gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
-                    <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarEpisodeDariRemote(${idx}, '${eps.video}')">
-                        <i class="fas fa-play-circle"></i>
-                        <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
+                    <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarVideo('${eps.video}')">
+                        <i class="fas fa-play-circle"></i> <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
                     </button>
                 `).join('');
             } else {
                 document.getElementById('modalTypeBadge').textContent = "Detail Film";
-                btnPlayUtama.style.display = 'flex'; 
-                areaSeri.style.display = 'none';     
-                gridEpisode.innerHTML = '';
+                btnPlayUtama.style.display = 'flex'; areaSeri.style.display = 'none';     
             }
-
             document.getElementById('movieModal').style.display = 'block';
-
             setTimeout(() => {
-                const savedEpsIdx = localStorage.getItem('lastFocusedEpisodeIndex');
-                if (item.is_series === true) {
-                    if (savedEpsIdx !== null) {
-                        const targetEps = document.querySelector(`.episode-btn[data-index="${savedEpsIdx}"]`);
-                        if (targetEps) { targetEps.focus(); return; }
-                    }
-                    const firstEps = document.querySelector('.episode-btn');
-                    if (firstEps) firstEps.focus();
-                } else {
-                    btnPlayUtama.focus();
-                }
+                if (item.is_series) document.querySelector('.episode-btn').focus();
+                else btnPlayUtama.focus();
             }, 200);
         }
 
-        function putarEpisodeDariRemote(index, urlVideo) {
-            localStorage.setItem('lastFocusedEpisodeIndex', index);
-            kirimKeAndroidStudio(urlVideo);
-        }
-
-        function putarFilmTunggal() {
-            if (dataFilmAktif && dataFilmAktif.video) {
-                kirimKeAndroidStudio(dataFilmAktif.video);
-            } else {
-                alert("Link video film tidak tersedia!");
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('movieModal').style.display = 'none';
-            localStorage.removeItem('activeMovieTitle');
-            localStorage.removeItem('lastFocusedEpisodeIndex');
-
-            const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
-            if (savedCardIdx !== null) {
-                const cards = document.querySelectorAll('.movie-card-horizontal');
-                if (cards[savedCardIdx]) {
-                    cards[savedCardIdx].focus();
-                    cards[savedCardIdx].scrollIntoView({ behavior: 'auto', block: 'center' });
-                }
-            }
-        }
-
-        function kirimKeAndroidStudio(urlMedia) {
-            if (urlMedia) {
-                if (typeof Android !== "undefined" && Android.playVideo) {
-                    Android.playVideo(urlMedia); 
-                } else {
-                    window.open(urlMedia, '_blank'); 
-                }
-            }
-        }
-
-        // PENCARIAN GLOBAL
-        const searchInput = document.getElementById('search-input');
-        const searchSection = document.getElementById('search-results-section');
-        const searchGridContainer = document.getElementById('search-grid-container');
-        const searchTitleText = document.getElementById('search-title-text');
-
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase().trim();
-            const barisReguler = ['row-pilihan', 'row-dubbing', 'row-indo', 'row-animasi', 'row-lawas', 'row-series'];
-
-            if (keyword === "") {
-                searchSection.style.display = 'none';
-                document.getElementById('hero-display-area').style.display = 'block';
-                kelolaBarisKategori(); 
-            } else {
-                barisReguler.forEach(id => document.getElementById(id).style.display = 'none');
-                document.getElementById('hero-display-area').style.display = 'none';
-                
-                const hasilFilter = databaseFilm.filter(item => 
-                    item.titulo.toLowerCase().includes(keyword) || 
-                    item.genre.toLowerCase().includes(keyword)
-                );
-
-                searchSection.style.display = 'block';
-                searchTitleText.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
-
-                if(hasilFilter.length === 0) {
-                    searchGridContainer.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
-                } else {
-                    searchGridContainer.innerHTML = hasilFilter.map(item => `
-                        <div class="movie-card-horizontal" tabindex="0" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
-                            <div class="movie-info">
-                                <h3 class="movie-title">${item.titulo}</h3>
-                                <div class="movie-meta">
-                                    <span>${item.year}</span>
-                                    <span class="movie-rating"><i class="fas fa-star"></i> ${item.rating}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-        });
-
-        const searchIcon = document.getElementById('search-icon');
-        const searchContainer = document.getElementById('search-container');
-        searchIcon.addEventListener('click', () => {
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) searchInput.focus();
-        });
-
-
-        // ==================== ENGINE NAVIGASI D-PAD STB ====================
+        function closeModal() { document.getElementById('movieModal').style.display = 'none'; }
+        function putarFilmTunggal() { if (dataFilmAktif) putarVideo(dataFilmAktif.video); }
         
-        setInterval(() => {
-            const modal = document.getElementById('movieModal');
-            const isModalOpen = (modal.style.display === 'block');
-            const activeEl = document.activeElement;
+        function putarVideo(url) {
+            if (!url) return alert("Link video rusak!");
+            if (typeof Android !== "undefined" && Android.playVideo) Android.playVideo(url);
+            else window.open(url, '_blank');
+        }
 
-            if (!activeEl || activeEl === document.body || activeEl === window) {
-                if (isModalOpen) {
-                    const savedEpsIdx = localStorage.getItem('lastFocusedEpisodeIndex');
-                    if (savedEpsIdx !== null) {
-                        const targetEps = document.querySelector(`.episode-btn[data-index="${savedEpsIdx}"]`);
-                        if (targetEps) targetEps.focus();
-                    } else {
-                        const btnPlay = document.getElementById('main-play-btn');
-                        if (btnPlay && btnPlay.style.display !== 'none') btnPlay.focus();
-                    }
-                } else {
-                    const savedCardIdx = localStorage.getItem('lastFocusedCardIndex');
-                    const cards = document.querySelectorAll('.movie-card-horizontal');
-                    if (savedCardIdx !== null && cards[savedCardIdx]) {
-                        cards[savedCardIdx].focus();
-                    }
-                }
-            }
-        }, 500);
-
+        // ================= ENGINE NAVIGASI D-PAD TV & AUTOMATIC EXPAND SIDEBAR =================
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
-            const isModalOpen = (modal.style.display === 'block');
-            
-            let selector = '[tabindex="0"], #search-icon, #search-input, .movie-card-horizontal';
-            if (isModalOpen) {
-                selector = '#movieModal .close-modal, #movieModal .action-button, #movieModal .episode-btn';
-            }
-            
-            const focusableElements = Array.from(document.querySelectorAll(selector)).filter(el => {
-                return el.offsetWidth > 0 || el.offsetHeight > 0;
-            });
-            
-            let activeEl = document.activeElement;
-
-            if (!focusableElements.includes(activeEl)) {
-                if (focusableElements.length > 0) {
-                    focusableElements[0].focus();
-                }
-                return;
+            if (modal.style.display === 'block') {
+                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); }
+                return; 
             }
 
-            const currentIndex = focusableElements.indexOf(activeEl);
-            let nextIndex = -1;
+            const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
+            const active = document.activeElement;
+            const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
-                if (isModalOpen) {
-                    closeModal();
-                    e.preventDefault();
-                }
+                if (activeView === 'search') { switchView('home'); e.preventDefault(); }
                 return;
             }
 
-            if (e.key === 'Enter') {
-                activeEl.click();
-                e.preventDefault();
-                return;
-            }
-
-            if (isModalOpen && activeEl.classList.contains('episode-btn')) {
-                if (e.key === 'ArrowDown') {
-                    if (currentIndex < focusableElements.length - 1) {
-                        focusableElements[currentIndex + 1].focus();
-                        focusableElements[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                    e.preventDefault();
-                    return;
-                } else if (e.key === 'ArrowUp') {
-                    if (currentIndex > 0) {
-                        focusableElements[currentIndex - 1].focus();
-                        focusableElements[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                    e.preventDefault();
-                    return;
-                }
-            }
-
+            let nextIdx = -1;
             switch(e.key) {
                 case 'ArrowLeft':
-                    nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kiri');
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
+                    // JIKA MENTOK PALING KIRI: Otomatis lempar fokus ke Sidebar terdekat
+                    if (nextIdx === -1 && !active.classList.contains('sidebar-item')) {
+                        const sideItems = document.querySelectorAll('.sidebar-item');
+                        if(sideItems.length > 0) sideItems[1].focus(); // Fokus ke menu Home
+                        e.preventDefault();
+                        return;
+                    }
                     break;
                 case 'ArrowRight':
-                    nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kanan');
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
                     break;
                 case 'ArrowUp':
-                    nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'atas');
+                    nextIdx = cariElemenTerdekat(active, focusable, 'atas');
                     break;
                 case 'ArrowDown':
-                    nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'bawah');
+                    nextIdx = cariElemenTerdekat(active, focusable, 'bawah');
                     break;
-                default:
+                case 'Enter':
+                    active.click();
+                    e.preventDefault();
                     return;
             }
 
-            if (nextIndex !== -1) {
-                focusableElements[nextIndex].focus();
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                    focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                } else {
-                    focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+            if (nextIdx !== -1) {
+                focusable[nextIdx].focus();
+                focusable[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
                 e.preventDefault();
             }
         });
@@ -864,32 +872,26 @@
         function cariElemenTerdekat(activeEl, elements, arah) {
             const rA = activeEl.getBoundingClientRect();
             const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
-            
-            let terdekatIndex = -1;
-            let jarakTerkecil = Infinity;
+            let terdekatIdx = -1; let jarakTerkecil = Infinity;
 
             elements.forEach((el, index) => {
                 if (el === activeEl) return;
-
                 const rB = el.getBoundingClientRect();
                 const cB = { x: rB.left + rB.width / 2, y: rB.top + rB.height / 2 };
-
-                const dx = cB.x - cA.x;
-                const dy = cB.y - cA.y;
+                const dx = cB.x - cA.x; const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.5) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.5) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.8) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
-                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.8) {
-                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
+                if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.8) {
+                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+                } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.8) {
+                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+                } else if (arah === 'bawah' && dy > 5 && Math.abs(dx) < window.innerWidth * 0.6) {
+                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
+                } else if (arah === 'atas' && dy < -5 && Math.abs(dx) < window.innerWidth * 0.6) {
+                    if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIdx = index; }
                 }
             });
-
-            return terdekatIndex;
+            return terdekatIdx;
         }
 
         window.addEventListener('load', loadDataKonten);
