@@ -85,7 +85,6 @@
             outline: none;
         }
 
-        /* --- STYLING ROW HORIZONTAL GAYA WETV --- */
         .movies-section {
             padding: 0 2rem;
             margin-top: 10px;
@@ -93,7 +92,7 @@
 
         .category-row {
             margin-bottom: 2rem;
-            display: none; /* Aktif otomatis via JavaScript */
+            display: none;
         }
 
         .row-header {
@@ -122,7 +121,6 @@
             display: none;
         }
 
-        /* --- STYLING KARTU FILM & EFEK FOKUS REMOTE --- */
         .movie-card-horizontal {
             background-color: var(--secondary-color);
             border-radius: 6px;
@@ -135,7 +133,6 @@
             border: 2px solid transparent;
         }
 
-        /* Efek fokus remote control untuk kartu film, tombol modal, dan episode */
         .movie-card-horizontal:focus,
         .action-button:focus,
         .episode-btn:focus,
@@ -183,7 +180,6 @@
             color: gold;
         }
 
-        /* Wadah Khusus Hasil Pencarian */
         #search-results-section {
             display: none;
             margin-bottom: 2rem;
@@ -194,7 +190,6 @@
             gap: 15px;
         }
 
-        /* Modal Detail Box */
         .modal {
             display: none;
             position: fixed;
@@ -369,7 +364,6 @@
     </header>
 
     <main class="movies-section" id="main-content-wrapper">
-        
         <div class="category-row" id="search-results-section">
             <div class="row-header"><h2 class="row-title" id="search-title-text">Hasil Pencarian</h2></div>
             <div class="search-grid" id="search-grid-container"></div>
@@ -399,7 +393,6 @@
             <div class="row-header"><h2 class="row-title">Film Series Pilihan</h2></div>
             <div class="movies-slider-horizontal" id="slider-series"></div>
         </div>
-
     </main>
 
     <div id="movieModal" class="modal">
@@ -431,7 +424,6 @@
                             <h4 class="episode-headline">Daftar Episode</h4>
                             <div class="episode-grid" id="episode-grid"></div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -442,7 +434,10 @@
         const JSON_URL = 'data/Tester.json'; 
         let databaseFilm = [];
         let dataFilmAktif = null;
-        let lastFocusedElementBeforeModal = null; 
+        
+        // VARIABLE MEMORI SISTEM FOKUS REMOTE
+        let lastFocusedCard = null;       // Mengingat kartu film terakhir di home
+        let lastFocusedEpisodeIndex = -1;  // Mengingat index episode terakhir yang diputar
 
         async function loadDataKonten() {
             try {
@@ -504,8 +499,10 @@
             const item = databaseFilm.find(m => m.titulo === judulKonten);
             if (!item) return;
 
-            lastFocusedElementBeforeModal = document.activeElement;
+            // Simpan kartu beranda ke memori sebelum masuk modal
+            lastFocusedCard = document.activeElement;
             dataFilmAktif = item; 
+            lastFocusedEpisodeIndex = -1; // Reset memori episode lama
 
             document.getElementById('modalMovieTitle').textContent = item.titulo;
             document.getElementById('modalPoster').src = item.poster;
@@ -524,8 +521,8 @@
                 btnPlayUtama.style.display = 'none'; 
                 areaSeri.style.display = 'block';    
                 
-                gridEpisode.innerHTML = item.episodes.map(eps => `
-                    <button class="episode-btn" tabindex="0" onclick="kirimKeAndroidStudio('${eps.video}')">
+                gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
+                    <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarEpisodeDariRemote(${idx}, '${eps.video}')">
                         <i class="fas fa-play-circle"></i>
                         <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
                     </button>
@@ -549,11 +546,10 @@
             }, 200);
         }
 
-        function closeModal() {
-            document.getElementById('movieModal').style.display = 'none';
-            if (lastFocusedElementBeforeModal) {
-                lastFocusedElementBeforeModal.focus();
-            }
+        // FUNGSI MEMUTAR EPISODE KATEGORI SERI + SIMPAN REKAMAN FOKUS INDEX
+        function putarEpisodeDariRemote(index, urlVideo) {
+            lastFocusedEpisodeIndex = index; // Ingat episode mana yang sedang diputar
+            kirimKeAndroidStudio(urlVideo);
         }
 
         function putarFilmTunggal() {
@@ -561,6 +557,15 @@
                 kirimKeAndroidStudio(dataFilmAktif.video);
             } else {
                 alert("Link video film tidak tersedia!");
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('movieModal').style.display = 'none';
+            // Paksa fokus kembali ke kartu film asal di beranda utama
+            if (lastFocusedCard) {
+                lastFocusedCard.focus();
+                lastFocusedCard.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
         }
 
@@ -625,25 +630,48 @@
         });
 
 
-// ==================== ENGINE NAVIGASI REMOTE CONTROL (D-PAD) TERBARU (ANTI-NYANGKUT) ====================
+        // ==================== ENGINE NAVIGASI REMOTE CONTROL + PEMULIHAN FOKUS OTOMATIS ====================
+        
+        // Cek secara berkala (setiap 0.5 detik), jika fokus hilang akibat keluar player, paksa pulihkan ke target asli!
+        setInterval(() => {
+            const modal = document.getElementById('movieModal');
+            const isModalOpen = (modal.style.display === 'block');
+            const activeEl = document.activeElement;
+
+            if (!activeEl || activeEl === document.body || activeEl === window) {
+                if (isModalOpen) {
+                    // Jika modal terbuka, kembalikan ke episode terakhir atau tombol play utama
+                    if (lastFocusedEpisodeIndex !== -1) {
+                        const targetEps = document.querySelector(`.episode-btn[data-index="${lastFocusedEpisodeIndex}"]`);
+                        if (targetEps) targetEps.focus();
+                    } else {
+                        const btnPlay = document.getElementById('main-play-btn');
+                        if (btnPlay && btnPlay.style.display !== 'none') btnPlay.focus();
+                    }
+                } else {
+                    // Jika di beranda utama, kembalikan ke kartu film yang terakhir diklik
+                    if (lastFocusedCard) {
+                        lastFocusedCard.focus();
+                    }
+                }
+            }
+        }, 500);
+
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
             const isModalOpen = (modal.style.display === 'block');
             
-            // Selector dibedakan secara tegas: jika modal buka, hanya ambil elemen di dalam modal saja!
             let selector = '[tabindex="0"], #search-icon, #search-input, .movie-card-horizontal';
             if (isModalOpen) {
                 selector = '#movieModal .close-modal, #movieModal .action-button, #movieModal .episode-btn';
             }
             
             const focusableElements = Array.from(document.querySelectorAll(selector)).filter(el => {
-                // Pastikan elemen tersebut memang terlihat secara fisik di layar
                 return el.offsetWidth > 0 || el.offsetHeight > 0;
             });
             
-            const activeEl = document.activeElement;
+            let activeEl = document.activeElement;
 
-            // Jika belum ada elemen terfokus atau fokus kesasar, kunci ke elemen pertama yang tersedia
             if (!focusableElements.includes(activeEl)) {
                 if (focusableElements.length > 0) {
                     focusableElements[0].focus();
@@ -654,7 +682,6 @@
             const currentIndex = focusableElements.indexOf(activeEl);
             let nextIndex = -1;
 
-            // AKSI TOMBOL BACK / KEMBALI
             if (e.key === 'Escape' || e.key === 'Backspace') {
                 if (isModalOpen) {
                     closeModal();
@@ -663,14 +690,13 @@
                 return;
             }
 
-            // AKSI TOMBOL ENTER / OK
             if (e.key === 'Enter') {
                 activeEl.click();
                 e.preventDefault();
                 return;
             }
 
-            // NAVIGASI KHUSUS DAFTAR EPISODE SERI (Navigasi Vertikal Murni / List Index)
+            // NAVIGASI URUTAN PADA DAFTAR EPISODE SERI
             if (isModalOpen && activeEl.classList.contains('episode-btn')) {
                 if (e.key === 'ArrowDown') {
                     if (currentIndex < focusableElements.length - 1) {
@@ -681,7 +707,6 @@
                     return;
                 } else if (e.key === 'ArrowUp') {
                     if (currentIndex > 0) {
-                        // Jika berada di episode pertama dan tekan atas, naik ke tombol X (close-modal) yang merupakan index 0
                         focusableElements[currentIndex - 1].focus();
                         focusableElements[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
@@ -690,7 +715,7 @@
                 }
             }
 
-            // NAVIGASI SPASIAL UMUM (Untuk Beranda Utama & Menu Atas/Pencarian)
+            // NAVIGASI SPASIAL UMUM BERANDA
             switch(e.key) {
                 case 'ArrowLeft':
                     nextIndex = cariElemenTerdekat(activeEl, focusableElements, 'kiri');
@@ -708,11 +733,8 @@
                     return;
             }
 
-            // Eksekusi pemindahan fokus jika elemen tujuan ditemukan
             if (nextIndex !== -1) {
                 focusableElements[nextIndex].focus();
-                
-                // Set sistem scroll otomatis agar posisi kursor selalu di tengah/terlihat
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     focusableElements[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 } else {
@@ -722,7 +744,6 @@
             }
         });
 
-        // RUMUS AKURASI KOORDINAT SPASIAL TV
         function cariElemenTerdekat(activeEl, elements, arah) {
             const rA = activeEl.getBoundingClientRect();
             const cA = { x: rA.left + rA.width / 2, y: rA.top + rA.height / 2 };
@@ -740,7 +761,6 @@
                 const dy = cB.y - cA.y;
                 const jarak = Math.sqrt(dx * dx + dy * dy);
 
-                // Aturan penyaringan sudut arah D-pad secara ketat agar tidak salah lompat
                 if (arah === 'kanan' && dx > 5 && Math.abs(dy) < rA.height * 1.5) {
                     if (jarak < jarakTerkecil) { jarakTerkecil = jarak; terdekatIndex = index; }
                 } else if (arah === 'kiri' && dx < -5 && Math.abs(dy) < rA.height * 1.5) {
