@@ -1014,15 +1014,32 @@
                 const isSidebar = active.classList.contains('sidebar-item');
                 const isPoster = active.classList.contains('movie-card-horizontal');
 
+                // FIX 1: JIKA DARI SIDEBAR PENCET KANAN -> DIARAHKAN KE ELEMEN TERDEKAT YANG TERLIHAT
                 if (isSidebar && e.key === 'ArrowRight') {
                     const sidebar = document.getElementById('main-sidebar');
                     sidebar.classList.remove('expanded'); 
                     
                     let target = null;
-                    if (activeView !== 'search') {
-                        target = document.querySelector('#page-home-view .movie-card-horizontal');
-                    } else {
+                    if (activeView === 'search') {
                         target = document.getElementById('search-main-input');
+                    } else {
+                        // Cari film terdekat berdasarkan posisi scroll vertikal layar saat ini
+                        const cards = Array.from(document.querySelectorAll('#page-home-view .movie-card-horizontal'));
+                        const sidebarRect = active.getBoundingClientRect();
+                        let minDiff = Infinity;
+                        
+                        cards.forEach(card => {
+                            const cardRect = card.getBoundingClientRect();
+                            // Pastikan card berada dalam area viewport aktif
+                            if (cardRect.bottom > 0 && cardRect.top < window.innerHeight) {
+                                const diff = Math.abs(cardRect.top - sidebarRect.top);
+                                if (diff < minDiff) {
+                                    minDiff = diff;
+                                    target = card;
+                                }
+                            }
+                        });
+                        if (!target && cards.length > 0) target = cards[0];
                     }
                     
                     if (target) {
@@ -1055,13 +1072,31 @@
             let nextIdx = -1;
             switch(e.key) {
                 case 'ArrowLeft':
-                    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
-                    if (nextIdx === -1 && active && !active.classList.contains('sidebar-item')) {
-                        const sideItems = document.querySelectorAll('.sidebar-item');
-                        if(sideItems.length > 0) sideItems[1].focus(); 
-                        e.preventDefault();
-                        return;
+                    // FIX 2: BILA DI GRID PALING BAWAH DIKLIK KIRI -> PAKSA KE MENU SIDEBAR YANG SEJAJAR VISUAL
+                    if (active && !active.classList.contains('sidebar-item')) {
+                        const rA = active.getBoundingClientRect();
+                        const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
+                        let targetSidebar = null;
+                        let minDiff = Infinity;
+
+                        sideItems.forEach(item => {
+                            const rI = item.getBoundingClientRect();
+                            const diff = Math.abs(rI.top - rA.top);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                targetSidebar = item;
+                            }
+                        });
+
+                        if (targetSidebar) {
+                            targetSidebar.focus();
+                            const sidebar = document.getElementById('main-sidebar');
+                            sidebar.classList.add('expanded');
+                            e.preventDefault();
+                            return;
+                        }
                     }
+                    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
                     break;
                 case 'ArrowRight':
                     nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
