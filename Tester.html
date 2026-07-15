@@ -152,29 +152,30 @@
         }
 
         .category-row {
-            margin-bottom: 2.2rem;
+            margin-bottom: 1.8rem;
             display: none;
         }
 
         .row-header {
-            margin-bottom: 0.6rem;
-            border-left: 4px solid var(--highlight-color);
-            padding-left: 10px;
+            margin-bottom: 0.4rem;
+            border-left: 3px solid var(--highlight-color);
+            padding-left: 8px;
         }
 
+        /* UKURAN TEKS KATEGORI DIKECILKAN */
         .row-title {
-            font-size: 2rem;
+            font-size: 1.5rem; 
             color: var(--text-color);
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .movies-slider-horizontal {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             overflow-x: auto;
-            padding: 10px 5px;
+            padding: 8px 4px;
             scrollbar-width: none;
         }
 
@@ -182,15 +183,16 @@
             display: none;
         }
 
+        /* UKURAN KONTENER POSTER DIKECILKAN (Dari 240px ke 190px) */
         .movie-card-horizontal {
             background-color: var(--secondary-color);
             border-radius: 6px;
             overflow: hidden;
             transition: all 0.2s ease;
             cursor: pointer;
-            flex: 0 0 240px;
+            flex: 0 0 190px; 
             position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.7);
             border: 2px solid transparent;
         }
 
@@ -201,7 +203,7 @@
         .user-actions i:focus {
             outline: none;
             transform: scale(1.08);
-            box-shadow: 0 0 20px var(--highlight-color);
+            box-shadow: 0 0 18px var(--highlight-color);
             border-color: var(--highlight-color);
             background-color: var(--accent-color);
             z-index: 99;
@@ -216,12 +218,12 @@
         }
 
         .movie-info {
-            padding: 8px 10px;
+            padding: 6px 8px;
             background-color: var(--secondary-color);
         }
 
         .movie-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -233,8 +235,8 @@
             display: flex;
             justify-content: space-between;
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-top: 3px;
+            font-size: 0.85rem;
+            margin-top: 2px;
         }
 
         .movie-rating {
@@ -248,7 +250,7 @@
         .search-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
 
         /* MODAL STYLING */
@@ -440,7 +442,6 @@
         </div>
 
         <div class="category-row" id="row-pilihan" style="margin-top: -180px;">
-            <div class="row-header"><h2 class="row-title">Pilihan Utama</h2></div>
             <div class="movies-slider-horizontal" id="slider-pilihan"></div>
         </div>
 
@@ -521,11 +522,9 @@
         }
 
         function kelolaBarisKategori() {
-            // 1. BARIS ATAS KHUSUS: Mengambil film dengan categoria "pilihan_atas" (Maksimal 6 film)
             const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
             renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan');
 
-            // 2. Baris-baris standar di bawahnya
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
             renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing');
 
@@ -541,7 +540,6 @@
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series');
 
-            // PEMULIHAN FOKUS LOCALSTORAGE STB
             setTimeout(() => {
                 const savedMovieTitle = localStorage.getItem('activeMovieTitle');
                 
@@ -584,7 +582,6 @@
                 </div>
             `).join('');
 
-            // EFEK DYNAMIC BACKGROUND HANYA DIKUNCI DI SLIDER PALING ATAS ('slider-pilihan')
             if (sliderId === 'slider-pilihan') {
                 setTimeout(() => {
                     const cards = slider.querySelectorAll('.movie-card-horizontal');
