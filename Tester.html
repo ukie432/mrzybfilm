@@ -388,6 +388,7 @@
             display: flex; 
             gap: 12px; 
             overflow-x: auto; 
+            white-space: nowrap;
             padding: 10px 5px; /* Padding agar efek zoom focus tidak terpotong */
             scrollbar-width: none; /* Hilangkan scrollbar di Firefox */
             width: 100%;
@@ -748,16 +749,61 @@
             else window.open(url, '_blank');
         }
 
-        // --- NAVIGATION D-PAD ENGINE (DENGAN KLIP DAN PENGUNCI BARIS ATAS) ---
+// --- NAVIGATION D-PAD ENGINE (PERBAIKAN EPISODE HORIZONTAL SCROLL) ---
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('movieModal');
+            const active = document.activeElement;
+
+            // KONTROL KHUSUS DALAM MODAL
             if (modal.style.display === 'block') {
-                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); }
+                if (e.key === 'Escape' || e.key === 'Backspace') { closeModal(); e.preventDefault(); return; }
+                
+                // Jika sedang fokus di tombol episode, jalankan navigasi linear khusus horizontal
+                if (active && active.classList.contains('episode-btn')) {
+                    const episodes = Array.from(document.querySelectorAll('.episode-btn'));
+                    const currEpsIdx = episodes.indexOf(active);
+
+                    if (e.key === 'ArrowRight' && currEpsIdx < episodes.length - 1) {
+                        const nextEps = episodes[currEpsIdx + 1];
+                        nextEps.focus();
+                        nextEps.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.key === 'ArrowLeft' && currEpsIdx > 0) {
+                        const prevEps = episodes[currEpsIdx - 1];
+                        prevEps.focus();
+                        prevEps.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.key === 'ArrowUp') {
+                        // Kembali ke tombol silang atau elemen atas modal jika ada
+                        const closeBtn = document.querySelector('.close-modal');
+                        if(closeBtn) closeBtn.focus();
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.key === 'Enter') {
+                        active.click();
+                        e.preventDefault();
+                        return;
+                    }
+                    return; // Blokir navigasi global saat di area episode agar tidak acak
+                }
+                
+                // Navigasi standar untuk elemen modal non-episode (tombol close / play utama)
+                const modalFocusable = Array.from(modal.querySelectorAll('[tabindex="0"], .episode-btn, .close-modal, .play-button')).filter(el => el.offsetWidth > 0);
+                let mIdx = modalFocusable.indexOf(active);
+                if (e.key === 'ArrowDown') {
+                    const firstEps = document.querySelector('.episode-btn');
+                    if(firstEps) { firstEps.focus(); e.preventDefault(); }
+                }
                 return; 
             }
 
+            // KONTROL HALAMAN UTAMA (HOME & SEARCH)
             const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
-            const active = document.activeElement;
             const currIdx = focusable.indexOf(active);
 
             if (e.key === 'Escape' || e.key === 'Backspace') {
@@ -780,10 +826,9 @@
                     nextIdx = cariElemenTerdekat(active, focusable, 'kanan');
                     break;
                 case 'ArrowUp':
-                    // PERBAIKAN PROTEKSI ATAS: Cegah pencarian ke sidebar jika berada di poster baris teratas
                     if (active && active.closest('#row-pilihan')) {
                         e.preventDefault();
-                        return; // Dikunci agar bar tidak terbuka/sidebar tidak terpilih secara otomatis
+                        return;
                     }
                     nextIdx = cariElemenTerdekat(active, focusable, 'atas');
                     break;
