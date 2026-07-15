@@ -359,18 +359,85 @@
         .modal-title { font-size: 1.8rem; }
         .close-modal { font-size: 2.2rem; cursor: pointer; padding: 0 10px; }
         .modal-body { padding: 2rem; }
-        .movie-details { display: flex; gap: 2rem; }
+        .movie-details { 
+            display: flex; 
+            gap: 2rem; 
+            width: 100%;
+            overflow: hidden; /* Mengunci elemen di dalam border modal */
+        }
         .movie-poster-large { width: 220px; height: 330px; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-        .movie-info-large { flex: 1; }
+     .movie-info-large { 
+            flex: 1; 
+            min-width: 0; /* Mengizinkan container mengecil mengikuti flex parent */
+            overflow: hidden;
+        }
         .movie-title-large { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .movie-meta-large { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.1rem; }
         .movie-description { font-size: 1.1rem; line-height: 1.5; margin-bottom: 2rem; color: #bbb; }
         .action-button { padding: 0.7rem 1.8rem; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border: 2px solid transparent; }
         .play-button { background-color: var(--highlight-color); color: white; }
-        .episode-section { margin-top: 1.5rem; border-top: 1px solid #333; padding-top: 1rem; }
-        .episode-headline { color: var(--highlight-color); font-size: 1.4rem; margin-bottom: 0.8rem; }
-        .episode-grid { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
-        .episode-btn { background-color: var(--accent-color); color: white; border: 2px solid #333; padding: 0.7rem 1.2rem; width: 100%; text-align: left; border-radius: 4px; font-size: 1.1rem; }
+        /* --- UPDATE LAYOUT EPISODE HORIZONTAL --- */
+        .episode-section { 
+            margin-top: 2rem; 
+            border-top: 1px solid #333; 
+            padding-top: 1.5rem; 
+            width: 100%;
+        }
+        .episode-headline { 
+            color: var(--highlight-color); 
+            font-size: 1.4rem; 
+            margin-bottom: 0.8rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+     .episode-grid { 
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            padding: 10px 5px;
+            scrollbar-width: none;
+            width: 100%;
+            position: relative;
+        }
+        .episode-grid::-webkit-scrollbar { 
+            display: none; /* Hilangkan scrollbar di Chrome/Safari */
+        }
+        .episode-btn { 
+            background-color: var(--accent-color); 
+            color: white; 
+            border: 2px solid #333; 
+            padding: 1rem; 
+            min-width: 110px; /* Lebar kotak episode berbentuk persegi/sedikit landscape */
+            height: 75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px; 
+            font-size: 1.3rem; 
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0; /* Mencegah kotak menyusut */
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .episode-btn span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90px;
+            margin-top: 2px;
+        }
+        .episode-btn:focus {
+            outline: none;
+            transform: scale(1.08);
+            border-color: #ffffff;
+            box-shadow: 0 0 15px var(--highlight-color);
+            background-color: #1a1a1a;
+        }
     </style>
 </head>
 <body>
@@ -653,20 +720,30 @@
 
             if (item.is_series === true && item.episodes) {
                 document.getElementById('modalTypeBadge').textContent = "Detail Seri";
-                btnPlayUtama.style.display = 'none'; areaSeri.style.display = 'block';    
+                btnPlayUtama.style.display = 'none'; 
+                areaSeri.style.display = 'block';    
+                
+                // Merubah isi menjadi kotak berjejer ke samping (Hanya nomor EPS besar & judul kecil di bawahnya)
                 gridEpisode.innerHTML = item.episodes.map((eps, idx) => `
                     <button class="episode-btn" tabindex="0" data-index="${idx}" onclick="putarVideo('${eps.video}')">
-                        <i class="fas fa-play-circle"></i> <span><strong>${eps.eps_num}</strong> - ${eps.eps_title}</span>
+                        <div>${eps.eps_num}</div>
+                        <span>${eps.eps_title}</span>
                     </button>
                 `).join('');
             } else {
                 document.getElementById('modalTypeBadge').textContent = "Detail Film";
-                btnPlayUtama.style.display = 'flex'; areaSeri.style.display = 'none';     
+                btnPlayUtama.style.display = 'flex'; 
+                areaSeri.style.display = 'none';     
             }
+            
             document.getElementById('movieModal').style.display = 'block';
             setTimeout(() => {
-                if (item.is_series) document.querySelector('.episode-btn').focus();
-                else btnPlayUtama.focus();
+                if (item.is_series) {
+                    const firstEps = document.querySelector('.episode-btn');
+                    if(firstEps) firstEps.focus();
+                } else {
+                    btnPlayUtama.focus();
+                }
             }, 200);
         }
 
