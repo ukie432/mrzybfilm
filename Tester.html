@@ -216,37 +216,33 @@
             border: 2px solid transparent;
         }
 
-        .movies-slider-horizontal:not(.grid-layout) .movie-card-horizontal {
-            flex: 0 0 175px; 
-        }
+/* Khusus slider HOME (Pilihan Atas) */
+#slider-pilihan.movie-landscape .movie-card-horizontal{
+    flex:0 0 280px;
+}
 
-        .movie-card-horizontal:focus,
-        .action-button:focus,
-        .episode-btn:focus,
-        .close-modal:focus,
-        .search-input-box:focus {
-            outline: none;
-            transform: scale(1.08);
-            box-shadow: 0 0 20px var(--highlight-color);
-            border-color: #ffffff;
-            z-index: 99;
-        }
+/* Semua slider kategori */
+.movies-slider-horizontal:not(#slider-pilihan).movie-portrait .movie-card-horizontal{
+    flex:0 0 170px;
+}
 
-        .movie-poster-horizontal{
+/* Poster landscape */
+.movie-poster-horizontal{
     width:100%;
     aspect-ratio:16/9;
     object-fit:cover;
     display:block;
-    background:#252525;
 }
 
+/* Poster portrait */
 .movie-poster-portrait{
     width:100%;
     aspect-ratio:2/3;
     object-fit:cover;
     display:block;
-    background:#252525;
 }
+
+
 
         .movie-info {
             padding: 5px 6px;
@@ -763,6 +759,14 @@ renderSlider(seriesData,'slider-series','row-series',false);
     }
 
     row.style.display="block";
+    
+    slider.classList.remove("movie-landscape","movie-portrait");
+
+if(isLandscape){
+    slider.classList.add("movie-landscape");
+}else{
+    slider.classList.add("movie-portrait");
+}
 
     slider.innerHTML=dataList.map(item=>`
 
