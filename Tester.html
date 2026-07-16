@@ -421,12 +421,19 @@
         .play-button { background-color: var(--highlight-color); color: white; }
         
         /* --- LAYOUT EPISODE HORIZONTAL --- */
-        .episode-section { 
-            margin-top: 2rem;
-            border-top: 1px solid #333; 
-            padding-top: 1.5rem; 
-            width: 100%;
-        }
+      .episode-section {
+    margin-top: 2rem;
+    border-top: 1px solid #333;
+    padding-top: 1.5rem;
+
+    margin-left: -2rem;
+    margin-right: -2rem;
+
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+    width: auto;
+}
         .episode-headline { 
             color: var(--highlight-color);
             font-size: 1.4rem; 
@@ -452,23 +459,23 @@
             color: white; 
             border: 2px solid #333; 
             padding: 1rem; 
-            min-width: 110px; 
-            height: 75px;
+            min-width: 80px; 
+            height: 455px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 6px; 
-            font-size: 1.3rem; 
+            font-size: 1rem; 
             font-weight: 600;
             cursor: pointer;
             flex-shrink: 0; 
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
         .episode-btn span {
-            font-size: 0.9rem;
+            font-size: 0rem;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
