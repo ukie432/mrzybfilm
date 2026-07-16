@@ -1027,7 +1027,7 @@
             const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
             if (lastTitle) {
                 setTimeout(() => {
-                    const targetCard = document.querySelector(`.movie-card-horizontal[data-title="${lastTitle}"]`);
+                    const targetCard = document.querySelector(`.movie-card-horizontal[data-title="${lastTitle}"], .movie-card-portrait[data-title="${lastTitle}"]`);
                     if (targetCard) {
                         targetCard.focus();
                         targetCard.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
@@ -1071,7 +1071,7 @@
                 localStorage.removeItem(pageTitle + "_sedangNontonVideoSTB");
             } else {
                 setTimeout(() => {
-                    const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal');
+                    const cards = document.querySelectorAll('#page-home-view .movie-card-horizontal, #page-home-view .movie-card-portrait');
                     if (cards.length > 0) cards[0].focus();
                 }, 300);
             }
@@ -1143,12 +1143,18 @@
                 return;
             }
 
-            const focusable = Array.from(document.querySelectorAll('[tabindex="0"], .movie-card-horizontal, .sidebar-item')).filter(el => el.offsetWidth > 0);
+            const focusable = Array.from(
+    document.querySelectorAll(
+        '[tabindex="0"], .movie-card-horizontal, .movie-card-portrait, .sidebar-item'
+    )
+).filter(el => el.offsetWidth > 0);
             const currIdx = focusable.indexOf(active);
 
             if (active) {
                 const isSidebar = active.classList.contains('sidebar-item');
-                const isPoster = active.classList.contains('movie-card-horizontal');
+                const isPoster =
+    active.classList.contains('movie-card-horizontal') ||
+    active.classList.contains('movie-card-portrait');
 
                 if (isSidebar && e.key === 'ArrowRight') {
                     document.getElementById('main-sidebar').classList.remove('expanded'); 
@@ -1186,7 +1192,13 @@
     }
 
     // Kalau sudah mentok di kiri, baru buka sidebar
-    if (active && active.classList.contains('movie-card-horizontal')) {
+    if (
+    active &&
+    (
+        active.classList.contains('movie-card-horizontal') ||
+        active.classList.contains('movie-card-portrait')
+    )
+) {
         const rA = active.getBoundingClientRect();
         const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
 
