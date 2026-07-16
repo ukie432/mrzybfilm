@@ -464,18 +464,29 @@
             <button class="sidebar-item active" id="menu-home" tabindex="0" onclick="switchView('home')">
                 <i class="fas fa-home"></i> <span>Home</span>
             </button>
-            <button class="sidebar-item" id="menu-film" tabindex="0" onclick="switchView('film')">
-                <i class="fas fa-film"></i> <span>Film</span>
-            </button>
-            <button class="sidebar-item" id="menu-anime" tabindex="0" onclick="switchView('anime')">
-                <i class="fas fa-cat"></i> <span>Anime</span>
-            </button>
-            <button class="sidebar-item" id="menu-koleksi" tabindex="0" onclick="switchView('favorites')">
-                <i class="fas fa-star"></i> <span>Koleksi Saya</span>
-            </button>
-            <button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('vip')">
-                <i class="fas fa-gem"></i> <span>Pusat VIP</span>
-            </button>
+<button class="sidebar-item" id="menu-film" tabindex="0" onclick="switchView('film')">
+    <i class="fas fa-film"></i> <span>Film Dubbing</span>
+</button>
+
+<button class="sidebar-item" id="menu-anime" tabindex="0" onclick="switchView('anime')">
+    <i class="fas fa-cat"></i> <span>Anime</span>
+</button>
+
+<button class="sidebar-item" id="menu-indo" tabindex="0" onclick="switchView('indo')">
+    <i class="fas fa-flag"></i> <span>Film Indo</span>
+</button>
+
+<button class="sidebar-item" id="menu-seri" tabindex="0" onclick="switchView('seri')">
+    <i class="fas fa-tv"></i> <span>Film Seri</span>
+</button>
+
+<button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
+    <i class="fas fa-landmark"></i> <span>Film Lawas</span>
+</button>
+
+<button class="sidebar-item" id="menu-koleksi" tabindex="0" onclick="switchView('favorites')">
+    <i class="fas fa-star"></i> <span>Koleksi Saya</span>
+</button>
         </div>
         <div class="sidebar-footer">
             <button class="sidebar-item" id="menu-pengaturan" tabindex="0">
@@ -624,15 +635,25 @@
                     document.getElementById('menu-koleksi').classList.add('active');
                     tampilkanKoleksiSaya();
                 } else if (viewName === 'film') {
-                    document.getElementById('menu-film').classList.add('active');
-                    tampilkanKategoriKhusus(m => m.is_series !== true, "Semua Film");
-                } else if (viewName === 'anime') {
-                    document.getElementById('menu-anime').classList.add('active');
-                    tampilkanKategoriKhusus(m => m.categoria === "film_animasi", "Koleksi Anime");
-                } else if (viewName === 'vip') {
-                    document.getElementById('menu-vip').classList.add('active');
-                    tampilkanKategoriKhusus(m => m.categoria === "pilihan_atas", "Rekomendasi VIP");
-                } else {
+    document.getElementById('menu-film').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "film_dubbing", "Film Dubbing");
+
+} else if (viewName === 'anime') {
+    document.getElementById('menu-anime').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "film_animasi", "Film Animasi");
+
+} else if (viewName === 'indo') {
+    document.getElementById('menu-indo').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "film_indo", "Film Indonesia");
+
+} else if (viewName === 'seri') {
+    document.getElementById('menu-seri').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
+
+} else if (viewName === 'lawas') {
+    document.getElementById('menu-vip').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
+} else {
                     document.getElementById('menu-home').classList.add('active');
                     document.getElementById('search-main-input').value = "";
                     kelolaBarisKategori();
