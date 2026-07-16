@@ -708,18 +708,22 @@
         }
 
         async function loadDataKonten() {
-            try {
-                const semuaData = await Promise.all(
-    JSON_URLS.map(url => fetch(url).then(res => res.json()))
-);
+    try {
+        const semuaData = await Promise.all(
+            JSON_URLS.map(url => fetch(url).then(res => res.json()))
+        );
 
-databaseFilm = semuaData.flat();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
+        databaseFilm = semuaData.flat();
+
+        console.log(databaseFilm); // cek data masuk atau tidak
+
+        kelolaBarisKategori();
+        buatEventSidebarFocus();
+
+    } catch (error) {
+        console.error("Gagal mengambil database JSON:", error);
+    }
+}
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
