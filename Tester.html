@@ -763,7 +763,7 @@
             document.getElementById('row-series').style.display = 'none';
 
             setTimeout(() => {
-                const cards = sliderPilihan.querySelectorAll('.movie-card-horizontal');
+                const cards = sliderPilihan.querySelectorAll('.movie-card-horizontal, .movie-card-portrait');
                 if (cards.length > 0) cards[0].focus();
             }, 200);
         }
@@ -874,7 +874,7 @@
                 sliderPilihan.innerHTML = `<p style="padding: 1.5rem; color: var(--text-secondary); font-size:1.3rem;">Belum ada film yang disimpan ke Koleksi Saya.</p>`;
                 rowPilihan.style.display = 'block';
             } else {
-                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', true);
+                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', false);
             }
 
             document.getElementById('row-dubbing').style.display = 'none';
@@ -884,7 +884,7 @@
             document.getElementById('row-series').style.display = 'none';
 
             setTimeout(() => {
-                const cards = sliderPilihan.querySelectorAll('.movie-card-horizontal');
+                const cards = sliderPilihan.querySelectorAll('.movie-card-horizontal, .movie-card-portrait');
                 if (cards.length > 0) cards[0].focus();
             }, 200);
         }
@@ -894,8 +894,8 @@
             const dataPopuler = databaseFilm.slice(0, 7); 
             
             grid.innerHTML = dataPopuler.map((item, idx) => `
-                <div class="movie-card-horizontal popular-card" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                <div class="movie-card-portrait popular-card" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
+                    <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
                     </div>
@@ -931,8 +931,8 @@
                     grid.innerHTML = `<p style="padding: 2rem; color: var(--text-secondary)">Konten tidak ditemukan...</p>`;
                 } else {
                     grid.innerHTML = filtered.map(item => `
-                        <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
-                            <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal">
+                        <div class="movie-card-portrait" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
+                            <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait">
                             <div class="movie-info">
                                 <h3 class="movie-title">${item.titulo}</h3>
                             </div>
