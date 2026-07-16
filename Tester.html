@@ -635,6 +635,9 @@
                     document.getElementById('menu-koleksi').classList.add('active');
                     tampilkanKoleksiSaya();
                 } else if (viewName === 'film') {
+                    document.getElementById('menu-film').classList.add('active');
+                    tampilkanKategoriKhusus(m => m.is_series !== true, "Semua Film");
+                } else if (viewName === 'film') {
     document.getElementById('menu-film').classList.add('active');
     tampilkanKategoriKhusus(m => m.categoria === "film_dubbing", "Film Dubbing");
 
@@ -653,7 +656,11 @@
 } else if (viewName === 'lawas') {
     document.getElementById('menu-vip').classList.add('active');
     tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
-}
+} else {
+                    document.getElementById('menu-home').classList.add('active');
+                    document.getElementById('search-main-input').value = "";
+                    kelolaBarisKategori();
+                }
             }
         }
 
