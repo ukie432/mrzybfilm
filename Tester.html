@@ -1102,19 +1102,38 @@
             let nextIdx = -1;
             switch(e.key) {
                 case 'ArrowLeft':
-                    if (active && !active.classList.contains('sidebar-item')) {
-                        const rA = active.getBoundingClientRect();
-                        const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
-                        let targetSidebar = null; let minDiff = Infinity;
-                        sideItems.forEach(item => {
-                            const rI = item.getBoundingClientRect();
-                            const diff = Math.abs((rI.top + rI.height/2) - (rA.top + rA.height/2));
-                            if (diff < minDiff) { minDiff = diff; targetSidebar = item; }
-                        });
-                        if (targetSidebar) { targetSidebar.focus(); document.getElementById('main-sidebar').classList.add('expanded'); return; }
-                    }
-                    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
-                    break;
+    nextIdx = cariElemenTerdekat(active, focusable, 'kiri');
+
+    // Kalau masih ada poster di kiri, jangan buka sidebar
+    if (nextIdx !== -1) {
+        break;
+    }
+
+    // Kalau sudah mentok di kiri, baru buka sidebar
+    if (active && active.classList.contains('movie-card-horizontal')) {
+        const rA = active.getBoundingClientRect();
+        const sideItems = Array.from(document.querySelectorAll('.sidebar-item'));
+
+        let targetSidebar = null;
+        let minDiff = Infinity;
+
+        sideItems.forEach(item => {
+            const rI = item.getBoundingClientRect();
+            const diff = Math.abs((rI.top + rI.height / 2) - (rA.top + rA.height / 2));
+
+            if (diff < minDiff) {
+                minDiff = diff;
+                targetSidebar = item;
+            }
+        });
+
+        if (targetSidebar) {
+            targetSidebar.focus();
+            document.getElementById('main-sidebar').classList.add('expanded');
+            return;
+        }
+    }
+    break;
                 case 'ArrowRight': nextIdx = cariElemenTerdekat(active, focusable, 'kanan'); break;
                 case 'ArrowUp': nextIdx = cariElemenTerdekat(active, focusable, 'atas'); break;
                 case 'ArrowDown': nextIdx = cariElemenTerdekat(active, focusable, 'bawah'); break;
