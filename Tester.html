@@ -610,7 +610,14 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/Tester.json';
+        const JSON_URLS = [
+    'data/Tester.json',
+    'data/dubbingg.json',
+    'data/indoo.json',
+    'data/animee.json',
+    'data/serii.json',
+    'data/lawass.json'
+];
         const pageTitle = "mrzyb_premium"; 
         let databaseFilm = [];
         let dataFilmAktif = null;
@@ -702,8 +709,11 @@
 
         async function loadDataKonten() {
             try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
+                const semuaData = await Promise.all(
+    JSON_URLS.map(url => fetch(url).then(res => res.json()))
+);
+
+databaseFilm = semuaData.flat();
                 kelolaBarisKategori();
                 buatEventSidebarFocus();
             } catch (error) {
