@@ -194,11 +194,12 @@
             scrollbar-width: none;
         }
 
-        .movies-slider-horizontal.grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            overflow-x: visible;
-        }
+        .movies-slider-horizontal.grid-layout{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,90px);
+    gap:16px;
+    justify-content:start;
+}
 
         .movies-slider-horizontal::-webkit-scrollbar {
             display: none;
@@ -221,7 +222,7 @@
 
 
 .movies-slider-horizontal:not(.grid-layout) .movie-card-portrait{
-    flex: 0 0 110px;
+    flex: 0 0 90px;
 }
 
         .movie-card-horizontal:focus,
