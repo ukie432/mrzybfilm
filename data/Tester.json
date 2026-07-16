@@ -212,8 +212,7 @@
     "video": "https://server-video.com/warkop_lawas.mp4",
     "halaman_depan": true,
     "is_series": false
-      }
-    ]
+    
   },
   {
     "id": "seri-indo-001",
@@ -633,7 +632,7 @@
       { "eps_num": "Eps 5", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.5%20720p.mp4" },
       { "eps_num": "Eps 6", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.6%20720p.mp4" },
       { "eps_num": "Eps 7", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.7%20720p.mp4" },
-      { "eps_num": "Eps 8", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.8%20(End)%20720p.mp4" }
+      { "eps_num": "Eps 8", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.8%20(End)%20720p.mp4" 
       }
     ]
   },
@@ -2496,8 +2495,7 @@
         "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/The%20incarnation%20season%201/The%20Incarnation%20Season%201%20Episode%206.mp4"
       }
     ]
-  }
-]
+  
     },
     {
 
@@ -3035,7 +3033,7 @@
       { "eps_num": "Eps 5", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.5%20720p.mp4" },
       { "eps_num": "Eps 6", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.6%20720p.mp4" },
       { "eps_num": "Eps 7", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.7%20720p.mp4" },
-      { "eps_num": "Eps 8", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.8%20(End)%20720p.mp4" }
+      { "eps_num": "Eps 8", "eps_title": " ", "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Love%20is%20a%20story/Love%20Is%20A%20Story%20Ep.8%20(End)%20720p.mp4" 
       }
     ]
   },
