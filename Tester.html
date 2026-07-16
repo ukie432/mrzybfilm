@@ -232,13 +232,21 @@
             z-index: 99;
         }
 
-        .movie-poster-horizontal {
-            width: 100%;
-            aspect-ratio: 16/10;
-            object-fit: cover;
-            background-color: #252525;
-            display: block;
-        }
+        .movie-poster-horizontal{
+    width:100%;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    display:block;
+    background:#252525;
+}
+
+.movie-poster-portrait{
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    display:block;
+    background:#252525;
+}
 
         .movie-info {
             padding: 5px 6px;
@@ -693,18 +701,17 @@
             sliderPilihan.classList.remove('grid-layout'); 
 
             const pilihanData = databaseFilm.filter(m => m.categoria === "pilihan_atas" && m.halaman_depan === true).slice(0, 6);
-            renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
+            renderSlider(pilihanData,'slider-pilihan','row-pilihan',true);
 
-            const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
-            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
-            const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
-            renderSlider(indoData, 'slider-indo', 'row-indo', false);
-            const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
-            renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
-            renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
-            const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
-            renderSlider(seriesData, 'slider-series', 'row-series', false);
+renderSlider(dubbingData,'slider-dubbing','row-dubbing',false);
+
+renderSlider(indoData,'slider-indo','row-indo',false);
+
+renderSlider(animasiData,'slider-animasi','row-animasi',false);
+
+renderSlider(lawasData,'slider-lawas','row-lawas',false);
+
+renderSlider(seriesData,'slider-series','row-series',false);
 
             // JALANKAN CHECK LAST SESSION UNTUK MERESTORE JIKA KEMBALI DARI PLAYER STB
             checkLastSessionPremium();
@@ -745,43 +752,83 @@
             }, 200);
         }
 
-        function renderSlider(dataList, sliderId, rowId, isPilihanAtas) {
-            const slider = document.getElementById(sliderId);
-            const row = document.getElementById(rowId);
-            if (dataList.length === 0) { row.style.display = 'none'; return; }
-            row.style.display = 'block';
-            if (isPilihanAtas) {
-                slider.innerHTML = dataList.map(item => `
-                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
-                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                    </div>
-                `).join('');
-            } else {
-                slider.innerHTML = dataList.map(item => `
-                    <div class="movie-card-horizontal" tabindex="0" data-title="${item.titulo}" data-bg="${item.poster}" onclick="bukaModalDetail('${item.titulo}')">
-                        <img src="${item.poster}" alt="${item.titulo}" class="movie-poster-horizontal" loading="lazy">
-                        <div class="movie-info">
-                            <h3 class="movie-title">${item.titulo}</h3>
-                        </div>
-                    </div>
-                `).join('');
+        function renderSlider(dataList, sliderId, rowId, isLandscape) {
+
+    const slider=document.getElementById(sliderId);
+    const row=document.getElementById(rowId);
+
+    if(dataList.length===0){
+        row.style.display="none";
+        return;
+    }
+
+    row.style.display="block";
+
+    slider.innerHTML=dataList.map(item=>`
+
+        <div class="movie-card-horizontal"
+            tabindex="0"
+            data-title="${item.titulo}"
+            data-bg="${item.poster}"
+            onclick="bukaModalDetail('${item.titulo}')">
+
+            <img src="${
+                isLandscape
+                ? item.poster
+                : (item.poster_portrait || item.poster)
+            }"
+
+            class="${
+                isLandscape
+                ? "movie-poster-horizontal"
+                : "movie-poster-portrait"
+            }"
+
+            loading="lazy">
+
+            ${
+                isLandscape
+                ? ""
+                :
+                `<div class="movie-info">
+                    <h3 class="movie-title">${item.titulo}</h3>
+                </div>`
             }
 
-            if (sliderId === 'slider-pilihan' && activeView === 'home') {
-                setTimeout(() => {
-                    slider.querySelectorAll('.movie-card-horizontal').forEach(card => {
-                        card.addEventListener('focus', function() {
-                            const bgUrl = this.getAttribute('data-bg');
-                            if(bgUrl) document.getElementById('hero-bg-image').style.backgroundImage = `url('${bgUrl}')`;
-                        });
-                    });
-                    const firstCard = slider.querySelector('.movie-card-horizontal');
-                    if(firstCard) {
-                        document.getElementById('hero-bg-image').style.backgroundImage = `url('${firstCard.getAttribute('data-bg')}')`;
-                    }
-                }, 100);
+        </div>
+
+    `).join("");
+
+    if(sliderId==="slider-pilihan" && activeView==="home"){
+
+        setTimeout(()=>{
+
+            slider.querySelectorAll(".movie-card-horizontal")
+            .forEach(card=>{
+
+                card.addEventListener("focus",function(){
+
+                    document.getElementById("hero-bg-image")
+                    .style.backgroundImage=`url('${this.dataset.bg}')`;
+
+                });
+
+            });
+
+            const first=slider.querySelector(".movie-card-horizontal");
+
+            if(first){
+
+                document.getElementById("hero-bg-image")
+                .style.backgroundImage=`url('${first.dataset.bg}')`;
+
             }
-        }
+
+        },100);
+
+    }
+
+}
 
         function toggleFavorit() {
             if (!dataFilmAktif) return;
@@ -823,7 +870,7 @@
                 sliderPilihan.innerHTML = `<p style="padding: 1.5rem; color: var(--text-secondary); font-size:1.3rem;">Belum ada film yang disimpan ke Koleksi Saya.</p>`;
                 rowPilihan.style.display = 'block';
             } else {
-                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', true);
+                renderSlider(listFavorit, 'slider-pilihan', 'row-pilihan', false);
             }
 
             document.getElementById('row-dubbing').style.display = 'none';
