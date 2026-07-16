@@ -50,7 +50,7 @@
             overflow: hidden;
         }
 
-        .sidebar:hover,
+        
         .sidebar.expanded {
             width: var(--sidebar-width-expanded);
             background: rgba(0, 0, 0, 0.9);
@@ -94,10 +94,9 @@
             transition: opacity 0.2s ease;
         }
 
-        .sidebar:hover .sidebar-item span,
-        .sidebar.expanded .sidebar-item span {
-            opacity: 1;
-        }
+.sidebar.expanded .sidebar-item span {
+    opacity: 1;
+}
 
         .sidebar-item:focus {
             outline: none;
