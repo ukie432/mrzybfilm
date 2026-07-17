@@ -774,17 +774,20 @@ async function loadJSON(nama){
         "indo_lawas",
         "Film Lawas"
     );
+else {
 
+document.getElementById('menu-home').classList.add('active');
+document.getElementById('search-main-input').value = "";
 
-} else {
-
-    document.getElementById('menu-home').classList.add('active');
-    document.getElementById('search-main-input').value = "";
+loadJSON("home").then(data=>{
+    databaseFilm = [...data];
     kelolaBarisKategori();
+});
 
 }
-            }
-        }
+}
+            
+        
 
         async function loadDataKonten(){
 
@@ -821,14 +824,11 @@ async function masukKategori(
 
     let data = [];
 
-    // Film Dubbing ambil dari dubbings.json
     if(categoria === "film_dubbing"){
 
         data = await loadJSON("film_dubbing");
 
-    }
-
-    // Film Indonesia gabungkan Tester + indos.json
+    } 
     else if(categoria === "film_indo"){
 
         const tester = await loadJSON("home");
@@ -839,9 +839,7 @@ async function masukKategori(
             ...indo
         ];
 
-    }
-
-    // Film Seri, Anime, Lawas ambil dari Tester.json
+    } 
     else {
 
         data = await loadJSON("home");
@@ -849,11 +847,8 @@ async function masukKategori(
     }
 
 
-    databaseFilm = data;
-
-
     tampilkanKategoriKhusus(
-        m => m.categoria === categoria,
+        m => data.includes(m) && m.categoria === categoria,
         titulo
     );
 
