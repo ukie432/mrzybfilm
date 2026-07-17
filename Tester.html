@@ -523,6 +523,12 @@
     <i class="fas fa-tv"></i> <span>Film Seri</span>
 </button>
 
+<button class="sidebar-item" id="menu-alur" tabindex="0" onclick="switchView('alur')">
+    <i class="fas fa-book-open"></i>
+    <span>Alur Cerita</span>
+</button>
+
+
 <button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
     <i class="fas fa-landmark"></i> <span>Film Lawas</span>
 </button>
@@ -614,12 +620,35 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/Tester.json';
+        const JSON_FILES = {
+    home: "data/Tester.json",
+    film_indo: "data/indos.json"
+    
+};
+
+let databaseFilm = [];
+let cacheJSON = {};
         const pageTitle = "mrzyb_premium"; 
-        let databaseFilm = [];
         let dataFilmAktif = null;
         let activeView = 'home';
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+
+
+async function loadJSON(nama){
+
+    if(cacheJSON[nama]){
+        return cacheJSON[nama];
+    }
+
+    const response = await fetch(JSON_FILES[nama]);
+
+    const data = await response.json();
+
+    cacheJSON[nama] = data;
+
+    return data;
+}
+
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -675,45 +704,146 @@
                 searchView.style.display = 'none';
 
                 if (viewName === 'favorites') {
-                    document.getElementById('menu-koleksi').classList.add('active');
-                    tampilkanKoleksiSaya();
-                } else if (viewName === 'film') {
+
+    document.getElementById('menu-koleksi').classList.add('active');
+    tampilkanKoleksiSaya();
+
+
+} else if (viewName === 'film') {
+
     document.getElementById('menu-film').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_dubbing", "Film Dubbing");
+
+    masukKategori(
+        "film_dubbing",
+        "film_dubbing",
+        "Film Dubbing"
+    );
+
 
 } else if (viewName === 'anime') {
+
     document.getElementById('menu-anime').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_animasi", "Film Animasi");
+
+    masukKategori(
+        "film_animasi",
+        "film_animasi",
+        "Film Animasi"
+    );
+
 
 } else if (viewName === 'indo') {
+
     document.getElementById('menu-indo').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_indo", "Film Indonesia");
+
+    masukKategori(
+        "film_indo",
+        "film_indo",
+        "Film Indonesia"
+    );
+
 
 } else if (viewName === 'seri') {
+
     document.getElementById('menu-seri').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
+
+    masukKategori(
+        "film_seri",
+        "film_seri",
+        "Film Seri"
+    );
+
+
+} else if (viewName === 'alur') {
+
+    document.getElementById('menu-alur').classList.add('active');
+
+    masukKategori(
+        "alur_cerita",
+        "alur_cerita",
+        "Alur Cerita"
+    );
+
 
 } else if (viewName === 'lawas') {
+
     document.getElementById('menu-vip').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
+
+    masukKategori(
+        "film_lawas",
+        "indo_lawas",
+        "Film Lawas"
+    );
+
+
 } else {
-                    document.getElementById('menu-home').classList.add('active');
-                    document.getElementById('search-main-input').value = "";
-                    kelolaBarisKategori();
-                }
+
+    document.getElementById('menu-home').classList.add('active');
+    document.getElementById('search-main-input').value = "";
+    kelolaBarisKategori();
+
+}
             }
         }
 
-        async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
+        async function loadDataKonten(){
+
+    try {
+
+        const home = await loadJSON("home");
+
+
+        databaseFilm = [
+            ...home
+        ];
+
+
+        kelolaBarisKategori();
+        buatEventSidebarFocus();
+
+
+    } catch(error){
+
+        console.error(
+            "Gagal load home:",
+            error
+        );
+
+    }
+
+}
+
+
+async function masukKategori(
+    namaJSON,
+    categoria,
+    titulo
+){
+
+    const data = await loadJSON(namaJSON);
+
+
+    data.forEach(item=>{
+
+        const sudahAda =
+        databaseFilm.some(
+            film => film.titulo === item.titulo
+        );
+
+
+        if(!sudahAda){
+            databaseFilm.push(item);
         }
+
+    });
+
+
+    tampilkanKategoriKhusus(
+        m => m.categoria === categoria,
+        titulo
+    );
+
+}
+
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
