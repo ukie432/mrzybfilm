@@ -27,12 +27,13 @@
         }
 
         body {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            overflow: hidden; 
-            height: 100vh;
-            display: flex;
-        }
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    overflow: hidden;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+}
 
         /* --- STYLING SIDEBAR --- */
       .sidebar {
@@ -198,12 +199,15 @@
 }
 
         .movies-slider-horizontal {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            padding: 15px 10px; 
-            scrollbar-width: none;
-        }
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    max-width: 100%;
+    padding: 15px 10px;
+    scrollbar-width: none;
+}
 
         .movies-slider-horizontal.grid-layout{
     display:grid;
@@ -796,7 +800,7 @@
 
     row.style.display="block";
 
-    slider.innerHTML=dataList.map(item=>{
+    slider.innerHTML=dataList.slice(0,100).map(item=>{
 
         const cardClass=isLandscape
             ? "movie-card-horizontal"
@@ -1240,16 +1244,31 @@
                 case 'Enter': active.click(); return;
             }
 
-            if (nextIdx !== -1) {
-                const nextActiveElement = focusable[nextIdx];
-                nextActiveElement.focus();
-                if (nextActiveElement.classList.contains('sidebar-item')) {
-                    document.getElementById('main-sidebar').classList.add('expanded');
-                } else {
-                    document.getElementById('main-sidebar').classList.remove('expanded');
-                }
-                nextActiveElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-            }
+if (nextIdx !== -1) {
+    const nextActiveElement = focusable[nextIdx];
+
+    nextActiveElement.focus();
+
+    if (nextActiveElement.classList.contains('sidebar-item')) {
+
+        document.getElementById('main-sidebar')
+        .classList.add('expanded');
+
+    } else {
+
+        document.getElementById('main-sidebar')
+        .classList.remove('expanded');
+
+        const slider = nextActiveElement.closest('.movies-slider-horizontal');
+
+        if (slider) {
+            slider.scrollTo({
+                left: nextActiveElement.offsetLeft - 100,
+                behavior: 'smooth'
+            });
+        }
+    }
+}
         });
 
         function cariElemenTerdekat(activeEl, elements, arah) {
