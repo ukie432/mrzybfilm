@@ -774,17 +774,20 @@ async function loadJSON(nama){
         "indo_lawas",
         "Film Lawas"
     );
-else {
+    
+    else {
 
 document.getElementById('menu-home').classList.add('active');
 document.getElementById('search-main-input').value = "";
 
-loadJSON("home").then(data=>{
+loadJSON("home").then(data => {
+
     databaseFilm = [...data];
+
     kelolaBarisKategori();
+
 });
 
-}
 }
             
         
@@ -815,40 +818,31 @@ loadJSON("home").then(data=>{
     }
 
 }
-
 async function masukKategori(
     namaJSON,
     categoria,
     titulo
 ){
 
-    let data = [];
+    const data = await loadJSON(namaJSON);
 
-    if(categoria === "film_dubbing"){
 
-        data = await loadJSON("film_dubbing");
+    // tambahkan data baru, jangan hapus database lama
+    data.forEach(item => {
 
-    } 
-    else if(categoria === "film_indo"){
+        const sudahAda = databaseFilm.some(
+            film => film.titulo === item.titulo
+        );
 
-        const tester = await loadJSON("home");
-        const indo = await loadJSON("film_indo");
+        if(!sudahAda){
+            databaseFilm.push(item);
+        }
 
-        data = [
-            ...tester,
-            ...indo
-        ];
-
-    } 
-    else {
-
-        data = await loadJSON("home");
-
-    }
+    });
 
 
     tampilkanKategoriKhusus(
-        m => data.includes(m) && m.categoria === categoria,
+        m => m.categoria === categoria,
         titulo
     );
 
