@@ -610,12 +610,7 @@
     </div>
 
     <script>
-        const JSON_URLS = [
-        'data/indos.json',
-        'data/indos1.json',
-        'data/indos2.json',
-    'data/Tester.json'
-];
+        const JSON_URL = 'data/Tester.json';
         const pageTitle = "mrzyb_premium"; 
         let databaseFilm = [];
         let dataFilmAktif = null;
@@ -706,20 +701,15 @@
         }
 
         async function loadDataKonten() {
-    try {
-        // Mengambil 3 file secara paralel agar tidak berat di STB
-        const responses = await Promise.all(JSON_URLS.map(url => fetch(url)));
-        const dataArray = await Promise.all(responses.map(res => res.json()));
-
-        // Menggabungkan 3 file (200x3 = 600 film) menjadi satu array
-        databaseFilm = dataArray.flat(); 
-
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
-    } catch (error) {
-        console.error("Gagal mengambil database JSON:", error);
-    }
-}
+            try {
+                const response = await fetch(JSON_URL);
+                databaseFilm = await response.json();
+                kelolaBarisKategori();
+                buatEventSidebarFocus();
+            } catch (error) {
+                console.error("Gagal mengambil database JSON:", error);
+            }
+        }
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -921,8 +911,7 @@
             
             grid.innerHTML = dataPopuler.map((item, idx) => `
                 <div class="movie-card-portrait popular-card" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait"
-                    loading="lazy>
+                    <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait">
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
                     </div>
@@ -1294,10 +1283,6 @@
         }
 
         window.addEventListener('load', loadDataKonten);
-    </script>
-</body>
-</html>
-EventListener('load', loadDataKonten);
     </script>
 </body>
 </html>
