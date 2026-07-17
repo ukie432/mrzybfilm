@@ -813,16 +813,44 @@ async function loadJSON(nama){
 
 }
 
-
 async function masukKategori(
     namaJSON,
     categoria,
     titulo
 ){
 
-    const data = await loadJSON("home");
+    let data = [];
 
-    databaseFilm = [...data];
+    // Film Dubbing ambil dari dubbings.json
+    if(categoria === "film_dubbing"){
+
+        data = await loadJSON("film_dubbing");
+
+    }
+
+    // Film Indonesia gabungkan Tester + indos.json
+    else if(categoria === "film_indo"){
+
+        const tester = await loadJSON("home");
+        const indo = await loadJSON("film_indo");
+
+        data = [
+            ...tester,
+            ...indo
+        ];
+
+    }
+
+    // Film Seri, Anime, Lawas ambil dari Tester.json
+    else {
+
+        data = await loadJSON("home");
+
+    }
+
+
+    databaseFilm = data;
+
 
     tampilkanKategoriKhusus(
         m => m.categoria === categoria,
