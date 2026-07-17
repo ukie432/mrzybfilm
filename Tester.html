@@ -611,8 +611,9 @@
 
     <script>
         const JSON_URLS = [
-    'data/indos.json',
-    'data/Tester.json'];
+        'data/indos.json',
+    'data/Tester.json'
+];
         const pageTitle = "mrzyb_premium"; 
         let databaseFilm = [];
         let dataFilmAktif = null;
@@ -704,17 +705,15 @@
 
         async function loadDataKonten() {
     try {
-        const semuaData = await Promise.all(
-            JSON_URLS.map(url => fetch(url).then(res => res.json()))
-        );
+        // Mengambil 3 file secara paralel agar tidak berat di STB
+        const responses = await Promise.all(JSON_URLS.map(url => fetch(url)));
+        const dataArray = await Promise.all(responses.map(res => res.json()));
 
-        databaseFilm = semuaData.flat();
-
-        console.log(databaseFilm); // cek data masuk atau tidak
+        // Menggabungkan 3 file (200x3 = 600 film) menjadi satu array
+        databaseFilm = dataArray.flat(); 
 
         kelolaBarisKategori();
         buatEventSidebarFocus();
-
     } catch (error) {
         console.error("Gagal mengambil database JSON:", error);
     }
@@ -920,7 +919,8 @@
             
             grid.innerHTML = dataPopuler.map((item, idx) => `
                 <div class="movie-card-portrait popular-card" tabindex="0" data-title="${item.titulo}" onclick="bukaModalDetail('${item.titulo}')">
-                    <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait">
+                    <img src="${item.poster_portrait || item.poster}" alt="${item.titulo}" class="movie-poster-portrait"
+                    loading="lazy>
                     <div class="movie-info">
                         <h3 class="movie-title">${item.titulo}</h3>
                     </div>
@@ -1292,6 +1292,10 @@
         }
 
         window.addEventListener('load', loadDataKonten);
+    </script>
+</body>
+</html>
+EventListener('load', loadDataKonten);
     </script>
 </body>
 </html>
