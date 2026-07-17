@@ -24,48 +24,77 @@
     "categoria": "pilihan_atas",
     "halaman_depan": true,
     "is_series": false,
-        "duration": "2h 10m",
-    "rating": "7.8",
-    "genre": "Horror, Mystery",
+        "duration": "",
+    "rating": "",
+    "genre": "Animasi, Komedi",
     "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/New%20Dimension%20Crayon%20Shinchan%20The%20Movie%203D%20(2024).mp4",
-    "description": "..."
+    "description": "Shinchan dan pria bernama mitsuru mendapatkan kekuatan psikokinesis setelah terkena cahaya misterius. Shinchan harus menguasai kekuatannya untuk menghentikan Mitsuru yang ingin menghancurkan bumi"
 },
-
-
-
 
 {
 
-
    "titulo": "Agak Laen 2",
     "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Agaklain2.webp", 
-    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeGcPfGO_s-_xsRmwVQVTxA0VoljCJbwLy9iIrSwTeIQ&s=10",
-    "year": "1973",
-    "categoria": "pilihan_atas",
-    "halaman_depan": true,
-    "is_series": false,
-        "duration": "2h 10m",
-    "rating": "7.8",
-    "genre": "Horror, Mystery",
-    "video": "https://movieku.ukielaki8387.workers.dev/0:/Animasi/Robin%20Hood%20(1973)%20Dubbing%20Indonesia.mp4",
-    "description": "..."
-    },
-    {
-    
-       "titulo": "Squid Game Season 3",
-    "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Squidgame3.webp", 
-    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaj9Smnk5VkncTsUotxfOtiyNrDemblZA1RJL6g1w-XY4dDi36Oj4R_qHb&s=10",
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH3U6J0jolHWEwKmGerihgCL-0wGZCIZ1ROTyEHlKvNg&s=10",
     "year": "2025",
     "categoria": "pilihan_atas",
     "halaman_depan": true,
     "is_series": false,
-        "duration": "2h 10m",
-    "rating": "7.8",
-    "genre": "Horror, Mystery",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20dubbing/Frankenstein%20(2025).mp4",
-    "description": "..."
+        "duration": "",
+    "rating": "",
+    "genre": "komedi",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Movies%20indo/agak_laen_menyala_pantiku_2025.mkv",
+    "description": "Bene, Boris, Jegel, dan Oki, yang kariernya terancam akibat gagal mengungkapkan kasus pembunuhan.Mereka diberikan satu kesempatan terakhir: melakukan operasi penyamaran dan menyusup ke sebuah panti jompo."
     },
     {
+    
+
+          "titulo": "Squid Game Season 3",
+    "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Squidgame3.webp", 
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBxFobF7nmhv9P1gbdQS7HnyvHauHfps8tVFgunbpAcQ&s=10",
+    "year": "2025",
+    "categoria": "pilihan_atas",
+    "halaman_depan": true,
+    "is_series": true,
+        "duration": "",
+    "rating": "",
+    "genre": "Drama, Survival",
+   
+        "episodes": [
+      {
+        
+      "eps_num": "Episode 1",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E01.mp4"
+    },
+    {
+      "eps_num": "Episode 2",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E02.mp4"
+    },
+    {
+      "eps_num": "Episode 3",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E03.mp4"
+    },
+    {
+      "eps_num": "Episode 4",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E04.mp4"
+    },
+    {
+      "eps_num": "Episode 5",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E05.mp4"
+    },
+    {
+      "eps_num": "Episode 6",
+        "eps_title": " ",
+      "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20series/Squid%20game%20season%203/squid%20game%20S03E06.mp4"
+      }
+    ]
+  },
+  {
     
            "titulo": "Avengers Endgame",
     "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Avengersss.webp", 
@@ -74,26 +103,26 @@
     "categoria": "pilihan_atas",
     "halaman_depan": true,
     "is_series": false,
-        "duration": "2h 10m",
-    "rating": "7.8",
-    "genre": "Horror, Mystery",
+        "duration": "",
+    "rating": "",
+    "genre": "Adventure, Superhero",
     "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Dubbing%20indonesia/Avengers_%20Endgame%20(2019)%20[Dub%20Indo].mp4",
-    "description": "..."
+    "description": "Pertempuran puncak di mana Avengers yang tersisa berhasil mengalahkan Thanos .Untuk memenangkan pertempuran tersebut, Tony Stark mengorbankan dirinya dengan menggunakan Infinity Stones untuk melenyapkan Thanos. "
     },
     {
     
                "titulo": "Jumbo",
     "poster": "https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_lawas/Jumboo.webp", 
-    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrBcJw-XHjOKqCdU3VIg96JIV87S442saY_LqglzOBhg&s=10",
+    "poster_portrait": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGr6tcLhxuNYem_i7voZEr9fPAHtARvvBmIjX21hpW6Q&s=10",
     "year": "2005",
     "categoria": "pilihan_atas",
     "halaman_depan": true,
     "is_series": false,
-        "duration": "2h 10m",
-    "rating": "7.8",
-    "genre": "Horror, Mystery",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indo%20lagi/Janji%20joni%20(2005).mp4",
-    "description": "..."
+        "duration": "",
+    "rating": "",
+    "genre": "Animasi , Komedi",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20kartun/jumbo%20(2025).mp4",
+    "description": "Menceritakan anak kecil Bernama Don, seorang anak yatim berusia 10 tahun berbadan besar yang ingin membuktikan dirinya lewat pentas seni yang terinspirasi dari buku dongeng orangtuanya "
 }, 
   {
     "id": "films2B",
@@ -4329,7 +4358,7 @@
   },
   {
     "id": "film291",
-    "titulo": "agak laen agak lain (2024)",
+    "titulo": "agak laen (2024)",
     "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMRzwp_PmCuL45U9_GFx198usNby96EKdhn1zJw_iNseGyOWLejwCLh3Y&s=10",
     "year": "2024",
     "duration": "",
@@ -6318,95 +6347,6 @@
   },
 {
 
-
-    "id": "seri-dub-001",
-    "titulo": "Avatar: The Last Airbender (Dub Indo)",
-    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxOhnwhV-cgZ5yw2T9JKn-pUGn_FUT-IR3QzNRFqOE4A&s=10",
-    "year": "2024",
-    "duration": "1 Musim",
-    "rating": "8.9",
-    "genre": "Aventura, Fantasía",
-    "categoria": "film_seri",
-    "description": "Seorang anak laki-laki bernama Aang harus menguasai empat elemen mistik untuk menyelamatkan dunia dari kekejaman Negara Api.",
-    "halaman_depan": true,
-    "is_series": true,
-    "episodes": [
-      {
-        "eps_num": "Eps 1",
-        "eps_title": "Anak di dalam Bongkahan Es",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Film%20anak%20lagi/panji_tengkorak_2025.mp4"
-      },
-      {
-        "eps_num": "Eps 2",
-        "eps_title": "Kembalinya Sang Pengendali Api",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps2.mp4"
-                },
-        {
-        
-        
-                "eps_num": "Eps 3",
-        "eps_title": "Anak di dalam Bongkahan Es",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Film%20anak%20lagi/panji_tengkorak_2025.mp4"
-      },
-      {
-        "eps_num": "Eps 4",
-        "eps_title": "Kembalinya Sang Pengendali Api",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps2.mp4"
-        },
-        {
-        
-          "eps_num": "Eps 5",
-        "eps_title": "Anak di dalam Bongkahan Es",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Film%20anak%20lagi/panji_tengkorak_2025.mp4"
-      },
-      {
-        "eps_num": "Eps 6",
-        "eps_title": "Kembalinya Sang Pengendali Api",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps2.mp4"
-        },
-        {
-        
-        
-                "eps_num": "Eps 7",
-        "eps_title": "Anak di dalam Bongkahan Es",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Film%20anak/Film%20anak%20lagi/panji_tengkorak_2025.mp4"
-      },
-      {
-        "eps_num": "Eps 8",
-        "eps_title": "Kembalinya Sang Pengendali Api",
-        "video": "https://mutia1503.ukielaki88.workers.dev/0:/Avatar/Eps2.mp4"
-      }
-    ]
-  },
-  {
-    "id": "ani-001",
-    "titulo": "Cars (Sub Indo)",
-    "poster": "https://image.tmdb.org/t/p/w500/4ucLGcXVVSVnsfkGtbLY4XAius8.jpg",
-    "year": "2006",
-    "duration": "1h 57m",
-    "rating": "8.0",
-    "genre": "Animación, Comedia",
-    "categoria": "film_animasi",
-    "description": "Lightning McQueen, sebuah mobil balap pemula yang sombong, terdampar di kota kecil bernama Radiator Springs.",
-    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Cars2006.mp4",
-    "halaman_depan": true,
-    "is_series": false
-  },
-  {
-    "id": "lawas-001",
-    "titulo": "Warkop DKI: Pintar Pintar Bodoh",
-    "poster": "https://image.tmdb.org/t/p/w500/yyyyyy.jpg",
-    "year": "1980",
-    "duration": "1h 30m",
-    "rating": "8.9",
-    "genre": "Comedia, Clásico",
-    "categoria": "indo_lawas",
-    "description": "Dono, Kasino, Indro, dan Slamet mendirikan sebuah kantor detektif swasta yang berujung pada kesalahpahaman kocak.",
-    "video": "https://server-video.com/warkop_lawas.mp4",
-    "halaman_depan": true,
-    "is_series": false
-  },
-  {
     "id": "seri-indo-001",
     "titulo": "Cinta Pertama Ayah",
     "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Cinta_pertama_ayah.webp",
