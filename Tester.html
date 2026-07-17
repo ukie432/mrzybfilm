@@ -820,23 +820,9 @@ async function masukKategori(
     titulo
 ){
 
-    const data = await loadJSON(namaJSON);
+    const data = await loadJSON("home");
 
-
-    data.forEach(item=>{
-
-        const sudahAda =
-        databaseFilm.some(
-            film => film.titulo === item.titulo
-        );
-
-
-        if(!sudahAda){
-            databaseFilm.push(item);
-        }
-
-    });
-
+    databaseFilm = [...data];
 
     tampilkanKategoriKhusus(
         m => m.categoria === categoria,
