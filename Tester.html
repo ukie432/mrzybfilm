@@ -614,12 +614,53 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/Tester.json';
-        const pageTitle = "mrzyb_premium"; 
-        let databaseFilm = [];
-        let dataFilmAktif = null;
-        let activeView = 'home';
-        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+        const JSON_FILES = {
+    home: 'data/Tester.json',
+    dubbing: 'data/dubbing.json',
+    indo: 'data/indo.json',
+    anime: 'data/anime.json',
+    seri: 'data/seri.json',
+    lawas: 'data/lawas.json'
+};
+
+const pageTitle = "mrzyb_premium"; 
+
+let databaseFilm = [];
+let loadedJSON = {};
+
+let dataFilmAktif = null;
+let activeView = 'home';
+
+let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+
+
+async function loadJSON(nama) {
+
+    if (loadedJSON[nama]) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(JSON_FILES[nama]);
+
+        const data = await response.json();
+
+        databaseFilm.push(...data);
+
+        loadedJSON[nama] = true;
+
+        console.log("Berhasil load :", nama);
+
+    } catch (e) {
+
+        console.log("JSON belum ada :", nama);
+
+    }
+
+}
+
+
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -653,7 +694,7 @@
             }
         }, true);
 
-        function switchView(viewName) {
+        async function switchView(viewName) {
             activeView = viewName;
             const homeView = document.getElementById('page-home-view');
             const searchView = document.getElementById('page-search-view');
@@ -674,46 +715,27 @@
                 homeView.style.display = 'block';
                 searchView.style.display = 'none';
 
-                if (viewName === 'favorites') {
-                    document.getElementById('menu-koleksi').classList.add('active');
-                    tampilkanKoleksiSaya();
-                } else if (viewName === 'film') {
-    document.getElementById('menu-film').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_dubbing", "Film Dubbing");
-
-} else if (viewName === 'anime') {
-    document.getElementById('menu-anime').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_animasi", "Film Animasi");
-
-} else if (viewName === 'indo') {
-    document.getElementById('menu-indo').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_indo", "Film Indonesia");
-
-} else if (viewName === 'seri') {
-    document.getElementById('menu-seri').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
-
-} else if (viewName === 'lawas') {
-    document.getElementById('menu-vip').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
-} else {
-                    document.getElementById('menu-home').classList.add('active');
-                    document.getElementById('search-main-input').value = "";
-                    kelolaBarisKategori();
-                }
+                if (viewName
             }
         }
 
         async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
+
+    try {
+
+        await loadJSON("home");
+
+        kelolaBarisKategori();
+
+        buatEventSidebarFocus();
+
+    } catch (error) {
+
+        console.error("Gagal mengambil database JSON:", error);
+
+    }
+
+}
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
