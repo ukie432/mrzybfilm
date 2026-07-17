@@ -1,0 +1,33 @@
+[
+{
+
+
+"id": "film431",
+    "titulo": "harta tahta raisa 2024",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZDU2OWQ1OGQtZmIwOS00ZjNkLThhNjYtYTBlYzY2NDE3YzdlXkEyXkFqcGc@._V1_.jpg",
+    "year": "2024",
+    "duration": "",
+    "rating": "",
+    "genre": "",
+    "categoria": "film_dubbing",
+    "description": "",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indonesia/Harta%20Tahta%20Raisa%20(2024).mp4",
+    "halaman_depan": true,
+    "is_series": false
+  },
+  {
+    "id": "film432",
+    "titulo": "Tumbal the ritual 2018",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmx_1ym5vYQWXb1G73GP4owh7nIRlvPsbPSY9x8TJyTXZ7GZe3vlQb33A&s=10",
+    "year": "2018",
+    "duration": "",
+    "rating": "",
+    "genre": "",
+    "categoria": "film_dubbing",
+    "description": "",
+    "video": "https://mutia1503.ukielaki88.workers.dev/0:/Album%20film%202/Movie%20indonesia/Tumbal%20The%20Ritual%20(2018).mp4",
+    "halaman_depan": true,
+    "is_series": false
+  }
+]
+
