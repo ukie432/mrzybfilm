@@ -519,7 +519,7 @@
     <i class="fas fa-tv"></i> <span>Film Seri</span>
 </button>
 
-<button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
+<button class="sidebar-item" id="menu-lawas" tabindex="0" onclick="switchView('lawas')">
     <i class="fas fa-landmark"></i> <span>Film lawas</span>
 </button>
 
@@ -691,7 +691,7 @@
 
 } else if (viewName === 'lawas') {
     document.getElementById('menu-vip').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film lawas");
+    tampilkanKategoriKhusus(m => m.categoria === "film_lawas", "Film lawas");
 } else {
                     document.getElementById('menu-home').classList.add('active');
                     document.getElementById('search-main-input').value = "";
@@ -740,7 +740,7 @@
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
+            const lawasData = databaseFilm.filter(m => m.categoria === "film_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
