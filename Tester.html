@@ -519,8 +519,8 @@
     <i class="fas fa-tv"></i> <span>Film Seri</span>
 </button>
 
-<button class="sidebar-item" id="menu-lawas" tabindex="0" onclick="switchView('lawas')">
-    <i class="fas fa-landmark"></i> <span>Film lawas</span>
+<button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
+    <i class="fas fa-landmark"></i> <span>Film Lawas</span>
 </button>
 
 <button class="sidebar-item" id="menu-koleksi" tabindex="0" onclick="switchView('favorites')">
@@ -553,7 +553,7 @@
                     <div class="movies-slider-horizontal" id="slider-animasi"></div>
                 </div>
                 <div class="category-row" id="row-lawas">
-                    <div class="row-header"><h2 class="row-title">Film Indo lawas</h2></div>
+                    <div class="row-header"><h2 class="row-title">Film Indo Lawas</h2></div>
                     <div class="movies-slider-horizontal" id="slider-lawas"></div>
                 </div>
                 <div class="category-row" id="row-series">
@@ -610,43 +610,12 @@
     </div>
 
     <script>
-        
-        
-        
-        const JSONS = {
-    home   : 'data/Tester.json'
-   
-};
-
-const cacheJson = {};
-let listFavorit = JSON.parse
-(localStorage.getItem('mrzyb_favorites')) || [];
-let databaseFilm = [];
-let semuaFilm = [];
-
-async function loadJson(kategori) {
-    if (cacheJson[kategori]) {
-        return cacheJson[kategori];
-    }
-
-    const response = await fetch(JSONS[kategori]);
-    const data = await response.json();
-
-    cacheJson[kategori] = data;
-    return data;
-}
-
-async function gabungSemuaJson() {
-    const keys = Object.keys(JSONS);
-
-    const hasil = await Promise.all(
-        keys.map(k => loadJson(k))
-    );
-
-    semuaFilm = hasil.flat();
-}
-
-
+        const JSON_URL = 'data/Tester.json';
+        const pageTitle = "mrzyb_premium"; 
+        let databaseFilm = [];
+        let dataFilmAktif = null;
+        let activeView = 'home';
+        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -680,7 +649,7 @@ async function gabungSemuaJson() {
             }
         }, true);
 
-        async function switchView(viewName) {
+        function switchView(viewName) {
             activeView = viewName;
             const homeView = document.getElementById('page-home-view');
             const searchView = document.getElementById('page-search-view');
@@ -706,23 +675,23 @@ async function gabungSemuaJson() {
                     tampilkanKoleksiSaya();
                 } else if (viewName === 'film') {
     document.getElementById('menu-film').classList.add('active');
-    await bukaKategoriJson('film', 'Film Dubbing');
+    tampilkanKategoriKhusus(m => m.categoria === "film_dubbing", "Film Dubbing");
 
 } else if (viewName === 'anime') {
     document.getElementById('menu-anime').classList.add('active');
-    await bukaKategoriJson('anime', 'Film Animasi');
+    tampilkanKategoriKhusus(m => m.categoria === "film_animasi", "Film Animasi");
 
 } else if (viewName === 'indo') {
     document.getElementById('menu-indo').classList.add('active');
-    await bukaKategoriJson('indo', 'Film Indonesia');
+    tampilkanKategoriKhusus(m => m.categoria === "film_indo", "Film Indonesia");
 
 } else if (viewName === 'seri') {
     document.getElementById('menu-seri').classList.add('active');
-    await bukaKategoriJson('series', 'Film Seri');
+    tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
 
 } else if (viewName === 'lawas') {
-    document.getElementById('menu-lawas').classList.add('active');
-    await bukaKategoriJson('lawas', 'Film Lawas');
+    document.getElementById('menu-vip').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
 } else {
                     document.getElementById('menu-home').classList.add('active');
                     document.getElementById('search-main-input').value = "";
@@ -731,26 +700,16 @@ async function gabungSemuaJson() {
             }
         }
 
-        loadDataKonten
-        
-        
         async function loadDataKonten() {
-    try {
-        // Home saja yang dimuat pertama
-        databaseFilm = await loadJson('home');
-
-        // Untuk search global
-        await gabungSemuaJson();
-
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
-
-    } catch (error) {
-        console.error('Gagal mengambil database JSON:', error);
-    }
-}
-        
-        
+            try {
+                const response = await fetch(JSON_URL);
+                databaseFilm = await response.json();
+                kelolaBarisKategori();
+                buatEventSidebarFocus();
+            } catch (error) {
+                console.error("Gagal mengambil database JSON:", error);
+            }
+        }
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -781,7 +740,7 @@ async function gabungSemuaJson() {
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "film_lawas" && m.halaman_depan === true);
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
@@ -970,7 +929,7 @@ async function gabungSemuaJson() {
                 renderPencarianPopuler();
             } else {
                 title.textContent = `Hasil Pencarian untuk: "${e.target.value}"`;
-                const filtered = semuaFilm.filter(item => {
+                const filtered = databaseFilm.filter(item => {
     const title = (item.titulo || "").toLowerCase();
     const genre = (item.genre || "").toLowerCase();
     const kategori = (item.categoria || "").toLowerCase();
