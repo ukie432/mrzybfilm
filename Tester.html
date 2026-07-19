@@ -540,14 +540,17 @@
                 <div class="category-row" id="row-pilihan">
                     <div class="movies-slider-horizontal" id="slider-pilihan"></div>
                 </div>
+                
                 <div class="category-row" id="row-dubbing">
                     <div class="row-header"><h2 class="row-title">Film Dubbing</h2></div>
                     <div class="movies-slider-horizontal" id="slider-dubbing"></div>
                 </div>
+                
                 <div class="category-row" id="row-indo">
                     <div class="row-header"><h2 class="row-title">Film Indonesia</h2></div>
                     <div class="movies-slider-horizontal" id="slider-indo"></div>
                 </div>
+                
                 <div class="category-row" id="row-animasi">
                     <div class="row-header"><h2 class="row-title">Film Animasi</h2></div>
                     <div class="movies-slider-horizontal" id="slider-animasi"></div>
@@ -615,7 +618,7 @@
     'data/animasis.json',
     'data/lawass.json',
     'data/indos.json',
-    'data/dubbingseries.json',
+    'data/indoseries',
     'data/dubbings.json'
 
 ];
@@ -751,13 +754,13 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
             renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
 
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
-            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', true);
+            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
             const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
             const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
-            renderSlider(lawasData, 'slider-lawas', 'row-lawas', true);
+            renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
 
