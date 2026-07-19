@@ -619,6 +619,8 @@
     'data/lawass.json',
     'data/indos.json',
     'data/animasiseriess.json',
+    'data/dubbingseriess.json',
+    'data/indoseriess',
     'data/dubbings.json'
 
 ];
@@ -824,7 +826,7 @@ cards.forEach((card, index) => {
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
+            const lawasData = databaseFilm.filter(m => m.categoria === "film_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
