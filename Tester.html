@@ -771,6 +771,27 @@ function tambahFilmKategori(){
 
     slider.insertAdjacentHTML("beforeend", html);
 
+const cards = slider.querySelectorAll(".movie-card-portrait");
+
+cards.forEach((card, index) => {
+
+    card.onfocus = function(){
+
+        // Jika fokus berada 5 poster sebelum akhir
+        if(index >= cards.length - 5){
+
+            if(cards.length < daftarKategori.length){
+
+                tambahFilmKategori();
+
+            }
+
+        }
+
+    };
+
+});
+
 }
 
 
