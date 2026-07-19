@@ -702,7 +702,7 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         }
 
         async function loadDataKonten() {
-    // 1. Masukkan semua URL file JSON kamu di sini
+    // 1. Pastikan path file benar. Jika file index.html dan folder data ada di lokasi sama.
     const jsonFiles = [
         'data/home.json',
         'data/indos.json',
@@ -715,23 +715,36 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
     ];
 
     try {
-        // 2. Fetch semua file secara bersamaan agar STB tidak lag (loading cepat)
-        const responses = await Promise.all(jsonFiles.map(file => fetch(file)));
+        console.log("Memulai loading data...");
+
+        // 2. Gunakan fetch dengan penanganan error per file
+        const fetchPromises = jsonFiles.map(async (file) => {
+            const response = await fetch(file);
+            if (!response.ok) {
+                console.warn(`File tidak ditemukan atau error: ${file}`);
+                return []; // Mengembalikan array kosong jika file gagal dimuat agar tidak merusak sistem
+            }
+            return response.json();
+        });
+
+        // 3. Tunggu semua selesai
+        const results = await Promise.all(fetchPromises);
         
-        // 3. Ubah semua respon menjadi data JSON
-        const dataArrays = await Promise.all(responses.map(res => res.json()));
+        // 4. Gabungkan (flatten) semua array menjadi satu
+        databaseFilm = results.flat();
         
-        // 4. Gabungkan semua data menjadi satu database utama
-        // Ini akan membuat 'databaseFilm' berisi seluruh isi dari 8 file tersebut
-        databaseFilm = dataArrays.flat();
+        console.log("Database berhasil dimuat!", databaseFilm);
         
-        console.log("Database berhasil dimuat, total konten:", databaseFilm.length);
-        
-        // 5. Lanjutkan ke fungsi render kategori
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
+        // 5. Validasi: jika database masih kosong, berikan peringatan
+        if (databaseFilm.length === 0) {
+            console.error("Database kosong! Pastikan struktur JSON benar.");
+        } else {
+            // 6. Jalankan fungsi utama
+            kelolaBarisKategori();
+            buatEventSidebarFocus();
+        }
     } catch (error) {
-        console.error("Gagal memuat salah satu file JSON:", error);
+        console.error("Terjadi kesalahan fatal saat memuat data:", error);
     }
 }
         function buatEventSidebarFocus() {
