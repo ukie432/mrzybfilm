@@ -126,49 +126,98 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function pasangEventAksi() {
-        document.querySelectorAll('.card-film').forEach(card => {
-            const link = card.querySelector('.play-link');
-            if (!link) return;
-            link.replaceWith(link.cloneNode(true));
-            const newLink = card.querySelector('.play-link');
-            
-            const handleWatch = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                localStorage.setItem("dubbing_idPosterTerakhir", card.getAttribute("id"));
-                localStorage.setItem("dubbing_sedangNontonVideoSTB", "ya");
-                
-                if (typeof Android !== "undefined" && Android.playVideo) {
-                    Android.playVideo(newLink.getAttribute("href"));
-                }
-                return false;
-            };
-            newLink.addEventListener("click", handleWatch);
-            newLink.addEventListener("keydown", function(e) { if (e.key === "Enter") handleWatch(e); });
-        });
+    function pasangEventAksi() {}
 
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            btn.replaceWith(btn.cloneNode(true));
-        });
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            const handleFavClick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const idTarget = btn.getAttribute('data-target');
-                if (listFavorit.includes(idTarget)) {
-                    listFavorit = listFavorit.filter(id => id !== idTarget);
-                } else {
-                    listFavorit.push(idTarget);
-                }
-                localStorage.setItem('dubbing_favorit', JSON.stringify(listFavorit));
-                updateTampilanFavorit();
-            };
-            btn.addEventListener('click', handleFavClick);
-            btn.addEventListener('keydown', function(e) { if (e.key === "Enter") handleFavClick(e); });
-        });
+document.addEventListener("click", function(e){
+
+    const play = e.target.closest(".play-link");
+
+    if(play){
+
+        e.preventDefault();
+
+        const card = play.closest(".card-film");
+
+        localStorage.setItem(
+            "dubbing_idPosterTerakhir",
+            card.id
+        );
+
+        localStorage.setItem(
+            "dubbing_sedangNontonVideoSTB",
+            "ya"
+        );
+
+        if(typeof Android !== "undefined" &&
+           Android.playVideo){
+
+            Android.playVideo(play.href);
+
+        }
+
+        return;
+
     }
+
+    const fav = e.target.closest(".btn-fav");
+
+    if(fav){
+
+        e.preventDefault();
+
+        const id = fav.dataset.target;
+
+        if(listFavorit.includes(id)){
+
+            listFavorit =
+                listFavorit.filter(x => x !== id);
+
+        }else{
+
+            listFavorit.push(id);
+
+        }
+
+        localStorage.setItem(
+            "dubbing_favorit",
+            JSON.stringify(listFavorit)
+        );
+
+        updateTampilanFavorit();
+
+    }
+
+});
+
+document.addEventListener("keydown", function(e){
+
+    if(e.key !== "Enter") return;
+
+    const play = e.target.closest(".play-link");
+
+    if(play){
+
+        e.preventDefault();
+
+        play.click();
+
+        return;
+
+    }
+
+    const fav = e.target.closest(".btn-fav");
+
+    if(fav){
+
+        e.preventDefault();
+
+        fav.click();
+
+    }
+
+});
+
+
 
     function saringFilm(keyword) {
         let adaFilmCocok = false;
