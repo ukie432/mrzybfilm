@@ -78,10 +78,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
 
-let semuaFilm = [];
-let currentIndex = 0;
-const PER_PAGE = 40;
-
     // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
 
     // Menangani tombol BACK fisik Android TV secara manual dan bersih
@@ -129,50 +125,6 @@ const PER_PAGE = 40;
             }
         });
     }
-
-function renderNext() {
-
-    const html = semuaFilm
-        .slice(currentIndex, currentIndex + PER_PAGE)
-        .map(film => `
-            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                <a tabindex="0"
-                   class="play-link"
-                   href="${film.url}"
-                   data-title="${film.title.toLowerCase()}">
-
-                    <div class="poster-wrapper">
-                        <img src="${film.img}"
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-
-                </a>
-
-                <button class="btn-fav"
-                        tabindex="0"
-                        data-target="${film.id}">
-                    <span>☆</span> Favorit
-                </button>
-
-                <div class="film-title">
-                    ${film.title}
-                </div>
-
-            </div>
-        `).join("");
-
-    containerUtama.insertAdjacentHTML("beforeend", html);
-
-    currentIndex += PER_PAGE;
-
-    pasangEventAksi();
-    perbaruiStatusTombolBintang();
-
-}
-
-
-
 
     function pasangEventAksi() {
         document.querySelectorAll('.card-film').forEach(card => {
@@ -253,78 +205,44 @@ function renderNext() {
     });
 
     fetch('data/dubbing.json')
-.then(response => response.json())
-.then(data => {
+    .then(response => response.json())
+    .then(data => {
+        containerUtama.innerHTML = data.map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                    <div class="poster-wrapper">
+                        <img src="${film.img}" loading="lazy" decoding="async">
+                    </div>
+                </a>
+                <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
+                <div class="film-title">${film.title}</div>
+            </div>
+        `).join('');
 
-    semuaFilm = data;
+        updateTampilanFavorit();
 
-    renderNext();
-
-    updateTampilanFavorit();
-
-    containerUtama.addEventListener("focusin", function(e){
-
-        const card = e.target.closest(".card-film");
-
-        if(!card) return;
-
-        const cards = containerUtama.querySelectorAll(".card-film");
-
-        const index = Array.from(cards).indexOf(card);
-
-        if(index >= currentIndex - 10 &&
-           currentIndex < semuaFilm.length){
-
-            renderNext();
-
-        }
-
-    });
-
-    setTimeout(() => {
-
-        const statusNontonSTB =
-            localStorage.getItem("dubbing_sedangNontonVideoSTB");
-
-        const idPosterTerakhir =
-            localStorage.getItem("dubbing_idPosterTerakhir");
-
-        if(statusNontonSTB === "ya" && idPosterTerakhir){
-
-            const targetPoster =
-                document.getElementById(idPosterTerakhir);
-
-            if(targetPoster){
-
-                const tombolPlay =
-                    targetPoster.querySelector(".play-link");
-
-                if(tombolPlay){
-
-                    tombolPlay.focus();
-
-                    targetPoster.scrollIntoView({
-                        behavior:"auto",
-                        block:"center"
-                    });
-
-                    localStorage.removeItem("dubbing_sedangNontonVideoSTB");
-                    localStorage.removeItem("dubbing_idPosterTerakhir");
-
-                    return;
-
+        setTimeout(() => {
+            const statusNontonSTB = localStorage.getItem("dubbing_sedangNontonVideoSTB");
+            const idPosterTerakhir = localStorage.getItem("dubbing_idPosterTerakhir");
+            if (statusNontonSTB === "ya" && idPosterTerakhir) {
+                const targetPoster = document.getElementById(idPosterTerakhir);
+                if (targetPoster) {
+                    const tombolPlay = targetPoster.querySelector('.play-link');
+                    if (tombolPlay) {
+                        tombolPlay.focus();
+                        targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                        localStorage.removeItem("dubbing_sedangNontonVideoSTB");
+                        localStorage.removeItem("dubbing_idPosterTerakhir");
+                        return;
+                    }
                 }
-
             }
-
-        }
-
-        document
-            .querySelector("#containerUtama .play-link")
-            ?.focus();
-
-    },180);
-
+            const firstPoster = document.querySelector("#containerUtama .play-link");
+if (firstPoster) {
+    firstPoster.focus();
+}
+        }, 180);
+    })
     .catch(err => {
         console.error("Gagal load JSON:", err);
         const firstPoster = document.querySelector("#containerUtama .play-link");
