@@ -116,36 +116,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     
+    function renderNext(){
 
-    function resetRender(list) {
-
-        dataAktif = list;
-
-        currentIndex = 0;
-
-        containerUtama.innerHTML = "";
-
-        renderNext();
-
-    }
-    
-    });
-
-    
-fetch('data/dubbing.json')
-.then(response => response.json())
-.then(data => {
-
-    semuaFilm = data;
-dataAktif = data;
-
-resetRender(dataAktif);
-
-updateTampilanFavorit();
-
-    function renderNext(list = semuaFilm){
-
-        const html = list
+        const html = dataAktif
             .slice(currentIndex, currentIndex + PER_PAGE)
             .map(film => buatCard(film))
             .join("");
@@ -158,7 +131,7 @@ updateTampilanFavorit();
 
     }
 
-    renderNext();
+    resetRender(dataAktif);
 
     updateTampilanFavorit();
 
@@ -181,7 +154,33 @@ updateTampilanFavorit();
 
         }
 
-    });
+    
+    
+    
+
+    function resetRender(list) {
+
+        dataAktif = list;
+
+        currentIndex = 0;
+
+        containerUtama.innerHTML = "";
+
+        renderNext();
+
+    }
+    
+    
+
+    
+fetch('data/dubbing.json')
+.then(response => response.json())
+.then(data => {
+
+    semuaFilm = data;
+    dataAktif = data;
+
+    
 
     searchBox.addEventListener("input", function(){
 
