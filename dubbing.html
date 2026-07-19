@@ -108,21 +108,44 @@ let searchTimer;
             favSectionTitle.style.display = "block";
             containerFav.style.display = "flex";
             listFavorit.forEach(idFilm => {
-                const film = Array.from(containerUtama.querySelectorAll(".card-film"))
-    .find(card => card.dataset.id === idFilm);
 
-if (film) {
+    const film = semuaFilm.find(f => f.id === idFilm);
 
-    containerFav.insertAdjacentHTML(
-        "beforeend",
-        film.outerHTML.replace(
-            `id="utama-${idFilm}"`,
-            `id="fav-${idFilm}"`
-        )
-    );
+    if(!film) return;
 
-}
-            });
+    containerFav.insertAdjacentHTML("beforeend", `
+        <div class="card-film"
+             data-id="${film.id}"
+             id="fav-${film.id}">
+
+            <a tabindex="0"
+               class="play-link"
+               href="${film.url}"
+               data-title="${film.title.toLowerCase()}">
+
+                <div class="poster-wrapper">
+                    <img src="${film.img}"
+                         loading="lazy"
+                         decoding="async">
+
+                </div>
+
+            </a>
+
+            <button class="btn-fav"
+                    tabindex="0"
+                    data-target="${film.id}">
+                <span>★</span> Favorit
+            </button>
+
+            <div class="film-title">
+                ${film.title}
+            </div>
+
+        </div>
+    `);
+
+});
         }
         pasangEventAksi();
         perbaruiStatusTombolBintang();
