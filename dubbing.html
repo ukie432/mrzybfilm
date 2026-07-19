@@ -101,12 +101,20 @@ document.addEventListener("DOMContentLoaded", function() {
             favSectionTitle.style.display = "block";
             containerFav.style.display = "flex";
             listFavorit.forEach(idFilm => {
-                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
-                if (itemAsli) {
-                    const klon = itemAsli.cloneNode(true);
-                    klon.setAttribute('id', 'fav-' + idFilm);
-                    containerFav.appendChild(klon);
-                }
+                const film = Array.from(containerUtama.querySelectorAll(".card-film"))
+    .find(card => card.dataset.id === idFilm);
+
+if (film) {
+
+    containerFav.insertAdjacentHTML(
+        "beforeend",
+        film.outerHTML.replace(
+            `id="utama-${idFilm}"`,
+            `id="fav-${idFilm}"`
+        )
+    );
+
+}
             });
         }
         pasangEventAksi();
