@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV Player Internal Fix</title>
-    <!-- Memuat Library Shaka Player -->
-    <script src="https://cloudflare.com"></script>
-    <link rel="stylesheet" href="https://cloudflare.com">
+    <title>IPTV Player Ringan & Stabil</title>
+    <!-- Memuat Library Ringan DASH Pemutar file .mpd -->
+    <script src="https://dashjs.org"></script>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -25,7 +24,6 @@
             max-width: 800px;
             gap: 15px;
         }
-        /* Wadah Video Player */
         .player-wrapper {
             width: 100%;
             background: #000;
@@ -36,7 +34,7 @@
         }
         video { width: 100%; height: 100%; }
         
-        /* Grid Menu Utama - Dipastikan Selalu Muncul */
+        /* Grid Menu Utama - Dipaksa tampil instan tanpa menunggu library video */
         .tv-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -93,86 +91,73 @@
 <body>
 
     <div class="main-container">
-        <!-- Notifikasi Error -->
+        <!-- Notifikasi Log Status -->
         <div id="error-overlay"></div>
 
-        <!-- Tampilan Player -->
+        <!-- Tampilan Video Player Standar HTML5 -->
         <div class="player-wrapper">
-            <div data-shaka-player-container style="width:100%; height:100%;">
-                <video autoplay id="video" data-shaka-player></video>
-            </div>
+            <video id="videoPlayer" controls autoplay preload="auto"></video>
         </div>
 
-        <!-- Daftar Menu Saluran TV -->
-        <div class="tv-grid" id="tv-grid-container">Memuat Menu Saluran...</div>
+        <!-- Daftar Menu Saluran TV (Wajib Kosong untuk Diisi Otomatis) -->
+        <div class="tv-grid" id="tv-grid-container"></div>
     </div>
 
     <script>
-        // DATA PLAYLIST ASLI ANDA
-        const channels = [
+        // DATA PLAYLIST REKANAN ASLI ANDA
+        var channels = [
             {
                 name: "Celestial Movies",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
-                referrer: "https://visionplus.id",
-                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "de4a383599bb4ec4a24f8c61f2b9a3ba": "5166677d7f6797bcf459cf7c8b66dcb9" }
             },
             {
                 name: "Celestial Classic Movies",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
-                referrer: "https://visionplus.id",
-                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "974d4fb195224f66a2271de806e62018": "0e92ec1a28d59da80161c3541c6eb8eb" }
             },
             {
                 name: "Zee Bioskop (FirstMedia)",
                 logo: "https://githubusercontent.com",
                 url: "https://sysln.id",
-                referrer: "https://firstmedia.com",
-                userAgent: "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
                 clearkey: { "70d0197a8aca42589cf5df6daa576d86": "ebd47832fd7251a09e3cc8eb36790ad5" }
             },
             {
                 name: "Zee Bioskop (Vision+)",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
-                referrer: "https://visionplus.id",
-                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "398ef14ec7014ad8ae75414a7efd2a0f": "99a6225691aa669f0f22677b4536705e" }
             },
             {
                 name: "Zee Bioskop (IndiHome)",
                 logo: "https://githubusercontent.com",
                 url: "https://indihometv.com",
-                referrer: "",
-                userAgent: "",
                 clearkey: null
             },
             {
                 name: "TVN",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
-                referrer: "https://visionplus.id",
-                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "2e8cbd6f664b4ace966d3edfad94c18e": "cff33777777f7e61078ae2ae41ed0636" }
             }
         ];
 
-        let playerInstance = null;
-        let activeChannel = null;
+        var dashPlayer = null;
 
-        // FUNGSI INI SEKARANG DIPAKSA BERJALAN DULUAN
+        // FUNGSI INI DIJAMIN BERJALAN INSTAN TANPA BLOKIRAN
         function buildHomeUI() {
-            const gridContainer = document.getElementById('tv-grid-container');
-            gridContainer.innerHTML = ''; // Bersihkan tulisan loading
+            var gridContainer = document.getElementById('tv-grid-container');
+            if (!gridContainer) return;
+            
+            gridContainer.innerHTML = ''; // Reset kontainer
 
-            channels.forEach((ch, idx) => {
-                const card = document.createElement('div');
+            channels.forEach(function(ch, idx) {
+                var card = document.createElement('div');
                 card.className = 'channel-card';
                 card.id = 'ch-' + idx;
-                card.onclick = () => loadChannelStream(ch, card);
+                card.onclick = function() { loadChannelStream(ch, card); };
 
                 card.innerHTML = `
                     <img class="channel-logo" src="${ch.logo}" onerror="this.src='https://placehold.co'">
@@ -180,69 +165,50 @@
                 `;
                 gridContainer.appendChild(card);
             });
-        }
-
-        async function initShakaEngine() {
-            const video = document.getElementById('video');
             
-            if (!video || !video['ui']) {
-                showErrorLog("Peringatan: Pustaka pemutar gagal terhubung sempurna. Pastikan WebView mengizinkan DOM Storage.");
-                return;
-            }
-
-            const ui = video['ui'];
-            playerInstance = ui.getControls().getPlayer();
-            playerInstance.addEventListener('error', (e) => showErrorLog("Kendala Player. Kode Error: " + e.detail.code));
-
-            // Modifikasi request filter internet untuk User Agent & Referer
-            playerInstance.getNetworkingEngine().registerRequestFilter(function(type, request) {
-                if (activeChannel) {
-                    if (activeChannel.referrer) {
-                        request.headers['Referer'] = activeChannel.referrer;
-                    }
-                    if (activeChannel.userAgent) {
-                        request.headers['User-Agent'] = activeChannel.userAgent;
-                    }
-                }
-            });
-
-            // Otomatis putar saluran pertama
+            // Inisialisasi awal dash player bawaan
+            var videoElement = document.querySelector("#videoPlayer");
+            dashPlayer = dashjs.MediaPlayer().create();
+            
+            // Putar otomatis saluran indeks ke-0 saat awal terbuka
             if (channels.length > 0) {
-                const firstCard = document.getElementById('ch-0');
+                var firstCard = document.getElementById('ch-0');
                 loadChannelStream(channels[0], firstCard);
             }
         }
 
-        async function loadChannelStream(channel, cardElement) {
-            if (!playerInstance) {
-                showErrorLog("Pemutar video internal belum siap dimobilisasi.");
-                return;
-            }
+        function loadChannelStream(channel, cardElement) {
+            var videoElement = document.querySelector("#videoPlayer");
+            if (!dashPlayer || !videoElement) return;
 
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+            // Atur tanda warna aktif pada menu grid
+            document.querySelectorAll('.channel-card').forEach(function(c) { 
+                c.classList.remove('active'); 
+            });
             if (cardElement) cardElement.classList.add('active');
 
-            activeChannel = channel;
-            document.getElementById('error-overlay').style.display = 'none';
-
             try {
-                playerInstance.configure({ drm: { clearKeys: {} } });
-
+                // Konfigurasi proteksi ClearKey DRM bawaan playlist Anda secara langsung
                 if (channel.clearkey) {
-                    playerInstance.configure({
-                        drm: { clearKeys: channel.clearkey }
+                    dashPlayer.setProtectionData({
+                        "org.w3.clearkey": {
+                            "clearkeys": channel.clearkey
+                        }
                     });
+                } else {
+                    dashPlayer.resetProtectionData();
                 }
 
-                await playerInstance.load(channel.url);
+                // Masukkan tautan .mpd ke engine player dan eksekusi
+                dashPlayer.initialize(videoElement, channel.url, true);
+                
             } catch (error) {
-                showErrorLog(`Gagal memutar ${channel.name}. (Code: ${error.code})`);
+                console.error("Gagal memutar saluran ini: ", error);
             }
         }
 
-        function showErrorLog(message) {
-            const errorBox = document.getElementById('error-overlay');
-            errorBox.innerText = message;
-            errorBox.style.display = 'block';
-        }
-
+        // Paksa rendering menu kotak-kotak segera setelah script selesai dibaca browser
+        buildHomeUI();
+    </script>
+</body>
+</html>
