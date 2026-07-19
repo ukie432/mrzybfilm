@@ -613,17 +613,9 @@
     </div>
 
     <script>
-        const JSON_FILES = [
-    'data/home.json',
-    'data/animasis.json',
-    'data/lawass.json',
-    'data/indos.json',
-    'data/dubbingseriess.json',
-    'data/indoseriess.json',
-    'data/animasiseriess.json',
-    'data/dubbings.json'
+        const JSON_URL = "data/home.json";
 
-];
+
 
 const pageTitle = "mrzyb_premium";
 let databaseFilm = [];
@@ -716,35 +708,15 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
         async function loadDataKonten() {
 
-    databaseFilm = [];
+    const res = await fetch(JSON_URL);
 
-    for (const file of JSON_FILES) {
-
-        try {
-
-            const res = await fetch(file);
-
-            if (!res.ok) {
-                console.error("Tidak ditemukan:", file);
-                continue;
-            }
-
-            const data = await res.json();
-
-            databaseFilm.push(...data);
-
-            console.log(file, data.length);
-
-        } catch(err) {
-
-            console.error(file, err);
-
-        }
-
-    }
+    databaseFilm = await res.json();
 
     kelolaBarisKategori();
+
     buatEventSidebarFocus();
+
+}
 
 }
 
