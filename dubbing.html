@@ -223,17 +223,77 @@ document.addEventListener("click", function(e){
     fetch('data/dubbing.json')
     .then(response => response.json())
     .then(data => {
-        containerUtama.innerHTML = data.map(film => `
+    
+    const PER_PAGE = 40;
+let currentIndex = 0;
+    
+        function renderNext() {
+
+    const html = data
+        .slice(currentIndex, currentIndex + PER_PAGE)
+        .map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                <a tabindex="0" class="play-link"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
+
                     <div class="poster-wrapper">
-                        <img src="${film.img}" loading="lazy" decoding="async">
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
                     </div>
+
                 </a>
-                <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
-                <div class="film-title">${film.title}</div>
+
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+                    <span>☆</span> Favorit
+                </button>
+
+                <div class="film-title">
+                    ${film.title}
+                </div>
+
             </div>
-        `).join('');
+        `).join("");
+
+    containerUtama.insertAdjacentHTML("beforeend", html);
+
+    currentIndex += PER_PAGE;
+
+}
+renderNext();
+
+
+function cekRenderBerikutnya(focusIndex){
+
+    if(focusIndex >= currentIndex - 10 && currentIndex < data.length){
+
+        renderNext();
+
+        perbaruiStatusTombolBintang();
+
+    }
+
+}
+
+
+containerUtama.addEventListener("focusin", function(e){
+
+    const card = e.target.closest(".card-film");
+
+    if(!card) return;
+
+    const cards = [...containerUtama.querySelectorAll(".card-film")];
+
+    const index = cards.indexOf(card);
+
+    cekRenderBerikutnya(index);
+
+});
+
+
 
         updateTampilanFavorit();
 
