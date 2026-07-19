@@ -136,6 +136,9 @@ document.addEventListener("click", function(e){
     const favSectionTitle = document.getElementById('favSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
+    
+    let semuaFilm = [];
+    
 
     // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
 
@@ -151,40 +154,64 @@ document.addEventListener("click", function(e){
         }
     });
 
-    function updateTampilanFavorit() {
-        containerFav.innerHTML = "";
-        if (listFavorit.length === 0) {
-            favSectionTitle.style.display = "none";
-            containerFav.style.display = "none";
-        } else {
-            favSectionTitle.style.display = "block";
-            containerFav.style.display = "flex";
-            listFavorit.forEach(idFilm => {
-                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
-                if (itemAsli) {
-                    const klon = itemAsli.cloneNode(true);
-                    klon.setAttribute('id', 'fav-' + idFilm);
-                    containerFav.appendChild(klon);
-                }
-            });
-        }
-        
-        perbaruiStatusTombolBintang();
+    function updateTampilanFavorit(){
+
+    if(listFavorit.length===0){
+
+        favSectionTitle.style.display="none";
+        containerFav.innerHTML="";
+        return;
+
     }
 
-    function perbaruiStatusTombolBintang() {
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            const idTarget = btn.getAttribute('data-target');
-            if (listFavorit.includes(idTarget)) {
-                btn.classList.add('active');
-                btn.innerHTML = "<span>★</span> Favorit";
-            } else {
-                btn.classList.remove('active');
-                btn.innerHTML = "<span>☆</span> Favorit";
-            }
-        });
-    }
+    favSectionTitle.style.display="block";
 
+    const favoritData=
+        semuaFilm.filter(film=>
+            listFavorit.includes(film.id)
+        );
+
+    containerFav.innerHTML=
+        favoritData.map(film=>`
+            <div class="card-film"
+                 data-id="${film.id}"
+                 id="fav-${film.id}">
+
+                <a class="play-link"
+                   tabindex="0"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
+
+                    <div class="poster-wrapper">
+
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
+
+                    </div>
+
+                </a>
+
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+
+                    <span>★</span> Favorit
+
+                </button>
+
+                <div class="film-title">
+
+                    ${film.title}
+
+                </div>
+
+            </div>
+        `).join("");
+
+    perbaruiStatusTombolBintang();
+
+}
     
     function saringFilm(keyword) {
         let adaFilmCocok = false;
@@ -223,6 +250,8 @@ document.addEventListener("click", function(e){
     fetch('data/dubbing.json')
     .then(response => response.json())
     .then(data => {
+    
+    semuaFilm = data;
     
     const PER_PAGE = 40;
 let currentIndex = 0;
