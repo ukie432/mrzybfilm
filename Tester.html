@@ -613,9 +613,17 @@
     </div>
 
     <script>
-        const JSON_URL = "data/home.json";
+        const JSON_FILES = [
+    'data/home.json',
+    'data/animasis.json',
+    'data/lawass.json',
+    'data/indos.json',
+    'data/dubbingseriess.json',
+    'data/indoseriess.json',
+    'data/animasiseriess.json',
+    'data/dubbings.json'
 
-
+];
 
 const pageTitle = "mrzyb_premium";
 let databaseFilm = [];
@@ -708,17 +716,47 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
         async function loadDataKonten() {
 
-    const res = await fetch(JSON_URL);
+    databaseFilm = [];
 
-    databaseFilm = await res.json();
+    // 1. Tampilkan Pilihan Atas dulu
+    await loadJson('data/home.json');
 
-    kelolaBarisKategori();
+    // 2. Baru muat kategori lain satu per satu
+    setTimeout(() => loadJson('data/dubbings.json'), 300);
 
-    buatEventSidebarFocus();
+    setTimeout(() => loadJson('data/indos.json'), 600);
+
+    setTimeout(() => loadJson('data/animasis.json'), 900);
+
+    setTimeout(() => loadJson('data/lawass.json'), 1200);
+
+    setTimeout(() => loadJson('data/animaseries.json'), 1500);
 
 }
 
+
+async function loadJson(file) {
+
+    try {
+
+        const res = await fetch(file);
+
+        const data = await res.json();
+
+        databaseFilm.push(...data);
+
+        kelolaBarisKategori();
+
+        buatEventSidebarFocus();
+
+    } catch(err) {
+
+        console.error(file, err);
+
+    }
+
 }
+
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
