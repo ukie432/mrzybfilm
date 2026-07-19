@@ -68,70 +68,197 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 <div id="noResultsText">Film tidak ditemukan...</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
+    const searchBox = document.getElementById('searchBox');
+    const btnClear = document.getElementById('btnClear');
+    const noResultsText = document.getElementById('noResultsText');
+    const containerUtama = document.getElementById('containerUtama');
+    const containerFav = document.getElementById('containerFav');
+    const favSectionTitle = document.getElementById('favSectionTitle');
 
-    const searchBox = document.getElementById("searchBox");
-    const btnClear = document.getElementById("btnClear");
-    const noResultsText = document.getElementById("noResultsText");
+    let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
 
-    const containerUtama = document.getElementById("containerUtama");
-    const containerFav = document.getElementById("containerFav");
-    const favSectionTitle = document.getElementById("favSectionTitle");
+let semuaFilm = [];
+let currentIndex = 0;
+const PER_PAGE = 40;
 
-    let semuaFilm = [];
-    let dataAktif = [];
-    let listFavorit = JSON.parse(localStorage.getItem("dubbing_favorit")) || [];
+    // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
 
-    let currentIndex = 0;
-    const PER_PAGE = 40;
-    let searchTimer;
+    // Menangani tombol BACK fisik Android TV secara manual dan bersih
+    window.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
+            // Jika ada jembatan keluar aplikasi dari pembungkus Android Anda, gunakan ini:
+            if (typeof Android !== "undefined" && Android.exitApp) {
+                e.preventDefault();
+                Android.exitApp(); 
+            }
+            // Jika tidak ada, biarkan browser STB menutup halaman ini secara alami tanpa hambatan stack riwayat.
+        }
+    });
 
-    function buatCard(film, fav = false) {
+    function updateTampilanFavorit() {
+        containerFav.innerHTML = "";
+        if (listFavorit.length === 0) {
+            favSectionTitle.style.display = "none";
+            containerFav.style.display = "none";
+        } else {
+            favSectionTitle.style.display = "block";
+            containerFav.style.display = "flex";
+            listFavorit.forEach(idFilm => {
+                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
+                if (itemAsli) {
+                    const klon = itemAsli.cloneNode(true);
+                    klon.setAttribute('id', 'fav-' + idFilm);
+                    containerFav.appendChild(klon);
+                }
+            });
+        }
+        pasangEventAksi();
+        perbaruiStatusTombolBintang();
+    }
 
-        return `
-        <div class="card-film" data-id="${film.id}" id="${fav ? "fav" : "utama"}-${film.id}">
-            <a class="play-link"
-               tabindex="0"
-               href="${film.url}"
-               data-title="${film.title.toLowerCase()}">
+    function perbaruiStatusTombolBintang() {
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            const idTarget = btn.getAttribute('data-target');
+            if (listFavorit.includes(idTarget)) {
+                btn.classList.add('active');
+                btn.innerHTML = "<span>★</span> Favorit";
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = "<span>☆</span> Favorit";
+            }
+        });
+    }
 
-                <div class="poster-wrapper">
-                    <img src="${film.img}"
-                         loading="lazy"
-                         decoding="async">
+function renderNext() {
+
+    const html = semuaFilm
+        .slice(currentIndex, currentIndex + PER_PAGE)
+        .map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0"
+                   class="play-link"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
+
+                    <div class="poster-wrapper">
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+
+                </a>
+
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+                    <span>☆</span> Favorit
+                </button>
+
+                <div class="film-title">
+                    ${film.title}
                 </div>
 
-            </a>
+            </div>
+        `).join("");
 
-            <button class="btn-fav"
-                    tabindex="0"
-                    data-target="${film.id}">
-                <span>${listFavorit.includes(film.id) ? "★" : "☆"}</span>
-                Favorit
-            </button>
+    containerUtama.insertAdjacentHTML("beforeend", html);
 
-            <div class="film-title">${film.title}</div>
+    currentIndex += PER_PAGE;
 
-        </div>`;
+    pasangEventAksi();
+    perbaruiStatusTombolBintang();
+
+}
+
+
+
+
+    function pasangEventAksi() {
+        document.querySelectorAll('.card-film').forEach(card => {
+            const link = card.querySelector('.play-link');
+            if (!link) return;
+            link.replaceWith(link.cloneNode(true));
+            const newLink = card.querySelector('.play-link');
+            
+            const handleWatch = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                localStorage.setItem("dubbing_idPosterTerakhir", card.getAttribute("id"));
+                localStorage.setItem("dubbing_sedangNontonVideoSTB", "ya");
+                
+                if (typeof Android !== "undefined" && Android.playVideo) {
+                    Android.playVideo(newLink.getAttribute("href"));
+                }
+                return false;
+            };
+            newLink.addEventListener("click", handleWatch);
+            newLink.addEventListener("keydown", function(e) { if (e.key === "Enter") handleWatch(e); });
+        });
+
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            const handleFavClick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const idTarget = btn.getAttribute('data-target');
+                if (listFavorit.includes(idTarget)) {
+                    listFavorit = listFavorit.filter(id => id !== idTarget);
+                } else {
+                    listFavorit.push(idTarget);
+                }
+                localStorage.setItem('dubbing_favorit', JSON.stringify(listFavorit));
+                updateTampilanFavorit();
+            };
+            btn.addEventListener('click', handleFavClick);
+            btn.addEventListener('keydown', function(e) { if (e.key === "Enter") handleFavClick(e); });
+        });
     }
 
-    
-    function renderNext(){
-
-        const html = dataAktif
-            .slice(currentIndex, currentIndex + PER_PAGE)
-            .map(film => buatCard(film))
-            .join("");
-
-        containerUtama.insertAdjacentHTML("beforeend", html);
-
-        currentIndex += PER_PAGE;
-
-        perbaruiStatusTombolBintang();
-
+    function saringFilm(keyword) {
+        let adaFilmCocok = false;
+        const semuaKartu = containerUtama.querySelectorAll('.card-film');
+        semuaKartu.forEach(card => {
+            const link = card.querySelector('.play-link');
+            const namaFilm = link.getAttribute('data-title');
+            const btnFav = card.querySelector('.btn-fav');
+            if (namaFilm.includes(keyword)) {
+                card.style.display = "block";
+                link.setAttribute("tabindex", "0");
+                btnFav.setAttribute("tabindex", "0");
+                adaFilmCocok = true;
+            } else {
+                card.style.display = "none";
+                link.setAttribute("tabindex", "-1");
+                btnFav.setAttribute("tabindex", "-1");
+            }
+        });
+        noResultsText.style.display = adaFilmCocok ? "none" : "block";
     }
 
-    resetRender(dataAktif);
+    searchBox.addEventListener('input', function() {
+        const filterText = searchBox.value.toLowerCase().trim();
+        btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+        saringFilm(filterText);
+    });
+
+    btnClear.addEventListener('click', function() {
+        searchBox.value = "";
+        btnClear.style.display = "none";
+        saringFilm("");
+        searchBox.focus();
+    });
+
+    fetch('data/dubbing.json')
+.then(response => response.json())
+.then(data => {
+
+    semuaFilm = data;
+
+    renderNext();
 
     updateTampilanFavorit();
 
@@ -146,161 +273,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const index = Array.from(cards).indexOf(card);
 
         if(index >= currentIndex - 10 &&
-   currentIndex < dataAktif.length){
+           currentIndex < semuaFilm.length){
 
-    renderNext();
-
-}
-
-        }
-
-    
-    
-    
-
-    function resetRender(list) {
-
-        dataAktif = list;
-
-        currentIndex = 0;
-
-        containerUtama.innerHTML = "";
-
-        renderNext();
-
-    }
-    
-    
-
-    
-fetch('data/dubbing.json')
-.then(response => response.json())
-.then(data => {
-
-    semuaFilm = data;
-    dataAktif = data;
-
-    
-
-    searchBox.addEventListener("input", function(){
-
-    clearTimeout(searchTimer);
-
-    searchTimer = setTimeout(() => {
-
-        const keyword = this.value
-            .toLowerCase()
-            .trim();
-
-        btnClear.style.display =
-            keyword ? "flex" : "none";
-
-        if(keyword === ""){
-
-            noResultsText.style.display = "none";
-
-            resetRender(semuaFilm);
-
-            return;
-
-        }
-
-        const hasil = semuaFilm.filter(film =>
-            film.title
-                .toLowerCase()
-                .includes(keyword)
-        );
-
-        if(hasil.length){
-
-            noResultsText.style.display = "none";
-
-            resetRender(hasil);
-
-        }else{
-
-            containerUtama.innerHTML = "";
-
-            dataAktif = [];
-
-            noResultsText.style.display = "block";
-
-        }
-
-    }, 200);
-
-});
-
-    btnClear.addEventListener("click", function(){
-
-    searchBox.value = "";
-
-    btnClear.style.display = "none";
-
-    noResultsText.style.display = "none";
-
-    resetRender(semuaFilm);
-
-    searchBox.focus();
-
-});
-
-    document.addEventListener("click", function(e){
-
-        const play = e.target.closest(".play-link");
-
-        if(play){
-
-            e.preventDefault();
-
-            const card = play.closest(".card-film");
-
-            localStorage.setItem(
-                "dubbing_idPosterTerakhir",
-                card.id
-            );
-
-            localStorage.setItem(
-                "dubbing_sedangNontonVideoSTB",
-                "ya"
-            );
-
-            if(typeof Android !== "undefined" &&
-               Android.playVideo){
-
-                Android.playVideo(play.href);
-
-            }
-
-            return;
-
-        }
-
-        const fav = e.target.closest(".btn-fav");
-
-        if(fav){
-
-            const id = fav.dataset.target;
-
-            if(listFavorit.includes(id)){
-
-                listFavorit =
-                    listFavorit.filter(x => x !== id);
-
-            }else{
-
-                listFavorit.push(id);
-
-            }
-
-            localStorage.setItem(
-                "dubbing_favorit",
-                JSON.stringify(listFavorit)
-            );
-
-            updateTampilanFavorit();
-
-            perbaruiStatusTombolBintang();
+            renderNext();
 
         }
 
@@ -308,53 +283,58 @@ fetch('data/dubbing.json')
 
     setTimeout(() => {
 
-        const id =
-            localStorage.getItem(
-                "dubbing_idPosterTerakhir"
-            );
+        const statusNontonSTB =
+            localStorage.getItem("dubbing_sedangNontonVideoSTB");
 
-        const status =
-            localStorage.getItem(
-                "dubbing_sedangNontonVideoSTB"
-            );
+        const idPosterTerakhir =
+            localStorage.getItem("dubbing_idPosterTerakhir");
 
-        if(status === "ya" && id){
+        if(statusNontonSTB === "ya" && idPosterTerakhir){
 
-            const target =
-                document.getElementById(id);
+            const targetPoster =
+                document.getElementById(idPosterTerakhir);
 
-            if(target){
+            if(targetPoster){
 
-                target
-                .querySelector(".play-link")
-                ?.focus();
+                const tombolPlay =
+                    targetPoster.querySelector(".play-link");
 
-                target.scrollIntoView({
-                    behavior:"auto",
-                    block:"center"
-                });
+                if(tombolPlay){
+
+                    tombolPlay.focus();
+
+                    targetPoster.scrollIntoView({
+                        behavior:"auto",
+                        block:"center"
+                    });
+
+                    localStorage.removeItem("dubbing_sedangNontonVideoSTB");
+                    localStorage.removeItem("dubbing_idPosterTerakhir");
+
+                    return;
+
+                }
 
             }
 
-            localStorage.removeItem(
-                "dubbing_idPosterTerakhir"
-            );
+        }
 
-            localStorage.removeItem(
-                "dubbing_sedangNontonVideoSTB"
-            );
-
-        }else{
-
-            document
+        document
             .querySelector("#containerUtama .play-link")
             ?.focus();
-
-        }
 
     },180);
 
 })
+.catch(err => {
+
+    console.error("Gagal load JSON:", err);
+
+    document
+        .querySelector("#containerUtama .play-link")
+        ?.focus();
+
+});
     .catch(err => {
         console.error("Gagal load JSON:", err);
         const firstPoster = document.querySelector("#containerUtama .play-link");
