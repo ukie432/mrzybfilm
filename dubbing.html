@@ -77,6 +77,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const favSectionTitle = document.getElementById('favSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
+
+let semuaFilm = [];
+let currentIndex = 0;
+const PER_PAGE = 40;
     
 let searchTimer;
 
@@ -135,6 +139,49 @@ if (film) {
             }
         });
     }
+
+
+
+
+function renderNext(){
+
+    const html = semuaFilm
+        .slice(currentIndex, currentIndex + PER_PAGE)
+        .map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0"
+                   class="play-link"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
+
+                    <div class="poster-wrapper">
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+
+                </a>
+
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+                    <span>☆</span> Favorit
+                </button>
+
+                <div class="film-title">
+                    ${film.title}
+                </div>
+            </div>
+        `).join("");
+
+    containerUtama.insertAdjacentHTML("beforeend", html);
+
+    currentIndex += PER_PAGE;
+
+    perbaruiStatusTombolBintang();
+
+}
+
 
     function pasangEventAksi() {}
 
