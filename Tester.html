@@ -699,7 +699,7 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
 } else if (viewName === 'lawas') {
     document.getElementById('menu-lawas').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
+    tampilkanKategoriKhusus(m => m.categoria === "film_lawas", "Film Lawas");
 } else {
                     document.getElementById('menu-home').classList.add('active');
                     document.getElementById('search-main-input').value = "";
@@ -750,13 +750,13 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
             renderSlider(pilihanData, 'slider-pilihan', 'row-pilihan', true);
 
             const dubbingData = databaseFilm.filter(m => m.categoria === "film_dubbing" && m.halaman_depan === true);
-            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', false);
+            renderSlider(dubbingData, 'slider-dubbing', 'row-dubbing', true);
             const indoData = databaseFilm.filter(m => m.categoria === "film_indo" && m.halaman_depan === true);
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
             const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
-            renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
+            renderSlider(lawasData, 'slider-lawas', 'row-lawas', true);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
 
