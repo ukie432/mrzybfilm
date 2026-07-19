@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
 
 let semuaFilm = [];
+let dataAktif = [];
 let currentIndex = 0;
 const PER_PAGE = 40;
     
@@ -145,7 +146,7 @@ if (film) {
 
 function renderNext(){
 
-    const html = semuaFilm
+    const html = dataAktif
         .slice(currentIndex, currentIndex + PER_PAGE)
         .map(film => `
             <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
@@ -328,6 +329,7 @@ document.addEventListener("keydown", function(e){
     .then(response => response.json())
     .then(data => {
         semuaFilm = data;
+dataAktif = data;
 
 renderNext();
 
@@ -345,7 +347,7 @@ renderNext();
     const index = Array.from(cards).indexOf(card);
 
     if(index >= currentIndex - 10 &&
-       currentIndex < semuaFilm.length){
+       currentIndex < dataAktif.length){
 
         renderNext();
 
