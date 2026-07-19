@@ -610,12 +610,40 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/home.json';
+        const JSON_FILES = [
+    'data/home.json',
+    'data/indos.json',
+    'data/dubbings.json',
+    'data/animasis.json',
+    'data/lawass.json',
+    'data/dubbingseries.json',
+    'data/indosseries.json',
+    'data/animasiseries.json'
         const pageTitle = "mrzyb_premium"; 
         let databaseFilm = [];
         let dataFilmAktif = null;
         let activeView = 'home';
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+
+async function loadDataKonten() {
+    try {
+        // Mengambil semua file secara paralel agar loading lebih cepat di STB
+        const responses = await Promise.all(JSON_FILES.map(url => fetch(url)));
+        const dataArrays = await Promise.all(responses.map(res => res.json()));
+        
+        // Menggabungkan semua array menjadi satu database besar
+        databaseFilm = dataArrays.flat();
+        
+        console.log("Total konten dimuat:", databaseFilm.length);
+        
+        // Panggil fungsi untuk menampilkan data ke layar
+        kelolaBarisKategori();
+        buatEventSidebarFocus();
+    } catch (error) {
+        console.error("Gagal mengambil database JSON:", error);
+    }
+}
+
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -700,16 +728,7 @@
             }
         }
 
-        async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
+       
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
