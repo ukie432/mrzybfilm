@@ -626,21 +626,36 @@
         let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
 async function loadDataKonten() {
-    try {
-        // Mengambil semua file secara paralel agar loading lebih cepat di STB
-        const responses = await Promise.all(JSON_FILES.map(url => fetch(url)));
-        const dataArrays = await Promise.all(responses.map(res => res.json()));
-        
-        // Menggabungkan semua array menjadi satu database besar
-        databaseFilm = dataArrays.flat();
-        
-        console.log("Total konten dimuat:", databaseFilm.length);
-        
-        // Panggil fungsi untuk menampilkan data ke layar
+    // Daftar file Anda
+    const files = [
+        'data/home.json', 'data/indos.json', 'data/dubbings.json', 
+        'data/animasis.json', 'data/lawass.json', 'data/dubbingseries.json', 
+        'data/indosseries.json', 'data/animasiseries.json'
+    ];
+
+    databaseFilm = []; // Reset database
+
+    for (const url of files) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) continue; // Lewati jika file tidak ditemukan
+            const data = await response.json();
+            
+            // Gabungkan data ke databaseFilm
+            databaseFilm = databaseFilm.concat(data);
+        } catch (e) {
+            console.error("Gagal load file: " + url, e);
+        }
+    }
+
+    console.log("Total data terkumpul:", databaseFilm.length);
+    
+    // Pastikan data benar-benar ada sebelum render
+    if (databaseFilm.length > 0) {
         kelolaBarisKategori();
         buatEventSidebarFocus();
-    } catch (error) {
-        console.error("Gagal mengambil database JSON:", error);
+    } else {
+        alert("Data tetap kosong! Cek isi file JSON.");
     }
 }
 
