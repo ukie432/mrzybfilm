@@ -618,22 +618,15 @@
     'data/animasis.json',
     'data/lawass.json',
     'data/indos.json',
-    'data/animasiseriess.json',
-    'data/dubbingseriess.json',
-    'data/indoseriess',
+    
+    'data/indoseriess.json',
+    
     'data/dubbings.json'
 
 ];
 
 const pageTitle = "mrzyb_premium";
-
 let databaseFilm = [];
-let indexFilm = {};
-const cacheJson = {};
-
-let daftarKategori = [];
-let jumlahTampil = 40;
-
 let dataFilmAktif = null;
 let activeView = 'home';
 let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
@@ -722,80 +715,38 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         }
 
         async function loadDataKonten() {
-    try {
-        const hasil = await Promise.all(
-            JSON_FILES.map(file =>
-                fetch(file).then(res => res.json())
-            )
-        );
 
-        databaseFilm = hasil.flat();
+    databaseFilm = [];
 
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
+    for (const file of JSON_FILES) {
 
-    } catch (error) {
-        console.error("Gagal mengambil database JSON:", error);
-    }
-}
+        try {
 
-function tambahFilmKategori(){
+            const res = await fetch(file);
 
-    const slider = document.getElementById("slider-pilihan");
-
-    const mulai = slider.children.length;
-
-    const akhir = Math.min(mulai + jumlahTampil, daftarKategori.length);
-
-    let html = "";
-
-    for(let i = mulai; i < akhir; i++){
-
-        const item = daftarKategori[i];
-
-        const poster = item.poster_portrait || item.poster;
-
-        html += `
-        <div class="movie-card-portrait"
-            tabindex="0"
-            onclick="bukaModalDetail('${item.titulo.replace(/'/g,"\\'")}')">
-
-            <img src="${poster}"
-                class="movie-poster-portrait"
-                loading="lazy">
-
-            <div class="movie-info">
-                <h3 class="movie-title">${item.titulo}</h3>
-            </div>
-
-        </div>`;
-    }
-
-    slider.insertAdjacentHTML("beforeend", html);
-
-const cards = slider.querySelectorAll(".movie-card-portrait");
-
-cards.forEach((card, index) => {
-
-    card.onfocus = function(){
-
-        // Jika fokus berada 5 poster sebelum akhir
-        if(index >= cards.length - 5){
-
-            if(cards.length < daftarKategori.length){
-
-                tambahFilmKategori();
-
+            if (!res.ok) {
+                console.error("Tidak ditemukan:", file);
+                continue;
             }
+
+            const data = await res.json();
+
+            databaseFilm.push(...data);
+
+            console.log(file, data.length);
+
+        } catch(err) {
+
+            console.error(file, err);
 
         }
 
-    };
+    }
 
-});
+    kelolaBarisKategori();
+    buatEventSidebarFocus();
 
 }
-
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -849,15 +800,13 @@ cards.forEach((card, index) => {
             rowHeader.innerHTML = `<h2 class="row-title">${judulKategori}</h2>`;
             rowPilihan.insertBefore(rowHeader, sliderPilihan);
 
-            daftarKategori = databaseFilm.filter(filterFunc);
+            const filteredData = databaseFilm.filter(filterFunc);
 
-            if (daftarKategori.length === 0) {
+            if (filteredData.length === 0) {
                 sliderPilihan.innerHTML = `<p style="padding: 1.5rem; color: var(--text-secondary); font-size:1.3rem;">Belum ada konten di kategori ini.</p>`;
                 rowPilihan.style.display = 'block';
             } else {
-                sliderPilihan.innerHTML = "";
-
-tambahFilmKategori();
+                renderSlider(filteredData, 'slider-pilihan', 'row-pilihan', false);
             }
 
             document.getElementById('row-dubbing').style.display = 'none';
