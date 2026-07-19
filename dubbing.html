@@ -398,7 +398,15 @@ renderNext();
             const statusNontonSTB = localStorage.getItem("dubbing_sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("dubbing_idPosterTerakhir");
             if (statusNontonSTB === "ya" && idPosterTerakhir) {
-                const targetPoster = document.getElementById(idPosterTerakhir);
+                let targetPoster = document.getElementById(idPosterTerakhir);
+
+while (!targetPoster && currentIndex < dataAktif.length) {
+
+    renderNext();
+
+    targetPoster = document.getElementById(idPosterTerakhir);
+
+}
                 if (targetPoster) {
                     const tombolPlay = targetPoster.querySelector('.play-link');
                     if (tombolPlay) {
