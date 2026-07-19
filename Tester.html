@@ -519,7 +519,7 @@
     <i class="fas fa-tv"></i> <span>Film Seri</span>
 </button>
 
-<button class="sidebar-item" id="menu-lawas" tabindex="0" onclick="switchView('lawas')">
+<button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
     <i class="fas fa-landmark"></i> <span>Film Lawas</span>
 </button>
 
@@ -610,12 +610,21 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/Tester.json';
-        const pageTitle = "mrzyb_premium"; 
-        let databaseFilm = [];
-        let dataFilmAktif = null;
-        let activeView = 'home';
-        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+        const JSON_FILES = [
+    'data/home.json',
+    'data/dubbings.json',
+    'data/animasis.json',
+    'data/lawass.json',
+    'data/dubbingseries.json',
+    'data/indosseries.json',
+    'data/animasiseries.json'
+];
+
+const pageTitle = "mrzyb_premium";
+let databaseFilm = [];
+let dataFilmAktif = null;
+let activeView = 'home';
+let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -690,8 +699,8 @@
     tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
 
 } else if (viewName === 'lawas') {
-    document.getElementById('menu-lawas').classList.add('active');
-    tampilkanKategoriKhusus(m => m.categoria === "film_lawas", "Film Lawas");
+    document.getElementById('menu-vip').classList.add('active');
+    tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
 } else {
                     document.getElementById('menu-home').classList.add('active');
                     document.getElementById('search-main-input').value = "";
@@ -701,15 +710,22 @@
         }
 
         async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
+    try {
+        const hasil = await Promise.all(
+            JSON_FILES.map(file =>
+                fetch(file).then(res => res.json())
+            )
+        );
+
+        databaseFilm = hasil.flat();
+
+        kelolaBarisKategori();
+        buatEventSidebarFocus();
+
+    } catch (error) {
+        console.error("Gagal mengambil database JSON:", error);
+    }
+}
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -740,7 +756,7 @@
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "film_lawas" && m.halaman_depan === true);
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
