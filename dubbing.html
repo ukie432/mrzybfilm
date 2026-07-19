@@ -169,44 +169,36 @@ let searchTimer;
 
 function renderNext(){
 
-    const fragment = document.createDocumentFragment();
-
-    const temp = document.createElement("div");
-
-    semuaFilm
+    const html = dataAktif
         .slice(currentIndex, currentIndex + PER_PAGE)
-        .forEach(film => {
+        .map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0"
+                   class="play-link"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
 
-            temp.innerHTML = `
-                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                    <a tabindex="0"
-                       class="play-link"
-                       href="${film.url}"
-                       data-title="${film.title.toLowerCase()}">
+                    <div class="poster-wrapper">
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
 
-                        <div class="poster-wrapper">
-                            <img src="${film.img}"
-                                 loading="lazy"
-                                 decoding="async">
-                        </div>
+                </a>
 
-                    </a>
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+                    <span>☆</span> Favorit
+                </button>
 
-                    <button class="btn-fav"
-                            tabindex="0"
-                            data-target="${film.id}">
-                        <span>☆</span> Favorit
-                    </button>
-
-                    <div class="film-title">${film.title}</div>
+                <div class="film-title">
+                    ${film.title}
                 </div>
-            `;
+            </div>
+        `).join("");
 
-            fragment.appendChild(temp.firstElementChild);
-
-        });
-
-    containerUtama.appendChild(fragment);
+    containerUtama.insertAdjacentHTML("beforeend", html);
 
     currentIndex += PER_PAGE;
 
