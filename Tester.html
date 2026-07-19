@@ -610,13 +610,14 @@
     </div>
 
     <script>
-        const JSON_URL = 'data/Tester.json';
-        const pageTitle = "mrzyb_premium"; 
-        let databaseFilm = [];
-        let dataFilmAktif = null;
-        let activeView = 'home';
-        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+        // HAPUS BARIS: const JSON_URL = 'data/Tester.json'; 
 
+// GANTI DENGAN INI (opsional, hanya jika ingin rapi):
+const pageTitle = "mrzyb_premium"; 
+let databaseFilm = [];
+let dataFilmAktif = null;
+let activeView = 'home';
+let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
             window.closeModal();
@@ -701,16 +702,38 @@
         }
 
         async function loadDataKonten() {
-            try {
-                const response = await fetch(JSON_URL);
-                databaseFilm = await response.json();
-                kelolaBarisKategori();
-                buatEventSidebarFocus();
-            } catch (error) {
-                console.error("Gagal mengambil database JSON:", error);
-            }
-        }
+    // 1. Masukkan semua URL file JSON kamu di sini
+    const jsonFiles = [
+        'data/home.json',
+        'data/indos.json',
+        'data/dubbings.json',
+        'data/animasis.json',
+        'data/lawass.json',
+        'data/dubbingseries.json',
+        'data/indosseries.json',
+        'data/animasiseries.json'
+    ];
 
+    try {
+        // 2. Fetch semua file secara bersamaan agar STB tidak lag (loading cepat)
+        const responses = await Promise.all(jsonFiles.map(file => fetch(file)));
+        
+        // 3. Ubah semua respon menjadi data JSON
+        const dataArrays = await Promise.all(responses.map(res => res.json()));
+        
+        // 4. Gabungkan semua data menjadi satu database utama
+        // Ini akan membuat 'databaseFilm' berisi seluruh isi dari 8 file tersebut
+        databaseFilm = dataArrays.flat();
+        
+        console.log("Database berhasil dimuat, total konten:", databaseFilm.length);
+        
+        // 5. Lanjutkan ke fungsi render kategori
+        kelolaBarisKategori();
+        buatEventSidebarFocus();
+    } catch (error) {
+        console.error("Gagal memuat salah satu file JSON:", error);
+    }
+}
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.addEventListener('focus', () => {
