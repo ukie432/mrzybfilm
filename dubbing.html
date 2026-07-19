@@ -28,12 +28,8 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
 .section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
-.card-film{
-    width:170px;
-    margin:0;
-    flex:none;
-}
 
+.card-film { width: calc(11.28% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; display: block; position: relative; }
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
 .play-link { display: block; text-decoration: none; outline: none; }
 
@@ -46,18 +42,13 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-fav span { font-size: 13px; }
 #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
-@media (max-width: 1400px) { .card-film { width: calc(14.28% - 14px); } }
-@media (max-width: 1000px) { .card-film { width: calc(16.66% - 14px); } }
-@media (max-width: 768px) { .card-film { width: calc(25% - 14px); } .header-banner h1 { font-size: 28px; } }
-@media (max-width: 480px) { .card-film { width: calc(33.33% - 10px); margin: 5px; } 
+@media (max-width: 1400px) { .card-film { width: calc(11.28% - 14px); } }
+@media (max-width: 1000px) { .card-film { width: calc(13.66% - 14px); } }
+@media (max-width: 768px) { .card-film { width: calc(22% - 14px); } .header-banner h1 { font-size: 28px; } }
+@media (max-width: 480px) { .card-film { width: calc(30.33% - 10px); margin: 5px; } 
 
-.container-film{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    justify-content:flex-start;
-}
- }
+
+.container-film { padding: 0 5px; } .section-title { font-size: 18px; margin: 10px 10px 5px 10px; } }
 </style>
 </head>
 <body>
