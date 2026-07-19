@@ -77,6 +77,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const favSectionTitle = document.getElementById('favSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
+    
+let searchTimer;
 
     // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
 
@@ -248,11 +250,25 @@ document.addEventListener("keydown", function(e){
         noResultsText.style.display = adaFilmCocok ? "none" : "block";
     }
 
-    searchBox.addEventListener('input', function() {
-        const filterText = searchBox.value.toLowerCase().trim();
-        btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+    searchBox.addEventListener("input", function(){
+
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+
+        const filterText =
+            searchBox.value.toLowerCase().trim();
+
+        btnClear.style.display =
+            searchBox.value.length > 0
+                ? "flex"
+                : "none";
+
         saringFilm(filterText);
-    });
+
+    }, 200);
+
+});
 
     btnClear.addEventListener('click', function() {
         searchBox.value = "";
