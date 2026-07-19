@@ -3,7 +3,6 @@
 <head>
 
     
-    
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
 
     <link rel="preconnect" href="https://posterfilm.pages.dev">
@@ -326,16 +325,6 @@ function renderNext() {
 
     },180);
 
-})
-.catch(err => {
-
-    console.error("Gagal load JSON:", err);
-
-    document
-        .querySelector("#containerUtama .play-link")
-        ?.focus();
-
-});
     .catch(err => {
         console.error("Gagal load JSON:", err);
         const firstPoster = document.querySelector("#containerUtama .play-link");
