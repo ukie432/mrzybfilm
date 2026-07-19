@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV Player Ringan & Stabil</title>
-    <!-- Memuat Library Ringan DASH Pemutar file .mpd -->
+    <title>IPTV Player Fix Android Studio</title>
+    <!-- Memuat Library Dash.js Resmi -->
     <script src="https://dashjs.org"></script>
     <style>
         body {
@@ -34,7 +34,6 @@
         }
         video { width: 100%; height: 100%; }
         
-        /* Grid Menu Utama - Dipaksa tampil instan tanpa menunggu library video */
         .tv-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -51,6 +50,7 @@
             border-radius: 10px;
             padding: 12px;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         .channel-card:active, .channel-card.active {
             background-color: #262626;
@@ -75,89 +75,88 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        #error-overlay {
-            color: #ff4d4d;
-            background: #2b1313;
-            padding: 10px;
-            border-radius: 6px;
-            display: none;
-            width: 100%;
-            font-size: 12px;
-            border: 1px solid #ff4d4d;
-            box-sizing: border-box;
-        }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <!-- Notifikasi Log Status -->
-        <div id="error-overlay"></div>
-
-        <!-- Tampilan Video Player Standar HTML5 -->
+        <!-- Bingkai Player Video -->
         <div class="player-wrapper">
             <video id="videoPlayer" controls autoplay preload="auto"></video>
         </div>
 
-        <!-- Daftar Menu Saluran TV (Wajib Kosong untuk Diisi Otomatis) -->
+        <!-- Wadah Menu Saluran -->
         <div class="tv-grid" id="tv-grid-container"></div>
     </div>
 
     <script>
-        // DATA PLAYLIST REKANAN ASLI ANDA
+        // DATA PLAYLIST ASLI ANDA SEUTUHNYA
         var channels = [
             {
                 name: "Celestial Movies",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
+                referrer: "https://visionplus.id",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "de4a383599bb4ec4a24f8c61f2b9a3ba": "5166677d7f6797bcf459cf7c8b66dcb9" }
             },
             {
                 name: "Celestial Classic Movies",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
+                referrer: "https://visionplus.id",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "974d4fb195224f66a2271de806e62018": "0e92ec1a28d59da80161c3541c6eb8eb" }
             },
             {
                 name: "Zee Bioskop (FirstMedia)",
                 logo: "https://githubusercontent.com",
                 url: "https://sysln.id",
+                referrer: "https://firstmedia.com",
+                userAgent: "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
                 clearkey: { "70d0197a8aca42589cf5df6daa576d86": "ebd47832fd7251a09e3cc8eb36790ad5" }
             },
             {
                 name: "Zee Bioskop (Vision+)",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
+                referrer: "https://visionplus.id",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "398ef14ec7014ad8ae75414a7efd2a0f": "99a6225691aa669f0f22677b4536705e" }
             },
             {
                 name: "Zee Bioskop (IndiHome)",
                 logo: "https://githubusercontent.com",
                 url: "https://indihometv.com",
+                referrer: "",
+                userAgent: "",
                 clearkey: null
             },
             {
                 name: "TVN",
                 logo: "https://githubusercontent.com",
                 url: "https://cloudfront.net",
+                referrer: "https://visionplus.id",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
                 clearkey: { "2e8cbd6f664b4ace966d3edfad94c18e": "cff33777777f7e61078ae2ae41ed0636" }
             }
         ];
 
         var dashPlayer = null;
 
-        // FUNGSI INI DIJAMIN BERJALAN INSTAN TANPA BLOKIRAN
         function buildHomeUI() {
             var gridContainer = document.getElementById('tv-grid-container');
             if (!gridContainer) return;
-            
-            gridContainer.innerHTML = ''; // Reset kontainer
+            gridContainer.innerHTML = ''; 
 
+            // Rendering menu dengan penambahan parameter indeks angka (idx) agar WebView Android tidak bingung saat membaca klik
             channels.forEach(function(ch, idx) {
                 var card = document.createElement('div');
                 card.className = 'channel-card';
                 card.id = 'ch-' + idx;
-                card.onclick = function() { loadChannelStream(ch, card); };
+                
+                // Perbaikan vital: Menggunakan indeks angka murni agar fungsi klik 100% merespons di WebView
+                card.onclick = function() { loadChannelStream(idx); };
 
                 card.innerHTML = `
                     <img class="channel-logo" src="${ch.logo}" onerror="this.src='https://placehold.co'">
@@ -166,48 +165,64 @@
                 gridContainer.appendChild(card);
             });
             
-            // Inisialisasi awal dash player bawaan
+            // Inisialisasi Engine Dash Player
             var videoElement = document.querySelector("#videoPlayer");
             dashPlayer = dashjs.MediaPlayer().create();
             
-            // Putar otomatis saluran indeks ke-0 saat awal terbuka
+            // Set agar memutar saluran pertama secara otomatis saat aplikasi terbuka
             if (channels.length > 0) {
-                var firstCard = document.getElementById('ch-0');
-                loadChannelStream(channels[0], firstCard);
+                loadChannelStream(0);
             }
         }
 
-        function loadChannelStream(channel, cardElement) {
+        function loadChannelStream(index) {
             var videoElement = document.querySelector("#videoPlayer");
             if (!dashPlayer || !videoElement) return;
 
-            // Atur tanda warna aktif pada menu grid
+            // Ambil data saluran berdasarkan angka indeks klik
+            var channel = channels[index];
+
+            // Ubah style visual card yang sedang aktif diputar
             document.querySelectorAll('.channel-card').forEach(function(c) { 
                 c.classList.remove('active'); 
             });
-            if (cardElement) cardElement.classList.add('active');
+            var activeCard = document.getElementById('ch-' + index);
+            if (activeCard) activeCard.classList.add('active');
 
             try {
-                // Konfigurasi proteksi ClearKey DRM bawaan playlist Anda secara langsung
+                // 1. Suntik Kunci Enkripsi DRM ClearKey bawaan playlist Anda
                 if (channel.clearkey) {
                     dashPlayer.setProtectionData({
-                        "org.w3.clearkey": {
-                            "clearkeys": channel.clearkey
-                        }
+                        "org.w3.clearkey": { "clearkeys": channel.clearkey }
                     });
                 } else {
                     dashPlayer.resetProtectionData();
                 }
 
-                // Masukkan tautan .mpd ke engine player dan eksekusi
+                // 2. Trik Inti: Menyuntikkan User-Agent dan Referer secara paksa ke dalam XHR Request Link Stream (.mpd)
+                dashPlayer.extend("RequestModifier", function () {
+                    return {
+                        modifyRequestHeader: function (xhr, request) {
+                            if (channel.referrer) {
+                                xhr.setRequestHeader("Referer", channel.referrer);
+                            }
+                            if (channel.userAgent) {
+                                xhr.setRequestHeader("User-Agent", channel.userAgent);
+                            }
+                            return xhr;
+                        }
+                    };
+                }, true);
+
+                // 3. Masukkan URL dan Jalankan video langsung di WebView Android Studio Anda
                 dashPlayer.initialize(videoElement, channel.url, true);
                 
             } catch (error) {
-                console.error("Gagal memutar saluran ini: ", error);
+                console.error("Eror pemutaran: ", error);
             }
         }
 
-        // Paksa rendering menu kotak-kotak segera setelah script selesai dibaca browser
+        // Jalankan pencetakan menu
         buildHomeUI();
     </script>
 </body>
