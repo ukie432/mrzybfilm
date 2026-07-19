@@ -833,69 +833,115 @@ async function loadJson(file) {
 
         function renderSlider(dataList, sliderId, rowId, isLandscape){
 
-    const slider=document.getElementById(sliderId);
-    const row=document.getElementById(rowId);
+    const slider = document.getElementById(sliderId);
+    const row = document.getElementById(rowId);
 
-    if(dataList.length===0){
-        row.style.display="none";
+    if(dataList.length === 0){
+        row.style.display = "none";
         return;
     }
 
-    row.style.display="block";
+    row.style.display = "block";
 
-    slider.innerHTML=dataList.map(item=>{
+    slider.innerHTML = "";
 
-        const cardClass=isLandscape
-            ? "movie-card-horizontal"
-            : "movie-card-portrait";
+    const STEP = 24;   // tampilkan 24 poster sekali render
+    let index = 0;
 
-        const posterClass=isLandscape
-            ? "movie-poster-horizontal"
-            : "movie-poster-portrait";
+    function renderBatch(){
 
-        const poster=isLandscape
-            ? item.poster
-            : (item.poster_portrait || item.poster);
+        const end = Math.min(index + STEP, dataList.length);
 
-        return `
-        <div class="${cardClass}"
-             tabindex="0"
-             data-title="${item.titulo}"
-             data-bg="${item.poster}"
-             onclick="bukaModalDetail('${item.titulo}')">
+        let html = "";
 
-            <img src="${poster}"
-                 class="${posterClass}"
-                 loading="lazy">
+        for(let i=index;i<end;i++){
 
-            ${
-                !isLandscape
-                ? `<div class="movie-info">
-                        <h3 class="movie-title">${item.titulo}</h3>
-                   </div>`
-                : ""
+            const item = dataList[i];
+
+            const cardClass = isLandscape
+                ? "movie-card-horizontal"
+                : "movie-card-portrait";
+
+            const posterClass = isLandscape
+                ? "movie-poster-horizontal"
+                : "movie-poster-portrait";
+
+            const poster = isLandscape
+                ? item.poster
+                : (item.poster_portrait || item.poster);
+
+            html += `
+            <div class="${cardClass}"
+                 tabindex="0"
+                 data-title="${item.titulo}"
+                 data-bg="${item.poster}"
+                 onclick="bukaModalDetail('${item.titulo}')">
+
+                <img
+                    src="${poster}"
+                    class="${posterClass}"
+                    loading="lazy">
+
+                ${
+                    !isLandscape
+                    ? `<div class="movie-info">
+                            <h3 class="movie-title">${item.titulo}</h3>
+                       </div>`
+                    : ""
+                }
+
+            </div>`;
+        }
+
+        slider.insertAdjacentHTML("beforeend", html);
+
+        index = end;
+    }
+
+    renderBatch();
+
+    slider.onscroll = function(){
+
+        if(slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 300){
+
+            if(index < dataList.length){
+
+                renderBatch();
+
             }
 
-        </div>
-        `;
-    }).join("");
+        }
+
+    };
 
     if(sliderId==="slider-pilihan" && activeView==="home"){
+
         setTimeout(()=>{
+
             slider.querySelectorAll(".movie-card-horizontal").forEach(card=>{
+
                 card.addEventListener("focus",function(){
-                    document.getElementById("hero-bg-image").style.backgroundImage=`url('${this.dataset.bg}')`;
+
+                    document.getElementById("hero-bg-image").style.backgroundImage =
+                        `url('${this.dataset.bg}')`;
+
                 });
+
             });
 
-            const first=slider.querySelector(".movie-card-horizontal");
+            const first = slider.querySelector(".movie-card-horizontal");
 
             if(first){
-                document.getElementById("hero-bg-image").style.backgroundImage=`url('${first.dataset.bg}')`;
+
+                document.getElementById("hero-bg-image").style.backgroundImage =
+                    `url('${first.dataset.bg}')`;
+
             }
 
         },100);
+
     }
+
 }
         function toggleFavorit() {
             if (!dataFilmAktif) return;
