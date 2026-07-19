@@ -618,6 +618,7 @@
     'data/animasis.json',
     'data/lawass.json',
     'data/indos.json',
+    'data/animasiseriess.json',
     'data/dubbings.json'
 
 ];
@@ -712,21 +713,37 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         }
 
         async function loadDataKonten() {
-    try {
-        const hasil = await Promise.all(
-            JSON_FILES.map(file =>
-                fetch(file).then(res => res.json())
-            )
-        );
 
-        databaseFilm = hasil.flat();
+    databaseFilm = [];
 
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
+    for (const file of JSON_FILES) {
 
-    } catch (error) {
-        console.error("Gagal mengambil database JSON:", error);
+        try {
+
+            const res = await fetch(file);
+
+            if (!res.ok) {
+                console.error("Tidak ditemukan:", file);
+                continue;
+            }
+
+            const data = await res.json();
+
+            databaseFilm.push(...data);
+
+            console.log(file, data.length);
+
+        } catch(err) {
+
+            console.error(file, err);
+
+        }
+
     }
+
+    kelolaBarisKategori();
+    buatEventSidebarFocus();
+
 }
 
         function buatEventSidebarFocus() {
