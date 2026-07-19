@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPTV Internal Player App</title>
+    <!-- Memuat Library Player & UI Terbaik Google Shaka -->
+    <script src="https://cloudflare.com"></script>
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Kontainer Utama Layout */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+            gap: 15px;
+        }
+        /* Bingkai Video Player */
+        .player-wrapper {
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+        video { width: 100%; height: 100%; }
+        /* Grid Tampilan Menu Saluran */
+        .tv-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+        /* Desain Card Setiap Channel */
+        .channel-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #1e1e1e;
+            border: 1px solid #2d2d2d;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .channel-card:active, .channel-card.active {
+            background-color: #262626;
+            border-color: #00ffcc;
+        }
+        .channel-logo {
+            width: 100%;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            background: #000;
+            border-radius: 6px;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        .channel-name {
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Pesan Error Tersembunyi */
+        #error-overlay {
+            color: #ff4d4d;
+            background: #2b1313;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: none;
+            width: 100%;
+            font-size: 12px;
+            border: 1px solid #ff4d4d;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Kotak Error Debugging -->
+        <div id="error-overlay"></div>
+
+        <!-- Wadah Video Player -->
+        <div class="player-wrapper">
+            <div data-shaka-player-container style="width:100%; height:100%;">
+                <video autoplay id="video" data-shaka-player></video>
+            </div>
+        </div>
+
+        <!-- Wadah Daftar Saluran Konten Anda -->
+        <div class="tv-grid" id="tv-grid-container"></div>
+    </div>
+
+    <script>
+        // DATA PLAYLIST ASLI DAN SEUTUHNYA MILIK ANDA
+        const channels = [
+            {
+                name: "Celestial Movies",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Celestial.webp",
+                url: "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/fd25e662b7154c60a94f7c061573ba2d/index.mpd",
+                referrer: "https://www.visionplus.id/",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+                clearkey: { "de4a383599bb4ec4a24f8c61f2b9a3ba": "5166677d7f6797bcf459cf7c8b66dcb9" }
+            },
+            {
+                name: "Celestial Classic Movies",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/Celestialclasic.webp",
+                url: "https://d84q7nw4qf3j3.cloudfront.net/out/v1/6bdbe6ce7f034807aba5f09bed048b05/index.mpd",
+                referrer: "https://www.visionplus.id/",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+                clearkey: { "974d4fb195224f66a2271de806e62018": "0e92ec1a28d59da80161c3541c6eb8eb" }
+            },
+            {
+                name: "Zee Bioskop (FirstMedia)",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+                url: "https://atemeshield1-voe.sysln.id/live/eds/ZeeBioskop/mediampd/ZeeBioskop.mpd",
+                referrer: "https://www.firstmedia.com",
+                userAgent: "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
+                clearkey: { "70d0197a8aca42589cf5df6daa576d86": "ebd47832fd7251a09e3cc8eb36790ad5" }
+            },
+            {
+                name: "Zee Bioskop (Vision+)",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+                url: "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/81cb1af2ea4d4842a94f1c83957b4cd2/index.mpd",
+                referrer: "https://www.visionplus.id/",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+                clearkey: { "398ef14ec7014ad8ae75414a7efd2a0f": "99a6225691aa669f0f22677b4536705e" }
+            },
+            {
+                name: "Zee Bioskop (IndiHome)",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/zeebioskop.webp",
+                url: "https://cdn10jtedge.indihometv.com/atm/DASH/zbioskop/manifest.mpd",
+                referrer: "",
+                userAgent: "",
+                clearkey: null
+            },
+            {
+                name: "TVN",
+                logo: "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/tvn.webp",
+                url: "https://d84q7nw4qf3j3.cloudfront.net/out/v1/6dc5412d26ea4e65961c825d866f2a34/index.mpd",
+                referrer: "https://www.visionplus.id/",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+                clearkey: { "2e8cbd6f664b4ace966d3edfad94c18e": "cff33777777f7e61078ae2ae41ed0636" }
+            }
+        ];
+
+        let playerInstance = null;
+        let activeChannel = null;
+
+        function buildHomeUI() {
+            const gridContainer = document.getElementById('tv-grid-container');
+            channels.forEach((ch, idx) => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.id = 'ch-' + idx;
+                card.onclick = () => loadChannelStream(ch, card);
+
+                card.innerHTML = `
+                    <img class="channel-logo" src="${ch.logo}" onerror="this.src='https://placehold.co'">
+                    <div class="channel-name">${ch.name}</div>
+                `;
+                gridContainer.appendChild(card);
+            });
+        }
+
+        async function initShakaEngine() {
+            const video = document.getElementById('video');
+            
+            if (!video['ui']) {
+                showErrorLog("Error: Engine UI Pemutar gagal dimuat.");
+                return;
+            }
+
+            const ui = video['ui'];
+            playerInstance = ui.getControls().getPlayer();
+            playerInstance.addEventListener('error', (e) => showErrorLog("Player Error Code: " + e.detail.code));
+
+            // Trik Inti: Memanipulasi request internet secara dinamis langsung dari dalam HTML
+            playerInstance.getNetworkingEngine().registerRequestFilter(function(type, request) {
+                if (activeChannel) {
+                    // Suntik HTTP Referrer asli jika channel membutuhkannya
+                    if (activeChannel.referrer) {
+                        request.headers['Referer'] = activeChannel.referrer;
+                    }
+                    // Suntik User-Agent palsu agar penyedia streaming mengizinkan akses data
+                    if (activeChannel.userAgent) {
+                        request.headers['User-Agent'] = activeChannel.userAgent;
+                    }
+                }
+            });
+
+            // Putar otomatis saluran nomor satu saat aplikasi pertama kali terbuka
+            if (channels.length > 0) {
+                const firstCard = document.getElementById('ch-0');
+                loadChannelStream(channels[0], firstCard);
+            }
+        }
+
+        async function loadChannelStream(channel, cardElement) {
+            if (!playerInstance) return;
+
+            // Efek visual menandai channel yang aktif saat diklik
+            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+            if (cardElement) cardElement.classList.add('active');
+
+            activeChannel = channel;
+            document.getElementById('error-overlay').style.display = 'none';
+
+            try {
+                // Bersihkan konfigurasi DRM lama terlebih dahulu
+                playerInstance.configure({ drm: { clearKeys: {} } });
+
+                // Terapkan Kunci DRM ClearKey bawaan playlist Anda jika saluran memilikinya
+                if (channel.clearkey) {
+                    playerInstance.configure({
+                        drm: { clearKeys: channel.clearkey }
+                    });
+                }
+
+                // Jalankan proses pemutaran video langsung di WebView Android Studio Anda
+                await playerInstance.load(channel.url);
