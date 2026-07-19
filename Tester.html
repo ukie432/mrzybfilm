@@ -618,16 +618,20 @@
     'data/animasis.json',
     'data/lawass.json',
     'data/indos.json',
-    'data/dubbingseriess.json',
-    'data/indoseriess.json',
     'data/animasiseriess.json',
     'data/dubbings.json'
 
 ];
 
 const pageTitle = "mrzyb_premium";
+
 let databaseFilm = [];
 let indexFilm = {};
+const cacheJson = {};
+
+let daftarKategori = [];
+let jumlahTampil = 40;
+
 let dataFilmAktif = null;
 let activeView = 'home';
 let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
@@ -716,49 +720,56 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
         }
 
         async function loadDataKonten() {
-
-    databaseFilm = [];
-
-    // 1. Tampilkan Pilihan Atas dulu
-    await loadJson('data/home.json');
-
-    // 2. Baru muat kategori lain satu per satu
-    setTimeout(() => loadJson('data/dubbings.json'), 300);
-
-    setTimeout(() => loadJson('data/indos.json'), 600);
-
-    setTimeout(() => loadJson('data/animasis.json'), 900);
-
-    setTimeout(() => loadJson('data/lawass.json'), 1200);
-
-    setTimeout(() => loadJson('data/animaseries.json'), 1500);
-
-}
-
-
-async function loadJson(file) {
-
     try {
+        const hasil = await Promise.all(
+            JSON_FILES.map(file =>
+                fetch(file).then(res => res.json())
+            )
+        );
 
-        const res = await fetch(file);
-
-        const data = await res.json();
-
-        databaseFilm.push(...data);
-        
-        data.forEach(item => {
-    indexFilm[item.titulo] = item;
-});
+        databaseFilm = hasil.flat();
 
         kelolaBarisKategori();
-
         buatEventSidebarFocus();
 
-    } catch(err) {
-
-        console.error(file, err);
-
+    } catch (error) {
+        console.error("Gagal mengambil database JSON:", error);
     }
+}
+
+function tambahFilmKategori(){
+
+    const slider = document.getElementById("slider-pilihan");
+
+    const mulai = slider.children.length;
+
+    const akhir = Math.min(mulai + jumlahTampil, daftarKategori.length);
+
+    let html = "";
+
+    for(let i = mulai; i < akhir; i++){
+
+        const item = daftarKategori[i];
+
+        const poster = item.poster_portrait || item.poster;
+
+        html += `
+        <div class="movie-card-portrait"
+            tabindex="0"
+            onclick="bukaModalDetail('${item.titulo.replace(/'/g,"\\'")}')">
+
+            <img src="${poster}"
+                class="movie-poster-portrait"
+                loading="lazy">
+
+            <div class="movie-info">
+                <h3 class="movie-title">${item.titulo}</h3>
+            </div>
+
+        </div>`;
+    }
+
+    slider.insertAdjacentHTML("beforeend", html);
 
 }
 
@@ -792,7 +803,7 @@ async function loadJson(file) {
             renderSlider(indoData, 'slider-indo', 'row-indo', false);
             const animasiData = databaseFilm.filter(m => m.categoria === "film_animasi" && m.halaman_depan === true);
             renderSlider(animasiData, 'slider-animasi', 'row-animasi', false);
-            const lawasData = databaseFilm.filter(m => m.categoria === "film_lawas" && m.halaman_depan === true);
+            const lawasData = databaseFilm.filter(m => m.categoria === "indo_lawas" && m.halaman_depan === true);
             renderSlider(lawasData, 'slider-lawas', 'row-lawas', false);
             const seriesData = databaseFilm.filter(m => m.is_series === true && m.halaman_depan === true);
             renderSlider(seriesData, 'slider-series', 'row-series', false);
@@ -815,13 +826,15 @@ async function loadJson(file) {
             rowHeader.innerHTML = `<h2 class="row-title">${judulKategori}</h2>`;
             rowPilihan.insertBefore(rowHeader, sliderPilihan);
 
-            const filteredData = databaseFilm.filter(filterFunc);
+            daftarKategori = databaseFilm.filter(filterFunc);
 
-            if (filteredData.length === 0) {
+            if (daftarKategori.length === 0) {
                 sliderPilihan.innerHTML = `<p style="padding: 1.5rem; color: var(--text-secondary); font-size:1.3rem;">Belum ada konten di kategori ini.</p>`;
                 rowPilihan.style.display = 'block';
             } else {
-                renderSlider(filteredData, 'slider-pilihan', 'row-pilihan', false);
+                sliderPilihan.innerHTML = "";
+
+tambahFilmKategori();
             }
 
             document.getElementById('row-dubbing').style.display = 'none';
@@ -838,115 +851,69 @@ async function loadJson(file) {
 
         function renderSlider(dataList, sliderId, rowId, isLandscape){
 
-    const slider = document.getElementById(sliderId);
-    const row = document.getElementById(rowId);
+    const slider=document.getElementById(sliderId);
+    const row=document.getElementById(rowId);
 
-    if(dataList.length === 0){
-        row.style.display = "none";
+    if(dataList.length===0){
+        row.style.display="none";
         return;
     }
 
-    row.style.display = "block";
+    row.style.display="block";
 
-    slider.innerHTML = "";
+    slider.innerHTML=dataList.map(item=>{
 
-    const STEP = 24;   // tampilkan 24 poster sekali render
-    let index = 0;
+        const cardClass=isLandscape
+            ? "movie-card-horizontal"
+            : "movie-card-portrait";
 
-    function renderBatch(){
+        const posterClass=isLandscape
+            ? "movie-poster-horizontal"
+            : "movie-poster-portrait";
 
-        const end = Math.min(index + STEP, dataList.length);
+        const poster=isLandscape
+            ? item.poster
+            : (item.poster_portrait || item.poster);
 
-        let html = "";
+        return `
+        <div class="${cardClass}"
+             tabindex="0"
+             data-title="${item.titulo}"
+             data-bg="${item.poster}"
+             onclick="bukaModalDetail('${item.titulo}')">
 
-        for(let i=index;i<end;i++){
+            <img src="${poster}"
+                 class="${posterClass}"
+                 loading="lazy">
 
-            const item = dataList[i];
-
-            const cardClass = isLandscape
-                ? "movie-card-horizontal"
-                : "movie-card-portrait";
-
-            const posterClass = isLandscape
-                ? "movie-poster-horizontal"
-                : "movie-poster-portrait";
-
-            const poster = isLandscape
-                ? item.poster
-                : (item.poster_portrait || item.poster);
-
-            html += `
-            <div class="${cardClass}"
-                 tabindex="0"
-                 data-title="${item.titulo}"
-                 data-bg="${item.poster}"
-                 onclick="bukaModalDetail('${item.titulo}')">
-
-                <img
-                    src="${poster}"
-                    class="${posterClass}"
-                    loading="lazy">
-
-                ${
-                    !isLandscape
-                    ? `<div class="movie-info">
-                            <h3 class="movie-title">${item.titulo}</h3>
-                       </div>`
-                    : ""
-                }
-
-            </div>`;
-        }
-
-        slider.insertAdjacentHTML("beforeend", html);
-
-        index = end;
-    }
-
-    renderBatch();
-
-    slider.onscroll = function(){
-
-        if(slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 300){
-
-            if(index < dataList.length){
-
-                renderBatch();
-
+            ${
+                !isLandscape
+                ? `<div class="movie-info">
+                        <h3 class="movie-title">${item.titulo}</h3>
+                   </div>`
+                : ""
             }
 
-        }
-
-    };
+        </div>
+        `;
+    }).join("");
 
     if(sliderId==="slider-pilihan" && activeView==="home"){
-
         setTimeout(()=>{
-
             slider.querySelectorAll(".movie-card-horizontal").forEach(card=>{
-
                 card.addEventListener("focus",function(){
-
-                    document.getElementById("hero-bg-image").style.backgroundImage =
-                        `url('${this.dataset.bg}')`;
-
+                    document.getElementById("hero-bg-image").style.backgroundImage=`url('${this.dataset.bg}')`;
                 });
-
             });
 
-            const first = slider.querySelector(".movie-card-horizontal");
+            const first=slider.querySelector(".movie-card-horizontal");
 
             if(first){
-
-                document.getElementById("hero-bg-image").style.backgroundImage =
-                    `url('${first.dataset.bg}')`;
-
+                document.getElementById("hero-bg-image").style.backgroundImage=`url('${first.dataset.bg}')`;
             }
 
         },100);
-
     }
-
 }
         function toggleFavorit() {
             if (!dataFilmAktif) return;
@@ -1061,7 +1028,7 @@ async function loadJson(file) {
             localStorage.setItem(pageTitle + "_status_popup", "open");
             localStorage.setItem(pageTitle + "_last_poster_title", judulKonten);
 
-            const item = indexFilm[judulKonten] || listFavorit.find(f => f.titulo === judulKonten);
+            const item = databaseFilm.find(m => m.titulo === judulKonten) || listFavorit.find(m => m.titulo === judulKonten);
             if (!item) return;
             dataFilmAktif = item; 
 
