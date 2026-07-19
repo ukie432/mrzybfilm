@@ -277,26 +277,41 @@ document.addEventListener("keydown", function(e){
 
 
 
-    function saringFilm(keyword) {
-        let adaFilmCocok = false;
-        const semuaKartu = containerUtama.querySelectorAll('.card-film');
-        semuaKartu.forEach(card => {
-            const link = card.querySelector('.play-link');
-            const namaFilm = link.getAttribute('data-title');
-            const btnFav = card.querySelector('.btn-fav');
-            if (namaFilm.includes(keyword)) {
-                card.style.display = "block";
-                link.setAttribute("tabindex", "0");
-                btnFav.setAttribute("tabindex", "0");
-                adaFilmCocok = true;
-            } else {
-                card.style.display = "none";
-                link.setAttribute("tabindex", "-1");
-                btnFav.setAttribute("tabindex", "-1");
-            }
-        });
-        noResultsText.style.display = adaFilmCocok ? "none" : "block";
+    function saringFilm(keyword){
+
+    currentIndex = 0;
+
+    containerUtama.innerHTML = "";
+
+    if(keyword === ""){
+
+        dataAktif = semuaFilm;
+
+        renderNext();
+
+        noResultsText.style.display = "none";
+
+        return;
+
     }
+
+    dataAktif = semuaFilm.filter(film =>
+        film.title.toLowerCase().includes(keyword)
+    );
+
+    if(dataAktif.length){
+
+        renderNext();
+
+        noResultsText.style.display = "none";
+
+    }else{
+
+        noResultsText.style.display = "block";
+
+    }
+
+}
 
     searchBox.addEventListener("input", function(){
 
