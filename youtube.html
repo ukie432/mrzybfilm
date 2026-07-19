@@ -209,6 +209,8 @@
     disablekb: 1
 }
     })[0];
+    
+let currentVideoUrl = "";
 
     // Logika Jembatan Penutupan Remote Back Bertingkat Resmi
     
@@ -405,23 +407,29 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
     $("#current-time").text("00:00");
     $("#total-time").text("00:00");
 
-        player.source({ 
-            type: "video", 
-            sources: [{ src: url, type: "youtube" }],
-            youtube: {
-    cc_load_policy: 0,
-    cc_lang_pref: '',
-    hl: 'id',
-    iv_load_policy: 3,
-    playsinline: 1,
-    rel: 0,
-    modestbranding: 1,
-    controls: 0,
-    disablekb: 1,
-    enablejsapi: 1,
-    origin: window.location.origin
+        if (currentVideoUrl !== url) {
+    currentVideoUrl = url;
+
+    player.pause();
+
+    player.source({
+        type: "video",
+        sources: [{ src: url, type: "youtube" }],
+        youtube: {
+            cc_load_policy: 0,
+            cc_lang_pref: '',
+            hl: 'id',
+            iv_load_policy: 3,
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            controls: 0,
+            disablekb: 1,
+            enablejsapi: 1,
+            origin: window.location.origin
+        }
+    });
 }
-        });
         
         // JEDA 1.5 DETIK DEMI KESTABILAN PEMINDAHAN FOKUS DI WEBVIEW STB
         setTimeout(() => {
@@ -460,7 +468,7 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
 
     // BACK TINGKAT 1: DARI PLAYER KEMBALI KE POPUP KATEGORI
     function closePlayer() {
-        player.stop();
+        player.pause();
         clearTimeout(hideTimer);
         $("#player-overlay").hide();
         
@@ -483,7 +491,7 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
 
     // BACK TINGKAT 2: DARI POPUP KATEGORI KEMBALI KE POSTER UTAMA
     window.closePopup = function() { 
-        player.stop();
+        player.pause();
         $("#popup").css("display", "none");
         
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
@@ -515,7 +523,7 @@ $("#player-overlay").on("touchstart mousedown pointerdown", function(e) {
         if (nextIdx >= 0 && nextIdx < currentEpisodes.length) {
             const title = localStorage.getItem(pageTitle + "_judul_film");
             const nextVideo = currentEpisodes[nextIdx];
-            player.stop();
+            player.pause();
             playFullscreen(nextVideo.url, nextIdx, title);
         }
     }
