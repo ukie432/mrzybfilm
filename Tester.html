@@ -610,7 +610,8 @@
     </div>
 
     <script>
-        const JSON_FILES = [
+        // 1. Perbaiki penutupan array JSON_FILES
+const JSON_FILES = [
     'data/home.json',
     'data/indos.json',
     'data/dubbings.json',
@@ -619,46 +620,43 @@
     'data/dubbingseries.json',
     'data/indosseries.json',
     'data/animasiseries.json'
-        const pageTitle = "mrzyb_premium"; 
-        let databaseFilm = [];
-        let dataFilmAktif = null;
-        let activeView = 'home';
-        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
+]; // <-- Kurung tutup array harus di sini
 
-async function loadDataKonten() {
-    // Daftar file Anda
-    const files = [
-        'data/home.json', 'data/indos.json', 'data/dubbings.json', 
-        'data/animasis.json', 'data/lawass.json', 'data/dubbingseries.json', 
-        'data/indosseries.json', 'data/animasiseries.json'
-    ];
+const pageTitle = "mrzyb_premium"; 
+let databaseFilm = [];
+let dataFilmAktif = null;
+let activeView = 'home';
+let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
-    databaseFilm = []; // Reset database
-
-    for (const url of files) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) continue; // Lewati jika file tidak ditemukan
-            const data = await response.json();
-            
-            // Gabungkan data ke databaseFilm
-            databaseFilm = databaseFilm.concat(data);
-        } catch (e) {
-            console.error("Gagal load file: " + url, e);
-        }
-    }
-
-    console.log("Total data terkumpul:", databaseFilm.length);
-    
-    // Pastikan data benar-benar ada sebelum render
-    if (databaseFilm.length > 0) {
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
-    } else {
-        alert("Data tetap kosong! Cek isi file JSON.");
+// 2. Fungsi untuk memuat file JSON
+async function loadDataByFile(fileName) {
+    try {
+        const response = await fetch('data/' + fileName);
+        if (!response.ok) return [];
+        return await response.json();
+    } catch (e) {
+        console.error("Gagal load " + fileName, e);
+        return [];
     }
 }
 
+// 3. Fungsi untuk menggabungkan semua file ke databaseFilm (Agar aplikasi tetap bisa mencari/search)
+async function loadAllData() {
+    let allData = [];
+    for (const file of JSON_FILES) {
+        const data = await loadDataByFile(file);
+        allData = allData.concat(data);
+    }
+    databaseFilm = allData;
+    console.log("Total konten dimuat:", databaseFilm.length);
+    
+    // Setelah data terkumpul, jalankan fungsi render utama Anda
+    kelolaBarisKategori();
+    buatEventSidebarFocus();
+}
+
+// Jalankan saat load
+window.addEventListener('load', loadAllData);
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
