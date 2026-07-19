@@ -519,7 +519,7 @@
     <i class="fas fa-tv"></i> <span>Film Seri</span>
 </button>
 
-<button class="sidebar-item" id="menu-vip" tabindex="0" onclick="switchView('lawas')">
+<button class="sidebar-item" id="menu-lawas" tabindex="0" onclick="switchView('lawas')">
     <i class="fas fa-landmark"></i> <span>Film Lawas</span>
 </button>
 
@@ -698,7 +698,7 @@ let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
     tampilkanKategoriKhusus(m => m.categoria === "film_seri", "Film Seri");
 
 } else if (viewName === 'lawas') {
-    document.getElementById('menu-vip').classList.add('active');
+    document.getElementById('menu-lawas').classList.add('active');
     tampilkanKategoriKhusus(m => m.categoria === "indo_lawas", "Film Lawas");
 } else {
                     document.getElementById('menu-home').classList.add('active');
