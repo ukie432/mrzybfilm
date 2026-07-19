@@ -610,36 +610,17 @@
     </div>
 
     <script>
+        const JSON_URL = 'data/home.json';
+        const pageTitle = "mrzyb_premium"; 
+        let databaseFilm = [];
+        let dataFilmAktif = null;
+        let activeView = 'home';
+        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
-// Daftar file JSON Anda
-const JSON_FILES = [
-    'data/home.json',
-    'data/indos.json',
-    'data/dubbings.json',
-    'data/animasis.json',
-    'data/lawass.json',
-    'data/dubbingseries.json',
-    'data/indosseries.json',
-    'data/animasiseries.json'
-];
-
-// Fungsi untuk memuat banyak JSON sekaligus
-async function loadDataKonten() {
-    try {
-        // Mengambil semua file secara paralel agar loading lebih cepat
-        const responses = await Promise.all(JSON_FILES.map(url => fetch(url)));
-        const dataArrays = await Promise.all(responses.map(res => res.json()));
-        
-        // Menggabungkan semua array menjadi satu database besar
-        databaseFilm = dataArrays.flat();
-        
-        console.log("Total konten dimuat:", databaseFilm.length);
-        kelolaBarisKategori();
-        buatEventSidebarFocus();
-    } catch (error) {
-        console.error("Gagal memuat database:", error);
-    }
-}
+        // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
+        window.tutupPopUpPoster = function() {
+            window.closeModal();
+        };
 
         // EVENT KEYDOWN GLOBAL UTUK BLOCK KEY BACK FISIK DARI PLAYER/SISTEM (CONTEKAN 100% SUKSES)
         window.addEventListener('keydown', function(event) {
@@ -719,7 +700,17 @@ async function loadDataKonten() {
             }
         }
 
-        
+        async function loadDataKonten() {
+            try {
+                const response = await fetch(JSON_URL);
+                databaseFilm = await response.json();
+                kelolaBarisKategori();
+                buatEventSidebarFocus();
+            } catch (error) {
+                console.error("Gagal mengambil database JSON:", error);
+            }
+        }
+
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.addEventListener('focus', () => {
