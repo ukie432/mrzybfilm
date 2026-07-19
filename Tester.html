@@ -610,47 +610,12 @@
     </div>
 
     <script>
-        // 1. Perbaiki penutupan array JSON_FILES
-const JSON_URL = [
-    'data/home.json'
-
-]; // <-- Kurung tutup array harus di sini
-
-const pageTitle = "mrzyb_premium"; 
-let databaseFilm = [];
-let dataFilmAktif = null;
-let activeView = 'home';
-let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
-
-// 2. Fungsi untuk memuat file JSON
-async function loadDataByFile(fileName) {
-    try {
-        const response = await fetch('data/' + fileName);
-        if (!response.ok) return [];
-        return await response.json();
-    } catch (e) {
-        console.error("Gagal load " + fileName, e);
-        return [];
-    }
-}
-
-// 3. Fungsi untuk menggabungkan semua file ke databaseFilm (Agar aplikasi tetap bisa mencari/search)
-async function loadAllData() {
-    let allData = [];
-    for (const file of JSON_FILES) {
-        const data = await loadDataByFile(file);
-        allData = allData.concat(data);
-    }
-    databaseFilm = allData;
-    console.log("Total konten dimuat:", databaseFilm.length);
-    
-    // Setelah data terkumpul, jalankan fungsi render utama Anda
-    kelolaBarisKategori();
-    buatEventSidebarFocus();
-}
-
-// Jalankan saat load
-window.addEventListener('load', loadAllData);
+        const JSON_URL = 'data/Tester.json';
+        const pageTitle = "mrzyb_premium"; 
+        let databaseFilm = [];
+        let dataFilmAktif = null;
+        let activeView = 'home';
+        let listFavorit = JSON.parse(localStorage.getItem('mrzyb_favorites')) || [];
 
         // JEMBATAN GLOBAL KODE BACK SUKSES KAMU
         window.tutupPopUpPoster = function() {
@@ -735,7 +700,16 @@ window.addEventListener('load', loadAllData);
             }
         }
 
-       
+        async function loadDataKonten() {
+            try {
+                const response = await fetch(JSON_URL);
+                databaseFilm = await response.json();
+                kelolaBarisKategori();
+                buatEventSidebarFocus();
+            } catch (error) {
+                console.error("Gagal mengambil database JSON:", error);
+            }
+        }
 
         function buatEventSidebarFocus() {
             document.querySelectorAll('.sidebar-item').forEach(item => {
