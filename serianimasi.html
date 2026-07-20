@@ -159,10 +159,9 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
         
         setTimeout(() => {
 
-    const posters = document.querySelectorAll(".poster");
-    const index = Array.from(posters).indexOf(document.activeElement);
+    const index = Number(document.activeElement.dataset.pos);
 
-    if (index >= loaded - 10 && loaded < allData.length) {
+    if (!isNaN(index) && index >= loaded - 10 && loaded < allData.length) {
         loadMore();
     }
 
@@ -365,6 +364,7 @@ div.tabIndex = 0;
 div.dataset.title = item.title;
 
 div.dataset.index = i;
+div.dataset.pos = i;
 
 div.innerHTML = `
     <img src="${item.poster}" loading="lazy" decoding="async">
