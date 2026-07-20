@@ -222,13 +222,53 @@
     });
 
     // Load Data JSON Utama
-    fetch(jsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-                $("#grid").append(`<div class="poster" tabindex="0" data-title="${item.title}" onclick='openModal("${item.title}", "${epEncoded}")'><img src="${item.poster}"><div class="poster-title">${item.title}</div></div>`);
-            });
+    let allData = [];
+let loaded = 0;
+const LOAD_SIZE = 40;
+
+fetch(jsonUrl)
+.then(response => response.json())
+.then(data => {
+
+    allData = data;
+
+    loadMore();
+
+    setTimeout(() => {
+        const popupElement = document.getElementById("popup");
+        if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+            document.querySelector(".poster")?.focus();
+        }
+    },600);
+
+    checkLastSession();
+
+});
+            const fragment = document.createDocumentFragment();
+
+data.forEach(item => {
+
+    const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+
+    const div = document.createElement("div");
+    div.className = "poster";
+    div.tabIndex = 0;
+    div.dataset.title = item.title;
+
+    div.setAttribute(
+        "onclick",
+        `openModal("${item.title.replace(/"/g,'&quot;')}", "${epEncoded}")`
+    );
+
+    div.innerHTML = `
+        <img src="${item.poster}" loading="lazy" decoding="async">
+        <div class="poster-title">${item.title}</div>
+    `;
+
+    fragment.appendChild(div);
+});
+
+document.getElementById("grid").appendChild(fragment);
             setTimeout(() => { 
                 const popupElement = document.getElementById("popup");
                 if (popupElement && window.getComputedStyle(popupElement).display === "none") {
@@ -237,6 +277,64 @@
             }, 600);
             checkLastSession();
         });
+        
+        
+        
+    function loadMore(){
+
+    const fragment=document.createDocumentFragment();
+
+    const end=Math.min(loaded+LOAD_SIZE,allData.length);
+
+    for(let i=loaded;i<end;i++){
+
+        const item=allData[i];
+
+        const epEncoded=encodeURIComponent(JSON.stringify(item.episodes));
+
+        const div=document.createElement("div");
+
+        div.className="poster";
+        div.tabIndex=0;
+        div.dataset.title=item.title;
+
+        div.setAttribute(
+            "onclick",
+            `openModal("${item.title.replace(/"/g,"&quot;")}","${epEncoded}")`
+        );
+
+        div.innerHTML=`
+            <img src="${item.poster}" loading="lazy" decoding="async">
+            <div class="poster-title">${item.title}</div>
+        `;
+
+        fragment.appendChild(div);
+
+    }
+
+    grid.appendChild(fragment);
+
+    loaded=end;
+
+}    
+
+
+window.addEventListener("scroll",()=>{
+
+    if(window.innerHeight+window.scrollY>=document.body.offsetHeight-500){
+
+        if(loaded<allData.length){
+
+            loadMore();
+
+        }
+
+    }
+
+});
+        
+        
+        
 
     // FUNGSI BUKA POPUP (MODAL)
     function openModal(title, epsEncoded) {
