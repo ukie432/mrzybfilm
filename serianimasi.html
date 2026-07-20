@@ -318,7 +318,23 @@ function loadMore(){
 
 
         
-        
+       
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+        if (loaded < allData.length) {
+            loadMore();
+        }
+    }
+});
+
+document.addEventListener("focusin", () => {
+    const posters = document.querySelectorAll(".poster");
+    const index = Array.from(posters).indexOf(document.activeElement);
+
+    if (index >= loaded - 10 && loaded < allData.length) {
+        loadMore();
+    }
+}); 
         
 
 
