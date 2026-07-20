@@ -244,43 +244,8 @@ fetch(jsonUrl)
     checkLastSession();
 
 });
-            const fragment = document.createDocumentFragment();
 
-data.forEach(item => {
-
-    const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
-
-    const div = document.createElement("div");
-    div.className = "poster";
-    div.tabIndex = 0;
-    div.dataset.title = item.title;
-
-    div.setAttribute(
-        "onclick",
-        `openModal("${item.title.replace(/"/g,'&quot;')}", "${epEncoded}")`
-    );
-
-    div.innerHTML = `
-        <img src="${item.poster}" loading="lazy" decoding="async">
-        <div class="poster-title">${item.title}</div>
-    `;
-
-    fragment.appendChild(div);
-});
-
-document.getElementById("grid").appendChild(fragment);
-            setTimeout(() => { 
-                const popupElement = document.getElementById("popup");
-                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
-                    $(".poster").first().focus(); 
-                }
-            }, 600);
-            checkLastSession();
-        });
-        
-        
-        
-    function loadMore(){
+function loadMore(){
 
     const fragment=document.createDocumentFragment();
 
@@ -335,6 +300,46 @@ window.addEventListener("scroll",()=>{
         
         
         
+
+
+
+            const fragment = document.createDocumentFragment();
+
+data.forEach(item => {
+
+    const epEncoded = encodeURIComponent(JSON.stringify(item.episodes));
+
+    const div = document.createElement("div");
+    div.className = "poster";
+    div.tabIndex = 0;
+    div.dataset.title = item.title;
+
+    div.setAttribute(
+        "onclick",
+        `openModal("${item.title.replace(/"/g,'&quot;')}", "${epEncoded}")`
+    );
+
+    div.innerHTML = `
+        <img src="${item.poster}" loading="lazy" decoding="async">
+        <div class="poster-title">${item.title}</div>
+    `;
+
+    fragment.appendChild(div);
+});
+
+document.getElementById("grid").appendChild(fragment);
+            setTimeout(() => { 
+                const popupElement = document.getElementById("popup");
+                if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                    $(".poster").first().focus(); 
+                }
+            }, 600);
+            checkLastSession();
+        });
+        
+        
+        
+    
 
     // FUNGSI BUKA POPUP (MODAL)
     function openModal(title, epsEncoded) {
