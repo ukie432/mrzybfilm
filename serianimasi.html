@@ -147,14 +147,16 @@
         }
         
         
-        setTimeout(checkLoadMore, 50);
-        
-        const posters = document.querySelectorAll(".poster");
-const index = Array.from(posters).indexOf(document.activeElement);
+        setTimeout(() => {
 
-if (index >= loaded - 10 && loaded < allData.length) {
-    loadMore();
-}
+    const posters = document.querySelectorAll(".poster");
+    const index = Array.from(posters).indexOf(document.activeElement);
+
+    if (index >= loaded - 10 && loaded < allData.length) {
+        loadMore();
+    }
+
+}, 50);
         
         
     });
