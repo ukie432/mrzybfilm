@@ -126,6 +126,16 @@
     // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
+        
+if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
+
+    e.preventDefault();
+
+    openModal(Number(document.activeElement.dataset.index));
+
+    return false;
+
+}
 
         // Jika menekan ATAS di baris poster pertama, naik ke pencarian
         if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
@@ -259,6 +269,20 @@ fetch(jsonUrl)
     loadMore();
     
     
+    
+document.getElementById("grid").addEventListener("click", function(e){
+
+    const poster = e.target.closest(".poster");
+
+    if(!poster) return;
+
+    openModal(Number(poster.dataset.index));
+
+});
+    
+    
+    
+    
     function checkLoadMore() {
 
     const posters = document.querySelectorAll(".poster");
@@ -302,7 +326,7 @@ div.className = "poster";
 div.tabIndex = 0;
 div.dataset.title = item.title;
 
-div.setAttribute("onclick", `openModal(${i})`);
+div.dataset.index = i;
 
 div.innerHTML = `
     <img src="${item.poster}" loading="lazy" decoding="async">
