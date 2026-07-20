@@ -295,12 +295,21 @@ function loadMore(){
 
     for(let i=loaded;i<end;i++){
 
-        const item=allData[i];
+        const item = allData[i];
 
-        div.setAttribute(
-    "onclick",
-    `openModal(${i})`
-);
+const div = document.createElement("div");
+div.className = "poster";
+div.tabIndex = 0;
+div.dataset.title = item.title;
+
+div.setAttribute("onclick", `openModal(${i})`);
+
+div.innerHTML = `
+    <img src="${item.poster}" loading="lazy" decoding="async">
+    <div class="poster-title">${item.title}</div>
+`;
+
+fragment.appendChild(div);
 
         div.innerHTML=`
             <img src="${item.poster}" loading="lazy" decoding="async">
