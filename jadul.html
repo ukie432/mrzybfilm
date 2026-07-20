@@ -26,7 +26,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
 .search-box:focus { border-color: #E50914; }
 .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
-.section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+.section-title { font-size: 8px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
 
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
@@ -39,34 +39,30 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .btn-fav { width: 100%; padding: 0px 0; background-color: #222; color: #bbb; border: none; font-size: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
 
 
-
-.film-title { padding: 0px; font-size: 3px; font-weight: 500; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
-
-.btn-fav:focus { background-color: #E50914; color: #fff; }
+.film-title { padding: 0px; font-size: 6px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
 
 
 .btn-fav.active { color: #ffcc00; }
 
-
-.btn-fav span { font-size: 8px; }
-#noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
+.btn-fav { width: 100%; padding: 6px 0; background-color: #222; color: #bbb; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
 
 
-.container-film {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 0 10px;
-}
 
-.card-film {
-    flex: 0 0 calc((100% - 8 * 8px) / 9);
-    margin: 0;
-    background-color: #181818;
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-}}
+
+.card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; display: block; position: relative; }
+    
+    
+    
+    container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
+    
+@media (max-width: 1400px) { .card-film { width: calc(14.28% - 14px); } }
+@media (max-width: 1000px) { .card-film { width: calc(16.66% - 14px); } }
+@media (max-width: 768px) { .card-film { width: calc(25% - 14px); } .header-banner h1 { font-size: 28px; } }
+@media (max-width: 480px) { .card-film { width: calc(33.33% - 10px); margin: 5px; } .container-film { padding: 0 5px; } .section-title { font-size: 18px; margin: 10px 10px 5px 10px; } }
+    
+    
+    
+
 </style>
 </head>
 <body>
