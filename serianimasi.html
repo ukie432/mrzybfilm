@@ -145,6 +145,11 @@
             const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
+        
+        
+        setTimeout(checkLoadMore, 50);
+        
+        
     });
 
     // 2. Logika Khusus di Bar Pencarian Utama
@@ -233,6 +238,24 @@ fetch(jsonUrl)
     allData = data;
 
     loadMore();
+    
+    
+    function checkLoadMore() {
+
+    const posters = document.querySelectorAll(".poster");
+
+    if (!posters.length) return;
+
+    const index = [...posters].indexOf(document.activeElement);
+
+    if (index >= loaded - 10 && loaded < allData.length) {
+        loadMore();
+    }
+
+}
+    
+    
+    
 
     setTimeout(() => {
         const popupElement = document.getElementById("popup");
@@ -284,19 +307,7 @@ function loadMore(){
 }    
 
 
-window.addEventListener("scroll",()=>{
 
-    if(window.innerHeight+window.scrollY>=document.body.offsetHeight-500){
-
-        if(loaded<allData.length){
-
-            loadMore();
-
-        }
-
-    }
-
-});
         
         
         
