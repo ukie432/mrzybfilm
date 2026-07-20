@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
+    
+    
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
 
     <link rel="preconnect" href="https://posterfilm.pages.dev">
@@ -13,7 +16,7 @@
 <meta http-equiv="Expires" content="0" />
 <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>MRZYB TV - Koleksi Film alur cerita</title>
+<title>MRZYB TV - Koleksi Film Alur Cerita</title>
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,26 +27,47 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
 .search-box:focus { border-color: #E50914; }
 .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
-.section-title { font-size: 22px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+.section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 .container-film { display: flex; flex-wrap: wrap; padding: 0 10px; justify-content: flex-start; }
 
-.card-film { width: calc(12.5% - 14px); margin: 7px; background-color: #181818; border-radius: 6px; overflow: hidden; display: block; position: relative; }
 .card-film:focus-within { transform: scale(1.05); box-shadow: 0 0 12px #E50914; outline: none; z-index: 10; }
 .play-link { display: block; text-decoration: none; outline: none; }
 
 .poster-wrapper { width: 100%; aspect-ratio: 2/3; position: relative; background-color: #2a2a2a; }
 .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
-.film-title { padding: 8px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
-.btn-fav { width: 100%; padding: 6px 0; background-color: #222; color: #bbb; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
+
+
+.btn-fav { width: 100%; padding: 3px 0; background-color: #222; color: #bbb; border: none; font-size: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
+
+
+
+.film-title { padding: 3px; font-size: 5px; font-weight: 700; text-align: center; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
+
 .btn-fav:focus { background-color: #E50914; color: #fff; }
+
+
 .btn-fav.active { color: #ffcc00; }
-.btn-fav span { font-size: 13px; }
+
+
+.btn-fav span { font-size: 8px; }
 #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
-@media (max-width: 1400px) { .card-film { width: calc(14.28% - 14px); } }
-@media (max-width: 1000px) { .card-film { width: calc(16.66% - 14px); } }
-@media (max-width: 768px) { .card-film { width: calc(25% - 14px); } .header-banner h1 { font-size: 28px; } }
-@media (max-width: 480px) { .card-film { width: calc(33.33% - 10px); margin: 5px; } .container-film { padding: 0 5px; } .section-title { font-size: 18px; margin: 10px 10px 5px 10px; } }
+
+.container-film {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.card-film {
+    flex: 0 0 calc((100% - 7 * 8px) / 8);
+    margin: 0;
+    background-color: #181818;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}}
 </style>
 </head>
 <body>
@@ -60,7 +84,7 @@ body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ff
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
-<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM alur ceritai</div>
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM ALUR CERITA</div>
 <div class="container-film" id="containerUtama"></div>
 
 <div id="noResultsText">Film tidak ditemukan...</div>
@@ -75,6 +99,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const favSectionTitle = document.getElementById('favSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('alurcerita_favorit')) || [];
+
+let semuaFilm = [];
+let dataAktif = [];
+let currentIndex = 0;
+const PER_PAGE = 40;
+    
+let searchTimer;
 
     // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
 
@@ -99,13 +130,44 @@ document.addEventListener("DOMContentLoaded", function() {
             favSectionTitle.style.display = "block";
             containerFav.style.display = "flex";
             listFavorit.forEach(idFilm => {
-                const itemAsli = containerUtama.querySelector(`.card-film[data-id="${idFilm}"]`);
-                if (itemAsli) {
-                    const klon = itemAsli.cloneNode(true);
-                    klon.setAttribute('id', 'fav-' + idFilm);
-                    containerFav.appendChild(klon);
-                }
-            });
+
+    const film = semuaFilm.find(f => f.id === idFilm);
+
+    if(!film) return;
+
+    containerFav.insertAdjacentHTML("beforeend", `
+        <div class="card-film"
+             data-id="${film.id}"
+             id="fav-${film.id}">
+
+            <a tabindex="0"
+               class="play-link"
+               href="${film.url}"
+               data-title="${film.title.toLowerCase()}">
+
+                <div class="poster-wrapper">
+                    <img src="${film.img}"
+                         loading="lazy"
+                         decoding="async">
+
+                </div>
+
+            </a>
+
+            <button class="btn-fav"
+                    tabindex="0"
+                    data-target="${film.id}">
+                <span>★</span> Favorit
+            </button>
+
+            <div class="film-title">
+                ${film.title}
+            </div>
+
+        </div>
+    `);
+
+});
         }
         pasangEventAksi();
         perbaruiStatusTombolBintang();
@@ -124,76 +186,197 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function pasangEventAksi() {
-        document.querySelectorAll('.card-film').forEach(card => {
-            const link = card.querySelector('.play-link');
-            if (!link) return;
-            link.replaceWith(link.cloneNode(true));
-            const newLink = card.querySelector('.play-link');
-            
-            const handleWatch = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                localStorage.setItem("alurcerita_idPosterTerakhir", card.getAttribute("id"));
-                localStorage.setItem("alurcerita_sedangNontonVideoSTB", "ya");
-                
-                if (typeof Android !== "undefined" && Android.playVideo) {
-                    Android.playVideo(newLink.getAttribute("href"));
-                }
-                return false;
-            };
-            newLink.addEventListener("click", handleWatch);
-            newLink.addEventListener("keydown", function(e) { if (e.key === "Enter") handleWatch(e); });
-        });
 
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            btn.replaceWith(btn.cloneNode(true));
-        });
-        document.querySelectorAll('.btn-fav').forEach(btn => {
-            const handleFavClick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const idTarget = btn.getAttribute('data-target');
-                if (listFavorit.includes(idTarget)) {
-                    listFavorit = listFavorit.filter(id => id !== idTarget);
-                } else {
-                    listFavorit.push(idTarget);
-                }
-                localStorage.setItem('alurcerita_favorit', JSON.stringify(listFavorit));
-                updateTampilanFavorit();
-            };
-            btn.addEventListener('click', handleFavClick);
-            btn.addEventListener('keydown', function(e) { if (e.key === "Enter") handleFavClick(e); });
-        });
+
+
+function renderNext(){
+
+    const html = dataAktif
+        .slice(currentIndex, currentIndex + PER_PAGE)
+        .map(film => `
+            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                <a tabindex="0"
+                   class="play-link"
+                   href="${film.url}"
+                   data-title="${film.title.toLowerCase()}">
+
+                    <div class="poster-wrapper">
+                        <img src="${film.img}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+
+                </a>
+
+                <button class="btn-fav"
+                        tabindex="0"
+                        data-target="${film.id}">
+                    <span>☆</span> Favorit
+                </button>
+
+                <div class="film-title">
+                    ${film.title}
+                </div>
+            </div>
+        `).join("");
+
+    containerUtama.insertAdjacentHTML("beforeend", html);
+
+    currentIndex += PER_PAGE;
+
+    perbaruiStatusTombolBintang();
+
+}
+
+
+    function pasangEventAksi() {}
+
+document.addEventListener("click", function(e){
+
+    const play = e.target.closest(".play-link");
+
+    if(play){
+
+        e.preventDefault();
+
+        const card = play.closest(".card-film");
+
+        localStorage.setItem(
+            "alurcerita_idPosterTerakhir",
+            card.id
+        );
+
+        localStorage.setItem(
+            "alurcerita_sedangNontonVideoSTB",
+            "ya"
+        );
+
+        if(typeof Android !== "undefined" &&
+           Android.playVideo){
+
+            Android.playVideo(play.href);
+
+        }
+
+        return;
+
     }
 
-    function saringFilm(keyword) {
-        let adaFilmCocok = false;
-        const semuaKartu = containerUtama.querySelectorAll('.card-film');
-        semuaKartu.forEach(card => {
-            const link = card.querySelector('.play-link');
-            const namaFilm = link.getAttribute('data-title');
-            const btnFav = card.querySelector('.btn-fav');
-            if (namaFilm.includes(keyword)) {
-                card.style.display = "block";
-                link.setAttribute("tabindex", "0");
-                btnFav.setAttribute("tabindex", "0");
-                adaFilmCocok = true;
-            } else {
-                card.style.display = "none";
-                link.setAttribute("tabindex", "-1");
-                btnFav.setAttribute("tabindex", "-1");
-            }
-        });
-        noResultsText.style.display = adaFilmCocok ? "none" : "block";
+    const fav = e.target.closest(".btn-fav");
+
+    if(fav){
+
+        e.preventDefault();
+
+        const id = fav.dataset.target;
+
+        if(listFavorit.includes(id)){
+
+            listFavorit =
+                listFavorit.filter(x => x !== id);
+
+        }else{
+
+            listFavorit.push(id);
+
+        }
+
+        localStorage.setItem(
+            "alurcerita_favorit",
+            JSON.stringify(listFavorit)
+        );
+
+        updateTampilanFavorit();
+
     }
 
-    searchBox.addEventListener('input', function() {
-        const filterText = searchBox.value.toLowerCase().trim();
-        btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+});
+
+document.addEventListener("keydown", function(e){
+
+    if(e.key !== "Enter") return;
+
+    const play = e.target.closest(".play-link");
+
+    if(play){
+
+        e.preventDefault();
+
+        play.click();
+
+        return;
+
+    }
+
+    const fav = e.target.closest(".btn-fav");
+
+    if(fav){
+
+        e.preventDefault();
+
+        fav.click();
+
+    }
+
+});
+
+
+
+    function saringFilm(keyword){
+
+    currentIndex = 0;
+
+    containerUtama.innerHTML = "";
+
+    if(keyword === ""){
+
+        dataAktif = semuaFilm;
+
+        renderNext();
+
+        noResultsText.style.display = "none";
+
+        return;
+
+    }
+
+    dataAktif = semuaFilm.filter(film =>
+        film.title.toLowerCase().includes(keyword)
+    );
+
+    if(dataAktif.length){
+
+        renderNext();
+
+        noResultsText.style.display = "none";
+
+    }else{
+
+        noResultsText.style.display = "block";
+
+    }
+
+}
+
+    searchBox.addEventListener("input", function(){
+
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+
+        const filterText =
+            searchBox.value.toLowerCase().trim();
+
+        btnClear.style.display =
+            searchBox.value.length > 0
+                ? "flex"
+                : "none";
+
         saringFilm(filterText);
-    });
+
+    }, 200);
+
+});
 
     btnClear.addEventListener('click', function() {
         searchBox.value = "";
@@ -205,25 +388,47 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch('data/alurcerita.json')
     .then(response => response.json())
     .then(data => {
-        containerUtama.innerHTML = data.map(film => `
-            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
-                    <div class="poster-wrapper">
-                        <img src="${film.img}" loading="lazy" decoding="async">
-                    </div>
-                </a>
-                <button class="btn-fav" tabindex="0" data-target="${film.id}"><span>☆</span> Favorit</button>
-                <div class="film-title">${film.title}</div>
-            </div>
-        `).join('');
+        semuaFilm = data;
+dataAktif = data;
+
+renderNext();
 
         updateTampilanFavorit();
+        
+        
+        containerUtama.addEventListener("focusin", function(e){
+
+    const card = e.target.closest(".card-film");
+
+    if(!card) return;
+
+    const cards = containerUtama.querySelectorAll(".card-film");
+
+    const index = Array.from(cards).indexOf(card);
+
+    if(index >= currentIndex - 10 &&
+       currentIndex < dataAktif.length){
+
+        renderNext();
+
+    }
+
+});
+        
 
         setTimeout(() => {
             const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
             const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
             if (statusNontonSTB === "ya" && idPosterTerakhir) {
-                const targetPoster = document.getElementById(idPosterTerakhir);
+                let targetPoster = document.getElementById(idPosterTerakhir);
+
+while (!targetPoster && currentIndex < dataAktif.length) {
+
+    renderNext();
+
+    targetPoster = document.getElementById(idPosterTerakhir);
+
+}
                 if (targetPoster) {
                     const tombolPlay = targetPoster.querySelector('.play-link');
                     if (tombolPlay) {
