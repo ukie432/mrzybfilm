@@ -142,14 +142,14 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
                 e.preventDefault();
-                $("#search-box").focus();
+                document.getElementById("search-box").focus();
                 return false;
             }
         }
 
         // Navigasi internal di dalam Popup
         if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
-            $('.close-x').focus();
+            document.querySelector(".close-x")?.focus();
         } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
             const currentTitle = $("#modal-title").text();
             const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
@@ -186,7 +186,7 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 
     if (e.keyCode == 40) {
         e.preventDefault();
-        $(".poster").first().focus();
+        document.querySelector(".poster")?.focus();
         return false;
     }
 
@@ -201,8 +201,8 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 
     if (e.keyCode == 40) {
         e.preventDefault();
-        $("#search-box").focus();
-        $(".poster").first().focus();
+        document.getElementById("search-box").focus();
+        document.querySelector(".poster")?.focus();
     }
 
     if (e.keyCode == 13) {
@@ -213,11 +213,11 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
     // Navigasi di tombol X hapus pencarian
     $("#clear-btn").on('keydown', function(e) {
         if (e.keyCode == 37) {
-            $("#search-box").focus();
+            document.getElementById("search-box").focus();
         }
         else if (e.keyCode == 40) {
             $(this).attr("tabindex", "-1");
-            $(".poster").first().focus();
+            document.querySelector(".poster")?.focus();
         }
     });
 
@@ -226,7 +226,7 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 
     $("#search").val("");
 
-    $("#grid").empty();
+    document.getElementById("grid").replaceChildren();
 
     loaded = 0;
 
@@ -234,7 +234,7 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 
     $(this).hide().attr("tabindex","-1");
 
-    $("#search-box").focus();
+    document.getElementById("search-box").focus();
 
 });
 
@@ -257,12 +257,12 @@ $("#search").on("input", function () {
             $("#clear-btn").css("display", "none").attr("tabindex", "-1");
 
             loaded = 0;
-            $("#grid").empty();
+            document.getElementById("grid").replaceChildren();
             loadMore();
             return;
         }
 
-        $("#grid").empty();
+        document.getElementById("grid").replaceChildren();
 
         const fragment = document.createDocumentFragment();
 
