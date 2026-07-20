@@ -221,19 +221,29 @@
     });
 
     // Logika filter ketikan pencarian
-    $("#search").on("input", function() {
-        const keyword = $(this).val().toLowerCase();
-        
+    let searchTimer;
+
+$("#search").on("input", function() {
+
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+
+        const keyword = $("#search").val().toLowerCase();
+
         if (keyword.length > 0) {
-            $("#clear-btn").css("display", "flex"); 
+            $("#clear-btn").css("display", "flex");
         } else {
-            $("#clear-btn").css("display", "none").attr("tabindex", "-1"); 
+            $("#clear-btn").css("display", "none").attr("tabindex", "-1");
         }
 
         $(".poster").each(function() {
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
         });
-    });
+
+    }, 200);
+
+});
 
     // Load Data JSON Utama
     let allData = [];
@@ -287,18 +297,10 @@ function loadMore(){
 
         const item=allData[i];
 
-        const epEncoded=encodeURIComponent(JSON.stringify(item.episodes));
-
-        const div=document.createElement("div");
-
-        div.className="poster";
-        div.tabIndex=0;
-        div.dataset.title=item.title;
-
         div.setAttribute(
-            "onclick",
-            `openModal("${item.title.replace(/"/g,"&quot;")}","${epEncoded}")`
-        );
+    "onclick",
+    `openModal(${i})`
+);
 
         div.innerHTML=`
             <img src="${item.poster}" loading="lazy" decoding="async">
@@ -345,18 +347,24 @@ document.addEventListener("focusin", () => {
     
 
     // FUNGSI BUKA POPUP (MODAL)
-    function openModal(title, epsEncoded) {
+    function openModal(index) {
+
+    const item = allData[index];
+
+localStorage.setItem(pageTitle + "_judul_film", item.title);
+    const title = item.title;
+    const eps = item.episodes;
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title);
         localStorage.setItem(pageTitle + "_judul_film", title);
-        localStorage.setItem(pageTitle + "_eps_data", epsEncoded);
+        
 
         // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
 
-        const eps = JSON.parse(decodeURIComponent(epsEncoded));
+        
         $("#modal-title").text(title);
         $("#eps-list").empty();
         eps.forEach((e, index) => {
@@ -405,12 +413,20 @@ document.addEventListener("focusin", () => {
 
     // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
     function checkLastSession() {
-        if (localStorage.getItem(pageTitle + "_status_popup") === "open") {
-            const title = localStorage.getItem(pageTitle + "_judul_film");
-            const eps = localStorage.getItem(pageTitle + "_eps_data");
-            if(title && eps) openModal(title, eps);
-        }
+
+    if (localStorage.getItem(pageTitle + "_status_popup") !== "open") return;
+
+    const title = localStorage.getItem(pageTitle + "_judul_film");
+
+    if (!title) return;
+
+    const index = allData.findIndex(item => item.title === title);
+
+    if (index !== -1) {
+        openModal(index);
     }
+
+}
 </script>
 
 <script>
