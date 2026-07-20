@@ -12,14 +12,34 @@
     <title>MRZYBtv hiburan & religi</title>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; color: #fff; background: url('https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif') no-repeat center center fixed; background-size: cover; }
-        .container { display: flex; flex-direction: column; height: 100vh; background: rgba(0, 0, 0, 0.5); }
-
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: rgba(28, 28, 28, 0.8); }
+       .container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+}
+       .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 20px;
+    background:#1c1c1c;
+}
         .logo { display: flex; align-items: center; }
         .logo img { height: 40px; width: auto; display: block; } /* Tinggi logo diatur di sini */
         
-        .time-container { display: flex; align-items: center; }
-        .time { font-size: 14px; margin-left: 10px; }
+        .time-container{
+    display:flex;
+    align-items:center;
+}
+
+.time{
+    color:#fff;
+    font-size:14px;
+    font-weight:bold;
+    min-width:80px;
+    text-align:right;
+}
 
         .main { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; flex-grow: 1; overflow-y: auto; }
 
@@ -27,12 +47,16 @@
         .main-item video, .main-item img { width: 100%; height: 100%; object-fit: cover;  }
 
         /* Efek saat fokus */
-        .main-item:focus, .footer-button:focus { outline: none; border: 3px solid #FF0000 !important; transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+        .main-item:focus,
+.footer-button:focus{
+    border:3px solid red;
+    outline:none;
+}
 
         .item1 { grid-column: span 2; grid-row: span 2; }
         .item2 { grid-column: span 2; grid-row: span 2; }
 
-        .footer { display: flex; justify-content: space-around; padding: 10px; background-color: rgba(28, 28, 28, 0.8); }
+        .footer { display: flex; justify-content: space-around; padding: 10px; background:#1c1c1c; }
         .footer-button { border: none; padding: 15px 30px; color: #fff; cursor: pointer; border-radius: 5px; font-size: 14px; }
         .footer-button1 { background-color: #8B0000; }
         .footer-button2 { background-color: #008000; }
@@ -45,7 +69,8 @@
     <div class="container">
         <header class="header">
             <div class="logo">
-                <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" alt="MRZYBtv">
+                <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" fetchpriority="high"
+loading="eager"alt="MRZYBtv">
             </div>
             <div class="time-container"><div id="currentTime" class="time"></div></div>
         </header>
@@ -55,19 +80,31 @@
                  <img src="https://iptv-posterku.pages.dev/poster/film_animasi/20260626_092511.gif" alt="P1">
             </div>
             <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'youtube.html')">
-                <img src="https://posterfilm.pages.dev/poster/film_animasi/youtubegado-gado.webp" alt="Youtube">
+                <img src="https://posterfilm.pages.dev/poster/film_animasi/youtubegado-gado.webp" width="640"
+height="360"
+loading="lazy"
+decoding="async"alt="Youtube">
             </div>
             <div class="main-item" id="p3" tabindex="0" onclick="go('p3', 'murottal.html')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Juzama.webp" alt="Murottal">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Juzama.webp"width="640"
+height="360"
+loading="lazy"
+decoding="async" alt="Murottal">
             </div>
             <div class="main-item" id="p4" tabindex="0" onclick="go('p4', 'ceramah.html')">
                 <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Zainuddin (1).webp" alt="Ceramah">
             </div>
             <div class="main-item" id="p5" tabindex="0" onclick="go('p5', 'musik.html')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Musik.webp" alt="Musik">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Musik.webp"width="640"
+height="360"
+loading="lazy"
+decoding="async" alt="Musik">
             </div>
             <div class="main-item" id="p6" tabindex="0" onclick="go('p6', 'lenong.html')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Lenong.webp" alt="Lenong">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Lenong.webp"width="640"
+height="360"
+loading="lazy"
+decoding="async" alt="Lenong">
             </div>
         </main>
 
@@ -90,7 +127,7 @@
             const lastFocus = localStorage.getItem('lastFocus');
             if (lastFocus) {
                 const el = document.getElementById(lastFocus);
-                if (el) { el.focus(); el.scrollIntoView({ block: 'center' }); }
+                if (el) { el.focus(); el.focus(); }
             }
         });
 
@@ -98,7 +135,7 @@
             var now = new Date();
             document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-ES', { hour12: false });
         }
-        setInterval(updateTime, 1000);
+        setInterval(updateTime,30000);
         updateTime();
     </script>
 </body>
