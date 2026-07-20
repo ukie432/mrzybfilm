@@ -11,7 +11,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYBtv hiburan & religi</title>
     <style>
-        body { margin: 0; font-family: Arial, sans-serif; color: #fff; background: url('https://media.tenor.com/Yg9cr-N09a4AAAAM/music.gif') no-repeat center center fixed; background-size: cover; }
+        body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    color:#fff;
+    background:#000;
+}
+
+#bgVideo{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-1;
+}
        .container{
     display: flex;
     flex-direction: column;
@@ -66,6 +81,11 @@
 </head>
 <body>
 
+
+<video id="bgVideo" autoplay muted loop playsinline preload="none">
+    <source src="https://posterfilm.pages.dev/poster/film_lawas/Joget.mp4" type="video/mp4">
+</video>
+
     <div class="container">
         <header class="header">
             <div class="logo">
@@ -76,9 +96,11 @@ loading="eager"alt="MRZYBtv">
         </header>
 
         <main class="main">
-            <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://iptv-posterku.pages.dev/poster/film_animasi/20260626_092511.gif')">
-                 <img src="https://iptv-posterku.pages.dev/poster/film_animasi/20260626_092511.gif" alt="P1">
-            </div>
+           <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://posterfilm.pages.dev/poster/film_lawas/Joget.mp4')">
+    <video autoplay muted loop playsinline preload="none">
+        <source src="https://posterfilm.pages.dev/poster/film_lawas/Joget.mp4" type="video/mp4">
+    </video>
+</div>
             <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'youtube.html')">
                 <img src="https://posterfilm.pages.dev/poster/film_animasi/youtubegado-gado.webp" width="640"
 height="360"
