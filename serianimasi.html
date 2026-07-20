@@ -240,7 +240,7 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 });
 
     // Logika filter ketikan pencarian
-    let searchTimer;
+    
 
 let searchTimer;
 
@@ -287,7 +287,7 @@ $("#search").on("input", function () {
 
             });
 
-        $("#grid").append(fragment);
+        document.getElementById("grid").appendChild(fragment);
 
     }, 200);
 
@@ -373,12 +373,7 @@ div.innerHTML = `
 
 fragment.appendChild(div);
 
-        div.innerHTML=`
-            <img src="${item.poster}" loading="lazy" decoding="async">
-            <div class="poster-title">${item.title}</div>
-        `;
-
-        fragment.appendChild(div);
+        
 
     }
 
