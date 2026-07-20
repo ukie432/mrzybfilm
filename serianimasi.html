@@ -224,32 +224,70 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
 
     // Fungsi klik/OK pada tombol X hapus pencarian
     $("#clear-btn").on('click', function() {
-        $("#search").val(""); 
-        $(".poster").show(); 
-        $(this).css("display", "none").attr("tabindex", "-1"); 
-        $("#search-box").focus();
-    });
+
+    $("#search").val("");
+
+    $("#grid").empty();
+
+    loaded = 0;
+
+    loadMore();
+
+    $(this).hide().attr("tabindex","-1");
+
+    $("#search-box").focus();
+
+});
 
     // Logika filter ketikan pencarian
     let searchTimer;
 
-$("#search").on("input", function() {
+let searchTimer;
+
+$("#search").on("input", function () {
 
     clearTimeout(searchTimer);
 
     searchTimer = setTimeout(() => {
 
-        const keyword = $("#search").val().toLowerCase();
+        const keyword = $("#search").val().trim().toLowerCase();
 
         if (keyword.length > 0) {
             $("#clear-btn").css("display", "flex");
         } else {
             $("#clear-btn").css("display", "none").attr("tabindex", "-1");
+
+            loaded = 0;
+            $("#grid").empty();
+            loadMore();
+            return;
         }
 
-        $(".poster").each(function() {
-            $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
-        });
+        $("#grid").empty();
+
+        const fragment = document.createDocumentFragment();
+
+        allData
+            .filter(item => item.title.toLowerCase().includes(keyword))
+            .forEach((item, index) => {
+
+                const div = document.createElement("div");
+
+                div.className = "poster";
+                div.tabIndex = 0;
+                div.dataset.index = allData.indexOf(item);
+                div.dataset.title = item.title;
+
+                div.innerHTML = `
+                    <img src="${item.poster}" loading="lazy" decoding="async">
+                    <div class="poster-title">${item.title}</div>
+                `;
+
+                fragment.appendChild(div);
+
+            });
+
+        $("#grid").append(fragment);
 
     }, 200);
 
