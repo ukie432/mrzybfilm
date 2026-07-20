@@ -16,9 +16,7 @@
     color:#eee;
     font-family:Arial,sans-serif;
     overflow:hidden;
-}
-        
-        body { margin: 0; background-color: #000; color: #eee; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
         
         /* === CONTAINER BACKGROUND (FIX LANSKAP 16:9) === */
         .bg-container { 
@@ -82,7 +80,7 @@
         /* === EFEK FOKUS (SELECTION) === */
         .item:focus {
             outline: none;
-            border: 6px solid #FF0000 !important; /* Border Merah Menyala */
+            border: 4px solid #FF0000 !important; /* Border Merah Menyala */
         
         }
         
@@ -109,17 +107,6 @@
     color:#fff;
 }
 
-        /* Label Nama Film */
-        ..label{
-    position:absolute;
-    bottom:-45px;
-    width:100%;
-    text-align:center;
-    font-weight:700;
-    font-size:16px;
-    color:#ffffff;
-    text-shadow:2px 2px 5px #000;
-}
 
         /* Warna Putih & Muncul saat Poster Difokuskan */
         .item:focus .label { 
@@ -131,8 +118,8 @@
 <body>
 
     <div class="bg-container">
-        <img id="main-bg" src="https://iptv-posterku.pages.dev/poster/film_dubbing/ChatGPTImage23Jun2026,19.45.53_copy_800x308.png" fetchpriority="high"
-decoding="async" style="opacity: 0.7;">
+        <img id="main-bg" src="https://iptv-posterku.pages.dev/poster/film_dubbing/ChatGPTImage23Jun2026,19.45.53_copy_800x308.png"width="800"height="308" fetchpriority="high"
+decoding="async">
     </div>
     <div class="overlay"></div>
 
@@ -145,19 +132,19 @@ decoding="async">
     <div class="thumbnail">
         <a href="seridubing_new.html" class="item" data-id="p1" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing1.webp"loading="lazy"
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing1.webp"loading="lazy"width="160"height="240"
 decoding="async"> <div class="label">Series Dubbing</div>
         </a>   
 
         <a href="seriindo.html" class="item" data-id="p2" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo%201.webp"loading="lazy"
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo%201.webp"loading="lazy"width="160"height="240"
 decoding="async"> <div class="label">Series Indo</div>
         </a>   
 
         <a href="serianimasi.html" class="item" data-id="p3" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime1.webp"loading="lazy"
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime1.webp"loading="lazy"width="160"height="240"
 decoding="async"><div class="label">Series Animasi</div>
         </a>   
     </div>
@@ -199,7 +186,7 @@ thumb.addEventListener('focusin', (e) => {
                     if (el) {
                         el.focus();
                         // Pastikan background juga langsung berubah sesuai item yang dipulihkan
-                        const savedBg = el.getAttribute('data-bg');
+                        const savedBg = el.dataset.bg;
                         if(savedBg) {
                             bgImage.src = savedBg;
                             bgImage.style.opacity = 0.7;
@@ -208,7 +195,7 @@ thumb.addEventListener('focusin', (e) => {
                 }, 400);
             } else {
                 // Jika tidak ada memori, fokus ke item pertama secara default
-                setTimeout(() => {
+                requestAnimationFrame(()=>{
                     const firstItem = document.querySelector('.item');
                     if(firstItem) firstItem.focus();
                 }, 400);
@@ -223,7 +210,7 @@ function updateClock() {
     const seconds = String(now.getSeconds()).padStart(2, '0'); // Tambahkan baris ini
     
     // Gabungkan dengan format jam:menit:detik
-    document.getElementById('digital-clock').innerText = `${hours}:${minutes}:${seconds}`;
+    const clock = document.getElementById("digital-clock");  clock.textContent =  `${hours}:${minutes}:${seconds}`;
 }
 
 // Jalankan setiap 1000 milidetik (1 detik)
