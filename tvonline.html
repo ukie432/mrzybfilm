@@ -56,43 +56,63 @@ h2{
 
 <h2>TV ONLINE</h2>
 
-<div class="grid">
+<div class="grid" id="tvList"></div>
 
-<!-- MAGNA (HLS) -->
-<div class="item" tabindex="0"
-onclick="playTv(
-'https://edge.medcom.id/live-edge/smil:magna.smil/chunklist_w657754957_b3884000_sleng.m3u8',
-'Mozilla/5.0'
-)">
-
-<img src="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Magna.webp">
-
-<p>MAGNA CHANNEL</p>
-
-</div>
-
-<!-- BTV (DASH) -->
-<div class="item" tabindex="0"
-onclick="playTv(
-'https://cdnbal1.indihometv.com/atm/DASH/beritasatu/beritasatu-avc1_2500000=7-3277707030000000.mpd',
-'Mozilla/5.0'
-)">
-
-<img src="https://i.imgur.com/zCbm66c.jpeg">
-
-<p>BTV (DASH TEST)</p>
-
-</div>
-
-</div>
 
 <script>
 
-function playTv(url,userAgent){
+// ambil daftar TV dari tv.json
+
+fetch('data/tv.json')
+.then(response => response.json())
+.then(data => {
+
+let html = "";
+
+data.forEach(tv => {
+
+html += `
+
+<div class="item" tabindex="0"
+onclick="playTv(
+'${tv.url}',
+'${tv.userAgent}',
+'${tv.referer}'
+)">
+
+<img src="${tv.logo}">
+
+<p>${tv.name}</p>
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("tvList").innerHTML = html;
+
+
+})
+.catch(error=>{
+
+document.getElementById("tvList").innerHTML =
+"<p>Gagal membaca tv.json</p>";
+
+});
+
+
+
+function playTv(url,userAgent,referer){
 
     if(window.Android){
 
-        Android.playTv(url,userAgent);
+        Android.playTv(
+            url,
+            userAgent,
+            referer
+        );
 
     }else{
 
@@ -101,7 +121,9 @@ function playTv(url,userAgent){
     }
 
 }
+
 </script>
+
 
 </body>
 </html>
