@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV Online</title>
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    font-family:Arial,sans-serif;
+    color:#fff;
+}
+
+h2{
+    text-align:center;
+    padding:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.item{
+    cursor:pointer;
+    transition:.2s;
+    outline:none;
+}
+
+.item img{
+    width:100%;
+    border-radius:10px;
+}
+
+.item p{
+    text-align:center;
+    margin-top:8px;
+}
+
+.item:focus{
+    transform:scale(1.08);
+}
+
+.item:focus img{
+    border:4px solid #00bfff;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>TV ONLINE</h2>
+
+<div class="grid">
+
+<div class="item" tabindex="0"
+onclick="playTv('https://edge.medcom.id/live-edge/smil:magna.smil/chunklist_w657754957_b3884000_sleng.m3u8')">
+
+<img src="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Magna.webp">
+
+<p>MAGNA CHANNEL</p>
+
+</div>
+
+</div>
+
+<script>
+
+function playTv(url){
+
+    if(window.Android){
+
+        Android.playTv(url);
+
+    }else{
+
+        alert(url);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
