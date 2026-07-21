@@ -7,6 +7,16 @@
   "referer":""
  },
  {
+ 
+  "name":"METRO TV",
+  "logo":"https://contoh.com/metro.webp",
+  "url":"https://server.com/index.mpd",
+  "userAgent":"Mozilla/5.0",
+  "referer":"https://visionplus.id",
+  "drm":"clearkey",
+  "licenseKey":"keyid:key"
+ },
+{
   "name":"BTV",
   "logo":"https://i.imgur.com/zCbm66c.jpeg",
   "url":"https://cdnbal1.indihometv.com/atm/DASH/beritasatu/beritasatu-avc1_2500000=7-3277707030000000.mpd",
