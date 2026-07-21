@@ -61,29 +61,34 @@ h2{
 
 <script>
 
-// ambil daftar TV dari tv.json
+// Ambil daftar TV dari tv.json
 
 fetch('data/tv.json')
+
 .then(response => response.json())
+
 .then(data => {
 
 let html = "";
 
+
 data.forEach(tv => {
+
 
 html += `
 
 <div class="item" tabindex="0"
 onclick="playTv(
-'${tv.url}',
-'${tv.userAgent}',
-'${tv.referer}',
-'${tv.drm}',
-'${tv.licenseKey}'
-)"
-<img src="${tv.logo}">
+'${tv.url || ""}',
+'${tv.userAgent || ""}',
+'${tv.referer || ""}',
+'${tv.drm || ""}',
+'${tv.licenseKey || ""}'
+)">
 
-<p>${tv.name}</p>
+<img src="${tv.logo || ""}">
+
+<p>${tv.name || "Tanpa Nama"}</p>
 
 </div>
 
@@ -96,7 +101,9 @@ document.getElementById("tvList").innerHTML = html;
 
 
 })
-.catch(error=>{
+
+
+.catch(error => {
 
 document.getElementById("tvList").innerHTML =
 "<p>Gagal membaca tv.json</p>";
@@ -105,9 +112,13 @@ document.getElementById("tvList").innerHTML =
 
 
 
+
+
 function playTv(url,userAgent,referer,drm,licenseKey){
 
+
 if(window.Android){
+
 
 Android.playTv(
 url,
@@ -117,7 +128,15 @@ drm,
 licenseKey
 );
 
+
+}else{
+
+
+alert(url);
+
+
 }
+
 
 }
 
