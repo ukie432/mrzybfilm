@@ -77,9 +77,10 @@ html += `
 onclick="playTv(
 '${tv.url}',
 '${tv.userAgent}',
-'${tv.referer}'
-)">
-
+'${tv.referer}',
+'${tv.drm}',
+'${tv.licenseKey}'
+)"
 <img src="${tv.logo}">
 
 <p>${tv.name}</p>
@@ -104,22 +105,21 @@ document.getElementById("tvList").innerHTML =
 
 
 
-function playTv(url,userAgent,referer){
+function playTv(url,userAgent,referer,drm,licenseKey){
 
-    if(window.Android){
+if(window.Android){
 
-        Android.playTv(
-            url,
-            userAgent,
-            referer
-        );
+Android.playTv(
+url,
+userAgent,
+referer,
+drm,
+licenseKey
+);
 
-    }else{
+}
 
-        alert(url);
-
-    }
-
+}
 }
 
 </script>
