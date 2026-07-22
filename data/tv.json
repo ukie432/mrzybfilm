@@ -9,6 +9,51 @@
  
 {
 
+
+
+    "name": "Tribunnews",
+    "logo": "https://i.imgur.com/JVZdVBa.jpeg",
+    "url": "https://d1zhs9dfs6uqpg.cloudfront.net/hls/X16J4FID/X16J4FID_720p30.m3u8",
+    "userAgent": "Mozilla/5.0",
+    "referer": ""
+  },
+  {
+    "name": "CNBC Indonesia",
+    "logo": "https://i.imgur.com/vH16ap1.jpeg",
+    "url": "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/playlist.m3u8",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "referer": "https://www.cnbcindonesia.com/"
+  },
+  {
+    "name": "CNN Indonesia",
+    "logo": "https://i.imgur.com/PfH7DFq.jpeg",
+    "url": "https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/master.m3u8",
+    "userAgent": "Mozilla/5.0",
+    "referer": ""
+  },
+  {
+    "name": "Trans TV",
+    "logo": "https://i.imgur.com/WZ5h0LV.jpeg",
+    "url": "https://video.detik.com/transtv/smil:transtv.smil/playlist.m3u8",
+    "userAgent": "Mozilla/5.0",
+    "referer": "https://20.detik.com/"
+  },
+  {
+    "name": "Trans 7",
+    "logo": "https://i.imgur.com/NvICauU.jpeg",
+    "url": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
+    "userAgent": "Mozilla/5.0",
+    "referer": "https://20.detik.com/"
+  },
+  {
+    "name": "Indosiar DensTV",
+    "logo": "https://i.imgur.com/SjCylM5.jpeg",
+    "url": "https://op-flashcon-digdayahd-1.dens.tv/h/h235/02.m3u8",
+    "userAgent": "Mozilla/5.0",
+    "referer": ""
+  },
+  {
+
  
     "name":"Indosiar UDP",
     "logo":"https://i.imgur.com/SjCylM5.jpeg",
