@@ -1,5 +1,4 @@
 
-
 [
  {
   "name":"Magna Channel",
@@ -18,7 +17,7 @@
 "userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
 "referer":"",
 "drm":"clearkey",
-"1f12a0fe110248a6811faf8a0ddf19c6:af565f760064594c755515cb6b4b6f1a"
+"licenseKey":"1f12a0fe110248a6811faf8a0ddf19c6:af565f760064594c755515cb6b4b6f1a"
 
  },
 {
@@ -31,7 +30,7 @@
 "userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
 "referer":"",
 "drm":"clearkey",
-"dfd7c4f6420843ab9ffb1b8fdda1073a:d99603a39c300373a2edaf4f048276be"
+"licenseKey":"dfd7c4f6420843ab9ffb1b8fdda1073a:d99603a39c300373a2edaf4f048276be"
 
  },
 {
@@ -81,7 +80,7 @@
     "name": "Trans 7",
     "logo": "https://i.imgur.com/NvICauU.jpeg",
     "url": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
+    "userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "referer": "https://20.detik.com/"
   },
   {
@@ -120,7 +119,10 @@
 {
   "name":"BTV",
   "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp",
-  "userAgent":"Mozilla/5.0",
+  
+"url":"https://op-flashcon-digdayahd-1.dens.tv/h/h210/02.m3u8",
+  "userAgent":"VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
   "referer":""
  }
 ]
+
