@@ -12,7 +12,7 @@
 
 
 "name":"Idx Channel",
-"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Idx.webp",
 "url":"https://atemeshield1-voe.sysln.id/live/eds/IDXChannelHD/mediampd/IDXChannelHD.mpd",
 "userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
 "referer":"",
@@ -25,7 +25,7 @@
 
 
 "name":"Daai Tv",
-"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Daaitv.webp",
 "url":"https://atemecdnbalancer-voe.sysln.id/live/eds/DAAITV/mediampd/DAAITV.mpd",
 "userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
 "referer":"",
@@ -77,11 +77,11 @@
     "referer": "https://www.rctiplus.com/"
   },
   {
-    "name": "Trans 7",
-    "logo": "https://i.imgur.com/NvICauU.jpeg",
-    "url": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
-    "userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    "referer": "https://20.detik.com/"
+    "name": "Sctv",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/refs/heads/main/sctv.webp",
+    "url": "https://nextgenz.my.id/event/pidio/play.mpd?id=204&type=dash",
+    "userAgent":"VidioPlayer/6.41.11",
+    "referer": ""
   },
   {
  
@@ -118,9 +118,7 @@
  },
 {
   "name":"BTV",
-  "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp",
-  
-"url":"https://op-flashcon-digdayahd-1.dens.tv/h/h210/02.m3u8",
+  "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp","url":"https://op-flashcon-digdayaxenkoda.dens.tv/e6550891-6bef-42e1-bab9-13bf4af739ce/v0/stream.m3u8",
   "userAgent":"VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
   "referer":""
  }
