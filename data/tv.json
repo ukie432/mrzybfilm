@@ -32,11 +32,11 @@
     "referer": ""
   },
   {
-    "name": "Trans TV",
-    "logo": "https://i.imgur.com/WZ5h0LV.jpeg",
-    "url": "https:/rtmp://f13h.mine.nu/sat/tv731/video.detik.com/transtv/smil:transtv.smil/playlist.m3u8",
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
-    "referer": "https://20.detik.com/"
+    "name": "Mnc Tv",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/mnctv.webp",
+    "url": "https://r-plus.sedotcw3.workers.dev/index.m3u8?id=mnctv",
+    "userAgent": "android-R+",
+    "referer": "https://www.rctiplus.com/"
   },
   {
     "name": "Trans 7",
