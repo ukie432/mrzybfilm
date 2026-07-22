@@ -8,24 +8,62 @@
  },
  
 {
-  "name": "Indosiar (Vision+)",
-  "logo": "https://i.imgur.com/Sq4o7Q1.jpeg",
-  "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/e930be336fed49e6b26a7554e113f7a4/index.mpd",
-  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
-  "referer": "https://m.visionplus.id",
-  "drm": "widevine",
-  "licenseKey": "https://clearkey.dantetivi.workers.dev/"
-},
-{
-  "name": "SCTV (Vision+)",
-  "logo": "https://i.imgur.com/xn5FNew.jpeg",
-  "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/9e9aba7068ca4c7f8a73381bef5f8742/index.mpd",
-  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
-  "referer": "https://m.visionplus.id",
-  "drm": "widevine",
-  "licenseKey": "https://clearkey.dantetivi.workers.dev/"
-},
-{
+  
+    "name":"Indosiar UDP",
+    "logo":"https://i.imgur.com/SjCylM5.jpeg",
+    "url":"http://202.169.224.202:8800/udp/239.9.1.25:1234",
+    "userAgent":"Mozilla/5.0",
+    "referer":""
+  },
+  {
+    "name":"Indosiar TS",
+    "logo":"https://i.imgur.com/SjCylM5.jpeg",
+    "url":"http://mag.king-4k.cc:80/live/C1645263A1D245C/1sFTVBSVCP/1505849.ts",
+    "userAgent":"Mozilla/5.0",
+    "referer":""
+  },
+  {
+    "name":"Indosiar DensTV",
+    "logo":"https://i.imgur.com/SjCylM5.jpeg",
+    "url":"https://op-flashcon-digdayahd-1.dens.tv/h/h235/02.m3u8",
+    "userAgent":"Mozilla/5.0",
+    "referer":""
+  },
+  {
+    "name":"Indosiar Vision+",
+    "logo":"https://i.imgur.com/Sq4o7Q1.jpeg",
+    "url":"https://d2tjypxxy769fn.cloudfront.net/out/v1/e930be336fed49e6b26a7554e113f7a4/index.mpd",
+    "userAgent":"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
+    "referer":"https://m.visionplus.id",
+    "drm":"clearkey",
+    "licenseUrl":"https://clearkey.dantetivi.workers.dev/"
+  },
+  {
+    "name":"Indosiar TransVision",
+    "logo":"https://i.imgur.com/KmQfExr.jpeg",
+    "url":"https://cdnjkt913.transvision.co.id:1000/live/master/1/4028c6856c3db2cc016cd6e773b02392/manifest.mpd",
+    "userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/108.0.0.0 Safari/537.36",
+    "referer":"",
+    "drm":"widevine",
+    "licenseUrl":"https://cbm-drm.openwindow042.workers.dev/"
+  },
+  {
+    "name":"Indosiar MaxStream TV",
+    "logo":"https://i.imgur.com/Z7sgnl6.jpeg",
+    "url":"https://cdnbal1.indihometv.com/atm/DASH/indosiar/indosiar-avc1_2500000=7-3277707030000000.mpd",
+    "userAgent":"Mozilla/5.0",
+    "referer":""
+  },
+  {
+    "name":"Indosiar Vidio",
+    "logo":"https://i.imgur.com/exHEZba.jpeg",
+    "url":"https://nextgenz.my.id/event/pidio/play.mpd?id=205&type=dash",
+    "userAgent":"VidioPlayer/6.41.11",
+    "referer":"",
+    "drm":"widevine",
+    "licenseUrl":"https://nextgenz.my.id/event/pidio/play.mpd?id=205&type=drm"
+  },
+  {
   
 "name":"METRO TV",
 "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
