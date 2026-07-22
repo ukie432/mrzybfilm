@@ -14,7 +14,7 @@
   "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
   "referer": "https://m.visionplus.id",
   "drm": "widevine",
-  "licenseUrl": "https://clearkey.dantetivi.workers.dev/"
+  "licenseKey": "https://clearkey.dantetivi.workers.dev/"
 },
 {
   "name": "SCTV (Vision+)",
@@ -22,7 +22,7 @@
   "url": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/9e9aba7068ca4c7f8a73381bef5f8742/index.mpd",
   "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
   "referer": "https://m.visionplus.id",
-  "drm": "clearkey",
+  "drm": "widevine",
   "licenseUrl": "https://clearkey.dantetivi.workers.dev/"
 },
 {
