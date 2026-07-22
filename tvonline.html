@@ -83,12 +83,15 @@ onclick="playTv(
 '${tv.userAgent || ""}',
 '${tv.referer || ""}',
 '${tv.drm || ""}',
-'${tv.licenseKey || ""}'
+'${tv.licenseKey || ""}',
+'${tv.licenseUrl || ""}'
 )">
+
 
 <img src="${tv.logo || ""}">
 
 <p>${tv.name || "Tanpa Nama"}</p>
+
 
 </div>
 
@@ -114,7 +117,14 @@ document.getElementById("tvList").innerHTML =
 
 
 
-function playTv(url,userAgent,referer,drm,licenseKey){
+function playTv(
+url,
+userAgent,
+referer,
+drm,
+licenseKey,
+licenseUrl
+){
 
 
 if(window.Android){
@@ -125,7 +135,8 @@ url,
 userAgent,
 referer,
 drm,
-licenseKey
+licenseKey,
+licenseUrl
 );
 
 
