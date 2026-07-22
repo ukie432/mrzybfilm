@@ -28,28 +28,28 @@
     "name": "CNN Indonesia",
     "logo": "https://i.imgur.com/PfH7DFq.jpeg",
     "url": "https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/master.m3u8",
-    "userAgent": "Mozilla/5.0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": ""
   },
   {
     "name": "Trans TV",
     "logo": "https://i.imgur.com/WZ5h0LV.jpeg",
     "url": "https://video.detik.com/transtv/smil:transtv.smil/playlist.m3u8",
-    "userAgent": "Mozilla/5.0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": "https://20.detik.com/"
   },
   {
     "name": "Trans 7",
     "logo": "https://i.imgur.com/NvICauU.jpeg",
     "url": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
-    "userAgent": "Mozilla/5.0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": "https://20.detik.com/"
   },
   {
     "name": "Indosiar DensTV",
     "logo": "https://i.imgur.com/SjCylM5.jpeg",
     "url": "https://op-flashcon-digdayahd-1.dens.tv/h/h235/02.m3u8",
-    "userAgent": "Mozilla/5.0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": ""
   },
   {
