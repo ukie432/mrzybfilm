@@ -27,14 +27,14 @@
   {
     "name": "CNN Indonesia",
     "logo": "https://i.imgur.com/PfH7DFq.jpeg",
-    "url": "https://live.cnnindonesia.com/livecnn/smil:cnntv.smil/master.m3u8",
+    "url": "http://202.169.224.202:8800/udp/239.4.1.3:1234",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": ""
   },
   {
     "name": "Trans TV",
     "logo": "https://i.imgur.com/WZ5h0LV.jpeg",
-    "url": "https://video.detik.com/transtv/smil:transtv.smil/playlist.m3u8",
+    "url": "https:/rtmp://f13h.mine.nu/sat/tv731/video.detik.com/transtv/smil:transtv.smil/playlist.m3u8",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": "https://20.detik.com/"
   },
