@@ -7,7 +7,6 @@
 
 <title>TV Online</title>
 
-
 <style>
 
 body{
@@ -24,7 +23,6 @@ h2{
 }
 
 
-
 .grid{
 
     display:grid;
@@ -35,7 +33,6 @@ h2{
 }
 
 
-
 .item{
 
     cursor:pointer;
@@ -43,7 +40,6 @@ h2{
     transition:.2s;
 
 }
-
 
 
 .item img{
@@ -56,14 +52,12 @@ h2{
 }
 
 
-
 .item p{
 
     text-align:center;
     margin:8px 0;
 
 }
-
 
 
 .item:focus{
@@ -73,13 +67,11 @@ h2{
 }
 
 
-
 .item:focus img{
 
     border:4px solid #00bfff;
 
 }
-
 
 </style>
 
@@ -110,7 +102,6 @@ const playlistURL =
 
 
 
-
 fetch(playlistURL)
 
 
@@ -121,7 +112,6 @@ fetch(playlistURL)
 
 
 let tvData = parseM3U(data);
-
 
 
 let html="";
@@ -149,7 +139,7 @@ onclick="playTv(
 
 
 
-<img src="${tv.logo}">
+<img loading="lazy" src="${tv.logo}">
 
 
 <p>${tv.name}</p>
@@ -174,7 +164,6 @@ document.getElementById("tvList").innerHTML=html;
 })
 
 
-
 .catch(error=>{
 
 
@@ -194,9 +183,7 @@ document.getElementById("tvList").innerHTML=
 function parseM3U(data){
 
 
-
 let lines=data.split("\n");
-
 
 
 let result=[];
@@ -207,14 +194,18 @@ let name="";
 let logo="";
 let userAgent="";
 let referer="";
+let drm="";
+let licenseKey="";
+let licenseUrl="";
+
 
 
 
 for(let i=0;i<lines.length;i++){
 
 
-
 let line=lines[i].trim();
+
 
 
 
@@ -233,6 +224,7 @@ userAgent=line.replace(
 
 
 
+
 else if(line.startsWith("#EXTVLCOPT:http-referrer=")){
 
 
@@ -247,6 +239,66 @@ referer=line.replace(
 
 
 
+
+else if(line.startsWith("#KODIPROP:inputstream.adaptive.license_type=")){
+
+
+let type=line.replace(
+"#KODIPROP:inputstream.adaptive.license_type=",
+""
+);
+
+
+
+if(type.includes("clearkey")){
+
+drm="clearkey";
+
+}else{
+
+drm=type;
+
+}
+
+
+
+}
+
+
+
+
+
+else if(line.startsWith("#KODIPROP:inputstream.adaptive.license_key=")){
+
+
+let key=line.replace(
+"#KODIPROP:inputstream.adaptive.license_key=",
+""
+);
+
+
+
+if(key.startsWith("http")){
+
+
+licenseUrl=key;
+
+
+}else{
+
+
+licenseKey=key;
+
+
+}
+
+
+}
+
+
+
+
+
 else if(line.startsWith("#EXTINF")){
 
 
@@ -254,6 +306,7 @@ let comma=line.lastIndexOf(",");
 
 
 name=line.substring(comma+1);
+
 
 
 
@@ -276,8 +329,8 @@ line.indexOf('"',logoPos+10)
 }
 
 
-
 }
+
 
 
 
@@ -285,37 +338,99 @@ line.indexOf('"',logoPos+10)
 else if(line.startsWith("http")){
 
 
+let streamUrl=line;
+
+
+
+
+// membaca format:
+// url|user-agent=xxx&referrer=xxx
+
+
+if(line.includes("|")){
+
+
+let parts=line.split("|");
+
+
+streamUrl=parts[0];
+
+
+let params=parts[1];
+
+
+
+if(params.includes("user-agent=")){
+
+
+userAgent=
+decodeURIComponent(
+params.split("user-agent=")[1]
+.split("&")[0]
+);
+
+
+}
+
+
+
+if(params.includes("referrer=")){
+
+
+referer=
+decodeURIComponent(
+params.split("referrer=")[1]
+);
+
+
+}
+
+
+}
+
+
+
+
+
 result.push({
 
 
-name:name,
+name:name || "Tanpa Nama",
 
 logo:logo,
 
-url:line,
+url:streamUrl,
 
 userAgent:userAgent,
 
 referer:referer,
 
-drm:"",
+drm:drm,
 
-licenseKey:"",
+licenseKey:licenseKey,
 
-licenseUrl:""
+licenseUrl:licenseUrl
 
 
 });
 
 
 
+
+// reset channel
+
+
 name="";
 logo="";
 userAgent="";
 referer="";
+drm="";
+licenseKey="";
+licenseUrl="";
 
 
 }
+
 
 
 
@@ -327,6 +442,7 @@ return result;
 
 
 }
+
 
 
 
@@ -352,7 +468,6 @@ licenseUrl
 
 
 if(window.Android){
-
 
 
 Android.playTv(
@@ -382,9 +497,7 @@ alert(url);
 }
 
 
-
 }
-
 
 
 
