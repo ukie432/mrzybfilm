@@ -1,6 +1,8 @@
+
+
 [
  {
-  "name":"MAGNA CHANNEL",
+  "name":"Magna Channel",
   "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Magna.webp",
   "url":"https://edge.medcom.id/live-edge/smil:magna.smil/chunklist_w657754957_b3884000_sleng.m3u8",
   "userAgent":"Mozilla/5.0",
@@ -10,23 +12,60 @@
 {
 
 
+"name":"Idx Channel",
+"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+"url":"https://atemeshield1-voe.sysln.id/live/eds/IDXChannelHD/mediampd/IDXChannelHD.mpd",
+"userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
+"referer":"",
+"drm":"clearkey",
+"1f12a0fe110248a6811faf8a0ddf19c6:af565f760064594c755515cb6b4b6f1a"
 
-    "name": "Tribunnews",
-    "logo": "https://i.imgur.com/JVZdVBa.jpeg",
-    "url": "https://d1zhs9dfs6uqpg.cloudfront.net/hls/X16J4FID/X16J4FID_720p30.m3u8",
-    "userAgent": "Mozilla/5.0",
+ },
+{
+
+
+
+"name":"Daai Tv",
+"logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Metrotv.webp",
+"url":"https://atemecdnbalancer-voe.sysln.id/live/eds/DAAITV/mediampd/DAAITV.mpd",
+"userAgent":"ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1",
+"referer":"",
+"drm":"clearkey",
+"dfd7c4f6420843ab9ffb1b8fdda1073a:d99603a39c300373a2edaf4f048276be"
+
+ },
+{
+
+
+
+
+  "name":"Nusantara Tv",
+  "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Ntv.webp",
+  "url":"https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8",
+  "userAgent":"Mozilla/5.0",
+  "referer":""
+ },
+ 
+{
+
+
+
+    "name": "Garuda Tv",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Garudatv.webp",
+    "url": "https://hgmtv.com:19360/garudatvlivestreaming/720p.m3u8",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64)",
     "referer": ""
   },
   {
     "name": "CNBC Indonesia",
-    "logo": "https://i.imgur.com/vH16ap1.jpeg",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Cnbcindonesia.webp",
     "url": "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/playlist.m3u8",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "referer": "https://www.cnbcindonesia.com/"
   },
   {
     "name": "CNN Indonesia",
-    "logo": "https://i.imgur.com/PfH7DFq.jpeg",
+    "logo": "https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Cnnindonesia.webp",
     "url": "http://202.169.224.202:8800/udp/239.4.1.3:1234",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
     "referer": ""
@@ -46,68 +85,26 @@
     "referer": "https://20.detik.com/"
   },
   {
-    "name": "Indosiar DensTV",
-    "logo": "https://i.imgur.com/SjCylM5.jpeg",
-    "url": "https://op-flashcon-digdayahd-1.dens.tv/h/h235/02.m3u8",
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
-    "referer": ""
-  },
-  {
-
  
-    "name":"Indosiar UDP",
-    "logo":"https://i.imgur.com/SjCylM5.jpeg",
+    "name":"Indosiar ",
+    "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp",
     "url":"http://202.169.224.202:8800/udp/239.9.1.25:1234",
     "userAgent":"Mozilla/5.0",
     "referer":""
   },
   {
-    "name":"Indosiar TS",
-    "logo":"https://i.imgur.com/SjCylM5.jpeg",
+    "name":"Indosiar ",
+    "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp",
     "url":"http://mag.king-4k.cc:80/live/C1645263A1D245C/1sFTVBSVCP/1505849.ts",
     "userAgent":"Mozilla/5.0",
     "referer":""
   },
   {
-    "name":"Indosiar DensTV",
-    "logo":"https://i.imgur.com/SjCylM5.jpeg",
-    "url":"https://op-flashcon-digdayahd-1.dens.tv/h/h235/02.m3u8",
-    "userAgent":"Mozilla/5.0",
-    "referer":""
-  },
-  {
-    "name":"Indosiar Vision+",
-    "logo":"https://i.imgur.com/Sq4o7Q1.jpeg",
-    "url":"https://d2tjypxxy769fn.cloudfront.net/out/v1/e930be336fed49e6b26a7554e113f7a4/index.mpd",
-    "userAgent":"Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
-    "referer":"https://m.visionplus.id",
-    "drm":"clearkey",
-    "licenseUrl":"https://clearkey.dantetivi.workers.dev/"
-  },
-  {
-    "name":"Indosiar TransVision",
-    "logo":"https://i.imgur.com/KmQfExr.jpeg",
-    "url":"https://cdnjkt913.transvision.co.id:1000/live/master/1/4028c6856c3db2cc016cd6e773b02392/manifest.mpd",
-    "userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/108.0.0.0 Safari/537.36",
-    "referer":"",
-    "drm":"widevine",
-    "licenseUrl":"https://cbm-drm.openwindow042.workers.dev/"
-  },
-  {
     "name":"Indosiar MaxStream TV",
-    "logo":"https://i.imgur.com/Z7sgnl6.jpeg",
+    "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp",
     "url":"https://cdnbal1.indihometv.com/atm/DASH/indosiar/indosiar-avc1_2500000=7-3277707030000000.mpd",
     "userAgent":"Mozilla/5.0",
     "referer":""
-  },
-  {
-    "name":"Indosiar Vidio",
-    "logo":"https://i.imgur.com/exHEZba.jpeg",
-    "url":"https://nextgenz.my.id/event/pidio/play.mpd?id=205&type=dash",
-    "userAgent":"VidioPlayer/6.41.11",
-    "referer":"",
-    "drm":"widevine",
-    "licenseUrl":"https://nextgenz.my.id/event/pidio/play.mpd?id=205&type=drm"
   },
   {
   
@@ -122,8 +119,7 @@
  },
 {
   "name":"BTV",
-  "logo":"https://i.imgur.com/zCbm66c.jpeg",
-  "url":"https://cdnbal1.indihometv.com/atm/DASH/beritasatu/beritasatu-avc1_2500000=7-3277707030000000.mpd",
+  "logo":"https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Btv.webp",
   "userAgent":"Mozilla/5.0",
   "referer":""
  }
