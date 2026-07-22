@@ -13,7 +13,7 @@
   "url": "https://d2tjypxxy769fn.cloudfront.net/out/v1/e930be336fed49e6b26a7554e113f7a4/index.mpd",
   "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Chrome/137.0.0.0 Mobile Safari/537.36",
   "referer": "https://m.visionplus.id",
-  "drm": "clearkey",
+  "drm": "widevine",
   "licenseUrl": "https://clearkey.dantetivi.workers.dev/"
 },
 {
