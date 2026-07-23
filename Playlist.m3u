@@ -2,7 +2,7 @@
 
 #EXTM3U
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp" tvg-id="itzplay.id" group-title="Channel Lokal", Indosiar Digital 4
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Indosiar.webp" tvg-id="" group-title="Channel Lokal", Indosiar Digital 4
 https://s.id/Shareext_liga1_m3u8
 
 
@@ -132,7 +132,7 @@ https://d2xz2v5wuvgur6.cloudfront.net/out/v1/7a69cfc9e135493f87ac4efd63000429/in
 
 
 #EXTVLCOPT:http-user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mdtv.webp" tvg-id="itzplay.id" group-title="Channel Lokal",MDTV
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Mdtv.webp" tvg-id="" group-title="Channel Lokal",MDTV
 https://op-flashcon-digdayahd-1.dens.tv/h/h223/02.m3u8
 
 
@@ -141,13 +141,13 @@ https://op-flashcon-digdayahd-1.dens.tv/h/h223/02.m3u8
 #EXTINF:-1 tvg-id="10" tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp" group-title="Channel Lokal", RTV 
 
 #EXTVLCOPT:http-user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp" tvg-id="itzplay.id" group-title="Channel Lokal",RTV
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp" tvg-id="" group-title="Channel Lokal",RTV
 https://op-flashcon-digdayahd-1.dens.tv/h/h10/01.m3u8
 
 
 #EXTVLCOPT:http-origin=https://www.vidio.com
 https://beetv.my.id/stream/vd.m3u8?ch=rtv
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp" tvg-id="itzplay.id" group-title="Channel Lokal",RTV 
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Rtv.webp" tvg-id="" group-title="Channel Lokal",RTV 
 https://beetv.my.id/stream/vd.m3u8?ch=rtv
 https://nextgenz.my.id/event/pidio/play.mpd?id=1561&type=dash
 
