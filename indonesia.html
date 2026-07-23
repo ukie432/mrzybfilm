@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // --- PARSER M3U KE FORMAT OBJEK ---
+    // --- PARSER M3U DENGAN PEMBERSIHAN SPASI/ENTER (.trim()) ---
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -303,11 +303,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     currentTitle = line.substring(commaIndex + 1).trim();
                 }
             } else if (line && !line.startsWith('#')) {
-                if (currentTitle) {
+                const cleanUrl = line.trim();
+                if (currentTitle && cleanUrl) {
                     listFilm.push({
                         id: String(idCounter++),
                         title: currentTitle,
-                        url: line,
+                        url: cleanUrl,
                         img: currentImg || 'https://via.placeholder.com/300x400?text=No+Image'
                     });
                 }
