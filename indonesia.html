@@ -337,6 +337,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
+            // Tambahan event scroll untuk mendeteksi guliran layar di HP / Layar Sentuh
+            window.addEventListener("scroll", function() {
+                if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 500)) {
+                    if (currentIndex < dataAktif.length) {
+                        renderNext();
+                    }
+                }
+            });
+
             setTimeout(() => {
                 const statusNontonSTB = localStorage.getItem("indonesia_sedangNontonVideoSTB");
                 const idPosterTerakhir = localStorage.getItem("indonesia_idPosterTerakhir");
