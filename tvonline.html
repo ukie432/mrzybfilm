@@ -26,6 +26,11 @@ h2 {
     border-radius: 8px;
     border: none;
     font-size: 16px;
+    outline: none;
+}
+
+#search:focus {
+    border: 2px solid #00bfff;
 }
 
 #kategori {
@@ -33,6 +38,7 @@ h2 {
     gap: 10px;
     overflow-x: auto;
     padding: 10px;
+    scroll-behavior: smooth;
 }
 
 #kategori button {
@@ -45,6 +51,7 @@ h2 {
     cursor: pointer;
     outline: none;
     transition: .2s;
+    flex-shrink: 0;
 }
 
 #kategori button:focus {
@@ -95,16 +102,13 @@ h2 {
 <input 
 id="search"
 type="text"
-placeholder="Cari channel (Tekan Enter/Selesai)..."
-onchange="cariChannel()"
-onkeydown="if(event.key === 'Enter'){ this.blur(); cariChannel(); }">
+placeholder="Cari channel..."
+oninput="cariChannel()"
+onkeydown="if(event.key === 'Enter'){ this.blur(); }">
 
-<div id="kategori">
-</div>
+<div id="kategori"></div>
 
-<div class="grid" id="tvList">
-Memuat TV...
-</div>
+<div class="grid" id="tvList">Memuat TV...</div>
 
 <script>
 const playlistURL = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/Playlist.m3u";
@@ -143,34 +147,41 @@ function tampilkanTV(data) {
     });
     document.getElementById("tvList").innerHTML = html;
 
-    // Logika Mengembalikan Fokus yang Dioptimalkan untuk STB / Android TV
+    // Pemulihan fokus dengan jeda waktu lebih lama khusus STB
+    pulihkanFokusSTB();
+}
+
+function pulihkanFokusSTB() {
+    let lastIndex = sessionStorage.getItem("lastFocusedIndex");
+    
+    // Beri waktu tunggu awal 500ms agar STB siap setelah kembali dari player
     setTimeout(() => {
-        let lastIndex = sessionStorage.getItem("lastFocusedIndex");
-        if (lastIndex !== null) {
-            let targetItem = document.getElementById(`item-${lastIndex}`);
-            if (targetItem) {
-                targetItem.focus();
-                targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                sessionStorage.removeItem("lastFocusedIndex");
+        let percobaan = 0;
+        let intInterval = setInterval(() => {
+            percobaan++;
+            if (lastIndex !== null) {
+                let targetItem = document.getElementById(`item-${lastIndex}`);
+                if (targetItem) {
+                    targetItem.focus();
+                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    sessionStorage.removeItem("lastFocusedIndex");
+                    clearInterval(intInterval);
+                    return;
+                }
             } else {
-                // Fallback jika elemen belum siap saat timeout pertama
-                let checkExist = setInterval(() => {
-                    let retryItem = document.getElementById(`item-${lastIndex}`);
-                    if (retryItem) {
-                        retryItem.focus();
-                        retryItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        sessionStorage.removeItem("lastFocusedIndex");
-                        clearInterval(checkExist);
-                    }
-                }, 50);
+                let firstItem = document.getElementById("item-0");
+                if (firstItem) {
+                    firstItem.focus();
+                    clearInterval(intInterval);
+                    return;
+                }
             }
-        } else {
-            let firstItem = document.getElementById("item-0");
-            if (firstItem) {
-                firstItem.focus();
+            
+            if (percobaan > 60) {
+                clearInterval(intInterval);
             }
-        }
-    }, 150);
+        }, 50);
+    }, 500);
 }
 
 function buatKategori() {
@@ -183,9 +194,7 @@ function buatKategori() {
     });
 
     let html = "";
-
     grup.forEach(g => {
-        // PERBAIKAN: Menambahkan tabindex="0" agar kategori bisa difokuskan remote control
         html += `
         <button tabindex="0" onclick="pilihKategori('${g}')">
             ${g}
@@ -193,7 +202,14 @@ function buatKategori() {
         `;
     });
 
-    document.getElementById("kategori").innerHTML = html;
+    let containerKategori = document.getElementById("kategori");
+    containerKategori.innerHTML = html;
+
+    containerKategori.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("focus", () => {
+            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+    });
 }
 
 function pilihKategori(g) {
@@ -240,11 +256,7 @@ function parseM3U(data) {
             referer = line.replace("#EXTVLCOPT:http-referrer=", "");
         } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_type=")) {
             let type = line.replace("#KODIPROP:inputstream.adaptive.license_type=", "");
-            if (type.includes("clearkey")) {
-                drm = "clearkey";
-            } else {
-                drm = type;
-            }
+            drm = type.includes("clearkey") ? "clearkey" : type;
         } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_key=")) {
             let key = line.replace("#KODIPROP:inputstream.adaptive.license_key=", "");
             if (key.startsWith("http")) {
