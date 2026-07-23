@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -200,19 +200,19 @@
         .player-right-wrapper {
             display: flex;
             flex-direction: column;
-            align-items: flex-end; /* Memojokkan konten ke kanan */
-            gap: 12px; /* Jarak antara tulisan logo dan tombol */
+            align-items: flex-end;
+            gap: 12px;
         }
 
         /* GAYA DESAIN WATERMARK / LOGO MRZYBmusik */
         .app-brand-logo {
             font-size: 14px;
             font-weight: 800;
-            color: rgba(255, 255, 255, 0.25); /* Putih elegan transparan ala watermark */
+            color: rgba(255, 255, 255, 0.25);
             letter-spacing: 3px;
             text-transform: uppercase;
             user-select: none;
-            border-right: 3px solid #cc0044; /* Garis aksen merah tipis di kanan logo */
+            border-right: 3px solid #cc0044;
             padding-right: 8px;
             line-height: 1;
         }
@@ -270,7 +270,6 @@
             width: 0%;
             height: 100%;
             background: #cc0044;
-            
         }
 
         /* --- PLAYLIST DAFTAR LAGU --- */
@@ -347,6 +346,11 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
+    <!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif (anti-sleep) -->
+    <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
+        <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+    </video>
+
     <div class="music-app-container">
         
         <!-- ELEMENT AREA ATAS (PENCARIAN & KATEGORI) -->
@@ -416,6 +420,7 @@
         let targetHeights = Array(totalBars).fill(0);
 
         const audio = document.getElementById('main-audio');
+        const ghostVideo = document.getElementById('ghost-video');
         const playBtn = document.getElementById('play-btn');
         const playerCover = document.getElementById('player-cover');
         const playerTitle = document.getElementById('player-title');
@@ -431,7 +436,6 @@
         // Fungsi Load Data JSON dari URL GitHub
         async function fetchPlaylistData() {
             try {
-                // MASUKKAN LINK RAW GITHUB ANDA DI SINI
                 const response = await fetch('data/playlistmusik.json');
                 if (!response.ok) {
                     throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
@@ -556,10 +560,12 @@
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
+                if(ghostVideo) ghostVideo.play().catch(e => {});
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#cc0044';
             } else {
                 audio.pause();
+                if(ghostVideo) ghostVideo.pause();
                 playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
                 playBtn.style.color = '#e0e0e0';
             }
@@ -568,6 +574,7 @@
         function selectTrack(index) {
             loadTrack(index);
             audio.play();
+            if(ghostVideo) ghostVideo.play().catch(e => {});
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#cc0044';
         }
@@ -629,6 +636,22 @@
             const duration = audio.duration;
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
+
+        // ANTI-SLEEP STB: Sinyal aktivitas virtual berkala tiap 1 menit jika musik aktif
+        setInterval(() => {
+            if (!audio.paused) {
+                window.scrollBy(0, 1);
+                window.scrollBy(0, -1);
+
+                const dummyClick = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                document.body.dispatchEvent(dummyClick);
+                console.log("Anti-Sleep STB: Sinyal aktivitas virtual dikirim.");
+            }
+        }, 60000);
 
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
