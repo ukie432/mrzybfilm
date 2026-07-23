@@ -26,7 +26,7 @@
 
     .container-film {
         display: grid !important;
-        grid-template-columns: repeat(5, 1fr) !important;
+        grid-template-columns: repeat(4, 1fr) !important;
         gap: 20px !important;
         padding: 20px !important;
     }
@@ -41,7 +41,7 @@
 
     .poster-wrapper { 
         width: 100%; 
-        aspect-ratio: 3 / 3.4 !important; 
+        aspect-ratio: 16 / 9 !important; 
         position: relative; 
         background-color: #2a2a2a; 
     }
@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 40;
     let searchTimer;
 
-    // Menangani tombol BACK fisik Android TV secara manual dan bersih
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
             if (typeof Android !== "undefined" && Android.exitApp) {
@@ -147,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
             containerFav.style.display = "none";
         } else {
             favSectionTitle.style.display = "block";
-            containerFav.style.display = "flex";
+            containerFav.style.display = "grid";
             listFavorit.forEach(idFilm => {
                 const film = semuaFilm.find(f => f.id === idFilm);
                 if(!film) return;
@@ -284,7 +283,6 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // --- PARSER M3U DENGAN PEMBERSIHAN SPASI/ENTER (.trim()) ---
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -309,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         id: String(idCounter++),
                         title: currentTitle,
                         url: cleanUrl,
-                        img: currentImg || 'https://via.placeholder.com/300x400?text=No+Image'
+                        img: currentImg || 'https://via.placeholder.com/400x225?text=No+Image'
                     });
                 }
                 currentTitle = '';
@@ -319,7 +317,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return listFilm;
     }
 
-    // --- MEMANGGIL PLAYLIST M3U DARI GITHUB ---
     fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/filmindonesia.m3u')
         .then(response => response.text())
         .then(m3uText => {
