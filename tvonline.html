@@ -128,7 +128,16 @@ fetch(playlistURL)
     let tvData = parseM3U(data);
     semuaTV = tvData;
     buatKategori();
-    tampilkanTV(tvData);
+    
+    // Cek apakah ada kategori tersimpan sebelumnya (misal setelah tombol Back ditekan)
+    let savedCategory = localStorage.getItem("lastCategory");
+    if (savedCategory && savedCategory !== "Semua") {
+        kategoriAktif = savedCategory;
+        let filteredData = semuaTV.filter(tv => tv.group == savedCategory);
+        tampilkanTVTanpaFokus(filteredData);
+    } else {
+        tampilkanTV(tvData);
+    }
 })
 .catch(error => {
     document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
@@ -178,10 +187,12 @@ function tampilkanTVTanpaFokus(data) {
         `;
     });
     document.getElementById("tvList").innerHTML = html;
+
+    pulihkanFokusSTB();
 }
 
 function pulihkanFokusSTB() {
-    let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
+    let lastIndex = localStorage.getItem("lastFocusedIndex");
     
     setTimeout(() => {
         let percobaan = 0;
@@ -193,7 +204,7 @@ function pulihkanFokusSTB() {
                     targetItem.focus();
                     targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     localStorage.removeItem("lastFocusedIndex");
-                    sessionStorage.removeItem("lastFocusedIndex");
+                    localStorage.removeItem("lastCategory");
                     clearInterval(intInterval);
                     return;
                 }
@@ -294,6 +305,7 @@ function handleItemKey(event, index) {
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
+    localStorage.setItem("lastCategory", g); // Simpan kategori aktif secara manual saat diklik
     let data = semuaTV;
 
     if (g != "Semua") {
@@ -315,7 +327,7 @@ function cariChannel() {
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     localStorage.setItem("lastFocusedIndex", index);
-    sessionStorage.setItem("lastFocusedIndex", index);
+    localStorage.setItem("lastCategory", kategoriAktif); // Simpan kategori yang sedang dibuka saat ini
     
     if(ghostVideo) ghostVideo.play().catch(e => {});
 
