@@ -158,6 +158,28 @@ function tampilkanTV(data) {
     pulihkanFokusSTB();
 }
 
+function tampilkanTVTanpaFokus(data) {
+    let html = "";
+    data.forEach((tv, index) => {
+        html += `
+        <div class="item" tabindex="0" id="item-${index}" 
+             onkeydown="handleItemKey(event, ${index})"
+             onclick="pilihDanPlay(${index}, 
+            '${tv.url}',
+            '${tv.userAgent}',
+            '${tv.referer}',
+            '${tv.drm}',
+            '${tv.licenseKey}',
+            '${tv.licenseUrl}'
+        )">
+            <img loading="lazy" src="${tv.logo}">
+            <p>${tv.name}</p>
+        </div>
+        `;
+    });
+    document.getElementById("tvList").innerHTML = html;
+}
+
 function pulihkanFokusSTB() {
     let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
     
@@ -207,7 +229,7 @@ function buatKategori() {
         html += `
         <button tabindex="0" id="kat-${idx}" 
                 onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
-                onclick="pilihKategori('${g}')">
+                onclick="pilihKategori('${g}', this)">
             ${g}
         </button>
         `;
@@ -257,13 +279,11 @@ function handleCategoryKey(event, index, totalKat) {
 }
 
 function handleItemKey(event, index) {
-    // Estimasi jumlah kolom grid secara dinamis (minmax 170px)
     let gridContainer = document.getElementById("tvList");
     let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
     let columns = Math.max(1, Math.floor(containerWidth / 190));
 
     if (event.key === 'ArrowUp') {
-        // Jika berada di baris paling atas grid, arahkan ke kategori
         if (index < columns) {
             event.preventDefault();
             let firstKat = document.getElementById("kat-0");
@@ -272,7 +292,7 @@ function handleItemKey(event, index) {
     }
 }
 
-function pilihKategori(g) {
+function pilihKategori(g, element) {
     kategoriAktif = g;
     let data = semuaTV;
 
@@ -280,13 +300,17 @@ function pilihKategori(g) {
         data = semuaTV.filter(tv => tv.group == g);
     }
 
-    tampilkanTV(data);
+    tampilkanTVTanpaFokus(data);
+
+    if (element) {
+        element.focus();
+    }
 }
 
 function cariChannel() {
     let text = document.getElementById("search").value.toLowerCase();
     let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
-    tampilkanTV(data);
+    tampilkanTVTanpaFokus(data);
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
