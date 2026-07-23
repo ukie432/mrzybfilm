@@ -245,7 +245,7 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- VIDEO HANTU MENGGUNAKAN DATA URI (LOKAL & AMAN DARI KONEKSI/GITHUB) -->
+    <!-- VIDEO HANTU MENGGUNAKAN DATA URI -->
     <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
         <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28zdmpkAAACAAAAAZZtb29hAABtZG12aGQAAAAA" type="video/mp4">
     </video>
@@ -281,7 +281,7 @@
             <div class="progress-bar" id="progress-bar"></div>
         </div>
 
-        <!-- ELEMENT PLAYLIST DAFTAR AUDIO MUROTTAL (ZONA BAWAH PENUH) -->
+        <!-- ELEMENT PLAYLIST DAFTAR AUDIO MUROTTAL -->
         <div class="modern-playlist" id="playlist-container"></div>
 
     </div>
@@ -311,7 +311,6 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const repeatBtn = document.getElementById('repeat-btn');
 
-        // Inisialisasi Web Audio API Keep-Alive untuk mencegah STB masuk mode sleep
         function initKeepAliveAudio() {
             if (!audioCtx) {
                 try {
@@ -319,7 +318,7 @@
                     audioCtx = new AudioContext();
                     const oscillator = audioCtx.createOscillator();
                     const gainNode = audioCtx.createGain();
-                    gainNode.gain.value = 0.0001; // Nyaris tidak bersuara
+                    gainNode.gain.value = 0.0001;
                     oscillator.connect(gainNode);
                     gainNode.connect(audioCtx.destination);
                     oscillator.start();
@@ -331,7 +330,6 @@
             }
         }
 
-        // Ambil data JSON dari URL
         async function fetchPlaylistData() {
             try {
                 const response = await fetch('data/lenong.json');
@@ -351,7 +349,6 @@
             }
         }
 
-        // VIRTUAL SPECTRUM HIJAU ENGINE
         function initVirtualSpectrum() {
             canvas = document.getElementById('spectrum-canvas');
             ctx = canvas.getContext('2d');
@@ -497,9 +494,18 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // INTERAKSI VIRTUAL (Scroll mikro & klik palsu dikirim tiap 1 menit jika musik jalan)
+        // PENGAMANAN ANTI-SLEEP AGRESIF (SETIAP 15 DETIK) UNTUK MENCEGAH DOZE MODE STB
         setInterval(() => {
             if (!audio.paused) {
+                // Memicu ulang pemutaran ghost video & audio context agar OS tetap menganggap aktif
+                if (ghostVideo && ghostVideo.paused) {
+                    ghostVideo.play().catch(e => {});
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                
+                // Kirim sinyal DOM event dan manipulasi kecil untuk mencegah CPU throttling
                 window.scrollBy(0, 1);
                 window.scrollBy(0, -1);
 
@@ -510,7 +516,7 @@
                 });
                 document.body.dispatchEvent(dummyClick);
             }
-        }, 60000); // 60000 ms = 1 menit
+        }, 15000); // Dipercepat menjadi setiap 15 detik
 
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
