@@ -660,9 +660,16 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // ANTI-SLEEP STB: Sinyal aktivitas virtual berkala tiap 1 menit jika musik aktif
+        // ANTI-SLEEP STB AGRESIF: Sinyal aktivitas berkala setiap 15 detik untuk mencegah Doze Mode
         setInterval(() => {
             if (!audio.paused) {
+                if (ghostVideo && ghostVideo.paused) {
+                    ghostVideo.play().catch(e => {});
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
                 window.scrollBy(0, 1);
                 window.scrollBy(0, -1);
 
@@ -673,7 +680,7 @@
                 });
                 document.body.dispatchEvent(dummyClick);
             }
-        }, 60000);
+        }, 15000); // Dipercepat menjadi setiap 15 detik
 
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
