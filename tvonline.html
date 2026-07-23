@@ -138,7 +138,9 @@ function tampilkanTV(data) {
     let html = "";
     data.forEach((tv, index) => {
         html += `
-        <div class="item" tabindex="0" id="item-${index}" onclick="pilihDanPlay(${index}, 
+        <div class="item" tabindex="0" id="item-${index}" 
+             onkeydown="handleItemKey(event, ${index})"
+             onclick="pilihDanPlay(${index}, 
             '${tv.url}',
             '${tv.userAgent}',
             '${tv.referer}',
@@ -153,7 +155,6 @@ function tampilkanTV(data) {
     });
     document.getElementById("tvList").innerHTML = html;
 
-    // Pemulihan fokus yang aman untuk STB (menggunakan localStorage agar lebih tahan dari re-create WebView)
     pulihkanFokusSTB();
 }
 
@@ -204,7 +205,9 @@ function buatKategori() {
     let html = "";
     grup.forEach((g, idx) => {
         html += `
-        <button tabindex="0" id="kat-${idx}" onclick="pilihKategori('${g}')">
+        <button tabindex="0" id="kat-${idx}" 
+                onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
+                onclick="pilihKategori('${g}')">
             ${g}
         </button>
         `;
@@ -224,19 +227,47 @@ function handleSearchKey(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         document.getElementById('search').blur();
-        // Arahkan fokus ke kategori pertama saat keluar dari search via remote
         let firstKat = document.getElementById("kat-0");
-        if (firstKat) {
-            firstKat.focus();
-        } else {
-            let firstItem = document.getElementById("item-0");
-            if (firstItem) firstItem.focus();
-        }
+        if (firstKat) firstKat.focus();
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         let firstKat = document.getElementById("kat-0");
-        if (firstKat) {
-            firstKat.focus();
+        if (firstKat) firstKat.focus();
+    }
+}
+
+function handleCategoryKey(event, index, totalKat) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        let searchInput = document.getElementById('search');
+        if (searchInput) searchInput.focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstItem = document.getElementById("item-0");
+        if (firstItem) firstItem.focus();
+    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
+        event.preventDefault();
+        let nextKat = document.getElementById(`kat-${index + 1}`);
+        if (nextKat) nextKat.focus();
+    } else if (event.key === 'ArrowLeft' && index > 0) {
+        event.preventDefault();
+        let prevKat = document.getElementById(`kat-${index - 1}`);
+        if (prevKat) prevKat.focus();
+    }
+}
+
+function handleItemKey(event, index) {
+    // Estimasi jumlah kolom grid secara dinamis (minmax 170px)
+    let gridContainer = document.getElementById("tvList");
+    let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
+    let columns = Math.max(1, Math.floor(containerWidth / 190));
+
+    if (event.key === 'ArrowUp') {
+        // Jika berada di baris paling atas grid, arahkan ke kategori
+        if (index < columns) {
+            event.preventDefault();
+            let firstKat = document.getElementById("kat-0");
+            if (firstKat) firstKat.focus();
         }
     }
 }
@@ -259,7 +290,6 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    // Simpan ke localStorage dan sessionStorage agar aman dari pembaharuan memori STB
     localStorage.setItem("lastFocusedIndex", index);
     sessionStorage.setItem("lastFocusedIndex", index);
     
