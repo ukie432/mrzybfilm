@@ -3,8 +3,7 @@
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
-
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -130,7 +129,6 @@
             color: #666;
             font-size: 20px;
             cursor: pointer;
-        
             outline: none;
         }
 
@@ -160,7 +158,6 @@
             flex: 0 0 auto;
             outline: none;
             position: relative;
-            
             z-index: 3;
         }
 
@@ -173,7 +170,6 @@
             width: 0%;
             height: 100%;
             background: #00cc66; /* WARNA HIJAU */
-            
         }
 
         /* --- PLAYLIST DAFTAR LAGU MUROTTAL --- */
@@ -200,7 +196,6 @@
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.01);
             cursor: pointer;
-            
             outline: none;
             border: 1px solid transparent;
         }
@@ -250,9 +245,9 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- TRIK 1: VIDEO HANTU (Ukurannya dibuat 1px, transparan, loop tanpa henti) -->
+    <!-- VIDEO HANTU MENGGUNAKAN DATA URI (LOKAL & AMAN DARI KONEKSI/GITHUB) -->
     <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-        <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28zdmpkAAACAAAAAZZtb29hAABtZG12aGQAAAAA" type="video/mp4">
     </video>
 
     <div class="music-app-container">
@@ -302,6 +297,7 @@
         let totalBars = 45; 
         let barHeights = Array(totalBars).fill(0); 
         let targetHeights = Array(totalBars).fill(0);
+        let audioCtx = null;
 
         const audio = document.getElementById('main-audio');
         const ghostVideo = document.getElementById('ghost-video');
@@ -314,6 +310,26 @@
         const playlistContainer = document.getElementById('playlist-container');
         const shuffleBtn = document.getElementById('shuffle-btn');
         const repeatBtn = document.getElementById('repeat-btn');
+
+        // Inisialisasi Web Audio API Keep-Alive untuk mencegah STB masuk mode sleep
+        function initKeepAliveAudio() {
+            if (!audioCtx) {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    gainNode.gain.value = 0.0001; // Nyaris tidak bersuara
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.start();
+                } catch(e) {
+                    console.log("AudioContext tidak didukung:", e);
+                }
+            } else if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
         // Ambil data JSON dari URL
         async function fetchPlaylistData() {
@@ -400,8 +416,9 @@
         }
 
         function togglePlay() {
+            initKeepAliveAudio();
             if (audio.paused) {
-                audio.play();
+                audio.play().catch(e => console.log(e));
                 if(ghostVideo) ghostVideo.play().catch(e => {});
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#00cc66';
@@ -414,8 +431,9 @@
         }
 
         function selectTrack(index) {
+            initKeepAliveAudio();
             loadTrack(index);
-            audio.play();
+            audio.play().catch(e => console.log(e));
             if(ghostVideo) ghostVideo.play().catch(e => {});
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#00cc66';
@@ -479,21 +497,18 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // TRIK 2: INTERAKSI VIRTUAL (Scroll mikro & klik palsu dikirim tiap 1 menit jika musik jalan)
+        // INTERAKSI VIRTUAL (Scroll mikro & klik palsu dikirim tiap 1 menit jika musik jalan)
         setInterval(() => {
             if (!audio.paused) {
-                // Scroll layar 1px lalu kembalikan
                 window.scrollBy(0, 1);
                 window.scrollBy(0, -1);
 
-                // Kirim event klik palsu ke body agar sistem deteksi user masih aktif
                 const dummyClick = new MouseEvent('click', {
                     view: window,
                     bubbles: true,
                     cancelable: true
                 });
                 document.body.dispatchEvent(dummyClick);
-                console.log("Anti-Sleep STB: Sinyal aktivitas virtual dikirim.");
             }
         }, 60000); // 60000 ms = 1 menit
 
@@ -523,7 +538,7 @@
         audio.addEventListener('ended', () => {
             if (isRepeat) {
                 audio.currentTime = 0;
-                audio.play();
+                audio.play().catch(e => console.log(e));
             } else {
                 playNext();
             }
