@@ -95,8 +95,9 @@ h2 {
 <input 
 id="search"
 type="text"
-placeholder="Cari channel..."
-oninput="cariChannel()">
+placeholder="Cari channel (Tekan Enter/Selesai)..."
+onchange="cariChannel()"
+onkeydown="if(event.key === 'Enter'){ this.blur(); cariChannel(); }">
 
 <div id="kategori">
 </div>
