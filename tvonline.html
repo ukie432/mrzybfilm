@@ -97,6 +97,11 @@ h2 {
 </head>
 <body>
 
+<!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif dan mencegah STB tidur -->
+<video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
+    <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+</video>
+
 <h2>TV ONLINE</h2>
 
 <input 
@@ -115,6 +120,7 @@ const playlistURL = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/he
 
 let semuaTV = [];
 let kategoriAktif = "Semua";
+const ghostVideo = document.getElementById('ghost-video');
 
 fetch(playlistURL)
 .then(response => response.text())
@@ -231,6 +237,10 @@ function cariChannel() {
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     sessionStorage.setItem("lastFocusedIndex", index);
+    
+    // Pastikan ghost video tetap berjalan saat interaksi
+    if(ghostVideo) ghostVideo.play().catch(e => {});
+
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
 
@@ -325,6 +335,30 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
         alert(url);
     }
 }
+
+// ANTI-SLEEP STB: Mengirimkan sinyal aktivitas virtual berkala tiap 1 menit
+setInterval(() => {
+    window.scrollBy(0, 1);
+    window.scrollBy(0, -1);
+
+    const dummyClick = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+    document.body.dispatchEvent(dummyClick);
+    
+    if (ghostVideo && ghostVideo.paused) {
+        ghostVideo.play().catch(e => {});
+    }
+}, 60000);
+
+// Auto-play ghost video saat halaman dimuat
+window.addEventListener('load', () => {
+    if (ghostVideo) {
+        ghostVideo.play().catch(e => {});
+    }
+});
 </script>
 
 </body>
