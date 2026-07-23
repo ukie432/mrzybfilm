@@ -229,11 +229,11 @@ https://r-plus.sedotcw3.workers.dev/index.m3u8?id=inews
 #https://inews-cutv.rctiplus.id/inews-sdi.m3u8
 
 #EXTVLCOPT:http-user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp" tvg-id="itzplay.id" group-title="Channel Lokal",TVRI Nasional
+#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp" tvg-id="" group-title="Channel Lokal",TVRI Nasional
 https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8
 
 
-#EXTINF:-1 tvg-id="19" tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp" group-title="Channel Lokal", TVRI #EXTVLCOPT:http-referrer=https://www.dens.tv
+#EXTINF:-1 tvg-id="19" tvg-logo="https://raw.githubusercontent.com/Ukie4321/Postertv/8c090eda8e4c48000e49f2324d9cebaa0f0c268e/Tvri.webp" group-title="Channel Lokal", TVRI 
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
 http://khano.nng.cloudns.us/live/m3u8/id/3f58825fe229a9f.m3u8
 
