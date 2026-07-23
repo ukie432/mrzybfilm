@@ -346,9 +346,9 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif (anti-sleep) -->
+    <!-- GHOST VIDEO MENGGUNAKAN DATA URI (LOKAL & AMAN DARI MASALAH KONEKSI/GITHUB) -->
     <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-        <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28zdmpkAAACAAAAAZZtb29hAABtZG12aGQAAAAA" type="video/mp4">
     </video>
 
     <div class="music-app-container">
@@ -418,6 +418,7 @@
         let totalBars = 45; 
         let barHeights = Array(totalBars).fill(0); 
         let targetHeights = Array(totalBars).fill(0);
+        let audioCtx = null;
 
         const audio = document.getElementById('main-audio');
         const ghostVideo = document.getElementById('ghost-video');
@@ -432,6 +433,26 @@
         const repeatBtn = document.getElementById('repeat-btn');
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search-btn');
+
+        // Inisialisasi Web Audio API Keep-Alive untuk mencegah STB masuk mode sleep
+        function initKeepAliveAudio() {
+            if (!audioCtx) {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    gainNode.gain.value = 0.0001; // Nyaris tidak bersuara
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.start();
+                } catch(e) {
+                    console.log("AudioContext tidak didukung:", e);
+                }
+            } else if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
         // Fungsi Load Data JSON dari URL GitHub
         async function fetchPlaylistData() {
@@ -558,9 +579,10 @@
         }
 
         function togglePlay() {
+            initKeepAliveAudio();
             if (audio.paused) {
-                audio.play();
-                if(ghostVideo) ghostVideo.play().catch(e => {});
+                audio.play().catch(e => console.log(e));
+                if(ghostVideo) ghostVideo.play().catch(e => console.log(e));
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#cc0044';
             } else {
@@ -572,9 +594,10 @@
         }
 
         function selectTrack(index) {
+            initKeepAliveAudio();
             loadTrack(index);
-            audio.play();
-            if(ghostVideo) ghostVideo.play().catch(e => {});
+            audio.play().catch(e => console.log(e));
+            if(ghostVideo) ghostVideo.play().catch(e => console.log(e));
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#cc0044';
         }
@@ -649,7 +672,6 @@
                     cancelable: true
                 });
                 document.body.dispatchEvent(dummyClick);
-                console.log("Anti-Sleep STB: Sinyal aktivitas virtual dikirim.");
             }
         }, 60000);
 
@@ -679,7 +701,7 @@
         audio.addEventListener('ended', () => {
             if (isRepeat) {
                 audio.currentTime = 0;
-                audio.play();
+                audio.play().catch(e => console.log(e));
             } else {
                 playNext();
             }
