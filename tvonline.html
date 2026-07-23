@@ -109,7 +109,7 @@ id="search"
 type="text"
 placeholder="Cari channel..."
 oninput="cariChannel()"
-onkeydown="if(event.key === 'Enter'){ this.blur(); }">
+onkeydown="handleSearchKey(event)">
 
 <div id="kategori"></div>
 
@@ -153,23 +153,23 @@ function tampilkanTV(data) {
     });
     document.getElementById("tvList").innerHTML = html;
 
-    // Pemulihan fokus dengan jeda waktu lebih lama khusus STB
+    // Pemulihan fokus yang aman untuk STB (menggunakan localStorage agar lebih tahan dari re-create WebView)
     pulihkanFokusSTB();
 }
 
 function pulihkanFokusSTB() {
-    let lastIndex = sessionStorage.getItem("lastFocusedIndex");
+    let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
     
-    // Beri waktu tunggu awal 500ms agar STB siap setelah kembali dari player
     setTimeout(() => {
         let percobaan = 0;
         let intInterval = setInterval(() => {
             percobaan++;
-            if (lastIndex !== null) {
+            if (lastIndex !== null && lastIndex !== undefined) {
                 let targetItem = document.getElementById(`item-${lastIndex}`);
                 if (targetItem) {
                     targetItem.focus();
                     targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    localStorage.removeItem("lastFocusedIndex");
                     sessionStorage.removeItem("lastFocusedIndex");
                     clearInterval(intInterval);
                     return;
@@ -183,11 +183,13 @@ function pulihkanFokusSTB() {
                 }
             }
             
-            if (percobaan > 60) {
+            if (percobaan > 80) {
                 clearInterval(intInterval);
+                let fallbackItem = document.getElementById("item-0");
+                if (fallbackItem) fallbackItem.focus();
             }
         }, 50);
-    }, 500);
+    }, 400);
 }
 
 function buatKategori() {
@@ -200,9 +202,9 @@ function buatKategori() {
     });
 
     let html = "";
-    grup.forEach(g => {
+    grup.forEach((g, idx) => {
         html += `
-        <button tabindex="0" onclick="pilihKategori('${g}')">
+        <button tabindex="0" id="kat-${idx}" onclick="pilihKategori('${g}')">
             ${g}
         </button>
         `;
@@ -216,6 +218,27 @@ function buatKategori() {
             btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         });
     });
+}
+
+function handleSearchKey(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('search').blur();
+        // Arahkan fokus ke kategori pertama saat keluar dari search via remote
+        let firstKat = document.getElementById("kat-0");
+        if (firstKat) {
+            firstKat.focus();
+        } else {
+            let firstItem = document.getElementById("item-0");
+            if (firstItem) firstItem.focus();
+        }
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstKat = document.getElementById("kat-0");
+        if (firstKat) {
+            firstKat.focus();
+        }
+    }
 }
 
 function pilihKategori(g) {
@@ -236,9 +259,10 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    // Simpan ke localStorage dan sessionStorage agar aman dari pembaharuan memori STB
+    localStorage.setItem("lastFocusedIndex", index);
     sessionStorage.setItem("lastFocusedIndex", index);
     
-    // Pastikan ghost video tetap berjalan saat interaksi
     if(ghostVideo) ghostVideo.play().catch(e => {});
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
@@ -336,7 +360,7 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-// ANTI-SLEEP STB: Mengirimkan sinyal aktivitas virtual berkala tiap 1 menit
+// ANTI-SLEEP STB
 setInterval(() => {
     window.scrollBy(0, 1);
     window.scrollBy(0, -1);
@@ -353,7 +377,6 @@ setInterval(() => {
     }
 }, 60000);
 
-// Auto-play ghost video saat halaman dimuat
 window.addEventListener('load', () => {
     if (ghostVideo) {
         ghostVideo.play().catch(e => {});
