@@ -143,23 +143,34 @@ function tampilkanTV(data) {
     });
     document.getElementById("tvList").innerHTML = html;
 
-    // Logika Mengembalikan Fokus / Fokus Awal
+    // Logika Mengembalikan Fokus yang Dioptimalkan untuk STB / Android TV
     setTimeout(() => {
         let lastIndex = sessionStorage.getItem("lastFocusedIndex");
-        if (lastIndex !== null && document.getElementById(`item-${lastIndex}`)) {
-            // Jika ada riwayat channel terakhir yang diklik, fokuskan ke sana
-            document.getElementById(`item-${lastIndex}`).focus();
-            document.getElementById(`item-${lastIndex}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Hapus session setelah digunakan agar tidak nyangkut terus jika halaman di-refresh total
-            sessionStorage.removeItem("lastFocusedIndex");
+        if (lastIndex !== null) {
+            let targetItem = document.getElementById(`item-${lastIndex}`);
+            if (targetItem) {
+                targetItem.focus();
+                targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                sessionStorage.removeItem("lastFocusedIndex");
+            } else {
+                // Fallback jika elemen belum siap saat timeout pertama
+                let checkExist = setInterval(() => {
+                    let retryItem = document.getElementById(`item-${lastIndex}`);
+                    if (retryItem) {
+                        retryItem.focus();
+                        retryItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        sessionStorage.removeItem("lastFocusedIndex");
+                        clearInterval(checkExist);
+                    }
+                }, 50);
+            }
         } else {
-            // Jika tidak ada (pertama kali dibuka), arahkan fokus ke poster pertama
             let firstItem = document.getElementById("item-0");
             if (firstItem) {
                 firstItem.focus();
             }
         }
-    }, 100);
+    }, 150);
 }
 
 function buatKategori() {
@@ -174,6 +185,7 @@ function buatKategori() {
     let html = "";
 
     grup.forEach(g => {
+        // PERBAIKAN: Menambahkan tabindex="0" agar kategori bisa difokuskan remote control
         html += `
         <button tabindex="0" onclick="pilihKategori('${g}')">
             ${g}
@@ -201,11 +213,8 @@ function cariChannel() {
     tampilkanTV(data);
 }
 
-// Fungsi tambahan untuk menyimpan indeks poster sebelum memutar video
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    // Simpan posisi index poster ke sessionStorage
     sessionStorage.setItem("lastFocusedIndex", index);
-    
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
 
