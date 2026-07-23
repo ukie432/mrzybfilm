@@ -4,7 +4,8 @@
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
 
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
+<link rel="preconnect" href="https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/AIRetouch_20260723_130141234.jpg
+">
 
 
     <meta charset="UTF-8">
@@ -18,15 +19,7 @@
     background:#000;
 }
 
-#bgVideo{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    z-index:-1;
-}
+
        .container{
     display: flex;
     flex-direction: column;
@@ -82,9 +75,7 @@
 <body>
 
 
-<video id="bgVideo" autoplay muted loop playsinline preload="none">
-    <source src="#" type="video/mp4">
-</video>
+
 
     <div class="container">
         <header class="header">
@@ -96,10 +87,14 @@ loading="eager"alt="MRZYBtv">
         </header>
 
         <main class="main">
-           <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', '#')">
-    <video autoplay muted loop playsinline preload="none">
-        <source src="https://posterfilm.pages.dev/poster/film_animasi/Yaiba.mp4" type="video/mp4">
-    </video>
+<div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'tvonline.html')">
+    <img src="https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/AIRetouch_20260723_130141234.jpg
+"
+    width="640"
+    height="360"
+    loading="lazy"
+    decoding="async"
+    alt="Yaiba">
 </div>
             <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'youtube.html')">
                 <img src="https://posterfilm.pages.dev/poster/film_lawas/Blackyoutube.webp" width="640"
@@ -133,7 +128,7 @@ decoding="async" alt="Lenong">
         <footer class="footer">
             
             <button class="footer-button footer-button1" id="b1" tabindex="0" onclick="go('b1', 'radio.html')">RADIO ONLINE</button>
-            <button class="footer-button footer-button2" id="b2" tabindex="0" onclick="go('b2', 'tvonline.html')">HORROR STORY</button>
+            <button class="footer-button footer-button2" id="b2" tabindex="0" onclick="go('b2', 'misteri.html')">HORROR STORY</button>
             <button class="footer-button footer-button3" id="b3" tabindex="0" onclick="go('b3', 'komik.html')">KOMIK</button>
             <button class="footer-button footer-button4" id="b4" tabindex="0" onclick="go('b4', 'Tester.html')">SUPPORT</button>
         </footer>
