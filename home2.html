@@ -1,70 +1,91 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/AIRetouch_20260723_130141234.jpg
-">
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MRZYBtv hiburan & religi</title>
+
+
+
+
+
     <style>
-        body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    color:#fff;
-    background:#000;
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background: #000;
+        }
 
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
-       .container{
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    
-}
-       .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 20px;
-    background:#1c1c1c;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: #1c1c1c;
+        }
+
         .logo { display: flex; align-items: center; }
-        .logo img { height: 40px; width: auto; display: block; } /* Tinggi logo diatur di sini */
+        .logo img { height: 40px; width: auto; display: block; }
         
-        .time-container{
-    display:flex;
-    align-items:center;
-}
+        .time-container {
+            display: flex;
+            align-items: center;
+        }
 
-.time{
-    color:#fff;
-    font-size:14px;
-    font-weight:bold;
-    min-width:80px;
-    text-align:right;
-}
+        .time {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: right;
+        }
 
-        .main { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; flex-grow: 1; overflow-y: auto; }
+        .main { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            grid-template-rows: repeat(2, 1fr); 
+            gap: 10px; 
+            padding: 10px; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+        }
 
-        .main-item { background-color: rgba(28, 28, 28, 0.8); border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
-        .main-item video, .main-item img { width: 100%; height: 100%; object-fit: cover;  }
+        .main-item { 
+            background-color: rgba(28, 28, 28, 0.8); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            border: 3px solid transparent; 
+        }
+
+        .main-item video, .main-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
 
         /* Efek saat fokus */
         .main-item:focus,
-.footer-button:focus{
-    border:3px solid red;
-    outline:none;
-}
+        .footer-button:focus {
+            border: 3px solid red;
+            outline: none;
+        }
 
         .item1 { grid-column: span 2; grid-row: span 2; }
         .item2 { grid-column: span 2; grid-row: span 2; }
 
-        .footer { display: flex; justify-content: space-around; padding: 10px; background:#1c1c1c; }
+        .footer { display: flex; justify-content: space-around; padding: 10px; background: #1c1c1c; }
         .footer-button { border: none; padding: 15px 30px; color: #fff; cursor: pointer; border-radius: 5px; font-size: 14px; }
         .footer-button1 { background-color: #8B0000; }
         .footer-button2 { background-color: #008000; }
@@ -74,59 +95,41 @@
 </head>
 <body>
 
-
-
-
     <div class="container">
         <header class="header">
             <div class="logo">
-                <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" fetchpriority="high"
-loading="eager"alt="MRZYBtv">
+                <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" fetchpriority="high" decoding="async" alt="MRZYBtv" width="150" height="40">
             </div>
             <div class="time-container"><div id="currentTime" class="time"></div></div>
         </header>
 
         <main class="main">
-<div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://mrzybtv-api.ukielaki88.workers.dev/app/tv_online')">
-    <img src="https://raw.githubusercontent.com/balqisnur/posterfilm/main/poster/film_animasi/AIRetouch_20260723_130141234.jpg
-"
-    width="640"
-    height="360"
-    loading="lazy"
-    decoding="async"
-    alt="Yaiba">
-</div>
-            <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'https://mrzybtv-api.ukielaki88.workers.dev/app/youtube')">
-                <img src="https://posterfilm.pages.dev/poster/film_lawas/Blackyoutube.webp" width="640"
-height="360"
-loading="lazy"
-decoding="async"alt="Youtube">
+            <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://mrzybtv-api.ukielaki88.workers.dev/app/tv_online')">
+                <img src="https://posterfilm.pages.dev/poster/film_animasi/AIRetouch_20260723_130141234.jpg" width="640" height="360" fetchpriority="high" decoding="async" alt="Yaiba">
             </div>
+
+            <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'https://mrzybtv-api.ukielaki88.workers.dev/api/youtube')">
+                <img src="https://posterfilm.pages.dev/poster/film_lawas/Blackyoutube.webp" width="640" height="360" fetchpriority="high" decoding="async" alt="Youtube">
+            </div>
+
             <div class="main-item" id="p3" tabindex="0" onclick="go('p3', 'https://mrzybtv-api.ukielaki88.workers.dev/app/murottall')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Juzama.webp"width="640"
-height="360"
-loading="lazy"
-decoding="async" alt="Murottal">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Juzama.webp" width="640" height="360" decoding="async" alt="Murottal">
             </div>
+
             <div class="main-item" id="p4" tabindex="0" onclick="go('p4', 'https://mrzybtv-api.ukielaki88.workers.dev/app/ceramah')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Zainuddin (1).webp" alt="Ceramah">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Zainuddin (1).webp" width="640" height="360" decoding="async" alt="Ceramah">
             </div>
+
             <div class="main-item" id="p5" tabindex="0" onclick="go('p5', 'https://mrzybtv-api.ukielaki88.workers.dev/app/musik')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Musik.webp"width="640"
-height="360"
-loading="lazy"
-decoding="async" alt="Musik">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Musik.webp" width="640" height="360" decoding="async" alt="Musik">
             </div>
+
             <div class="main-item" id="p6" tabindex="0" onclick="go('p6', 'https://mrzybtv-api.ukielaki88.workers.dev/app/lenong')">
-                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Lenong.webp"width="640"
-height="360"
-loading="lazy"
-decoding="async" alt="Lenong">
+                <img src="https://iptv-posterku.pages.dev/poster/film_lawas/Lenong.webp" width="640" height="360" decoding="async" alt="Lenong">
             </div>
         </main>
 
         <footer class="footer">
-            
             <button class="footer-button footer-button1" id="b1" tabindex="0" onclick="go('b1', 'https://mrzybtv-api.ukielaki88.workers.dev/app/radio')">RADIO ONLINE</button>
             <button class="footer-button footer-button2" id="b2" tabindex="0" onclick="go('b2', 'https://mrzybtv-api.ukielaki88.workers.dev/app/story')">HORROR STORY</button>
             <button class="footer-button footer-button3" id="b3" tabindex="0" onclick="go('b3', 'https://mrzybtv-api.ukielaki88.workers.dev/app/komikk')">KOMIK</button>
@@ -144,7 +147,10 @@ decoding="async" alt="Lenong">
             const lastFocus = localStorage.getItem('lastFocus');
             if (lastFocus) {
                 const el = document.getElementById(lastFocus);
-                if (el) { el.focus(); el.focus(); }
+                if (el) el.focus();
+            } else {
+                const firstItem = document.getElementById('p1');
+                if (firstItem) firstItem.focus();
             }
         });
 
@@ -152,7 +158,7 @@ decoding="async" alt="Lenong">
             var now = new Date();
             document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-ES', { hour12: false });
         }
-        setInterval(updateTime,30000);
+        setInterval(updateTime, 1000); // Diubah ke 1 detik agar jam berjalan normal
         updateTime();
     </script>
 </body>
