@@ -317,8 +317,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return listFilm;
     }
 
-    fetch('"/api/film-indonesia":
-"https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/filmindonesia.m3u",')
+    fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/filmindonesia.m3u')
         .then(response => response.text())
         .then(m3uText => {
             const data = parseM3U(m3uText);
