@@ -132,15 +132,6 @@ h2 {
     <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
 </video>
 
-
-
-<input
-    type="file"
-    id="playlistFile"
-    accept=".m3u,.txt"
-    style="display:none"
-    onchange="importPlaylist(event)">
-
 <h2>TV ONLINE</h2>
 
 <input 
@@ -161,9 +152,6 @@ onkeydown="handleSearchKey(event)">
 
 <div id="menuBox" style="display:none;">
     <button onclick="tambahPlaylist()">➕ Tambah URL</button>
-<button onclick="document.getElementById('playlistFile').click()">
-📂 Import File M3U
-</button>
     <button onclick="lihatPlaylist()">📋 Daftar Playlist</button>
     <button onclick="refreshPlaylist()">🔄 Refresh</button>
 </div>
@@ -228,41 +216,7 @@ async function loadAllPlaylists(){
 
 }
 
-function importPlaylist(event){
 
-    const file = event.target.files[0];
-
-    if(!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        const text = e.target.result;
-
-        const list = parseM3U(text);
-
-        if(list.length===0){
-
-            alert("Playlist tidak valid");
-
-            return;
-
-        }
-
-        semuaTV.push(...list);
-
-        buatKategori();
-
-        tampilkanTV(semuaTV);
-
-        alert("Berhasil mengimpor "+list.length+" channel");
-
-    };
-
-    reader.readAsText(file);
-
-}
 
 
 function bukaMenuPlaylist(){
