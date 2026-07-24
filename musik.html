@@ -457,7 +457,7 @@
         // Fungsi Load Data JSON dari URL GitHub
         async function fetchPlaylistData() {
             try {
-                const response = await fetch('data/playlistmusik.json');
+                const response = await fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/musik');
                 if (!response.ok) {
                     throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
                 }
