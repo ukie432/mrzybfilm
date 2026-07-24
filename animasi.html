@@ -1,112 +1,98 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    
-    
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MRZYB TV - Koleksi Film animasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
+    .header-banner { text-align: center; padding: 20px 0 10px 0; }
+    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+    .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
+    .search-box:focus { border-color: #E50914; }
+    .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
-<meta charset="utf-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>MRZYB TV - Koleksi Film animasi</title>
-<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
-.header-banner { text-align: center; padding: 20px 0 10px 0; }
-.header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
-.search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
-.search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
-.search-box:focus { border-color: #E50914; }
-.btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
-.section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+    .container-film {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px !important;
+        padding: 20px !important;
+    }
 
+    .card-film {
+        width: 100% !important;
+        background-color: #181818;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+    }
 
-.container-film {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
+    .poster-wrapper { 
+        width: 100%; 
+        aspect-ratio: 16 / 9 !important; 
+        position: relative; 
+        background-color: #2a2a2a; 
+    }
+    .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 
-.card-film {
-    width: 100%;
-    background-color: #181818;
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-}
+    .btn-fav { 
+        width: 100%; 
+        padding: 2px 0 !important; 
+        background-color: #222; 
+        color: #bbb; 
+        border: none; 
+        font-size: 6px !important; 
+        font-weight: 700; 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 4px; 
+        border-top: 1px solid #333; 
+        outline: none; 
+    }
 
-.poster-wrapper { width: 100%; aspect-ratio: 3 / 4; position: relative; background-color: #2a2a2a; }
-.poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+    .film-title { 
+        padding: 8px !important; 
+        font-size: 10px !important; 
+        text-align: center !important; 
+        font-weight: 700; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        background-color: #181818;
+        color: #fff; 
+        direction: ltr;
+    }
 
+    .btn-fav:focus { background-color: #E50914; color: #fff; }
+    .btn-fav.active { color: #ffcc00; }
+    .btn-fav span { font-size: 8px; }
+    #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
-.btn-fav { width: 100%; padding: 3px 0; background-color: #222; color: #bbb; border: none; font-size: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid #333; outline: none; }
+    .play-link:focus {
+        outline: 3px solid #E50914 !important;
+        outline-offset: 2px;
+    }
 
-
-
-.film-title { padding: 3px; font-size: 5px; font-weight: 700; text-align: left; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: #181818; }
-
-.btn-fav:focus { background-color: #E50914; color: #fff; }
-
-
-.btn-fav.active { color: #ffcc00; }
-
-
-.btn-fav span { font-size: 8px; }
-#noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
-
-.container-film {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    gap: 20px !important;
-    padding: 20px !important;
-}
-
-.card-film {
-    width: 100% !important;
-}
-.poster-wrapper {
-    aspect-ratio: 3 / 3.4 !important;
-}
-
-.film-title {
-    padding: 8px !important;
-    font-size: 10px !important;
-    text-align: center !important;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #fff;
-    direction: ltr;
-}
-
-.btn-fav {
-    padding: 2px 0 !important;
-    font-size: 6px !important;
-}
-
-.play-link:focus {
-    outline: 3px solid #E50914 !important;
-    outline-offset: 2px;
-}
-
-.card-film:focus-within {
-    transform: scale(1.05);
-    box-shadow: 0 0 12px #E50914;
-    z-index: 10;
-}
-
-</style>
+    .card-film:focus-within {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px #E50914;
+        z-index: 10;
+    }
+    </style>
 </head>
 <body>
 
@@ -138,24 +124,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let listFavorit = JSON.parse(localStorage.getItem('animasi_favorit')) || [];
 
-let semuaFilm = [];
-let dataAktif = [];
-let currentIndex = 0;
-const PER_PAGE = 40;
-    
-let searchTimer;
+    let semuaFilm = [];
+    let dataAktif = [];
+    let currentIndex = 0;
+    const PER_PAGE = 40;
+    let searchTimer;
 
-    // --- BAGIAN BERAT / LOCK HISTORY DI ATAS SUDAH DIHAPUS TOTAL AGAR AMAN ---
-
-    // Menangani tombol BACK fisik Android TV secara manual dan bersih
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
-            // Jika ada jembatan keluar aplikasi dari pembungkus Android Anda, gunakan ini:
             if (typeof Android !== "undefined" && Android.exitApp) {
                 e.preventDefault();
                 Android.exitApp(); 
             }
-            // Jika tidak ada, biarkan browser STB menutup halaman ini secara alami tanpa hambatan stack riwayat.
         }
     });
 
@@ -166,46 +146,25 @@ let searchTimer;
             containerFav.style.display = "none";
         } else {
             favSectionTitle.style.display = "block";
-            containerFav.style.display = "flex";
+            containerFav.style.display = "grid";
             listFavorit.forEach(idFilm => {
+                const film = semuaFilm.find(f => f.id === idFilm);
+                if(!film) return;
 
-    const film = semuaFilm.find(f => f.id === idFilm);
-
-    if(!film) return;
-
-    containerFav.insertAdjacentHTML("beforeend", `
-        <div class="card-film"
-             data-id="${film.id}"
-             id="fav-${film.id}">
-
-            <a tabindex="0"
-               class="play-link"
-               href="${film.url}"
-               data-title="${film.title.toLowerCase()}">
-
-                <div class="poster-wrapper">
-                    <img src="${film.img}"
-                         loading="lazy"
-                         decoding="async">
-
-                </div>
-
-            </a>
-
-            <button class="btn-fav"
-                    tabindex="0"
-                    data-target="${film.id}">
-                <span>★</span> Favorit
-            </button>
-
-            <div class="film-title">
-                ${film.title}
-            </div>
-
-        </div>
-    `);
-
-});
+                containerFav.insertAdjacentHTML("beforeend", `
+                    <div class="card-film" data-id="${film.id}" id="fav-${film.id}">
+                        <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                            <div class="poster-wrapper">
+                                <img src="${film.img}" loading="lazy" decoding="async">
+                            </div>
+                        </a>
+                        <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                            <span>★</span> Favorit
+                        </button>
+                        <div class="film-title">${film.title}</div>
+                    </div>
+                `);
+            });
         }
         pasangEventAksi();
         perbaruiStatusTombolBintang();
@@ -224,197 +183,98 @@ let searchTimer;
         });
     }
 
-
-
-
-function renderNext(){
-
-    const html = dataAktif
-        .slice(currentIndex, currentIndex + PER_PAGE)
-        .map(film => `
-            <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
-                <a tabindex="0"
-                   class="play-link"
-                   href="${film.url}"
-                   data-title="${film.title.toLowerCase()}">
-
-                    <div class="poster-wrapper">
-                        <img src="${film.img}"
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-
-                </a>
-
-                <button class="btn-fav"
-                        tabindex="0"
-                        data-target="${film.id}">
-                    <span>☆</span> Favorit
-                </button>
-
-                <div class="film-title">
-                    ${film.title}
+    function renderNext(){
+        const html = dataAktif
+            .slice(currentIndex, currentIndex + PER_PAGE)
+            .map(film => `
+                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                    <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                        <div class="poster-wrapper">
+                            <img src="${film.img}" loading="lazy" decoding="async">
+                        </div>
+                    </a>
+                    <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                        <span>☆</span> Favorit
+                    </button>
+                    <div class="film-title">${film.title}</div>
                 </div>
-            </div>
-        `).join("");
+            `).join("");
 
-    containerUtama.insertAdjacentHTML("beforeend", html);
-
-    currentIndex += PER_PAGE;
-
-    perbaruiStatusTombolBintang();
-
-}
-
+        containerUtama.insertAdjacentHTML("beforeend", html);
+        currentIndex += PER_PAGE;
+        perbaruiStatusTombolBintang();
+    }
 
     function pasangEventAksi() {}
 
-document.addEventListener("click", function(e){
-
-    const play = e.target.closest(".play-link");
-
-    if(play){
-
-        e.preventDefault();
-
-        const card = play.closest(".card-film");
-
-        localStorage.setItem(
-            "animasi_idPosterTerakhir",
-            card.id
-        );
-
-        localStorage.setItem(
-            "animasi_sedangNontonVideoSTB",
-            "ya"
-        );
-
-        if(typeof Android !== "undefined" &&
-           Android.playVideo){
-
-            Android.playVideo(play.href);
-
+    document.addEventListener("click", function(e){
+        const play = e.target.closest(".play-link");
+        if(play){
+            e.preventDefault();
+            const card = play.closest(".card-film");
+            localStorage.setItem("animasi_idPosterTerakhir", card.id);
+            localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
+            if(typeof Android !== "undefined" && Android.playVideo){
+                Android.playVideo(play.href);
+            }
+            return;
         }
 
-        return;
-
-    }
-
-    const fav = e.target.closest(".btn-fav");
-
-    if(fav){
-
-        e.preventDefault();
-
-        const id = fav.dataset.target;
-
-        if(listFavorit.includes(id)){
-
-            listFavorit =
-                listFavorit.filter(x => x !== id);
-
-        }else{
-
-            listFavorit.push(id);
-
+        const fav = e.target.closest(".btn-fav");
+        if(fav){
+            e.preventDefault();
+            const id = fav.dataset.target;
+            if(listFavorit.includes(id)){
+                listFavorit = listFavorit.filter(x => x !== id);
+            }else{
+                listFavorit.push(id);
+            }
+            localStorage.setItem("animasi_favorit", JSON.stringify(listFavorit));
+            updateTampilanFavorit();
         }
+    });
 
-        localStorage.setItem(
-            "animasi_favorit",
-            JSON.stringify(listFavorit)
-        );
-
-        updateTampilanFavorit();
-
-    }
-
-});
-
-document.addEventListener("keydown", function(e){
-
-    if(e.key !== "Enter") return;
-
-    const play = e.target.closest(".play-link");
-
-    if(play){
-
-        e.preventDefault();
-
-        play.click();
-
-        return;
-
-    }
-
-    const fav = e.target.closest(".btn-fav");
-
-    if(fav){
-
-        e.preventDefault();
-
-        fav.click();
-
-    }
-
-});
-
-
+    document.addEventListener("keydown", function(e){
+        if(e.key !== "Enter") return;
+        const play = e.target.closest(".play-link");
+        if(play){
+            e.preventDefault();
+            play.click();
+            return;
+        }
+        const fav = e.target.closest(".btn-fav");
+        if(fav){
+            e.preventDefault();
+            fav.click();
+        }
+    });
 
     function saringFilm(keyword){
-
-    currentIndex = 0;
-
-    containerUtama.innerHTML = "";
-
-    if(keyword === ""){
-
-        dataAktif = semuaFilm;
-
-        renderNext();
-
-        noResultsText.style.display = "none";
-
-        return;
-
+        currentIndex = 0;
+        containerUtama.innerHTML = "";
+        if(keyword === ""){
+            dataAktif = semuaFilm;
+            renderNext();
+            noResultsText.style.display = "none";
+            return;
+        }
+        dataAktif = semuaFilm.filter(film => film.title.toLowerCase().includes(keyword));
+        if(dataAktif.length){
+            renderNext();
+            noResultsText.style.display = "none";
+        }else{
+            noResultsText.style.display = "block";
+        }
     }
-
-    dataAktif = semuaFilm.filter(film =>
-        film.title.toLowerCase().includes(keyword)
-    );
-
-    if(dataAktif.length){
-
-        renderNext();
-
-        noResultsText.style.display = "none";
-
-    }else{
-
-        noResultsText.style.display = "block";
-
-    }
-
-}
 
     searchBox.addEventListener("input", function(){
-
-    clearTimeout(searchTimer);
-
-    searchTimer = setTimeout(() => {
-
-        const filterText =
-            searchBox.value.toLowerCase().trim();
-
-        btnClear.style.display =
-            searchBox.value.length > 0
-                ? "flex"
-                : "none";
-
-        saringFilm(filterText);
-
-    }, 200);
-
-});
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const filterText = searchBox.value.toLowerCase().trim();
+            btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+            saringFilm(filterText);
+        }, 200);
+    });
 
     btnClear.addEventListener('click', function() {
         searchBox.value = "";
@@ -423,75 +283,106 @@ document.addEventListener("keydown", function(e){
         searchBox.focus();
     });
 
-    fetch('data/animasi.json')
-    .then(response => response.json())
-    .then(data => {
-        semuaFilm = data;
-dataAktif = data;
+    function parseM3U(m3uText) {
+        const lines = m3uText.split('\n');
+        const listFilm = [];
+        let currentTitle = '';
+        let currentImg = '';
+        let idCounter = 1;
 
-renderNext();
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('#EXTINF')) {
+                const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                currentImg = logoMatch ? logoMatch[1] : '';
 
-        updateTampilanFavorit();
-        
-        
-        containerUtama.addEventListener("focusin", function(e){
-
-    const card = e.target.closest(".card-film");
-
-    if(!card) return;
-
-    const cards = containerUtama.querySelectorAll(".card-film");
-
-    const index = Array.from(cards).indexOf(card);
-
-    if(index >= currentIndex - 10 &&
-       currentIndex < dataAktif.length){
-
-        renderNext();
-
+                const commaIndex = line.lastIndexOf(',');
+                if (commaIndex !== -1) {
+                    currentTitle = line.substring(commaIndex + 1).trim();
+                }
+            } else if (line && !line.startsWith('#')) {
+                const cleanUrl = line.trim();
+                if (currentTitle && cleanUrl) {
+                    listFilm.push({
+                        id: String(idCounter++),
+                        title: currentTitle,
+                        url: cleanUrl,
+                        img: currentImg || 'https://via.placeholder.com/400x225?text=No+Image'
+                    });
+                }
+                currentTitle = '';
+                currentImg = '';
+            }
+        }
+        return listFilm;
     }
 
-});
-        
+    fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/Filmanimasi.m3u')
+        .then(response => response.text())
+        .then(m3uText => {
+            const data = parseM3U(m3uText);
+            semuaFilm = data;
+            dataAktif = data;
 
-        setTimeout(() => {
-            const statusNontonSTB = localStorage.getItem("animasi_sedangNontonVideoSTB");
-            const idPosterTerakhir = localStorage.getItem("animasi_idPosterTerakhir");
-            if (statusNontonSTB === "ya" && idPosterTerakhir) {
-                let targetPoster = document.getElementById(idPosterTerakhir);
+            renderNext();
+            updateTampilanFavorit();
+            
+            containerUtama.addEventListener("focusin", function(e){
+                const card = e.target.closest(".card-film");
+                if(!card) return;
+                const cards = containerUtama.querySelectorAll(".card-film");
+                const index = Array.from(cards).indexOf(card);
+                if(index >= currentIndex - 10 && currentIndex < dataAktif.length){
+                    renderNext();
+                }
+            });
 
-while (!targetPoster && currentIndex < dataAktif.length) {
-
-    renderNext();
-
-    targetPoster = document.getElementById(idPosterTerakhir);
-
-}
-                if (targetPoster) {
-                    const tombolPlay = targetPoster.querySelector('.play-link');
-                    if (tombolPlay) {
-                        tombolPlay.focus();
-                        targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                        localStorage.removeItem("animasi_sedangNontonVideoSTB");
-                        localStorage.removeItem("animasi_idPosterTerakhir");
-                        return;
+            // Tambahan event scroll untuk mendeteksi guliran layar di HP / Layar Sentuh
+            window.addEventListener("scroll", function() {
+                if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 500)) {
+                    if (currentIndex < dataAktif.length) {
+                        renderNext();
                     }
                 }
-            }
+            });
+
+            setTimeout(() => {
+                const statusNontonSTB = localStorage.getItem("animasi_sedangNontonVideoSTB");
+                const idPosterTerakhir = localStorage.getItem("animasi_idPosterTerakhir");
+                if (statusNontonSTB === "ya" && idPosterTerakhir) {
+                    let targetPoster = document.getElementById(idPosterTerakhir);
+
+                    while (!targetPoster && currentIndex < dataAktif.length) {
+                        renderNext();
+                        targetPoster = document.getElementById(idPosterTerakhir);
+                    }
+
+                    if (targetPoster) {
+                        const tombolPlay = targetPoster.querySelector('.play-link');
+                        if (tombolPlay) {
+                            tombolPlay.focus();
+                            targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                            localStorage.removeItem("animasi_sedangNontonVideoSTB");
+                            localStorage.removeItem("animasi_idPosterTerakhir");
+                            return;
+                        }
+                    }
+                }
+                const firstPoster = document.querySelector("#containerUtama .play-link");
+                if (firstPoster) {
+                    firstPoster.focus();
+                }
+            }, 180);
+        })
+        .catch(err => {
+            console.error("Gagal load playlist M3U:", err);
             const firstPoster = document.querySelector("#containerUtama .play-link");
-if (firstPoster) {
-    firstPoster.focus();
-}
-        }, 180);
-    })
-    .catch(err => {
-        console.error("Gagal load JSON:", err);
-        const firstPoster = document.querySelector("#containerUtama .play-link");
-if (firstPoster) {
-    firstPoster.focus();
-}
-    });
+            if (firstPoster) {
+                firstPoster.focus();
+            }
+        });
 });
 </script>
 </body>
 </html>
+ml>
