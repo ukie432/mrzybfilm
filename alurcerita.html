@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return listFilm;
     }
 
-    fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/Film-indonesia')
+    fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/alurcerita')
         .then(response => response.text())
         .then(m3uText => {
             const data = parseM3U(m3uText);
