@@ -2,12 +2,14 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>MRZYBceramah - Audio Player TV</title>
+    
+    <!-- PRECONNECT DOMAIN UTAMA UNTUK MEMPERCEPAT LOAD ASSET/GAMBAR -->
+    <link rel="preconnect" href="https://mrzybtv-api.ukielaki88.workers.dev" crossorigin>
+    <link rel="preconnect" href="https://use.fontawesome.com" crossorigin>
     
     <!-- FontAwesome untuk Icon Navigasi -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
@@ -36,7 +38,7 @@
             background: rgba(10, 12, 16, 0.95);
         }
 
-        /* --- HEAD PLAYER (STEALTH DESIGN WITH CANVAS) --- */
+        /* --- HEAD PLAYER --- */
         .neon-player {
             position: relative;
             display: flex;
@@ -48,7 +50,6 @@
             overflow: hidden;
         }
 
-        /* CANVAS UNTUK EFEK SPECTRUM HIJAU */
         #spectrum-canvas {
             position: absolute;
             bottom: 0;
@@ -70,8 +71,9 @@
             height: 90px;
             border-radius: 6px;
             object-fit: cover;
-            border: 1px solid #00cc66; /* WARNA HIJAU */
+            border: 1px solid #00cc66;
             margin-right: 25px;
+            background-color: #141923; /* Placeholder visual saat loading */
         }
 
         .track-info {
@@ -96,7 +98,6 @@
             font-family: monospace;
         }
 
-        /* WRAPPER KANAN UNTUK MENYUSUN LOGO DI ATAS TOMBOL */
         .player-right-wrapper {
             display: flex;
             flex-direction: column;
@@ -104,7 +105,6 @@
             gap: 15px;
         }
 
-        /* LOGO WATERMARK MRZYBceramah */
         .app-brand-logo {
             font-size: 14px;
             font-weight: 800;
@@ -112,7 +112,7 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             user-select: none;
-            border-right: 3px solid #00cc66; /* AKSEN JALUR HIJAU */
+            border-right: 3px solid #00cc66;
             padding-right: 8px;
             line-height: 1;
         }
@@ -133,12 +133,12 @@
         }
 
         .btn-control:focus, .btn-control:hover {
-            color: #00cc66; /* WARNA HIJAU */
+            color: #00cc66;
             transform: scale(1.1);
         }
 
         .btn-control.active-mode {
-            color: #00cc66; /* WARNA HIJAU */
+            color: #00cc66;
         }
 
         .btn-play-pause {
@@ -146,10 +146,10 @@
             color: #e0e0e0;
         }
         .btn-play-pause:focus, .btn-play-pause:hover {
-            color: #00cc66; /* WARNA HIJAU */
+            color: #00cc66;
         }
 
-        /* BAR PROGRES INTERAKTIF */
+        /* BAR PROGRES */
         .progress-container {
             width: 100%;
             height: 6px;
@@ -169,10 +169,10 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: #00cc66; /* WARNA HIJAU */
+            background: #00cc66;
         }
 
-        /* --- PLAYLIST DAFTAR  CERAMAH --- */
+        /* --- PLAYLIST DAFTAR LAGU --- */
         .modern-playlist {
             flex: 1 1 auto;
             overflow-y: auto;
@@ -206,12 +206,12 @@
 
         .playlist-item:focus {
             background: #141a26 !important; 
-            border-color: #00cc66 !important; /* BORDER SELEKSI HIJAU */
+            border-color: #00cc66 !important;
         }
 
         .playlist-item.active {
             background: rgba(0, 204, 102, 0.06);
-            border-left: 4px solid #00cc66; /* SELEKSI AKTIF HIJAU */
+            border-left: 4px solid #00cc66;
         }
 
         .item-cover {
@@ -220,6 +220,7 @@
             border-radius: 4px;
             object-fit: cover;
             margin-right: 20px;
+            background-color: #141923;
         }
 
         .item-title {
@@ -245,18 +246,13 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- VIDEO HANTU MENGGUNAKAN DATA URI -->
-    <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28zdmpkAAACAAAAAZZtb29hAABtZG12aGQAAAAA" type="video/mp4">
-    </video>
-
     <div class="music-app-container">
         
         <!-- ELEMENT BOX PLAYER (ZONA ATAS) -->
         <div class="neon-player">
             <canvas id="spectrum-canvas"></canvas>
 
-            <img id="player-cover" class="now-playing-cover" src="" alt="Cover">
+            <img id="player-cover" class="now-playing-cover" src="" alt="Cover" fetchpriority="high" decoding="async">
             
             <div class="track-info">
                 <div id="player-title" class="track-title">Memuat data audio...</div>
@@ -281,7 +277,7 @@
             <div class="progress-bar" id="progress-bar"></div>
         </div>
 
-        <!-- ELEMENT PLAYLIST DAFTAR AUDIO ceramah -->
+        <!-- ELEMENT PLAYLIST DAFTAR AUDIO -->
         <div class="modern-playlist" id="playlist-container"></div>
 
     </div>
@@ -297,10 +293,8 @@
         let totalBars = 45; 
         let barHeights = Array(totalBars).fill(0); 
         let targetHeights = Array(totalBars).fill(0);
-        let audioCtx = null;
 
         const audio = document.getElementById('main-audio');
-        const ghostVideo = document.getElementById('ghost-video');
         const playBtn = document.getElementById('play-btn');
         const playerCover = document.getElementById('player-cover');
         const playerTitle = document.getElementById('player-title');
@@ -311,23 +305,14 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const repeatBtn = document.getElementById('repeat-btn');
 
-        function initKeepAliveAudio() {
-            if (!audioCtx) {
-                try {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    gainNode.gain.value = 0.0001;
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    oscillator.start();
-                } catch(e) {
-                    console.log("AudioContext tidak didukung:", e);
+        // FITUR PRELOADER GANDA: Mempercepat loading cover
+        function preloadCoverImages(trackList) {
+            trackList.forEach(track => {
+                if (track.cover) {
+                    const img = new Image();
+                    img.src = track.cover;
                 }
-            } else if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            });
         }
 
         async function fetchPlaylistData() {
@@ -338,6 +323,9 @@
                 }
                 tracks = await response.json();
                 
+                // Mulai caching gambar di latar belakang
+                preloadCoverImages(tracks);
+
                 loadPlaylistView();
                 if(tracks.length > 0) {
                     loadTrack(0);
@@ -384,13 +372,22 @@
             tracks.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
+                item.setAttribute('id', `track-item-${index}`);
                 item.setAttribute('tabindex', '0'); 
                 item.setAttribute('onclick', `selectTrack(${index})`);
+                
+                // D-Pad Remote Control STB handler
                 item.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') selectTrack(index);
+                    if (e.key === 'Enter') {
+                        selectTrack(index);
+                    } else if (e.key === 'ArrowUp' && index === 0) {
+                        e.preventDefault();
+                        progressContainer.focus();
+                    }
                 });
+
                 item.innerHTML = `
-                    <img class="item-cover" src="${track.cover}">
+                    <img class="item-cover" src="${track.cover}" decoding="async" ${index < 6 ? 'fetchpriority="high"' : ''}>
                     <div class="item-title">${track.title}</div>
                 `;
                 playlistContainer.appendChild(item);
@@ -410,28 +407,29 @@
             items.forEach((item, idx) => {
                 item.classList.toggle('active', idx === index);
             });
+
+            // Auto-scroll ke lagu yang sedang aktif
+            const activeItem = document.getElementById(`track-item-${index}`);
+            if (activeItem) {
+                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function togglePlay() {
-            initKeepAliveAudio();
             if (audio.paused) {
                 audio.play().catch(e => console.log(e));
-                if(ghostVideo) ghostVideo.play().catch(e => {});
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#00cc66';
             } else {
                 audio.pause();
-                if(ghostVideo) ghostVideo.pause();
                 playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
                 playBtn.style.color = '#e0e0e0';
             }
         }
 
         function selectTrack(index) {
-            initKeepAliveAudio();
             loadTrack(index);
             audio.play().catch(e => console.log(e));
-            if(ghostVideo) ghostVideo.play().catch(e => {});
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#00cc66';
         }
@@ -494,30 +492,6 @@
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
 
-        // PENGAMANAN ANTI-SLEEP AGRESIF (SETIAP 15 DETIK) UNTUK MENCEGAH DOZE MODE STB
-        setInterval(() => {
-            if (!audio.paused) {
-                // Memicu ulang pemutaran ghost video & audio context agar OS tetap menganggap aktif
-                if (ghostVideo && ghostVideo.paused) {
-                    ghostVideo.play().catch(e => {});
-                }
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                
-                // Kirim sinyal DOM event dan manipulasi kecil untuk mencegah CPU throttling
-                window.scrollBy(0, 1);
-                window.scrollBy(0, -1);
-
-                const dummyClick = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true
-                });
-                document.body.dispatchEvent(dummyClick);
-            }
-        }, 15000); // Dipercepat menjadi setiap 15 detik
-
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
@@ -533,8 +507,8 @@
                 audio.currentTime = newTime;
             } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                const firstPlaylistItem = playlistContainer.querySelector('.playlist-item');
-                if (firstPlaylistItem) firstPlaylistItem.focus();
+                const activeItem = playlistContainer.querySelector(`.playlist-item.active`) || playlistContainer.querySelector('.playlist-item');
+                if (activeItem) activeItem.focus();
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 document.getElementById('play-btn').focus();
