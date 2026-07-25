@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
-
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -31,12 +27,15 @@
         padding: 20px !important;
     }
 
+    /* OPTIMASI PERFORMANSA STB/TV: Hemat memori untuk elemen di luar viewport */
     .card-film {
         width: 100% !important;
         background-color: #181818;
         border-radius: 6px;
         overflow: hidden;
         position: relative;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 200px;
     }
 
     .poster-wrapper { 
@@ -101,14 +100,14 @@
 </div>
 
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film Alurcerita..." tabindex="0">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film alur cerita..." tabindex="0">
     <button id="btnClear" class="btn-clear">&times;</button>
 </div>
 
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
-<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM ALUR CERITA</div>
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA ALUR CERITA</div>
 <div class="container-film" id="containerUtama"></div>
 
 <div id="noResultsText">Film tidak ditemukan...</div>
@@ -122,13 +121,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
 
-    let listFavorit = JSON.parse(localStorage.getItem('Alurcerita_favorit')) || [];
+    let listFavorit = JSON.parse(localStorage.getItem('alurcerita_favorit')) || [];
 
     let semuaFilm = [];
     let dataAktif = [];
     let currentIndex = 0;
-    const PER_PAGE = 40;
+    
+    // OPTIMASI 1: Kurangi beban awal render dari 40 menjadi 16 (4 baris x 4 kolom)
+    const PER_PAGE = 16; 
     let searchTimer;
+
+    // OPTIMASI 2: Helper CDN Proxy untuk kompres poster otomatis ke WebP ukuran 320px
+    function getOptimizedImg(originalUrl) {
+        if (!originalUrl || originalUrl.includes('placeholder.com')) {
+            return 'https://via.placeholder.com/400x225?text=No+Image';
+        }
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=320&output=webp&q=75`;
+    }
 
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
@@ -151,11 +160,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 const film = semuaFilm.find(f => f.id === idFilm);
                 if(!film) return;
 
+                const optimizedImg = getOptimizedImg(film.img);
+
                 containerFav.insertAdjacentHTML("beforeend", `
                     <div class="card-film" data-id="${film.id}" id="fav-${film.id}">
                         <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                             <div class="poster-wrapper">
-                                <img src="${film.img}" loading="lazy" decoding="async">
+                                <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
                             </div>
                         </a>
                         <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -186,11 +197,13 @@ document.addEventListener("DOMContentLoaded", function() {
     function renderNext(){
         const html = dataAktif
             .slice(currentIndex, currentIndex + PER_PAGE)
-            .map(film => `
+            .map(film => {
+                const optimizedImg = getOptimizedImg(film.img);
+                return `
                 <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                     <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                         <div class="poster-wrapper">
-                            <img src="${film.img}" loading="lazy" decoding="async">
+                            <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
                         </div>
                     </a>
                     <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -198,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </button>
                     <div class="film-title">${film.title}</div>
                 </div>
-            `).join("");
+            `}).join("");
 
         containerUtama.insertAdjacentHTML("beforeend", html);
         currentIndex += PER_PAGE;
@@ -212,8 +225,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if(play){
             e.preventDefault();
             const card = play.closest(".card-film");
-            localStorage.setItem("Alurcerita_idPosterTerakhir", card.id);
-            localStorage.setItem("Alurcerita_sedangNontonVideoSTB", "ya");
+            localStorage.setItem("alurcerita_idPosterTerakhir", card.id);
+            localStorage.setItem("alurcerita_sedangNontonVideoSTB", "ya");
             if(typeof Android !== "undefined" && Android.playVideo){
                 Android.playVideo(play.href);
             }
@@ -229,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }else{
                 listFavorit.push(id);
             }
-            localStorage.setItem("Alurcerita_favorit", JSON.stringify(listFavorit));
+            localStorage.setItem("alurcerita_favorit", JSON.stringify(listFavorit));
             updateTampilanFavorit();
         }
     });
@@ -332,12 +345,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(!card) return;
                 const cards = containerUtama.querySelectorAll(".card-film");
                 const index = Array.from(cards).indexOf(card);
-                if(index >= currentIndex - 10 && currentIndex < dataAktif.length){
+                if(index >= currentIndex - 6 && currentIndex < dataAktif.length){
                     renderNext();
                 }
             });
 
-            // Tambahan event scroll untuk mendeteksi guliran layar di HP / Layar Sentuh
             window.addEventListener("scroll", function() {
                 if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 500)) {
                     if (currentIndex < dataAktif.length) {
@@ -347,8 +359,8 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             setTimeout(() => {
-                const statusNontonSTB = localStorage.getItem("Alurcerita_sedangNontonVideoSTB");
-                const idPosterTerakhir = localStorage.getItem("Alurcerita_idPosterTerakhir");
+                const statusNontonSTB = localStorage.getItem("alurcerita_sedangNontonVideoSTB");
+                const idPosterTerakhir = localStorage.getItem("alurcerita_idPosterTerakhir");
                 if (statusNontonSTB === "ya" && idPosterTerakhir) {
                     let targetPoster = document.getElementById(idPosterTerakhir);
 
@@ -362,8 +374,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         if (tombolPlay) {
                             tombolPlay.focus();
                             targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
-                            localStorage.removeItem("Alurcerita_sedangNontonVideoSTB");
-                            localStorage.removeItem("Alurcerita_idPosterTerakhir");
+                            localStorage.removeItem("alurcerita_sedangNontonVideoSTB");
+                            localStorage.removeItem("alurcerita_idPosterTerakhir");
                             return;
                         }
                     }
@@ -385,5 +397,3 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
-
-
