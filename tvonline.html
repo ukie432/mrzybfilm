@@ -58,6 +58,12 @@
         flex-shrink: 0;
     }
 
+    #kategori button.active {
+        background: #00bfff;
+        color: #000;
+        font-weight: bold;
+    }
+
     #kategori button:focus {
         background: #00bfff;
         color: #000;
@@ -72,7 +78,6 @@
         padding: 20px;
     }
 
-    /* OPTIMASI 1: Hemat memori rendering elemen yang belum kelihatan di layar */
     .item {
         cursor: pointer;
         outline: none;
@@ -87,7 +92,7 @@
     .item img {
         width: 100%;
         aspect-ratio: 16/9;
-        object-fit: contain; /* Menggunakan 'contain' agar logo TV tidak terpotong */
+        object-fit: contain;
         background: #222;
         display: block;
     }
@@ -130,9 +135,8 @@ onkeydown="handleSearchKey(event)">
 const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
 
 let semuaTV = [];
-let kategoriAktif = "Semua";
+let kategoriAktif = localStorage.getItem("lastCategory") || "Semua";
 
-// OPTIMASI 2: Otomatis kompresi gambar lewat Weserv CDN + WebP
 function formatGambarOptimized(url) {
     if (!url || url.trim() === "") {
         return 'https://via.placeholder.com/300x169?text=No+Logo';
@@ -145,15 +149,26 @@ fetch(playlistURL)
 .then(data => {
     let tvData = parseM3U(data);
     semuaTV = tvData;
+    
+    // Ambil kategori terakhir yang disimpan
+    let savedKat = localStorage.getItem("lastCategory") || "Semua";
+    kategoriAktif = savedKat;
+
     buatKategori();
-    tampilkanTV(tvData);
+
+    // Filter daftar TV berdasarkan kategori terakhir sebelum ditampilkan
+    let dataToDisplay = semuaTV;
+    if (savedKat !== "Semua") {
+        dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
+    }
+
+    tampilkanTV(dataToDisplay);
 })
 .catch(error => {
     document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
 });
 
 function buatElemenHTMLTV(tv, index) {
-    // Memproses URL gambar agar super ringan & menyertakan fallback onerror
     const logoOptimized = formatGambarOptimized(tv.logo);
     
     return `
@@ -237,8 +252,9 @@ function buatKategori() {
 
     let html = "";
     grup.forEach((g, idx) => {
+        let activeClass = (g === kategoriAktif) ? "active" : "";
         html += `
-        <button tabindex="0" id="kat-${idx}" 
+        <button tabindex="0" id="kat-${idx}" class="${activeClass}"
                 onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
                 onclick="pilihKategori('${g}', this)">
             ${g}
@@ -293,25 +309,33 @@ function handleItemKey(event, index) {
     if (event.key === 'ArrowUp') {
         if (index < columns) {
             event.preventDefault();
-            let firstKat = document.getElementById("kat-0");
-            if (firstKat) firstKat.focus();
+            // Cari tombol kategori yang aktif untuk difokuskan saat panah atas ditekan dari baris pertama poster
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
         }
     }
 }
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
-    let data = semuaTV;
+    
+    // Simpan kategori yang dipilih ke LocalStorage
+    localStorage.setItem("lastCategory", g);
+    sessionStorage.setItem("lastCategory", g);
 
-    if (g != "Semua") {
-        data = semuaTV.filter(tv => tv.group == g);
+    // Update tampilan tombol aktif
+    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
+    if (element) {
+        element.classList.add("active");
+        element.focus();
+    }
+
+    let data = semuaTV;
+    if (g !== "Semua") {
+        data = semuaTV.filter(tv => tv.group === g);
     }
 
     tampilkanTVTanpaFokus(data);
-
-    if (element) {
-        element.focus();
-    }
 }
 
 function cariChannel() {
@@ -321,8 +345,11 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    // Simpan indeks poster dan kategori sebelum memutar video
     localStorage.setItem("lastFocusedIndex", index);
     sessionStorage.setItem("lastFocusedIndex", index);
+    localStorage.setItem("lastCategory", kategoriAktif);
+    sessionStorage.setItem("lastCategory", kategoriAktif);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
