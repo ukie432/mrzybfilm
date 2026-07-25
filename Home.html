@@ -796,10 +796,7 @@ setInterval(showSlides, 5000);
 
     // LOAD UTAMA
     window.addEventListener("load", function(){
-        const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav');
-        document.querySelectorAll('.force-5 a').forEach(item => {
-            item.addEventListener('focus', () => { soundClick.currentTime = 0; soundClick.play().catch(()=>{}); });
-        });
+        
 
         const lastPosterIndex = localStorage.getItem("lastHomePoster");
         setTimeout(() => {
