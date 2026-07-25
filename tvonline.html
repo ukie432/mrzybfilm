@@ -2,7 +2,6 @@
 <html lang="id">
 <head>    
     <meta charset="utf-8">
-
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
     <title>TV Online</title>
@@ -144,14 +143,23 @@ fetch(playlistURL)
     let tvData = parseM3U(data);
     semuaTV = tvData;
     buatKategori();
-    tampilkanTV(tvData);
+    
+    // Ambil kategori terakhir yang tersimpan saat kembali dari player
+    let savedCategory = localStorage.getItem("activeCategory") || sessionStorage.getItem("activeCategory") || "Semua";
+    kategoriAktif = savedCategory;
+
+    let filteredData = semuaTV;
+    if (savedCategory !== "Semua") {
+        filteredData = semuaTV.filter(tv => tv.group === savedCategory);
+    }
+
+    tampilkanTV(filteredData);
 })
 .catch(error => {
     document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
 });
 
 function buatElemenHTMLTV(tv, index) {
-    // Memproses URL gambar agar super ringan & menyertakan fallback onerror
     const logoOptimized = formatGambarOptimized(tv.logo);
     
     return `
@@ -299,6 +307,10 @@ function handleItemKey(event, index) {
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
+    // Simpan kategori pilihan ke storage
+    localStorage.setItem("activeCategory", g);
+    sessionStorage.setItem("activeCategory", g);
+
     let data = semuaTV;
 
     if (g != "Semua") {
