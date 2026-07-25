@@ -127,7 +127,6 @@ const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
 
 let semuaTV = [];
 let kategoriAktif = "Semua";
-let channelTerakhirID = null;
 
 function formatGambarOptimized(url) {
     if (!url || url.trim() === "") {
@@ -136,10 +135,38 @@ function formatGambarOptimized(url) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
 }
 
+// Membaca State dari Hash URL (Metode paling aman jika WebView STB me-reset localStorage)
+function bacaStateDariURL() {
+    let hash = decodeURIComponent(window.location.hash.replace("#", ""));
+    let state = { kat: "Semua", idx: null };
+    
+    if (hash) {
+        let parts = hash.split("|");
+        if (parts[0]) state.kat = parts[0];
+        if (parts[1] !== undefined) state.idx = parts[1];
+    } else {
+        state.kat = localStorage.getItem("activeCategory") || "Semua";
+        state.idx = localStorage.getItem("lastFocusedIndex");
+    }
+    return state;
+}
+
+function simpanState(kat, idx) {
+    kategoriAktif = kat;
+    try {
+        localStorage.setItem("activeCategory", kat);
+        if (idx !== null && idx !== undefined) {
+            localStorage.setItem("lastFocusedIndex", idx);
+        }
+    } catch(e) {}
+    
+    // Set Hash pada URL tanpa merefresh halaman
+    window.location.hash = encodeURIComponent(`${kat}|${idx !== null ? idx : ''}`);
+}
+
 function muatDataPlaylist() {
-    // Ambil Simpanan Kategori & Channel Terakhir dari Storage
-    kategoriAktif = localStorage.getItem("activeCategory") || sessionStorage.getItem("activeCategory") || "Semua";
-    channelTerakhirID = localStorage.getItem("lastChannelID") || sessionStorage.getItem("lastChannelID") || null;
+    let state = bacaStateDariURL();
+    kategoriAktif = state.kat;
 
     fetch(playlistURL)
     .then(response => response.text())
@@ -149,13 +176,12 @@ function muatDataPlaylist() {
         
         buatKategori();
 
-        // Filter langsung sesuai Kategori Terakhir
         let filteredData = semuaTV;
         if (kategoriAktif !== "Semua") {
             filteredData = semuaTV.filter(tv => tv.group === kategoriAktif);
         }
 
-        tampilkanTV(filteredData);
+        tampilkanTV(filteredData, state.idx);
     })
     .catch(error => {
         document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
@@ -164,27 +190,25 @@ function muatDataPlaylist() {
 
 function buatElemenHTMLTV(tv, index) {
     const logoOptimized = formatGambarOptimized(tv.logo);
-    // Buat ID unik berdasarkan URL/Nama Channel
-    const elementId = `tv-item-${index}`;
     
     return `
-    <div class="item" tabindex="0" id="${elementId}" data-url="${tv.url}"
+    <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay('${elementId}', '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
         <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
         <p>${tv.name}</p>
     </div>
     `;
 }
 
-function tampilkanTV(data) {
+function tampilkanTV(data, targetIndex) {
     let html = "";
     data.forEach((tv, index) => {
         html += buatElemenHTMLTV(tv, index);
     });
     document.getElementById("tvList").innerHTML = html;
 
-    pulihkanFokusSTB();
+    pulihkanFokusSTB(targetIndex);
 }
 
 function tampilkanTVTanpaFokus(data) {
@@ -195,43 +219,37 @@ function tampilkanTVTanpaFokus(data) {
     document.getElementById("tvList").innerHTML = html;
 }
 
-function pulihkanFokusSTB() {
-    let lastElementId = localStorage.getItem("lastFocusedElemId") || sessionStorage.getItem("lastFocusedElemId");
-    
-    // Polling khusus untuk TV Box / STB lambat
-    let percobaan = 0;
-    let intInterval = setInterval(() => {
-        percobaan++;
-        
-        let targetItem = null;
-        
-        // 1. Cari elemen berdasarkan ID Terakhir
-        if (lastElementId) {
-            targetItem = document.getElementById(lastElementId);
-        }
-        
-        // 2. Jika tidak ketemu, cari berdasarkan URL channel terakhir
-        if (!targetItem && channelTerakhirID) {
-            targetItem = document.querySelector(`.item[data-url="${channelTerakhirID}"]`);
+function pulihkanFokusSTB(targetIndex) {
+    let state = bacaStateDariURL();
+    let indexUntukFokus = (targetIndex !== null && targetIndex !== undefined) ? targetIndex : state.idx;
+
+    let retries = 0;
+    function eksekusiFokus() {
+        let targetElem = null;
+
+        if (indexUntukFokus !== null && indexUntukFokus !== undefined && indexUntukFokus !== '') {
+            targetElem = document.getElementById(`item-${indexUntukFokus}`);
         }
 
-        if (targetItem) {
-            targetItem.focus();
-            targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            clearInterval(intInterval);
-            return;
-        }
-
-        // 3. Fallback jika item tidak ketemu sama sekali -> Fokus ke item pertama
-        if (percobaan > 40) {
-            clearInterval(intInterval);
-            let firstItem = document.getElementById("tv-item-0");
+        if (targetElem) {
+            targetElem.focus();
+            targetElem.scrollIntoView({ behavior: 'auto', block: 'center' });
+        } else if (retries < 50) { 
+            // Coba lagi sampai elemen siap di render oleh rendering engine STB
+            retries++;
+            setTimeout(eksekusiFokus, 100);
+        } else {
+            // Fallback fokus ke item pertama
+            let firstItem = document.getElementById("item-0");
             if (firstItem) {
                 firstItem.focus();
-                firstItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstItem.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
         }
-    }, 100);
+    }
+
+    // Beri jeda ekstra kecil agar Webkit STB selesai menyusun DOM
+    setTimeout(eksekusiFokus, 300);
 }
 
 function buatKategori() {
@@ -281,7 +299,7 @@ function handleCategoryKey(event, index, totalKat) {
         if (searchInput) searchInput.focus();
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
-        let firstItem = document.getElementById("tv-item-0");
+        let firstItem = document.getElementById("item-0");
         if (firstItem) firstItem.focus();
     } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
         event.preventDefault();
@@ -309,23 +327,14 @@ function handleItemKey(event, index) {
 }
 
 function pilihKategori(g, element) {
-    kategoriAktif = g;
-    
-    // Simpan Kategori Aktif
-    localStorage.setItem("activeCategory", g);
-    sessionStorage.setItem("activeCategory", g);
+    simpanState(g, 0);
 
-    // Reset channel fokus terakhir kalau pindah kategori manual
-    localStorage.removeItem("lastFocusedElemId");
-    localStorage.removeItem("lastChannelID");
-
-    // Update style button
     document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
     if (element) element.classList.add("active");
 
     let data = semuaTV;
-    if (g != "Semua") {
-        data = semuaTV.filter(tv => tv.group == g);
+    if (g !== "Semua") {
+        data = semuaTV.filter(tv => tv.group === g);
     }
 
     tampilkanTVTanpaFokus(data);
@@ -341,16 +350,9 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-function pilihDanPlay(elemId, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    // Simpan Kategori, Element ID, dan Channel URL sekaligus
-    localStorage.setItem("activeCategory", kategoriAktif);
-    sessionStorage.setItem("activeCategory", kategoriAktif);
-
-    localStorage.setItem("lastFocusedElemId", elemId);
-    sessionStorage.setItem("lastFocusedElemId", elemId);
-
-    localStorage.setItem("lastChannelID", url);
-    sessionStorage.setItem("lastChannelID", url);
+function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    // Simpan Kategori Aktif & Posisi Index Poster sebelum buka Player
+    simpanState(kategoriAktif, index);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
@@ -447,13 +449,14 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-// Jalankan saat WebView pertama kali / reload dipicu oleh STB
+// Jalankan otomatis saat halaman dimuat
 muatDataPlaylist();
 
-// Handler opsional jika STB mendukung pemulihan background
+// Eventlistener tambahan jika STB memakai Back/Forward Cache
 window.addEventListener("pageshow", function () {
+    let state = bacaStateDariURL();
     if (semuaTV.length > 0) {
-        pulihkanFokusSTB();
+        pulihkanFokusSTB(state.idx);
     }
 });
 </script>
