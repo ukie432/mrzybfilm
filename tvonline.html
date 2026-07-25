@@ -1,99 +1,115 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TV Online</title>
+<head>    
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TV Online</title>
 
-<style>
-body {
-    margin: 0;
-    background: #111;
-    font-family: Arial, sans-serif;
-    color: #fff;
-}
+    <style>
+    body {
+        margin: 0;
+        background: #111;
+        font-family: Arial, sans-serif;
+        color: #fff;
+    }
 
-h2 {
-    text-align: center;
-    padding: 15px;
-}
+    h2 {
+        text-align: center;
+        padding: 15px;
+    }
 
-#search {
-    width: 90%;
-    margin: 10px auto;
-    display: block;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    outline: none;
-}
+    #search {
+        width: 90%;
+        margin: 10px auto;
+        display: block;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
 
-#search:focus {
-    border: 2px solid #00bfff;
-}
+    #search:focus {
+        border: 2px solid #00bfff;
+    }
 
-#kategori {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px;
-    scroll-behavior: smooth;
-}
+    #kategori {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 10px;
+        scroll-behavior: smooth;
+    }
 
-#kategori button {
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 20px;
-    white-space: nowrap;
-    cursor: pointer;
-    outline: none;
-    transition: .2s;
-    flex-shrink: 0;
-}
+    #kategori button {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 20px;
+        white-space: nowrap;
+        cursor: pointer;
+        outline: none;
+        transition: .2s;
+        flex-shrink: 0;
+    }
 
-#kategori button:focus {
-    background: #00bfff;
-    color: #000;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px #00bfff;
-}
+    #kategori button:focus {
+        background: #00bfff;
+        color: #000;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px #00bfff;
+    }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
 
-.item {
-    cursor: pointer;
-    outline: none;
-    transition: .2s;
-}
+    /* OPTIMASI 1: Hemat memori rendering elemen yang belum kelihatan di layar */
+    .item {
+        cursor: pointer;
+        outline: none;
+        transition: .2s;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 120px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-.item img {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    border-radius: 10px;
-}
+    .item img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: contain; /* Menggunakan 'contain' agar logo TV tidak terpotong */
+        background: #222;
+        display: block;
+    }
 
-.item p {
-    text-align: center;
-    margin: 8px 0;
-}
+    .item p {
+        text-align: center;
+        margin: 8px 0;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+    }
 
-.item:focus {
-    transform: scale(1.08);
-}
+    .item:focus {
+        transform: scale(1.08);
+    }
 
-.item:focus img {
-    border: 4px solid #00bfff;
-}
-</style>
+    .item:focus img {
+        border: 3px solid #00bfff;
+    }
+    </style>
 </head>
 <body>
 
@@ -116,6 +132,14 @@ const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
 let semuaTV = [];
 let kategoriAktif = "Semua";
 
+// OPTIMASI 2: Otomatis kompresi gambar lewat Weserv CDN + WebP
+function formatGambarOptimized(url) {
+    if (!url || url.trim() === "") {
+        return 'https://via.placeholder.com/300x169?text=No+Logo';
+    }
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
+}
+
 fetch(playlistURL)
 .then(response => response.text())
 .then(data => {
@@ -128,24 +152,31 @@ fetch(playlistURL)
     document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
 });
 
+function buatElemenHTMLTV(tv, index) {
+    // Memproses URL gambar agar super ringan & menyertakan fallback onerror
+    const logoOptimized = formatGambarOptimized(tv.logo);
+    
+    return `
+    <div class="item" tabindex="0" id="item-${index}" 
+         onkeydown="handleItemKey(event, ${index})"
+         onclick="pilihDanPlay(${index}, 
+        '${tv.url}',
+        '${tv.userAgent}',
+        '${tv.referer}',
+        '${tv.drm}',
+        '${tv.licenseKey}',
+        '${tv.licenseUrl}'
+    )">
+        <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
+        <p>${tv.name}</p>
+    </div>
+    `;
+}
+
 function tampilkanTV(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += `
-        <div class="item" tabindex="0" id="item-${index}" 
-             onkeydown="handleItemKey(event, ${index})"
-             onclick="pilihDanPlay(${index}, 
-            '${tv.url}',
-            '${tv.userAgent}',
-            '${tv.referer}',
-            '${tv.drm}',
-            '${tv.licenseKey}',
-            '${tv.licenseUrl}'
-        )">
-            <img loading="lazy" src="${tv.logo}">
-            <p>${tv.name}</p>
-        </div>
-        `;
+        html += buatElemenHTMLTV(tv, index);
     });
     document.getElementById("tvList").innerHTML = html;
 
@@ -155,21 +186,7 @@ function tampilkanTV(data) {
 function tampilkanTVTanpaFokus(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += `
-        <div class="item" tabindex="0" id="item-${index}" 
-             onkeydown="handleItemKey(event, ${index})"
-             onclick="pilihDanPlay(${index}, 
-            '${tv.url}',
-            '${tv.userAgent}',
-            '${tv.referer}',
-            '${tv.drm}',
-            '${tv.licenseKey}',
-            '${tv.licenseUrl}'
-        )">
-            <img loading="lazy" src="${tv.logo}">
-            <p>${tv.name}</p>
-        </div>
-        `;
+        html += buatElemenHTMLTV(tv, index);
     });
     document.getElementById("tvList").innerHTML = html;
 }
@@ -240,13 +257,9 @@ function buatKategori() {
 }
 
 function handleSearchKey(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' || event.key === 'ArrowDown') {
         event.preventDefault();
         document.getElementById('search').blur();
-        let firstKat = document.getElementById("kat-0");
-        if (firstKat) firstKat.focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
         let firstKat = document.getElementById("kat-0");
         if (firstKat) firstKat.focus();
     }
