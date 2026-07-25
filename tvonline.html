@@ -135,38 +135,14 @@ function formatGambarOptimized(url) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
 }
 
-// Membaca State dari URL Parameter Tanpa Membuat Riwayat Browser Baru
-function bacaStateDariURL() {
-    let params = new URLSearchParams(window.location.search);
-    let kat = params.get("kat") || localStorage.getItem("activeCategory") || "Semua";
-    let idx = params.get("idx") || localStorage.getItem("lastFocusedIndex");
-    return { kat: kat, idx: idx };
-}
-
-function simpanState(kat, idx) {
-    kategoriAktif = kat;
-    try {
-        localStorage.setItem("activeCategory", kat);
-        if (idx !== null && idx !== undefined) {
-            localStorage.setItem("lastFocusedIndex", idx);
-        }
-    } catch(e) {}
-
-    // KUNCI UTAMA: replaceState TIDAK MENAMBAH RIWAYAT BACK BROWSER
-    let newUrl = window.location.pathname + `?kat=${encodeURIComponent(kat)}&idx=${idx !== null ? idx : ''}`;
-    window.history.replaceState(null, "", newUrl);
-}
-
 function muatDataPlaylist() {
-    let state = bacaStateDariURL();
-    kategoriAktif = state.kat;
+    kategoriAktif = localStorage.getItem("activeCategory") || "Semua";
+    let lastIndex = localStorage.getItem("lastFocusedIndex");
 
     fetch(playlistURL)
     .then(response => response.text())
     .then(data => {
-        let tvData = parseM3U(data);
-        semuaTV = tvData;
-        
+        semuaTV = parseM3U(data);
         buatKategori();
 
         let filteredData = semuaTV;
@@ -174,7 +150,7 @@ function muatDataPlaylist() {
             filteredData = semuaTV.filter(tv => tv.group === kategoriAktif);
         }
 
-        tampilkanTV(filteredData, state.idx);
+        tampilkanTV(filteredData, lastIndex);
     })
     .catch(error => {
         document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
@@ -183,7 +159,6 @@ function muatDataPlaylist() {
 
 function buatElemenHTMLTV(tv, index) {
     const logoOptimized = formatGambarOptimized(tv.logo);
-    
     return `
     <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
@@ -213,21 +188,17 @@ function tampilkanTVTanpaFokus(data) {
 }
 
 function pulihkanFokusSTB(targetIndex) {
-    let state = bacaStateDariURL();
-    let indexUntukFokus = (targetIndex !== null && targetIndex !== undefined) ? targetIndex : state.idx;
-
     let retries = 0;
     function eksekusiFokus() {
         let targetElem = null;
-
-        if (indexUntukFokus !== null && indexUntukFokus !== undefined && indexUntukFokus !== '') {
-            targetElem = document.getElementById(`item-${indexUntukFokus}`);
+        if (targetIndex !== null && targetIndex !== undefined && targetIndex !== '') {
+            targetElem = document.getElementById(`item-${targetIndex}`);
         }
 
         if (targetElem) {
             targetElem.focus();
             targetElem.scrollIntoView({ behavior: 'auto', block: 'center' });
-        } else if (retries < 40) { 
+        } else if (retries < 30) { 
             retries++;
             setTimeout(eksekusiFokus, 100);
         } else {
@@ -238,8 +209,7 @@ function pulihkanFokusSTB(targetIndex) {
             }
         }
     }
-
-    setTimeout(eksekusiFokus, 200);
+    setTimeout(eksekusiFokus, 150);
 }
 
 function buatKategori() {
@@ -317,7 +287,9 @@ function handleItemKey(event, index) {
 }
 
 function pilihKategori(g, element) {
-    simpanState(g, 0);
+    kategoriAktif = g;
+    localStorage.setItem("activeCategory", g);
+    localStorage.setItem("lastFocusedIndex", 0);
 
     document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
     if (element) element.classList.add("active");
@@ -341,8 +313,8 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    // Simpan posisi tanpa membuat riwayat baru
-    simpanState(kategoriAktif, index);
+    localStorage.setItem("activeCategory", kategoriAktif);
+    localStorage.setItem("lastFocusedIndex", index);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
@@ -439,29 +411,6 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-// Handler khusus tombol Back Remote STB untuk keluar aplikasi
-document.addEventListener("keydown", function(event) {
-    // Keycode tombol Back pada berbagai merk Remote STB/Android TV
-    if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009 || event.key === "Backspace" || event.key === "GoBack") {
-        let activeElem = document.activeElement;
-        
-        // Jika fokus sedang di Poster TV -> Pindahkan fokus ke tombol Kategori aktif dulu
-        if (activeElem && activeElem.classList.contains("item")) {
-            event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) {
-                activeCategoryBtn.focus();
-            }
-        } 
-        // Jika fokus sudah ada di Kategori/Search -> Tekan Back sekali lagi akan langsung KELUAR Aplikasi
-        else if (window.Android && typeof Android.exitApp === "function") {
-            event.preventDefault();
-            Android.exitApp();
-        }
-    }
-});
-
-// Jalankan otomatis saat halaman dimuat
 muatDataPlaylist();
 </script>
 
