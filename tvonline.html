@@ -1,113 +1,106 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>    
-    <meta charset="utf-8">
-    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV Online</title>
 
-    <title>TV Online</title>
+<style>
+body {
+    margin: 0;
+    background: #111;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
 
-    <style>
-    body {
-        margin: 0;
-        background: #111;
-        font-family: Arial, sans-serif;
-        color: #fff;
-    }
+h2 {
+    text-align: center;
+    padding: 15px;
+}
 
-    h2 {
-        text-align: center;
-        padding: 15px;
-    }
+#search {
+    width: 90%;
+    margin: 10px auto;
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
 
-    #search {
-        width: 90%;
-        margin: 10px auto;
-        display: block;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        font-size: 16px;
-        outline: none;
-    }
+#search:focus {
+    border: 2px solid #00bfff;
+}
 
-    #search:focus {
-        border: 2px solid #00bfff;
-    }
+#kategori {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px;
+    scroll-behavior: smooth;
+}
 
-    #kategori {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding: 10px;
-        scroll-behavior: smooth;
-    }
+#kategori button {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    transition: .2s;
+    flex-shrink: 0;
+}
 
-    #kategori button {
-        background: #333;
-        color: #fff;
-        border: none;
-        padding: 10px 18px;
-        border-radius: 20px;
-        white-space: nowrap;
-        cursor: pointer;
-        outline: none;
-        transition: .2s;
-        flex-shrink: 0;
-    }
+#kategori button:focus {
+    background: #00bfff;
+    color: #000;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #00bfff;
+}
 
-    #kategori button:focus, #kategori button.active {
-        background: #00bfff;
-        color: #000;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px #00bfff;
-    }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
 
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-        gap: 20px;
-        padding: 20px;
-    }
+.item {
+    cursor: pointer;
+    outline: none;
+    transition: .2s;
+}
 
-    .item {
-        cursor: pointer;
-        outline: none;
-        transition: .2s;
-        content-visibility: auto;
-        contain-intrinsic-size: 1px 120px;
-        background: #1a1a1a;
-        border-radius: 10px;
-        overflow: hidden;
-    }
+.item img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 10px;
+}
 
-    .item img {
-        width: 100%;
-        aspect-ratio: 16/9;
-        object-fit: contain;
-        background: #222;
-        display: block;
-    }
+.item p {
+    text-align: center;
+    margin: 8px 0;
+}
 
-    .item p {
-        text-align: center;
-        margin: 8px 0;
-        font-size: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 0 5px;
-    }
+.item:focus {
+    transform: scale(1.08);
+}
 
-    .item:focus {
-        transform: scale(1.08);
-    }
-
-    .item:focus img {
-        border: 3px solid #00bfff;
-    }
-    </style>
+.item:focus img {
+    border: 4px solid #00bfff;
+}
+</style>
 </head>
 <body>
+
+<!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif dan mencegah STB tidur -->
+<video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
+    <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
+</video>
 
 <h2>TV ONLINE</h2>
 
@@ -123,93 +116,114 @@ onkeydown="handleSearchKey(event)">
 <div class="grid" id="tvList">Memuat TV...</div>
 
 <script>
-const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
+const playlistURL = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/Playlist.m3u";
 
 let semuaTV = [];
 let kategoriAktif = "Semua";
+const ghostVideo = document.getElementById('ghost-video');
 
-function formatGambarOptimized(url) {
-    if (!url || url.trim() === "") {
-        return 'https://via.placeholder.com/300x169?text=No+Logo';
+fetch(playlistURL)
+.then(response => response.text())
+.then(data => {
+    let tvData = parseM3U(data);
+    semuaTV = tvData;
+    buatKategori();
+    
+    // Cek apakah ada kategori tersimpan sebelumnya (misal setelah tombol Back ditekan)
+    let savedCategory = localStorage.getItem("lastCategory");
+    if (savedCategory && savedCategory !== "Semua") {
+        kategoriAktif = savedCategory;
+        let filteredData = semuaTV.filter(tv => tv.group == savedCategory);
+        tampilkanTVTanpaFokus(filteredData);
+    } else {
+        tampilkanTV(tvData);
     }
-    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
-}
+})
+.catch(error => {
+    document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
+});
 
-function muatDataPlaylist() {
-    kategoriAktif = localStorage.getItem("activeCategory") || "Semua";
-    let lastIndex = localStorage.getItem("lastFocusedIndex");
-
-    fetch(playlistURL)
-    .then(response => response.text())
-    .then(data => {
-        semuaTV = parseM3U(data);
-        buatKategori();
-
-        let filteredData = semuaTV;
-        if (kategoriAktif !== "Semua") {
-            filteredData = semuaTV.filter(tv => tv.group === kategoriAktif);
-        }
-
-        tampilkanTV(filteredData, lastIndex);
-    })
-    .catch(error => {
-        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
-    });
-}
-
-function buatElemenHTMLTV(tv, index) {
-    const logoOptimized = formatGambarOptimized(tv.logo);
-    return `
-    <div class="item" tabindex="0" id="item-${index}" 
-         onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
-        <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
-        <p>${tv.name}</p>
-    </div>
-    `;
-}
-
-function tampilkanTV(data, targetIndex) {
+function tampilkanTV(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += buatElemenHTMLTV(tv, index);
+        html += `
+        <div class="item" tabindex="0" id="item-${index}" 
+             onkeydown="handleItemKey(event, ${index})"
+             onclick="pilihDanPlay(${index}, 
+            '${tv.url}',
+            '${tv.userAgent}',
+            '${tv.referer}',
+            '${tv.drm}',
+            '${tv.licenseKey}',
+            '${tv.licenseUrl}'
+        )">
+            <img loading="lazy" src="${tv.logo}">
+            <p>${tv.name}</p>
+        </div>
+        `;
     });
     document.getElementById("tvList").innerHTML = html;
 
-    pulihkanFokusSTB(targetIndex);
+    pulihkanFokusSTB();
 }
 
 function tampilkanTVTanpaFokus(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += buatElemenHTMLTV(tv, index);
+        html += `
+        <div class="item" tabindex="0" id="item-${index}" 
+             onkeydown="handleItemKey(event, ${index})"
+             onclick="pilihDanPlay(${index}, 
+            '${tv.url}',
+            '${tv.userAgent}',
+            '${tv.referer}',
+            '${tv.drm}',
+            '${tv.licenseKey}',
+            '${tv.licenseUrl}'
+        )">
+            <img loading="lazy" src="${tv.logo}">
+            <p>${tv.name}</p>
+        </div>
+        `;
     });
     document.getElementById("tvList").innerHTML = html;
+
+    pulihkanFokusSTB();
 }
 
-function pulihkanFokusSTB(targetIndex) {
-    let retries = 0;
-    function eksekusiFokus() {
-        let targetElem = null;
-        if (targetIndex !== null && targetIndex !== undefined && targetIndex !== '') {
-            targetElem = document.getElementById(`item-${targetIndex}`);
-        }
-
-        if (targetElem) {
-            targetElem.focus();
-            targetElem.scrollIntoView({ behavior: 'auto', block: 'center' });
-        } else if (retries < 30) { 
-            retries++;
-            setTimeout(eksekusiFokus, 100);
-        } else {
-            let firstItem = document.getElementById("item-0");
-            if (firstItem) {
-                firstItem.focus();
-                firstItem.scrollIntoView({ behavior: 'auto', block: 'center' });
+function pulihkanFokusSTB() {
+    let lastIndex = localStorage.getItem("lastFocusedIndex");
+    
+    setTimeout(() => {
+        let percobaan = 0;
+        let intInterval = setInterval(() => {
+            percobaan++;
+            if (lastIndex !== null && lastIndex !== undefined) {
+                let targetItem = document.getElementById(`item-${lastIndex}`);
+                if (targetItem) {
+                    targetItem.focus();
+                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    localStorage.removeItem("lastFocusedIndex");
+                    localStorage.removeItem("lastCategory");
+                    clearInterval(intInterval);
+                    return;
+                }
+            } else {
+                let firstItem = document.getElementById("item-0");
+                if (firstItem) {
+                    firstItem.focus();
+                    clearInterval(intInterval);
+                    return;
+                }
             }
-        }
-    }
-    setTimeout(eksekusiFokus, 150);
+            
+            if (percobaan > 80) {
+                clearInterval(intInterval);
+                let fallbackItem = document.getElementById("item-0");
+                if (fallbackItem) fallbackItem.focus();
+            }
+        }, 50);
+    }, 400);
 }
 
 function buatKategori() {
@@ -223,9 +237,8 @@ function buatKategori() {
 
     let html = "";
     grup.forEach((g, idx) => {
-        let isSelected = (g === kategoriAktif) ? "active" : "";
         html += `
-        <button tabindex="0" id="kat-${idx}" class="${isSelected}"
+        <button tabindex="0" id="kat-${idx}" 
                 onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
                 onclick="pilihKategori('${g}', this)">
             ${g}
@@ -244,11 +257,15 @@ function buatKategori() {
 }
 
 function handleSearchKey(event) {
-    if (event.key === 'Enter' || event.key === 'ArrowDown') {
+    if (event.key === 'Enter') {
         event.preventDefault();
         document.getElementById('search').blur();
-        let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-        if (activeCategoryBtn) activeCategoryBtn.focus();
+        let firstKat = document.getElementById("kat-0");
+        if (firstKat) firstKat.focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstKat = document.getElementById("kat-0");
+        if (firstKat) firstKat.focus();
     }
 }
 
@@ -280,23 +297,19 @@ function handleItemKey(event, index) {
     if (event.key === 'ArrowUp') {
         if (index < columns) {
             event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) activeCategoryBtn.focus();
+            let firstKat = document.getElementById("kat-0");
+            if (firstKat) firstKat.focus();
         }
     }
 }
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
-    localStorage.setItem("activeCategory", g);
-    localStorage.setItem("lastFocusedIndex", 0);
-
-    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
-    if (element) element.classList.add("active");
-
+    localStorage.setItem("lastCategory", g); // Simpan kategori aktif secara manual saat diklik
     let data = semuaTV;
-    if (g !== "Semua") {
-        data = semuaTV.filter(tv => tv.group === g);
+
+    if (g != "Semua") {
+        data = semuaTV.filter(tv => tv.group == g);
     }
 
     tampilkanTVTanpaFokus(data);
@@ -313,8 +326,10 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    localStorage.setItem("activeCategory", kategoriAktif);
     localStorage.setItem("lastFocusedIndex", index);
+    localStorage.setItem("lastCategory", kategoriAktif); // Simpan kategori yang sedang dibuka saat ini
+    
+    if(ghostVideo) ghostVideo.play().catch(e => {});
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
@@ -411,7 +426,28 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-muatDataPlaylist();
+// ANTI-SLEEP STB
+setInterval(() => {
+    window.scrollBy(0, 1);
+    window.scrollBy(0, -1);
+
+    const dummyClick = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+    document.body.dispatchEvent(dummyClick);
+    
+    if (ghostVideo && ghostVideo.paused) {
+        ghostVideo.play().catch(e => {});
+    }
+}, 60000);
+
+window.addEventListener('load', () => {
+    if (ghostVideo) {
+        ghostVideo.play().catch(e => {});
+    }
+});
 </script>
 
 </body>
