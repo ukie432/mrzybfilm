@@ -135,20 +135,12 @@ function formatGambarOptimized(url) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
 }
 
-// Membaca State dari Hash URL (Metode paling aman jika WebView STB me-reset localStorage)
+// Membaca State dari URL Parameter Tanpa Membuat Riwayat Browser Baru
 function bacaStateDariURL() {
-    let hash = decodeURIComponent(window.location.hash.replace("#", ""));
-    let state = { kat: "Semua", idx: null };
-    
-    if (hash) {
-        let parts = hash.split("|");
-        if (parts[0]) state.kat = parts[0];
-        if (parts[1] !== undefined) state.idx = parts[1];
-    } else {
-        state.kat = localStorage.getItem("activeCategory") || "Semua";
-        state.idx = localStorage.getItem("lastFocusedIndex");
-    }
-    return state;
+    let params = new URLSearchParams(window.location.search);
+    let kat = params.get("kat") || localStorage.getItem("activeCategory") || "Semua";
+    let idx = params.get("idx") || localStorage.getItem("lastFocusedIndex");
+    return { kat: kat, idx: idx };
 }
 
 function simpanState(kat, idx) {
@@ -159,9 +151,10 @@ function simpanState(kat, idx) {
             localStorage.setItem("lastFocusedIndex", idx);
         }
     } catch(e) {}
-    
-    // Set Hash pada URL tanpa merefresh halaman
-    window.location.hash = encodeURIComponent(`${kat}|${idx !== null ? idx : ''}`);
+
+    // KUNCI UTAMA: replaceState TIDAK MENAMBAH RIWAYAT BACK BROWSER
+    let newUrl = window.location.pathname + `?kat=${encodeURIComponent(kat)}&idx=${idx !== null ? idx : ''}`;
+    window.history.replaceState(null, "", newUrl);
 }
 
 function muatDataPlaylist() {
@@ -234,12 +227,10 @@ function pulihkanFokusSTB(targetIndex) {
         if (targetElem) {
             targetElem.focus();
             targetElem.scrollIntoView({ behavior: 'auto', block: 'center' });
-        } else if (retries < 50) { 
-            // Coba lagi sampai elemen siap di render oleh rendering engine STB
+        } else if (retries < 40) { 
             retries++;
             setTimeout(eksekusiFokus, 100);
         } else {
-            // Fallback fokus ke item pertama
             let firstItem = document.getElementById("item-0");
             if (firstItem) {
                 firstItem.focus();
@@ -248,8 +239,7 @@ function pulihkanFokusSTB(targetIndex) {
         }
     }
 
-    // Beri jeda ekstra kecil agar Webkit STB selesai menyusun DOM
-    setTimeout(eksekusiFokus, 300);
+    setTimeout(eksekusiFokus, 200);
 }
 
 function buatKategori() {
@@ -351,7 +341,7 @@ function cariChannel() {
 }
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    // Simpan Kategori Aktif & Posisi Index Poster sebelum buka Player
+    // Simpan posisi tanpa membuat riwayat baru
     simpanState(kategoriAktif, index);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
@@ -449,16 +439,30 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-// Jalankan otomatis saat halaman dimuat
-muatDataPlaylist();
-
-// Eventlistener tambahan jika STB memakai Back/Forward Cache
-window.addEventListener("pageshow", function () {
-    let state = bacaStateDariURL();
-    if (semuaTV.length > 0) {
-        pulihkanFokusSTB(state.idx);
+// Handler khusus tombol Back Remote STB untuk keluar aplikasi
+document.addEventListener("keydown", function(event) {
+    // Keycode tombol Back pada berbagai merk Remote STB/Android TV
+    if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009 || event.key === "Backspace" || event.key === "GoBack") {
+        let activeElem = document.activeElement;
+        
+        // Jika fokus sedang di Poster TV -> Pindahkan fokus ke tombol Kategori aktif dulu
+        if (activeElem && activeElem.classList.contains("item")) {
+            event.preventDefault();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) {
+                activeCategoryBtn.focus();
+            }
+        } 
+        // Jika fokus sudah ada di Kategori/Search -> Tekan Back sekali lagi akan langsung KELUAR Aplikasi
+        else if (window.Android && typeof Android.exitApp === "function") {
+            event.preventDefault();
+            Android.exitApp();
+        }
     }
 });
+
+// Jalankan otomatis saat halaman dimuat
+muatDataPlaylist();
 </script>
 
 </body>
