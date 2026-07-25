@@ -1,51 +1,59 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRZYB - Nightmare Side</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MRZYB - Nightmare Side</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body { 
+        background: radial-gradient(circle, #2a0000 0%, #000000 90%); 
+        width:100vw; height:100vh; display:flex; justify-content:center; align-items:center;
+        overflow:hidden; animation: flicker 4s infinite; color: white;
+    }
+    @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body { 
-    background: radial-gradient(circle, #2a0000 0%, #000000 90%); 
-    width:100vw; height:100vh; display:flex; justify-content:center; align-items:center;
-    overflow:hidden; animation: flicker 4s infinite; color: white;
-}
-@keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .music-player-container {
+        width: 800px; height: 400px; 
+        background: rgba(10, 0, 0, 0.9);
+        border: 2px solid #550000; border-radius:20px;
+        padding: 30px; display: flex; gap: 40px;
+    }
 
-.music-player-container {
-    width: 800px; height: 400px; 
-    background: rgba(10, 0, 0, 0.9);
-    border: 2px solid #550000; border-radius:20px;
-    padding: 30px; display: flex; gap: 40px;
-}
+    .left-side { width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .brand-name { font-family: 'Creepster', cursive; font-size: 2.5em; color: #ff0000; }
+    .sub-brand { font-family: 'Creepster', cursive; font-size: 1.2em; color: #880000; margin-bottom: 20px; letter-spacing: 2px; }
+    .circle-container { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #500; overflow: hidden; }
+    #cover { width: 100%; height: 100%; object-fit: cover; }
 
-.left-side { width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.brand-name { font-family: 'Creepster', cursive; font-size: 2.5em; color: #ff0000; }
-.sub-brand { font-family: 'Creepster', cursive; font-size: 1.2em; color: #880000; margin-bottom: 20px; letter-spacing: 2px; }
-.circle-container { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #500; overflow: hidden; }
-#cover { width: 100%; height: 100%; object-fit: cover; }
+    .right-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    #title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
 
-.right-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-#title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
+    .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 30px; }
+    /* Menambahkan tabindex agar progress bar bisa di-focus remote STB */
+    .seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; outline: none; }
+    .seeks:focus { border: 1px solid #ff0000; height: 10px; }
+    .fill { height:100%; width:0%; background:#ff0000; }
 
-.progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 30px; }
-.seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; }
-.fill { height:8px; width:0%; background:#ff0000; }
+    .controls-area { display: flex; align-items: center; justify-content: space-between; }
+    .controls { display:flex; gap:20px; }
+    
+    /* Efek visual Focus untuk Remote STB */
+    button, .volume-up { outline: none; }
+    button:focus, .volume-up:focus { 
+        box-shadow: 0 0 10px #ff0000; 
+        border-color: #ff0000 !important; 
+        background: #330000 !important;
+    }
 
-.controls-area { display: flex; align-items: center; justify-content: space-between; }
-.controls { display:flex; gap:20px; }
-.controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; }
-.volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; }
-.volume-up:focus { outline: 2px solid #ff0000; border-radius: 5px; }
-</style>
+    .controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; }
+    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; display: inline-block; }
+    </style>
 </head>
 
 <body>
@@ -60,9 +68,10 @@ body {
     <div class="right-side">
         <h2 id="title">Loading...</h2>
         
+        <!-- Tambahkan tabindex agar progress bar bisa dipilih lewat remote -->
         <div class="progress-bar-container">
             <span class="current_time">00:00</span>
-            <div class="seeks"><div class="fill"></div></div>
+            <div class="seeks" tabindex="0" role="slider"><div class="fill"></div></div>
             <span class="duration_time">00:00</span>
         </div>
         
@@ -90,23 +99,15 @@ const songs = [
     {title: "Hantu Jaman Penjajahan", song: "https://d3ctxlq1ktw2nl.cloudfront.net/production/2020-1-26/52595733-48000-2-534166e529dc2.mp3", cover: "https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/penjajahan.webp"}
 ];
 
-let index = 0, isPlay = false;
+let index = 0;
 const music = document.querySelector("audio"), 
       titleEl = document.getElementById("title"),
       coverEl = document.getElementById("cover"), 
       playBtn = document.getElementById("play"),
       fill = document.querySelector(".fill"),
+      seeks = document.querySelector(".seeks"),
       volumeBtn = document.querySelector(".volume-up"),
       volumeIcon = volumeBtn.querySelector("i");
-
-window.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") music.currentTime = Math.min(music.currentTime + 10, music.duration);
-    if (e.key === "ArrowLeft") music.currentTime = Math.max(music.currentTime - 10, 0);
-    if (e.key === "Enter") {
-        if(document.activeElement === volumeBtn) volumeBtn.click();
-        else playBtn.click();
-    }
-});
 
 function loadSong(i){
     titleEl.textContent = songs[i].title;
@@ -115,33 +116,71 @@ function loadSong(i){
 }
 loadSong(0);
 
+// --- TANGANI STATE PLAY/PAUSE DARI SISTEM AUDIO ---
+music.onplay = () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; };
+music.onpause = () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; };
+
 playBtn.onclick = () => {
-    if(!isPlay) { music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; }
-    else { music.pause(); playBtn.innerHTML='<i class="fas fa-play"></i>'; }
-    isPlay = !isPlay;
+    if (music.paused) {
+        music.play().catch(e => console.log("Playback error:", e));
+    } else {
+        music.pause();
+    }
 };
 
-document.getElementById("previous").onclick = () => { index=(index-1+songs.length)%songs.length; loadSong(index); music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; isPlay=true; };
-document.getElementById("forword").onclick = () => { index=(index+1)%songs.length; loadSong(index); music.play(); playBtn.innerHTML='<i class="fas fa-pause"></i>'; isPlay=true; };
+document.getElementById("previous").onclick = () => { 
+    index = (index - 1 + songs.length) % songs.length; 
+    loadSong(index); 
+    music.play(); 
+};
+
+document.getElementById("forword").onclick = () => { 
+    index = (index + 1) % songs.length; 
+    loadSong(index); 
+    music.play(); 
+};
 
 volumeBtn.onclick = () => {
-    if(music.volume > 0) { music.volume = 0; volumeIcon.className = "fa fa-volume-mute"; }
-    else { music.volume = 1; volumeIcon.className = "fa fa-volume-up"; }
+    if (music.volume > 0) { 
+        music.volume = 0; 
+        volumeIcon.className = "fa fa-volume-mute"; 
+    } else { 
+        music.volume = 1; 
+        volumeIcon.className = "fa fa-volume-up"; 
+    }
 };
 
-music.addEventListener("timeupdate",()=>{
-    fill.style.width=(music.currentTime/music.duration)*100+"%";
-    let m=Math.floor(music.currentTime/60), s=Math.floor(music.currentTime%60);
-    document.querySelector(".current_time").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
-    if(!isNaN(music.duration)){
-        let dm=Math.floor(music.duration/60), ds=Math.floor(music.duration%60);
-        document.querySelector(".duration_time").textContent=(dm<10?"0":"")+dm+":"+(ds<10?"0":"")+ds;
+// --- PENANGANAN KEYBOARD / REMOTE STB ---
+window.addEventListener("keydown", (e) => {
+    const active = document.activeElement;
+
+    // Jika fokus sedang ada di Progress Bar (.seeks), panah kanan/kiri untuk rewind/fast-forward
+    if (active === seeks) {
+        if (e.key === "ArrowRight") {
+            e.preventDefault(); // Cegah fokus lari ke speaker
+            music.currentTime = Math.min(music.currentTime + 10, music.duration);
+        } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            music.currentTime = Math.max(music.currentTime - 10, 0);
+        }
     }
 });
 
-document.querySelector(".seeks").onclick=(e)=>{
-    const r=e.currentTarget.getBoundingClientRect();
-    music.currentTime=((e.clientX-r.left)/r.width)*music.duration;
+music.addEventListener("timeupdate", () => {
+    if (!isNaN(music.duration)) {
+        fill.style.width = (music.currentTime / music.duration) * 100 + "%";
+        
+        let m = Math.floor(music.currentTime / 60), s = Math.floor(music.currentTime % 60);
+        document.querySelector(".current_time").textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        
+        let dm = Math.floor(music.duration / 60), ds = Math.floor(music.duration % 60);
+        document.querySelector(".duration_time").textContent = (dm < 10 ? "0" : "") + dm + ":" + (ds < 10 ? "0" : "") + ds;
+    }
+});
+
+seeks.onclick = (e) => {
+    const r = seeks.getBoundingClientRect();
+    music.currentTime = ((e.clientX - r.left) / r.width) * music.duration;
 };
 </script>
 </body>
