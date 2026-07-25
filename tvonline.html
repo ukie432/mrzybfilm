@@ -97,11 +97,6 @@ h2 {
 </head>
 <body>
 
-<!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif dan mencegah STB tidur -->
-<video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-    <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
-</video>
-
 <h2>TV ONLINE</h2>
 
 <input 
@@ -120,7 +115,6 @@ const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
 
 let semuaTV = [];
 let kategoriAktif = "Semua";
-const ghostVideo = document.getElementById('ghost-video');
 
 fetch(playlistURL)
 .then(response => response.text())
@@ -128,16 +122,7 @@ fetch(playlistURL)
     let tvData = parseM3U(data);
     semuaTV = tvData;
     buatKategori();
-    
-    // Cek apakah ada kategori tersimpan sebelumnya (misal setelah tombol Back ditekan)
-    let savedCategory = localStorage.getItem("lastCategory");
-    if (savedCategory && savedCategory !== "Semua") {
-        kategoriAktif = savedCategory;
-        let filteredData = semuaTV.filter(tv => tv.group == savedCategory);
-        tampilkanTVTanpaFokus(filteredData);
-    } else {
-        tampilkanTV(tvData);
-    }
+    tampilkanTV(tvData);
 })
 .catch(error => {
     document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
@@ -187,12 +172,10 @@ function tampilkanTVTanpaFokus(data) {
         `;
     });
     document.getElementById("tvList").innerHTML = html;
-
-    pulihkanFokusSTB();
 }
 
 function pulihkanFokusSTB() {
-    let lastIndex = localStorage.getItem("lastFocusedIndex");
+    let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
     
     setTimeout(() => {
         let percobaan = 0;
@@ -204,7 +187,7 @@ function pulihkanFokusSTB() {
                     targetItem.focus();
                     targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     localStorage.removeItem("lastFocusedIndex");
-                    localStorage.removeItem("lastCategory");
+                    sessionStorage.removeItem("lastFocusedIndex");
                     clearInterval(intInterval);
                     return;
                 }
@@ -305,7 +288,6 @@ function handleItemKey(event, index) {
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
-    localStorage.setItem("lastCategory", g); // Simpan kategori aktif secara manual saat diklik
     let data = semuaTV;
 
     if (g != "Semua") {
@@ -327,9 +309,7 @@ function cariChannel() {
 
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     localStorage.setItem("lastFocusedIndex", index);
-    localStorage.setItem("lastCategory", kategoriAktif); // Simpan kategori yang sedang dibuka saat ini
-    
-    if(ghostVideo) ghostVideo.play().catch(e => {});
+    sessionStorage.setItem("lastFocusedIndex", index);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
@@ -425,29 +405,6 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
         alert(url);
     }
 }
-
-// ANTI-SLEEP STB
-setInterval(() => {
-    window.scrollBy(0, 1);
-    window.scrollBy(0, -1);
-
-    const dummyClick = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
-    document.body.dispatchEvent(dummyClick);
-    
-    if (ghostVideo && ghostVideo.paused) {
-        ghostVideo.play().catch(e => {});
-    }
-}, 60000);
-
-window.addEventListener('load', () => {
-    if (ghostVideo) {
-        ghostVideo.play().catch(e => {});
-    }
-});
 </script>
 
 </body>
