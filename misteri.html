@@ -35,24 +35,27 @@
     #title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
 
     .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 30px; }
-    /* Menambahkan tabindex agar progress bar bisa di-focus remote STB */
     .seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; outline: none; }
-    .seeks:focus { border: 1px solid #ff0000; height: 10px; }
     .fill { height:100%; width:0%; background:#ff0000; }
 
     .controls-area { display: flex; align-items: center; justify-content: space-between; }
     .controls { display:flex; gap:20px; }
     
-    /* Efek visual Focus untuk Remote STB */
-    button, .volume-up { outline: none; }
+    /* Efek Visual Fokus Remote STB yang Jelas */
+    button, .volume-up, .seeks { outline: none; }
     button:focus, .volume-up:focus { 
-        box-shadow: 0 0 10px #ff0000; 
+        box-shadow: 0 0 12px #ff0000; 
         border-color: #ff0000 !important; 
         background: #330000 !important;
+        transform: scale(1.05);
+    }
+    .seeks:focus {
+        border: 2px solid #ff0000;
+        box-shadow: 0 0 8px #ff0000;
     }
 
-    .controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; }
-    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; display: inline-block; }
+    .controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; transition: 0.2s; }
+    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; display: inline-block; border-radius: 8px; }
     </style>
 </head>
 
@@ -68,18 +71,18 @@
     <div class="right-side">
         <h2 id="title">Loading...</h2>
         
-        <!-- Tambahkan tabindex agar progress bar bisa dipilih lewat remote -->
+        <!-- Progress Bar (Diberi tabindex agar bisa difokuskan) -->
         <div class="progress-bar-container">
             <span class="current_time">00:00</span>
-            <div class="seeks" tabindex="0" role="slider"><div class="fill"></div></div>
+            <div class="seeks" tabindex="0"><div class="fill"></div></div>
             <span class="duration_time">00:00</span>
         </div>
         
         <div class="controls-area">
             <div class="controls">
-                <button id="previous"><i class="fas fa-backward"></i></button>
-                <button id="play"><i class="fas fa-play"></i></button>
-                <button id="forword"><i class="fas fa-forward"></i></button>
+                <button id="previous" tabindex="0"><i class="fas fa-backward"></i></button>
+                <button id="play" tabindex="0"><i class="fas fa-play"></i></button>
+                <button id="forword" tabindex="0"><i class="fas fa-forward"></i></button>
             </div>
             <a class="volume-up" tabindex="0"><i class="fa fa-volume-up"></i></a>
         </div>
@@ -104,6 +107,8 @@ const music = document.querySelector("audio"),
       titleEl = document.getElementById("title"),
       coverEl = document.getElementById("cover"), 
       playBtn = document.getElementById("play"),
+      forwardBtn = document.getElementById("forword"),
+      previousBtn = document.getElementById("previous"),
       fill = document.querySelector(".fill"),
       seeks = document.querySelector(".seeks"),
       volumeBtn = document.querySelector(".volume-up"),
@@ -116,25 +121,28 @@ function loadSong(i){
 }
 loadSong(0);
 
-// --- TANGANI STATE PLAY/PAUSE DARI SISTEM AUDIO ---
+// Sinkronisasi Ikon Play/Pause Otomatis Berdasarkan Status Audio Asli
 music.onplay = () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; };
 music.onpause = () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; };
 
-playBtn.onclick = () => {
+// Fungsi Toggle Play
+function togglePlay() {
     if (music.paused) {
-        music.play().catch(e => console.log("Playback error:", e));
+        music.play().catch(e => console.log("Blocked:", e));
     } else {
         music.pause();
     }
-};
+}
 
-document.getElementById("previous").onclick = () => { 
+playBtn.onclick = togglePlay;
+
+previousBtn.onclick = () => { 
     index = (index - 1 + songs.length) % songs.length; 
     loadSong(index); 
     music.play(); 
 };
 
-document.getElementById("forword").onclick = () => { 
+forwardBtn.onclick = () => { 
     index = (index + 1) % songs.length; 
     loadSong(index); 
     music.play(); 
@@ -150,18 +158,21 @@ volumeBtn.onclick = () => {
     }
 };
 
-// --- PENANGANAN KEYBOARD / REMOTE STB ---
+// --- PENGATURAN KHUSUS REMOTE STB / D-PAD ---
 window.addEventListener("keydown", (e) => {
     const active = document.activeElement;
 
-    // Jika fokus sedang ada di Progress Bar (.seeks), panah kanan/kiri untuk rewind/fast-forward
+    // Jika fokus sedang berada di Progress Bar (`.seeks`)
     if (active === seeks) {
         if (e.key === "ArrowRight") {
-            e.preventDefault(); // Cegah fokus lari ke speaker
-            music.currentTime = Math.min(music.currentTime + 10, music.duration);
+            e.preventDefault(); // Jangan biarkan fokus lari ke speaker
+            music.currentTime = Math.min(music.currentTime + 10, music.duration); // Fast Forward 10 detik
         } else if (e.key === "ArrowLeft") {
             e.preventDefault();
-            music.currentTime = Math.max(music.currentTime - 10, 0);
+            music.currentTime = Math.max(music.currentTime - 10, 0); // Rewind 10 detik
+        } else if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            // Jika ditekan Enter di bar, jangan jadi play/pause, tapi biarkan fungsinya netral atau abaikan
         }
     }
 });
