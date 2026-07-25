@@ -19,7 +19,7 @@
     @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
     .music-player-container {
-        width: 800px; height: 400px; 
+        width: 800px; height: 420px; 
         background: rgba(10, 0, 0, 0.9);
         border: 2px solid #550000; border-radius:20px;
         padding: 30px; display: flex; gap: 40px;
@@ -34,14 +34,14 @@
     .right-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
     #title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
 
-    .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 30px; }
+    .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 20px; }
     .seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; outline: none; }
     .fill { height:100%; width:0%; background:#ff0000; }
 
-    .controls-area { display: flex; align-items: center; justify-content: space-between; }
+    .controls-area { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .controls { display:flex; gap:20px; }
     
-    /* Efek Visual Fokus Remote STB yang Jelas */
+    /* Efek Visual Fokus Remote STB */
     button, .volume-up, .seeks { outline: none; }
     button:focus, .volume-up:focus { 
         box-shadow: 0 0 12px #ff0000; 
@@ -55,7 +55,7 @@
     }
 
     .controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; transition: 0.2s; }
-    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 10px; display: inline-block; border-radius: 8px; }
+    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 12px; display: inline-block; border-radius: 50%; background: #1a0000; border: 1px solid #400; width: 50px; height: 50px; text-align: center; }
     </style>
 </head>
 
@@ -71,7 +71,7 @@
     <div class="right-side">
         <h2 id="title">Loading...</h2>
         
-        <!-- Progress Bar (Diberi tabindex agar bisa difokuskan) -->
+        <!-- Progress Bar -->
         <div class="progress-bar-container">
             <span class="current_time">00:00</span>
             <div class="seeks" tabindex="0"><div class="fill"></div></div>
@@ -79,12 +79,13 @@
         </div>
         
         <div class="controls-area">
+            <a class="volume-up" tabindex="0" title="Mute/Unmute"><i class="fa fa-volume-up"></i></a>
+            
             <div class="controls">
                 <button id="previous" tabindex="0"><i class="fas fa-backward"></i></button>
                 <button id="play" tabindex="0"><i class="fas fa-play"></i></button>
                 <button id="forword" tabindex="0"><i class="fas fa-forward"></i></button>
             </div>
-            <a class="volume-up" tabindex="0"><i class="fa fa-volume-up"></i></a>
         </div>
     </div>
 </div>
@@ -121,20 +122,18 @@ function loadSong(i){
 }
 loadSong(0);
 
-// Sinkronisasi Ikon Play/Pause Otomatis Berdasarkan Status Audio Asli
+// Status Play/Pause sinkron otomatis dengan pemutar audio
 music.onplay = () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; };
 music.onpause = () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; };
 
-// Fungsi Toggle Play
-function togglePlay() {
+// Fungsi Play/Pause utama yang dipicu tombol Play
+playBtn.onclick = () => {
     if (music.paused) {
         music.play().catch(e => console.log("Blocked:", e));
     } else {
         music.pause();
     }
-}
-
-playBtn.onclick = togglePlay;
+};
 
 previousBtn.onclick = () => { 
     index = (index - 1 + songs.length) % songs.length; 
@@ -158,21 +157,20 @@ volumeBtn.onclick = () => {
     }
 };
 
-// --- PENGATURAN KHUSUS REMOTE STB / D-PAD ---
+// Pengaturan Navigasi Remote STB khusus agar tombol Enter di bar TIDAK MENJADI PLAY/PAUSE
 window.addEventListener("keydown", (e) => {
     const active = document.activeElement;
 
-    // Jika fokus sedang berada di Progress Bar (`.seeks`)
     if (active === seeks) {
         if (e.key === "ArrowRight") {
-            e.preventDefault(); // Jangan biarkan fokus lari ke speaker
-            music.currentTime = Math.min(music.currentTime + 10, music.duration); // Fast Forward 10 detik
+            e.preventDefault(); 
+            music.currentTime = Math.min(music.currentTime + 10, music.duration); 
         } else if (e.key === "ArrowLeft") {
             e.preventDefault();
-            music.currentTime = Math.max(music.currentTime - 10, 0); // Rewind 10 detik
+            music.currentTime = Math.max(music.currentTime - 10, 0); 
         } else if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            // Jika ditekan Enter di bar, jangan jadi play/pause, tapi biarkan fungsinya netral atau abaikan
+            // Mencegah tombol Enter di progress bar memicu fungsi play/pause
+            e.preventDefault(); 
         }
     }
 });
@@ -181,10 +179,10 @@ music.addEventListener("timeupdate", () => {
     if (!isNaN(music.duration)) {
         fill.style.width = (music.currentTime / music.duration) * 100 + "%";
         
-        let m = Math.floor(music.currentTime / 60), s = Math.floor(music.currentTime % 60);
+        let m = Math.floor(music.currentTime / 60), s = Math.floor(music.currentTime%60);
         document.querySelector(".current_time").textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
         
-        let dm = Math.floor(music.duration / 60), ds = Math.floor(music.duration % 60);
+        let dm = Math.floor(music.duration / 60), ds = Math.floor(music.duration%60);
         document.querySelector(".duration_time").textContent = (dm < 10 ? "0" : "") + dm + ":" + (ds < 10 ? "0" : "") + ds;
     }
 });
