@@ -2,9 +2,6 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-    <link rel="preconnect" href="https://posterfilm.pages.dev">
-    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>MRZYBmusik - Premium Audio Player TV</title>
@@ -171,6 +168,8 @@
             object-fit: cover;
             border: 1px solid #cc0044;
             margin-right: 25px;
+            background-color: #10141d;
+            transition: opacity 0.2s ease-in-out;
         }
 
         .track-info {
@@ -321,6 +320,7 @@
             border-radius: 4px;
             object-fit: cover;
             margin-right: 20px;
+            background-color: #10141d;
         }
 
         .item-title {
@@ -346,11 +346,6 @@
     <!-- CORE AUDIO ELEMENT -->
     <audio id="main-audio" src=""></audio>
 
-    <!-- GHOST VIDEO MENGGUNAKAN DATA URI (LOKAL & AMAN DARI MASALAH KONEKSI/GITHUB) -->
-    <video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28zdmpkAAACAAAAAZZtb29hAABtZG12aGQAAAAA" type="video/mp4">
-    </video>
-
     <div class="music-app-container">
         
         <!-- ELEMENT AREA ATAS (PENCARIAN & KATEGORI) -->
@@ -375,7 +370,8 @@
         <div class="neon-player">
             <canvas id="spectrum-canvas"></canvas>
 
-            <img id="player-cover" class="now-playing-cover" src="" alt="Cover">
+            <!-- DITAMBAHKAN OPTIMASI LOADING GAMBAR DI PLAYER UTAMA -->
+            <img id="player-cover" class="now-playing-cover" src="" alt="Cover" decoding="async" fetchpriority="high">
             
             <div class="track-info">
                 <div id="player-title" class="track-title">Memuat data JSON...</div>
@@ -418,10 +414,8 @@
         let totalBars = 45; 
         let barHeights = Array(totalBars).fill(0); 
         let targetHeights = Array(totalBars).fill(0);
-        let audioCtx = null;
 
         const audio = document.getElementById('main-audio');
-        const ghostVideo = document.getElementById('ghost-video');
         const playBtn = document.getElementById('play-btn');
         const playerCover = document.getElementById('player-cover');
         const playerTitle = document.getElementById('player-title');
@@ -434,32 +428,19 @@
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search-btn');
 
-        // Inisialisasi Web Audio API Keep-Alive untuk mencegah STB masuk mode sleep
-        function initKeepAliveAudio() {
-            if (!audioCtx) {
-                try {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    gainNode.gain.value = 0.0001; // Nyaris tidak bersuara
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    oscillator.start();
-                } catch(e) {
-                    console.log("AudioContext tidak didukung:", e);
-                }
-            } else if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        // FUNGSI KOMPRES & OPTIMASI URL GAMBAR MELEWATI CDN (MENGUBAH FILE MB MENJADI HANYA KB)
+        function getOptimizedImage(originalUrl, width = 300) {
+            if (!originalUrl) return 'https://via.placeholder.com/300x180/10141d/ffffff?text=No+Cover';
+            // Menggunakan CDN weserv.nl untuk me-resize & mengkonversi ke WebP otomatis
+            return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=${width}&output=webp&q=80`;
         }
 
-        // Fungsi Load Data JSON dari URL GitHub
+        // Fungsi Load Data JSON dari API
         async function fetchPlaylistData() {
             try {
                 const response = await fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/musik');
                 if (!response.ok) {
-                    throw new Error("Gagal mengambil data dari GitHub. Periksa kembali URL Raw Anda.");
+                    throw new Error("Gagal mengambil data. Periksa kembali URL Raw Anda.");
                 }
                 tracks = await response.json();
                 
@@ -559,8 +540,12 @@
                 item.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') selectTrack(originalIndex);
                 });
+                
+                // MENGGUNAKAN LAZY LOADING DAN GAMBAR WEBP TEROPTIMASI
+                const thumbUrl = getOptimizedImage(track.cover, 160);
+                
                 item.innerHTML = `
-                    <img class="item-cover" src="${track.cover}">
+                    <img class="item-cover" src="${thumbUrl}" loading="lazy" decoding="async" alt="Cover" onerror="this.onerror=null;this.src='https://via.placeholder.com/160x90/10141d/ffffff?text=No+Cover';">
                     <div class="item-title">${track.title}</div>
                 `;
                 playlistContainer.appendChild(item);
@@ -572,32 +557,40 @@
             currentTrackIndex = index;
             audio.src = tracks[index].url;
             playerTitle.innerText = tracks[index].title;
-            playerCover.src = tracks[index].cover;
+            
+            // PRELOADER UNTUK COVER UTAMA SUPAYA TIDAK LAG
+            const optCoverUrl = getOptimizedImage(tracks[index].cover, 320);
+            const imgPreloader = new Image();
+            imgPreloader.src = optCoverUrl;
+            imgPreloader.onload = () => {
+                playerCover.src = optCoverUrl;
+            };
+            playerCover.src = optCoverUrl;
+            playerCover.onerror = function() {
+                this.onerror = null;
+                this.src = 'https://via.placeholder.com/300x180/10141d/ffffff?text=No+Cover';
+            };
+
             progressBar.style.width = "0%";
             playerTime.innerText = "00:00 / 00:00";
             filterMusic();
         }
 
         function togglePlay() {
-            initKeepAliveAudio();
             if (audio.paused) {
                 audio.play().catch(e => console.log(e));
-                if(ghostVideo) ghostVideo.play().catch(e => console.log(e));
                 playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
                 playBtn.style.color = '#cc0044';
             } else {
                 audio.pause();
-                if(ghostVideo) ghostVideo.pause();
                 playBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
                 playBtn.style.color = '#e0e0e0';
             }
         }
 
         function selectTrack(index) {
-            initKeepAliveAudio();
             loadTrack(index);
             audio.play().catch(e => console.log(e));
-            if(ghostVideo) ghostVideo.play().catch(e => console.log(e));
             playBtn.innerHTML = '<i class="fas fa-pause-circle"></i>';
             playBtn.style.color = '#cc0044';
         }
@@ -659,28 +652,6 @@
             const duration = audio.duration;
             if(duration) audio.currentTime = (clickX / width) * duration;
         }
-
-        // ANTI-SLEEP STB AGRESIF: Sinyal aktivitas berkala setiap 15 detik untuk mencegah Doze Mode
-        setInterval(() => {
-            if (!audio.paused) {
-                if (ghostVideo && ghostVideo.paused) {
-                    ghostVideo.play().catch(e => {});
-                }
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                window.scrollBy(0, 1);
-                window.scrollBy(0, -1);
-
-                const dummyClick = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true
-                });
-                document.body.dispatchEvent(dummyClick);
-            }
-        }, 15000); // Dipercepat menjadi setiap 15 detik
 
         progressContainer.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowRight') {
