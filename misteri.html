@@ -19,10 +19,10 @@
     @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
     .music-player-container {
-        width: 800px; height: 420px; 
-        background: rgba(10, 0, 0, 0.9);
+        width: 850px; height: 440px; 
+        background: rgba(10, 0, 0, 0.95);
         border: 2px solid #550000; border-radius:20px;
-        padding: 30px; display: flex; gap: 40px;
+        padding: 35px; display: flex; gap: 40px;
     }
 
     .left-side { width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -32,30 +32,36 @@
     #cover { width: 100%; height: 100%; object-fit: cover; }
 
     .right-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    #title { color: #cc0000; font-size: 1.5em; margin-bottom: 20px; height: 40px; }
+    #title { color: #cc0000; font-size: 1.5em; margin-bottom: 25px; height: 40px; }
 
-    .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-bottom: 20px; }
-    .seeks { flex:1; height:8px; background:#220000; border-radius:10px; cursor:pointer; outline: none; }
-    .fill { height:100%; width:0%; background:#ff0000; }
+    /* Progress bar diberi jarak atas-bawah yang jauh agar STB tidak salah deteksi fokus */
+    .progress-section { margin-bottom: 30px; }
+    .progress-bar-container { display:flex; align-items:center; gap:15px; font-size: 14px; margin-top: 8px; }
+    .seeks { flex:1; height:12px; background:#220000; border-radius:10px; cursor:pointer; outline: none; border: 1px solid #400; }
+    .fill { height:100%; width:0%; background:#ff0000; border-radius:10px; }
 
-    .controls-area { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-    .controls { display:flex; gap:20px; }
+    /* Area Kontrol Tombol Dipisah Jelas */
+    .controls-area { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; }
+    .controls { display:flex; gap:25px; }
     
-    /* Efek Visual Fokus Remote STB */
+    /* Efek Visual Fokus Remote STB (Sangat Terang agar Terlihat di TV) */
     button, .volume-up, .seeks { outline: none; }
+    
     button:focus, .volume-up:focus { 
-        box-shadow: 0 0 12px #ff0000; 
+        box-shadow: 0 0 15px #ff0000; 
         border-color: #ff0000 !important; 
-        background: #330000 !important;
-        transform: scale(1.05);
+        background: #400000 !important;
+        transform: scale(1.1);
     }
+    
     .seeks:focus {
-        border: 2px solid #ff0000;
-        box-shadow: 0 0 8px #ff0000;
+        border: 2px solid #ff0000 !important;
+        box-shadow: 0 0 10px #ff0000;
+        background: #300000;
     }
 
-    .controls button { width:60px; height:60px; border:1px solid #400; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 20px; transition: 0.2s; }
-    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; padding: 12px; display: inline-block; border-radius: 50%; background: #1a0000; border: 1px solid #400; width: 50px; height: 50px; text-align: center; }
+    .controls button { width:65px; height:65px; border:2px solid #500; border-radius:50%; background:#1a0000; color:#ff3333; cursor:pointer; font-size: 22px; transition: 0.15s; }
+    .volume-up { color: #ff0000; font-size: 20px; cursor:pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #1a0000; border: 2px solid #500; width: 55px; height: 55px; }
     </style>
 </head>
 
@@ -71,13 +77,17 @@
     <div class="right-side">
         <h2 id="title">Loading...</h2>
         
-        <!-- Progress Bar -->
-        <div class="progress-bar-container">
-            <span class="current_time">00:00</span>
-            <div class="seeks" tabindex="0"><div class="fill"></div></div>
-            <span class="duration_time">00:00</span>
+        <!-- Progress Bar Diberi Pembungkus Khusus (Section) -->
+        <div class="progress-section">
+            <span style="font-size: 13px; color: #888;">Progress Bar (Tekan Kiri/Kanan untuk Geser Lagu)</span>
+            <div class="progress-bar-container">
+                <span class="current_time">00:00</span>
+                <div class="seeks" tabindex="0"><div class="fill"></div></div>
+                <span class="duration_time">00:00</span>
+            </div>
         </div>
         
+        <!-- Tombol Kontrol Bawah -->
         <div class="controls-area">
             <a class="volume-up" tabindex="0" title="Mute/Unmute"><i class="fa fa-volume-up"></i></a>
             
@@ -122,11 +132,10 @@ function loadSong(i){
 }
 loadSong(0);
 
-// Status Play/Pause sinkron otomatis dengan pemutar audio
+// Sinkronisasi status Play/Pause yang murni
 music.onplay = () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; };
 music.onpause = () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; };
 
-// Fungsi Play/Pause utama yang dipicu tombol Play
 playBtn.onclick = () => {
     if (music.paused) {
         music.play().catch(e => console.log("Blocked:", e));
@@ -157,7 +166,7 @@ volumeBtn.onclick = () => {
     }
 };
 
-// Pengaturan Navigasi Remote STB khusus agar tombol Enter di bar TIDAK MENJADI PLAY/PAUSE
+// Pengaturan Navigasi Remote STB agar tombol arah tidak saling tindih
 window.addEventListener("keydown", (e) => {
     const active = document.activeElement;
 
@@ -169,8 +178,7 @@ window.addEventListener("keydown", (e) => {
             e.preventDefault();
             music.currentTime = Math.max(music.currentTime - 10, 0); 
         } else if (e.key === "Enter" || e.key === " ") {
-            // Mencegah tombol Enter di progress bar memicu fungsi play/pause
-            e.preventDefault(); 
+            e.preventDefault(); // Mencegah bar bertindak sebagai tombol Play/Pause
         }
     }
 });
