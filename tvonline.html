@@ -1,106 +1,113 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TV Online</title>
+<head>    
+    <meta charset="utf-8">
+    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
-<style>
-body {
-    margin: 0;
-    background: #111;
-    font-family: Arial, sans-serif;
-    color: #fff;
-}
+    <title>TV Online</title>
 
-h2 {
-    text-align: center;
-    padding: 15px;
-}
+    <style>
+    body {
+        margin: 0;
+        background: #111;
+        font-family: Arial, sans-serif;
+        color: #fff;
+    }
 
-#search {
-    width: 90%;
-    margin: 10px auto;
-    display: block;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    outline: none;
-}
+    h2 {
+        text-align: center;
+        padding: 15px;
+    }
 
-#search:focus {
-    border: 2px solid #00bfff;
-}
+    #search {
+        width: 90%;
+        margin: 10px auto;
+        display: block;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
 
-#kategori {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px;
-    scroll-behavior: smooth;
-}
+    #search:focus {
+        border: 2px solid #00bfff;
+    }
 
-#kategori button {
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 20px;
-    white-space: nowrap;
-    cursor: pointer;
-    outline: none;
-    transition: .2s;
-    flex-shrink: 0;
-}
+    #kategori {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 10px;
+        scroll-behavior: smooth;
+    }
 
-#kategori button:focus {
-    background: #00bfff;
-    color: #000;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px #00bfff;
-}
+    #kategori button {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 20px;
+        white-space: nowrap;
+        cursor: pointer;
+        outline: none;
+        transition: .2s;
+        flex-shrink: 0;
+    }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
+    #kategori button:focus, #kategori button.active {
+        background: #00bfff;
+        color: #000;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px #00bfff;
+    }
 
-.item {
-    cursor: pointer;
-    outline: none;
-    transition: .2s;
-}
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
 
-.item img {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    border-radius: 10px;
-}
+    .item {
+        cursor: pointer;
+        outline: none;
+        transition: .2s;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 120px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-.item p {
-    text-align: center;
-    margin: 8px 0;
-}
+    .item img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: contain;
+        background: #222;
+        display: block;
+    }
 
-.item:focus {
-    transform: scale(1.08);
-}
+    .item p {
+        text-align: center;
+        margin: 8px 0;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+    }
 
-.item:focus img {
-    border: 4px solid #00bfff;
-}
-</style>
+    .item:focus {
+        transform: scale(1.08);
+    }
+
+    .item:focus img {
+        border: 3px solid #00bfff;
+    }
+    </style>
 </head>
 <body>
-
-<!-- TRIK GHOST VIDEO: Elemen video tersembunyi untuk menjaga background tetap aktif dan mencegah STB tidur -->
-<video id="ghost-video" playsinline autoplay loop muted style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; pointer-events:none;">
-    <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/dummy.mp4" type="video/mp4">
-</video>
 
 <h2>TV ONLINE</h2>
 
@@ -120,47 +127,60 @@ const playlistURL = "https://mrzybtv-api.ukielaki88.workers.dev/api/playlist";
 
 let semuaTV = [];
 let kategoriAktif = "Semua";
-const ghostVideo = document.getElementById('ghost-video');
+let channelTerakhirID = null;
 
-fetch(playlistURL)
-.then(response => response.text())
-.then(data => {
-    let tvData = parseM3U(data);
-    semuaTV = tvData;
-    buatKategori();
-    
-    // Cek apakah ada kategori tersimpan sebelumnya (misal setelah tombol Back ditekan)
-    let savedCategory = localStorage.getItem("lastCategory");
-    if (savedCategory && savedCategory !== "Semua") {
-        kategoriAktif = savedCategory;
-        let filteredData = semuaTV.filter(tv => tv.group == savedCategory);
-        tampilkanTVTanpaFokus(filteredData);
-    } else {
-        tampilkanTV(tvData);
+function formatGambarOptimized(url) {
+    if (!url || url.trim() === "") {
+        return 'https://via.placeholder.com/300x169?text=No+Logo';
     }
-})
-.catch(error => {
-    document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
-});
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
+}
+
+function muatDataPlaylist() {
+    // Ambil Simpanan Kategori & Channel Terakhir dari Storage
+    kategoriAktif = localStorage.getItem("activeCategory") || sessionStorage.getItem("activeCategory") || "Semua";
+    channelTerakhirID = localStorage.getItem("lastChannelID") || sessionStorage.getItem("lastChannelID") || null;
+
+    fetch(playlistURL)
+    .then(response => response.text())
+    .then(data => {
+        let tvData = parseM3U(data);
+        semuaTV = tvData;
+        
+        buatKategori();
+
+        // Filter langsung sesuai Kategori Terakhir
+        let filteredData = semuaTV;
+        if (kategoriAktif !== "Semua") {
+            filteredData = semuaTV.filter(tv => tv.group === kategoriAktif);
+        }
+
+        tampilkanTV(filteredData);
+    })
+    .catch(error => {
+        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.m3u";
+    });
+}
+
+function buatElemenHTMLTV(tv, index) {
+    const logoOptimized = formatGambarOptimized(tv.logo);
+    // Buat ID unik berdasarkan URL/Nama Channel
+    const elementId = `tv-item-${index}`;
+    
+    return `
+    <div class="item" tabindex="0" id="${elementId}" data-url="${tv.url}"
+         onkeydown="handleItemKey(event, ${index})"
+         onclick="pilihDanPlay('${elementId}', '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+        <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
+        <p>${tv.name}</p>
+    </div>
+    `;
+}
 
 function tampilkanTV(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += `
-        <div class="item" tabindex="0" id="item-${index}" 
-             onkeydown="handleItemKey(event, ${index})"
-             onclick="pilihDanPlay(${index}, 
-            '${tv.url}',
-            '${tv.userAgent}',
-            '${tv.referer}',
-            '${tv.drm}',
-            '${tv.licenseKey}',
-            '${tv.licenseUrl}'
-        )">
-            <img loading="lazy" src="${tv.logo}">
-            <p>${tv.name}</p>
-        </div>
-        `;
+        html += buatElemenHTMLTV(tv, index);
     });
     document.getElementById("tvList").innerHTML = html;
 
@@ -170,60 +190,48 @@ function tampilkanTV(data) {
 function tampilkanTVTanpaFokus(data) {
     let html = "";
     data.forEach((tv, index) => {
-        html += `
-        <div class="item" tabindex="0" id="item-${index}" 
-             onkeydown="handleItemKey(event, ${index})"
-             onclick="pilihDanPlay(${index}, 
-            '${tv.url}',
-            '${tv.userAgent}',
-            '${tv.referer}',
-            '${tv.drm}',
-            '${tv.licenseKey}',
-            '${tv.licenseUrl}'
-        )">
-            <img loading="lazy" src="${tv.logo}">
-            <p>${tv.name}</p>
-        </div>
-        `;
+        html += buatElemenHTMLTV(tv, index);
     });
     document.getElementById("tvList").innerHTML = html;
-
-    pulihkanFokusSTB();
 }
 
 function pulihkanFokusSTB() {
-    let lastIndex = localStorage.getItem("lastFocusedIndex");
+    let lastElementId = localStorage.getItem("lastFocusedElemId") || sessionStorage.getItem("lastFocusedElemId");
     
-    setTimeout(() => {
-        let percobaan = 0;
-        let intInterval = setInterval(() => {
-            percobaan++;
-            if (lastIndex !== null && lastIndex !== undefined) {
-                let targetItem = document.getElementById(`item-${lastIndex}`);
-                if (targetItem) {
-                    targetItem.focus();
-                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    localStorage.removeItem("lastFocusedIndex");
-                    localStorage.removeItem("lastCategory");
-                    clearInterval(intInterval);
-                    return;
-                }
-            } else {
-                let firstItem = document.getElementById("item-0");
-                if (firstItem) {
-                    firstItem.focus();
-                    clearInterval(intInterval);
-                    return;
-                }
+    // Polling khusus untuk TV Box / STB lambat
+    let percobaan = 0;
+    let intInterval = setInterval(() => {
+        percobaan++;
+        
+        let targetItem = null;
+        
+        // 1. Cari elemen berdasarkan ID Terakhir
+        if (lastElementId) {
+            targetItem = document.getElementById(lastElementId);
+        }
+        
+        // 2. Jika tidak ketemu, cari berdasarkan URL channel terakhir
+        if (!targetItem && channelTerakhirID) {
+            targetItem = document.querySelector(`.item[data-url="${channelTerakhirID}"]`);
+        }
+
+        if (targetItem) {
+            targetItem.focus();
+            targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            clearInterval(intInterval);
+            return;
+        }
+
+        // 3. Fallback jika item tidak ketemu sama sekali -> Fokus ke item pertama
+        if (percobaan > 40) {
+            clearInterval(intInterval);
+            let firstItem = document.getElementById("tv-item-0");
+            if (firstItem) {
+                firstItem.focus();
+                firstItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            
-            if (percobaan > 80) {
-                clearInterval(intInterval);
-                let fallbackItem = document.getElementById("item-0");
-                if (fallbackItem) fallbackItem.focus();
-            }
-        }, 50);
-    }, 400);
+        }
+    }, 100);
 }
 
 function buatKategori() {
@@ -237,8 +245,9 @@ function buatKategori() {
 
     let html = "";
     grup.forEach((g, idx) => {
+        let isSelected = (g === kategoriAktif) ? "active" : "";
         html += `
-        <button tabindex="0" id="kat-${idx}" 
+        <button tabindex="0" id="kat-${idx}" class="${isSelected}"
                 onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
                 onclick="pilihKategori('${g}', this)">
             ${g}
@@ -257,15 +266,11 @@ function buatKategori() {
 }
 
 function handleSearchKey(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' || event.key === 'ArrowDown') {
         event.preventDefault();
         document.getElementById('search').blur();
-        let firstKat = document.getElementById("kat-0");
-        if (firstKat) firstKat.focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        let firstKat = document.getElementById("kat-0");
-        if (firstKat) firstKat.focus();
+        let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+        if (activeCategoryBtn) activeCategoryBtn.focus();
     }
 }
 
@@ -276,7 +281,7 @@ function handleCategoryKey(event, index, totalKat) {
         if (searchInput) searchInput.focus();
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
-        let firstItem = document.getElementById("item-0");
+        let firstItem = document.getElementById("tv-item-0");
         if (firstItem) firstItem.focus();
     } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
         event.preventDefault();
@@ -297,17 +302,28 @@ function handleItemKey(event, index) {
     if (event.key === 'ArrowUp') {
         if (index < columns) {
             event.preventDefault();
-            let firstKat = document.getElementById("kat-0");
-            if (firstKat) firstKat.focus();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
         }
     }
 }
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
-    localStorage.setItem("lastCategory", g); // Simpan kategori aktif secara manual saat diklik
-    let data = semuaTV;
+    
+    // Simpan Kategori Aktif
+    localStorage.setItem("activeCategory", g);
+    sessionStorage.setItem("activeCategory", g);
 
+    // Reset channel fokus terakhir kalau pindah kategori manual
+    localStorage.removeItem("lastFocusedElemId");
+    localStorage.removeItem("lastChannelID");
+
+    // Update style button
+    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
+    if (element) element.classList.add("active");
+
+    let data = semuaTV;
     if (g != "Semua") {
         data = semuaTV.filter(tv => tv.group == g);
     }
@@ -325,11 +341,16 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    localStorage.setItem("lastFocusedIndex", index);
-    localStorage.setItem("lastCategory", kategoriAktif); // Simpan kategori yang sedang dibuka saat ini
-    
-    if(ghostVideo) ghostVideo.play().catch(e => {});
+function pilihDanPlay(elemId, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    // Simpan Kategori, Element ID, dan Channel URL sekaligus
+    localStorage.setItem("activeCategory", kategoriAktif);
+    sessionStorage.setItem("activeCategory", kategoriAktif);
+
+    localStorage.setItem("lastFocusedElemId", elemId);
+    sessionStorage.setItem("lastFocusedElemId", elemId);
+
+    localStorage.setItem("lastChannelID", url);
+    sessionStorage.setItem("lastChannelID", url);
 
     playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
 }
@@ -426,26 +447,13 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     }
 }
 
-// ANTI-SLEEP STB
-setInterval(() => {
-    window.scrollBy(0, 1);
-    window.scrollBy(0, -1);
+// Jalankan saat WebView pertama kali / reload dipicu oleh STB
+muatDataPlaylist();
 
-    const dummyClick = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
-    document.body.dispatchEvent(dummyClick);
-    
-    if (ghostVideo && ghostVideo.paused) {
-        ghostVideo.play().catch(e => {});
-    }
-}, 60000);
-
-window.addEventListener('load', () => {
-    if (ghostVideo) {
-        ghostVideo.play().catch(e => {});
+// Handler opsional jika STB mendukung pemulihan background
+window.addEventListener("pageshow", function () {
+    if (semuaTV.length > 0) {
+        pulihkanFokusSTB();
     }
 });
 </script>
