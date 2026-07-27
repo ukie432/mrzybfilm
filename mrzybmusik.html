@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id" style="--accent-color:#ff4b66;">
+<head> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="UTF-8"> 
+  <title>Music Player STB & Mobile</title> 
+  <script>
+    console.log = function(){};
+    console.error = function(){};
+  </script> 
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> 
+  <link href="https://fonts.googleapis.com/css?family=Changa+One|Roboto&display=swap" rel="stylesheet"> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+    :root { --accent-color: #ff4b66; --bottom-bg-color: #20343f; }
+    body, html { width: 100%; height: 100%; font-family: "Roboto", sans-serif; user-select: none; background: #121212; overflow: hidden; color: #fff; }
+    
+    .main-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    
+    /* Indicator Loading */
+    #loading { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; font-family: "Changa One", cursive; font-size: 2em; color: #ffffff; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    
+    /* STB Remote Focus Highlight - Efek Sorot Tombol Remote */
+    .focusable { transition: transform 0.2s, box-shadow 0.2s, border 0.2s; border: 2px solid transparent; }
+    .focusable:focus { border: 3px solid #ffffff !important; transform: scale(1.05); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 10; outline: none; }
+
+    /* Left Pannel */
+    .left-pannel { width: 4rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 1rem 0; }
+    .left-pannel__menu { font-size: 2em; cursor: pointer; }
+    .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 1rem 0; cursor: pointer; font-size: 0.9em; letter-spacing: 1px; }
+    .left-pannel__category.active { color: var(--accent-color); font-weight: bold; }
+
+    /* Layout Top Cards */
+    .top { background: var(--accent-color); height: 50vh; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; transition: all 0.5s; }
+    .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 1.5rem 0 1rem 5rem; height: 100%; align-items: center; }
+    .cards-holder::-webkit-scrollbar { display: none; }
+    .card { background: #000; width: 22vh; height: 32vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
+    .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.75); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+    .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
+    .card__song-info__singer { font-size: 0.7em; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Layout Bottom List */
+    .list-view { overflow-y: auto; height: calc(50vh - 12vh); padding-left: 5rem; }
+    .list-view::-webkit-scrollbar { display: none; }
+    .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .song-list__info { display: flex; align-items: center; }
+    .song-list img { height: 2.8rem; width: 2.8rem; border-radius: 8px; margin-right: 1rem; object-fit: cover; }
+    .song-list__singer { font-size: 0.8em; color: grey; }
+
+    /* Player Controls Bar */
+    .bottom-pannel { background: var(--bottom-bg-color); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; }
+    .bottom__warpper { display: flex; align-items: center; width: 40%; }
+    .bottom__song-info { margin-left: 0.5rem; overflow: hidden; }
+    #bottomSongName { font-weight: bold; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #bottomSingerName { font-size: 0.75em; color: #aaa; }
+    .bottom__progress-warpper { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
+    #progressTimeDuration { font-size: 0.75em; margin-bottom: 4px; color: #ccc; }
+    #bottomProgress { width: 100%; background: #444; border-radius: 5px; cursor: pointer; position: relative; height: 5px; }
+    #bottomBar, #bufferedBar { position: absolute; height: 100%; border-radius: 5px; }
+    #bottomBar { background: var(--accent-color); width: 0%; }
+    #bufferedBar { background: #777; width: 0%; }
+    .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; }
+
+    /* OPTIMASI KHUSUS TAMPILAN LANDSCAPE (TV / HP MENDATAR) */
+    @media screen and (min-aspect-ratio: 4/3) or (orientation: landscape) {
+      .top { height: 55vh; }
+      .card { width: 26vh; height: 38vh; }
+      .list-view { height: calc(45vh - 12vh); }
+      .left-pannel { width: 4.5rem; }
+      .cards-holder { padding-left: 5.5rem; }
+      .list-view { padding-left: 5.5rem; }
+    }
+  </style>
+</head> 
+<body> 
+  
+  <div id="loading"> 
+    <div>Memuat Lagu...</div> 
+  </div> 
+  
+  <div class="main-container"> 
+    <div class="left-pannel"> 
+      <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="alert('Menu Terbuka')">menu</i> 
+      <div>
+        <div class="left-pannel__category active focusable" tabindex="0" id="catEnglish" onclick="switchCategory(false)">English</div> 
+        <div class="left-pannel__category focusable" tabindex="0" id="catHindi" onclick="switchCategory(true)">Hindi</div> 
+      </div>
+    </div> 
+
+    <div class="top"> 
+      <div class="cards-holder" id="cardsHolder"></div> 
+    </div> 
+
+    <div class="list-view" id="listView"></div> 
+
+    <div class="bottom-pannel"> 
+      <div class="bottom__warpper"> 
+        <div class="bottom__song-info"> 
+          <div id="bottomSongName">Pilih Lagu</div> 
+          <div id="bottomSingerName">-</div> 
+        </div> 
+      </div> 
+
+      <div class="bottom__progress-warpper"> 
+        <div id="progressTimeDuration">00:00 / 00:00</div> 
+        <div id="bottomProgress"> 
+          <div id="bufferedBar"></div> 
+          <div id="bottomBar"></div> 
+        </div> 
+      </div> 
+
+      <i class="material-icons bottom__play-button focusable" tabindex="0" id="playBtn" onclick="playPause()">play_arrow</i> 
+    </div> 
+  </div> 
+
+  <audio id="media-player" preload="metadata"> 
+    <source id="audio-source" src="" type="audio/mpeg"> 
+  </audio> 
+
+  <script>
+    var mediaPlayer, audioSource;
+    var isPlaying = false;
+    var songs = [], english = [], hindi = [];
+    var currentIndex = 0;
+    var isHindiCat = false;
+
+    // Memuat Data dari JSON
+    function loadMusicJSON() {
+      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.json')
+        .then(res => res.json())
+        .then(data => {
+          english = data.english || [];
+          hindi = data.hindi || [];
+          
+          switchCategory(false);
+          document.getElementById("loading").style.display = "none";
+
+          // Set fokus awal ke elemen pertama untuk Remote STB
+          setTimeout(() => {
+            const firstFocus = document.querySelector('.focusable');
+            if(firstFocus) firstFocus.focus();
+          }, 500);
+        })
+        .catch(err => {
+          document.getElementById("loading").innerHTML = "Gagal memuat file songs.json!";
+        });
+    }
+
+    function switchCategory(isHindi) {
+      isHindiCat = isHindi;
+      songs = isHindi ? hindi : english;
+      
+      document.getElementById("catEnglish").classList.toggle("active", !isHindi);
+      document.getElementById("catHindi").classList.toggle("active", isHindi);
+
+      renderElements();
+    }
+
+    function renderElements() {
+      let cardsHtml = "";
+      let listHtml = "";
+
+      songs.forEach((song, i) => {
+        // Tabindex="0" diberikan agar bisa di-navigasi remote STB
+        cardsHtml += `
+          <div class="card focusable" tabindex="0" onclick="playSong(${i})" onkeydown="handleItemKey(event, ${i})">
+            <img src="${song.albumArt}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;" />
+            <div class="card__song-info">
+              <div class="card__song-info__name">${song.name}</div>
+              <div class="card__song-info__singer">${song.singer}</div>
+            </div>
+          </div>`;
+
+        listHtml += `
+          <div class="song-list focusable" tabindex="0" onclick="playSong(${i})" onkeydown="handleItemKey(event, ${i})">
+            <div class="song-list__info">
+              <img src="${song.albumArt}">
+              <div>
+                <div><b>${song.name}</b></div>
+                <div class="song-list__singer">${song.singer}</div>
+              </div>
+            </div>
+            <div>${song.duration}</div>
+          </div>`;
+      });
+
+      document.getElementById("cardsHolder").innerHTML = cardsHtml;
+      document.getElementById("listView").innerHTML = listHtml;
+    }
+
+    function playSong(index) {
+      currentIndex = index;
+      const song = songs[currentIndex];
+      
+      audioSource.src = song.url;
+      document.getElementById("bottomSongName").innerText = song.name;
+      document.getElementById("bottomSingerName").innerText = song.singer;
+
+      mediaPlayer.load();
+      mediaPlayer.play();
+      isPlaying = true;
+      document.getElementById("playBtn").innerText = "pause";
+    }
+
+    function playPause() {
+      if(!audioSource.src) return;
+      if (isPlaying) {
+        mediaPlayer.pause();
+        document.getElementById("playBtn").innerText = "play_arrow";
+      } else {
+        mediaPlayer.play();
+        document.getElementById("playBtn").innerText = "pause";
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // Penanganan Tombol D-Pad / Panah Remote TV & STB
+    document.addEventListener("keydown", function(e) {
+      const focusables = Array.from(document.querySelectorAll('.focusable'));
+      let index = focusables.indexOf(document.activeElement);
+
+      if (index === -1) index = 0;
+
+      switch(e.key) {
+        case "ArrowRight":
+          if (index < focusables.length - 1) focusables[index + 1].focus();
+          break;
+        case "ArrowLeft":
+          if (index > 0) focusables[index - 1].focus();
+          break;
+        case "ArrowDown":
+          // Lompat fokus ke bawah jika di list
+          if (index + 3 < focusables.length) focusables[index + 3].focus();
+          break;
+        case "ArrowUp":
+          // Lompat fokus ke atas
+          if (index - 3 >= 0) focusables[index - 3].focus();
+          break;
+        case "Enter":
+        case "OK":
+          document.activeElement.click();
+          break;
+      }
+    });
+
+    function handleItemKey(event, index) {
+      if(event.key === "Enter" || event.key === "OK") {
+        playSong(index);
+      }
+    }
+
+    window.onload = function() {
+      mediaPlayer = document.getElementById("media-player");
+      audioSource = document.getElementById("audio-source");
+
+      loadMusicJSON();
+
+      // Update progress bar
+      mediaPlayer.addEventListener("timeupdate", function() {
+        if (mediaPlayer.duration) {
+          let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
+          document.getElementById("bottomBar").style.width = pct + "%";
+          
+          let curMin = Math.floor(mediaPlayer.currentTime / 60);
+          let curSec = Math.floor(mediaPlayer.currentTime % 60);
+          let durMin = Math.floor(mediaPlayer.duration / 60);
+          let durSec = Math.floor(mediaPlayer.duration % 60);
+
+          document.getElementById("progressTimeDuration").innerText = 
+            `${curMin}:${curSec < 10 ? '0':''}${curSec} / ${durMin}:${durSec < 10 ? '0':''}${durSec}`;
+        }
+      });
+    };
+  </script>
+</body>
+</html>
