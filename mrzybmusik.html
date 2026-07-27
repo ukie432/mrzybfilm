@@ -18,40 +18,52 @@
     
     .main-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     
-    /* Indicator Loading */
-    #loading { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; font-family: "Changa One", cursive; font-size: 2em; color: #ffffff; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    /* Loading Overlay */
+    #loading { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; font-family: "Changa One", cursive; font-size: 1.8em; color: #ffffff; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     
-    /* STB Remote Focus Highlight - Efek Sorot Tombol Remote */
+    /* STB Remote Focus Highlight */
     .focusable { transition: transform 0.2s, box-shadow 0.2s, border 0.2s; border: 2px solid transparent; }
-    .focusable:focus { border: 3px solid #ffffff !important; transform: scale(1.05); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 10; outline: none; }
+    .focusable:focus { border: 2px solid #ffffff !important; transform: scale(1.04); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 10; outline: none; }
 
     /* Left Pannel */
-    .left-pannel { width: 4rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 1rem 0; }
-    .left-pannel__menu { font-size: 2em; cursor: pointer; }
+    .left-pannel { width: 4.5rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 1rem 0; }
+    .left-pannel__menu { font-size: 2em; cursor: pointer; border-radius: 50%; padding: 5px; }
     .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 1rem 0; cursor: pointer; font-size: 0.9em; letter-spacing: 1px; }
     .left-pannel__category.active { color: var(--accent-color); font-weight: bold; }
 
-    /* Layout Top Cards */
+    /* Menu Navigation Modal (Samping) */
+    .nav-container { position: absolute; background: rgba(0, 0, 0, 0.6); height: 100%; width: 100%; left: 0; top: 0; z-index: 20; display: none; }
+    .nav { position: relative; background: #1e1e1e; height: 100%; width: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .nav-top { background: var(--accent-color); height: 30vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #ffffff; }
+    .nav-bottom { padding: 1.5rem; text-align: left; }
+    .themes { display: none; flex-wrap: wrap; gap: 10px; margin-top: 1rem; }
+    .theme { height: 3.5rem; width: 3.5rem; border-radius: 50%; cursor: pointer; }
+    .theme1 { background: #ff4b66; } .theme2 { background: #62ff6e; }
+    .theme3 { background: #ffb762; } .theme4 { background: #3444ff; }
+    .theme5 { background: #16e0aa; } .theme6 { background: #8f1fff; }
+
+    /* Top Cards Container */
     .top { background: var(--accent-color); height: 50vh; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; transition: all 0.5s; }
-    .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 1.5rem 0 1rem 5rem; height: 100%; align-items: center; }
+    .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 1.5rem 0 1rem 5.5rem; height: 100%; align-items: center; }
     .cards-holder::-webkit-scrollbar { display: none; }
     .card { background: #000; width: 22vh; height: 32vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
-    .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.75); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+    .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.8); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
     .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
     .card__song-info__singer { font-size: 0.7em; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* Layout Bottom List */
-    .list-view { overflow-y: auto; height: calc(50vh - 12vh); padding-left: 5rem; }
+    /* Bottom List Container */
+    .list-view { overflow-y: auto; height: calc(50vh - 12vh); padding-left: 5.5rem; padding-right: 1rem; }
     .list-view::-webkit-scrollbar { display: none; }
-    .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); border-radius: 8px; }
     .song-list__info { display: flex; align-items: center; }
     .song-list img { height: 2.8rem; width: 2.8rem; border-radius: 8px; margin-right: 1rem; object-fit: cover; }
     .song-list__singer { font-size: 0.8em; color: grey; }
 
-    /* Player Controls Bar */
+    /* Player Controls Bar Bawah */
     .bottom-pannel { background: var(--bottom-bg-color); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; }
     .bottom__warpper { display: flex; align-items: center; width: 40%; }
-    .bottom__song-info { margin-left: 0.5rem; overflow: hidden; }
+    .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; }
+    .bottom__song-info { overflow: hidden; }
     #bottomSongName { font-weight: bold; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #bottomSingerName { font-size: 0.75em; color: #aaa; }
     .bottom__progress-warpper { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
@@ -60,42 +72,80 @@
     #bottomBar, #bufferedBar { position: absolute; height: 100%; border-radius: 5px; }
     #bottomBar { background: var(--accent-color); width: 0%; }
     #bufferedBar { background: #777; width: 0%; }
-    .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; }
+    .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; border-radius: 50%; }
 
-    /* OPTIMASI KHUSUS TAMPILAN LANDSCAPE (TV / HP MENDATAR) */
+    /* Drawer Modal Player Melayang dari Bawah */
+    .bottom-drawer { background: rgba(0, 0, 0, 0.75); height: 100%; position: absolute; bottom: 0; width: 100%; z-index: 15; display: none; }
+    .drawer-holder { position: absolute; bottom: 0; width: 100%; background: var(--bottom-bg-color); border-top-left-radius: 2rem; border-top-right-radius: 2rem; height: 12vh; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; padding: 1rem; }
+    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2em; cursor: pointer; }
+    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 1rem; }
+    .song-album-art-holder { width: 26vh; height: 26vh; border-radius: 50%; position: relative; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+    #songAlbumArt { width: 100%; height: 100%; background-size: cover; background-position: center; }
+    .darwer__column2 { text-align: center; margin: 0.5rem 0; }
+    #drawerSongName { font-weight: bold; font-size: 1.1em; }
+    #drawerSingerName { color: #b5b5b5; font-size: 0.9em; }
+    .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 10px; width: 80%; margin: 0 auto; }
+    #dawerProgress { position: relative; cursor: pointer; height: 5px; flex-grow: 1; background: #555; border-radius: 5px; }
+    #drawerBar { height: 100%; background: var(--accent-color); border-radius: 5px; width: 0; }
+    .column { display: none; }
+
+    /* Responsif Landscape STB / TV / HP Mendatar */
     @media screen and (min-aspect-ratio: 4/3) or (orientation: landscape) {
       .top { height: 55vh; }
-      .card { width: 26vh; height: 38vh; }
+      .card { width: 25vh; height: 38vh; }
       .list-view { height: calc(45vh - 12vh); }
-      .left-pannel { width: 4.5rem; }
-      .cards-holder { padding-left: 5.5rem; }
-      .list-view { padding-left: 5.5rem; }
+      .song-album-art-holder { width: 22vh; height: 22vh; }
     }
   </style>
 </head> 
 <body> 
   
   <div id="loading"> 
-    <div>Memuat Lagu...</div> 
+    <div>Memuat Musik...</div> 
   </div> 
   
   <div class="main-container"> 
+    <!-- Menu Samping Kiri -->
     <div class="left-pannel"> 
-      <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="alert('Menu Terbuka')">menu</i> 
+      <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="navHandler()">menu</i> 
       <div>
         <div class="left-pannel__category active focusable" tabindex="0" id="catEnglish" onclick="switchCategory(false)">English</div> 
         <div class="left-pannel__category focusable" tabindex="0" id="catHindi" onclick="switchCategory(true)">Hindi</div> 
       </div>
     </div> 
 
+    <!-- Menu Slide Navigasi -->
+    <div class="nav-container" onclick="navHandler();"> 
+      <div class="nav" onclick="event.stopPropagation();"> 
+        <div class="nav-top"> 
+          <h3>Pemutar Musik</h3> 
+          <p>Pilih Tema Warna</p> 
+        </div> 
+        <div class="nav-bottom"> 
+          <div class="themes"> 
+            <div class="theme theme1 focusable" tabindex="0" onclick="changeTheme('#ff4b66');"></div> 
+            <div class="theme theme2 focusable" tabindex="0" onclick="changeTheme('#62ff6e');"></div> 
+            <div class="theme theme3 focusable" tabindex="0" onclick="changeTheme('#ffb762');"></div> 
+            <div class="theme theme4 focusable" tabindex="0" onclick="changeTheme('#3444ff');"></div> 
+            <div class="theme theme5 focusable" tabindex="0" onclick="changeTheme('#16e0aa');"></div> 
+            <div class="theme theme6 focusable" tabindex="0" onclick="changeTheme('#8f1fff');"></div> 
+          </div> 
+        </div> 
+      </div> 
+    </div> 
+
+    <!-- Bagian Kartu / Top -->
     <div class="top"> 
       <div class="cards-holder" id="cardsHolder"></div> 
     </div> 
 
+    <!-- Bagian Daftar Lagu / Bottom -->
     <div class="list-view" id="listView"></div> 
 
+    <!-- Control Bar Bawah -->
     <div class="bottom-pannel"> 
       <div class="bottom__warpper"> 
+        <i class="material-icons bottom__up-arrow focusable" tabindex="0" onclick="drawerHandler();">keyboard_arrow_up</i> 
         <div class="bottom__song-info"> 
           <div id="bottomSongName">Pilih Lagu</div> 
           <div id="bottomSingerName">-</div> 
@@ -112,6 +162,38 @@
 
       <i class="material-icons bottom__play-button focusable" tabindex="0" id="playBtn" onclick="playPause()">play_arrow</i> 
     </div> 
+
+    <!-- Player Melayang / Drawer Full Display -->
+    <div class="bottom-drawer"> 
+      <div class="drawer-holder"> 
+        <i class="material-icons drawer-close-btn focusable" tabindex="0" onclick="drawerHandler();">keyboard_arrow_down</i> 
+        
+        <div class="darwer__column1 column"> 
+          <div class="song-album-art-holder"> 
+            <div id="songAlbumArt"></div> 
+          </div> 
+        </div> 
+        
+        <div class="darwer__column2 column"> 
+          <div id="drawerSongName">Judul Lagu</div> 
+          <div id="drawerSingerName">Penyanyi</div> 
+        </div> 
+
+        <div class="darwer__column3 column"> 
+          <div id="drawerCurrentTime">00:00</div> 
+          <div id="dawerProgress"> 
+            <div id="drawerBar"></div> 
+          </div> 
+          <div id="drawerSongDuration">00:00</div> 
+        </div> 
+
+        <div class="darwer__column1 column"> 
+          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
+          <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
+          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
+        </div> 
+      </div> 
+    </div> 
   </div> 
 
   <audio id="media-player" preload="metadata"> 
@@ -124,11 +206,16 @@
     var songs = [], english = [], hindi = [];
     var currentIndex = 0;
     var isHindiCat = false;
+    var isNavOpen = false;
+    var isDrawerOpen = false;
 
-    // Memuat Data dari JSON
+    // Memuat Data Lagu dari songs.json
     function loadMusicJSON() {
       fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/musikku')
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error("File JSON tidak ditemukan");
+          return res.json();
+        })
         .then(data => {
           english = data.english || [];
           hindi = data.hindi || [];
@@ -136,14 +223,14 @@
           switchCategory(false);
           document.getElementById("loading").style.display = "none";
 
-          // Set fokus awal ke elemen pertama untuk Remote STB
           setTimeout(() => {
             const firstFocus = document.querySelector('.focusable');
             if(firstFocus) firstFocus.focus();
           }, 500);
         })
         .catch(err => {
-          document.getElementById("loading").innerHTML = "Gagal memuat file songs.json!";
+          console.error(err);
+          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat songs.json!<br>Gunakan Local Server (Live Server).</p>";
         });
     }
 
@@ -162,9 +249,8 @@
       let listHtml = "";
 
       songs.forEach((song, i) => {
-        // Tabindex="0" diberikan agar bisa di-navigasi remote STB
         cardsHtml += `
-          <div class="card focusable" tabindex="0" onclick="playSong(${i})" onkeydown="handleItemKey(event, ${i})">
+          <div class="card focusable" tabindex="0" onclick="playSong(${i}); openDrawer();" onkeydown="handleItemKey(event, ${i})">
             <img src="${song.albumArt}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;" />
             <div class="card__song-info">
               <div class="card__song-info__name">${song.name}</div>
@@ -173,7 +259,7 @@
           </div>`;
 
         listHtml += `
-          <div class="song-list focusable" tabindex="0" onclick="playSong(${i})" onkeydown="handleItemKey(event, ${i})">
+          <div class="song-list focusable" tabindex="0" onclick="playSong(${i}); openDrawer();" onkeydown="handleItemKey(event, ${i})">
             <div class="song-list__info">
               <img src="${song.albumArt}">
               <div>
@@ -197,27 +283,97 @@
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
 
+      // Update Tampilan Drawer
+      $("#drawerSongName").text(song.name);
+      $("#drawerSingerName").text(song.singer);
+      $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
+
       mediaPlayer.load();
       mediaPlayer.play();
       isPlaying = true;
       document.getElementById("playBtn").innerText = "pause";
+      $("#drawerPlay").text("pause");
     }
 
     function playPause() {
-      if(!audioSource.src) return;
+      if(!audioSource.src && songs.length > 0) {
+        playSong(0);
+        return;
+      }
       if (isPlaying) {
         mediaPlayer.pause();
         document.getElementById("playBtn").innerText = "play_arrow";
+        $("#drawerPlay").text("play_arrow");
       } else {
         mediaPlayer.play();
         document.getElementById("playBtn").innerText = "pause";
+        $("#drawerPlay").text("pause");
       }
       isPlaying = !isPlaying;
     }
 
-    // Penanganan Tombol D-Pad / Panah Remote TV & STB
+    function nextSong() {
+      let nextIndex = (currentIndex + 1) % songs.length;
+      playSong(nextIndex);
+    }
+
+    function prevSong() {
+      let prevIndex = (currentIndex - 1 + songs.length) % songs.length;
+      playSong(prevIndex);
+    }
+
+    // Fungsi Buka & Tutup Drawer
+    function drawerHandler() {
+      if (isDrawerOpen) {
+        $(".column").hide();
+        $(".drawer-holder").animate({ height: "12vh" }, 400, function () {
+          isDrawerOpen = false;
+          $(".bottom-drawer").hide();
+        });
+      } else {
+        openDrawer();
+      }
+    }
+
+    function openDrawer() {
+      $(".bottom-drawer").show();
+      const song = songs[currentIndex] || { name: "Pilih Lagu", singer: "-", albumArt: "" };
+      $("#drawerSongName").text(song.name);
+      $("#drawerSingerName").text(song.singer);
+      $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
+      
+      $(".drawer-holder").animate({ height: "80vh" }, 400, function () {
+        $(".column").css("display", "flex");
+        isDrawerOpen = true;
+      });
+    }
+
+    // Fungsi Buka & Tutup Menu Samping
+    function navHandler() {
+      if (isNavOpen) {
+        $(".nav p").hide();
+        $(".themes").hide();
+        $(".nav").animate({ width: "0vw" }, 400, function () {
+          $(".nav-container").hide();
+          isNavOpen = false;
+        });
+      } else {
+        $(".nav-container").show();
+        $(".nav").animate({ width: "50vw" }, 400, function () {
+          $(".nav p").show();
+          $(".themes").css("display", "flex");
+          isNavOpen = true;
+        });
+      }
+    }
+
+    function changeTheme(color) {
+      document.documentElement.style.setProperty("--accent-color", color);
+    }
+
+    // Navigasi Remote STB / D-Pad
     document.addEventListener("keydown", function(e) {
-      const focusables = Array.from(document.querySelectorAll('.focusable'));
+      const focusables = Array.from(document.querySelectorAll('.focusable:visible'));
       let index = focusables.indexOf(document.activeElement);
 
       if (index === -1) index = 0;
@@ -230,16 +386,16 @@
           if (index > 0) focusables[index - 1].focus();
           break;
         case "ArrowDown":
-          // Lompat fokus ke bawah jika di list
           if (index + 3 < focusables.length) focusables[index + 3].focus();
+          else if (index < focusables.length - 1) focusables[index + 1].focus();
           break;
         case "ArrowUp":
-          // Lompat fokus ke atas
           if (index - 3 >= 0) focusables[index - 3].focus();
+          else if (index > 0) focusables[index - 1].focus();
           break;
         case "Enter":
         case "OK":
-          document.activeElement.click();
+          if(document.activeElement) document.activeElement.click();
           break;
       }
     });
@@ -247,6 +403,7 @@
     function handleItemKey(event, index) {
       if(event.key === "Enter" || event.key === "OK") {
         playSong(index);
+        openDrawer();
       }
     }
 
@@ -256,19 +413,23 @@
 
       loadMusicJSON();
 
-      // Update progress bar
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
           let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
           document.getElementById("bottomBar").style.width = pct + "%";
+          if(document.getElementById("drawerBar")) document.getElementById("drawerBar").style.width = pct + "%";
           
           let curMin = Math.floor(mediaPlayer.currentTime / 60);
           let curSec = Math.floor(mediaPlayer.currentTime % 60);
           let durMin = Math.floor(mediaPlayer.duration / 60);
           let durSec = Math.floor(mediaPlayer.duration % 60);
 
-          document.getElementById("progressTimeDuration").innerText = 
-            `${curMin}:${curSec < 10 ? '0':''}${curSec} / ${durMin}:${durSec < 10 ? '0':''}${durSec}`;
+          let curStr = `${curMin}:${curSec < 10 ? '0':''}${curSec}`;
+          let durStr = `${durMin}:${durSec < 10 ? '0':''}${durSec}`;
+
+          document.getElementById("progressTimeDuration").innerText = `${curStr} / ${durStr}`;
+          if(document.getElementById("drawerCurrentTime")) document.getElementById("drawerCurrentTime").innerText = curStr;
+          if(document.getElementById("drawerSongDuration")) document.getElementById("drawerSongDuration").innerText = durStr;
         }
       });
     };
