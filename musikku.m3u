@@ -1,25 +1,54 @@
 #EXTM3U
 
-# Kategori English - Album/Artis Linkin Park
-#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi3EYtQJ-eyupNI3D2rWoFjI0ZKK_opAJl1PKYY7uKwA&s=10", Linkin Park - In the End
+=== Kategori English - Album/Artis Linkin Park ===
+
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - In the End
 https://link-stream-audio.com/intheend.mp3
 
-#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi3EYtQJ-eyupNI3D2rWoFjI0ZKK_opAJl1PKYY7uKwA&s=10", Linkin Park - Numb
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - Numb
 https://link-stream-audio.com/numb.mp3
 
-# Kategori English - Album/Artis Westlife
-#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4C_485EonsK_9XDj-8A3ozQIsDe5-gjmsU8FM3Ml2hA&s=10", Westlife - My Love
+=== Kategori English - Album/Artis Westlife ===
+
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Love
 https://link-stream-audio.com/mylove.mp3
 
 
-#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4C_485EonsK_9XDj-8A3ozQIsDe5-gjmsU8FM3Ml2hA&s=10", Westlife - My Heart
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Heart
 https://link-stream-audio.com/mylove.mp3
 
 
-# Kategori Indonesia - Album/Artis Dewa 19
-#EXTINF:-1 group-title="indonesia" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReEkQp_LtTi13hp4UO2jAYbz9xugMDC1JZ6VRTJ_9Hdw&s=10", Dewa 19 - Kangen
-https://link-stream-audio.com/kangen.mp3
+==== Kategori Indonesia - Album/Artis Dewa 19 ===
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Kita Tidak Sedang Bercinta Lagi
+https://archive.org/download/dewa19_album_19/2dewa19_kTsB_lagi.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Kangen
+https://archive.org/download/dewa19_album_19/01dewa19-kangen.mp3
 
 
-#EXTINF:-1 group-title="indonesia" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReEkQp_LtTi13hp4UO2jAYbz9xugMDC1JZ6VRTJ_9Hdw&s=10", Dewa 19 - Pupus
-https://link-stream-audio.com/kangen.mp3
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Bayang Bayang
+https://archive.org/download/dewa19_album_19/3dewa19_bayang-bayang.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Selamat Pagi
+https://archive.org/download/dewa19_album_19/4dewa19_selamat_pagi.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Swear
+https://archive.org/download/dewa19_album_19/5dewa19_swear.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Bayi 19
+https://archive.org/download/dewa19_album_19/6dewa19_bayi_19.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Rein
+https://archive.org/download/dewa19_album_19/7dewa19_rein.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Dewa Dan Si Mata Uang
+https://archive.org/download/dewa19_album_19/8dewa19_dewa_dan_si_mata_uang.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Hanya Mimpi
+https://archive.org/download/dewa19_album_19/9dewa19_hanya_mimpi.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Kosong
+https://archive.org/download/dewa-cintailah-cinta-album/02.%20Kosong.mp3
+
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Mistikus Cinta
+https://archive.org/download/dewa-cintailah-cinta-album/03.%20Mistikus%20Cinta.mp3
