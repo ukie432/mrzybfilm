@@ -127,7 +127,7 @@
 
     // Memuat Data dari JSON
     function loadMusicJSON() {
-      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.json')
+      fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/musikku')
         .then(res => res.json())
         .then(data => {
           english = data.english || [];
