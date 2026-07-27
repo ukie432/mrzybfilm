@@ -1,176 +1,25 @@
+#EXTM3U
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Linkin_park.webp" group-title="English", Linkin Park
-https://abdulmoqueet.github.io/music-player/songs/End_Of_Time.mp3
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Adele.webp" group-title="English", Adele
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/adele%20songs%202021%20-%20Best%20Of%20Adele%20Greatest%20Hits%20Full%20Album%202021%20(%20720%20X%201280%20).mp4
+# Kategori English - Album/Artis Linkin Park
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - In the End
+https://link-stream-audio.com/intheend.mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Blink182.webp" group-title="English", Blink 182
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/b.l.i.n.k.-.1.8.2%20Greatest%20Hits,%20Full%20Album%20-%20Rock%20Music%20Playlist%202022%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Greenday.webp" group-title="English", Greenday
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Beest%20Songs%20Of%20G%20R%20E%20E%20N%20D%20A%20Y%F0%9F%8D%80%20G%20R%20E%20E%20N%20D%20A%20Y%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - Numb
+https://link-stream-audio.com/numb.mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Offspring.webp" group-title="English", The Offspring
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20of%20-%20Offspring%20~%20-%20The%20Offspring%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Bonjovi.webp" group-title="English", Bon Jovi
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Bon%20Jovi%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4
+# Kategori English - Album/Artis Westlife
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Love
+https://link-stream-audio.com/mylove.mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Pearljam.webp" group-title="English", Pearl Jam
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Of%20Pearl%20Jam%20-%20Greatest%20Hits%20Full%20Album%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Oasis.webp" group-title="English", Oasis
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Best%20Songs%20of%20Oasis%20-%20Oasis%20Greatest%20Hits%20Full%20Album%20-%20Oasis%20Collection%20New%20(%20720%20X%201280%20).mp4
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Evansense.webp" group-title="English", Evanescence
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/E%20V%20A%20N%20E%20S%20C%20E%20N%20C%20E%20Greatest%20Hits%20Full%20Album%20-%20Best%20Songs%20Of%20E%20V%20A%20N%20E%20S%20C%20E%20N%20C%20E%20Playlist%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Scorpions.webp" group-title="English", Scorpions
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/full%20album%20lagu%20scorpions%20enak%20di%20dengar%20buat%20pengantar%20tidur%20(%20240%20X%20426%20).mp4
+#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Heart
+https://link-stream-audio.com/mylove.mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Gunsroses.webp" group-title="English", Guns And Roses
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/GNR%20Greatest%20Hits%20Full%20Album%20-%20Best%20Songs%20Of%20GNR%20Playlist%202021%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Limpbizkit.webp" group-title="English", Limp Bizkit
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Limp%20Bizkit%20%20Collection%20%202021%20%20-%20%20Best%20Songs%20Of%20Limp%20Bizkit%20Playlist%202021%20(%20720%20X%201280%20).mp4
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Metalica.webp" group-title="English", Metallica
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Metallica%20Greatest%20Hits%20Full%20Album%202023%20-%20Best%20Songs%20Of%20Metallica%20Playlist%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Alan_walker.webp" group-title="English", Alan Walker
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/New%20Songs%20Alan%20Walker%202019%20-%20Top%2020%20Alan%20Walker%20Songs%202019%20(%20720%20X%201280%20).mp4
+# Kategori Indonesia - Album/Artis Dewa 19
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Kangen
+https://link-stream-audio.com/kangen.mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Nirvana.webp" group-title="English", Nirvana
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Nirvana%20Greatest%20Hits%20-%20The%20Best%20Of%20Nirvana%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Roxette.webp" group-title="English", Roxette
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/R%20O%20X%20E%20T%20T%20E%20Greatest%20Hits%20Full%20Album%20-%20Best%20Songs%20Of%20R%20O%20X%20E%20T%20T%20E%20Playlist%202021%20(%20720%20X%201280%20).mp4
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Radiohead.webp" group-title="English", Radiohead
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Radiohead%20Best%20Songs-Radiohead%20Greatest%20Hits-Radiohead%20Playlist%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Redhot.webp" group-title="English", Red Hot Chili Peppers
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Red%20Hot%20Chili%20Peppers%20Top%2030%20Greatest%20Hits%20-%20Red%20Hot%20Chili%20Peppers%20Full%20Album%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Cranberries.webp" group-title="English", The Cranberries
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/The%20Cranberries%20Greatest%20Hits%20Full%20Album%20-%20The%20Cranberries%20Best%20Songs%20(%20240%20X%20426%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Roling_stones.webp" group-title="English", The Rolling Stones
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/The%20Rolling%20Stones%20Greatest%20Hits%20Full%20Album%20-%20Best%20Songs%20of%20The%20Rolling%20Stones%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Coldplay.webp" group-title="English", Coldplay
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20barat/Top%2020%20Coldplay%20Greatest%20Hits%20Playlist%20%F0%9F%92%9B%F0%9F%92%9BBest%20Songs%20Of%20Coldplay%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Andra_and_the_backbone.webp" group-title="indonesia", Andra And The Backbone
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/ANDRA%20&%20THE%20BACKBONE%20FULL%20ALBUM%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Armada.webp" group-title="indonesia", Armada
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Armada%20Full%20Album%20-%20Tanpa%20Iklan%20-%20Armada%20Band%20Full%20Album%202020%20-%20Asal%20Kau%20Bahagia%20-%20Awas%20Jatuh%20Cinta%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Basejam.webp" group-title="indonesia", Base Jam
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Base%20Jam%20-%20Album%20Best%20Of%201993%20-2002%20_%20Audio%20HQ%20(%20720%20X%201280%2060fps%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Bondan.webp" group-title="indonesia", Bondan Prakoso 
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Bondan%20Prakoso%20&%20Fade%202%20Black%20Full%20Album%20-%20Kumpulan%20Lagu%20Bondan%20Penyemangat%20Kerja%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Dmasiv.webp" group-title="indonesia", D masiv
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/D'Masiv%20_Full%20Album_%20-%20Kumpulan%20Lagu%20D'Masiv%20Terbaik%20&%20Terpopuler%20Hingga%20Saat%20Ini%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Dewa_19.webp" group-title="indonesia", Dewa 19
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Dewa%2019%20-%20Best%20of%20Dewa%2019%20(%20360%20X%20640%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Pilot.webp" group-title="indonesia", Pilot
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Full%20album%20PILOT%20!!%20lagu%20pilot%20band%20terbaik%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Kotak.webp" group-title="indonesia", Kotak
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/KOTAK%20FULL%20ALBUM%202022%20-%20TANPA%20IKLAN%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Iwan_fals.webp" group-title="indonesia", Iwan Fals
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Kumpulan%20Lagu%20Terbaik%20Iwan%20Fals%20~%20Iwan%20Fals%20Album%20Terpopuler%202023%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Kangenband.webp" group-title="indonesia", Kangen Band
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/LAGU%20%20KANGEN%20BAND%20FULL%20ALBUM%20POPULAR%20DAN%20HITS%20TAHUN%202000AN%20(%20720%20X%201280%2060fps%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Padi.webp" group-title="indonesia", Padi
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Lagu%20PADI%20Full%20Album%20Terpopuler%20dan%20Terbaik%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Tipex.webp" group-title="indonesia", Tipe-X
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Lagu%20TIPE-X%20Full%20Album%20II%20TANPA%20IKLAN%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Melly.webp" group-title="indonesia", Melly Goeslaw
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/MELLY%20GOESLAW%20_%20FULL%20ALBUM%20KOMPILASI%20SOUNDTRACK%20TERPOPULER%20(%20480%20X%20854%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Panbers.webp" group-title="indonesia", Panbers
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/PANBERS%20FULL%20ALBUM%20TERBAIK%20-%20Tembang%20Kenangan%20_%20%20Lagu%20Lawas%20Nostalgia%2080an%20-%2090an%20Terpopuler%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Peterpan.webp" group-title="indonesia", Peterpan
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/PETERPAN%20FULL%20ALBUM%20%20%20tanpa%20iklan%20%20club%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Samson.webp" group-title="indonesia", Samson
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/SAMSONS%20FULL%20ALBUM%20TANPA%20IKLAN.%20LAGU%20TERBAIK%20TERPOPULER.%20ENAK%20DIDENGAR%20SAAT%20SANTAI%20SAAT%20KERJA%20(%20480%20X%20854%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Shila_on_seven.webp" group-title="indonesia", Sheila On Seven
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Sheila%20On7%20%20%20Full%20album%2030%20lagu%20Terbaik%20TANPA%20IKLAN%202021%20(%20240%20X%20426%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/St12.webp" group-title="indonesia", St12
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/ST12%20FULL%20ALBUM%20(%20720%20X%201056%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Ungu.webp" group-title="indonesia", Ungu
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Ungu%20full%20album%20(%20720%20X%201080%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Vegatoz.webp" group-title="Dangdut", Vegatoz
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20indonesia/Vagetoz%20Full%20Album%20Terbaik%202000an%20Dan%20Sekarang%20Jadi%20Satu%20-%20akhirnyakitaberpisah%20-%20saatkaupergi%20-%20jauh%20(%20240%20X%20426%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Alam.webp" group-title="Dangdut", Alam
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Alam%20Full%20Album%20_%20Bah%20Dukun%20,%20Sabu%20-%20sabu%20_%20Lagu%20Dangdut%20Lawas%20Nostalgia%20Terbaik%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Caca_handika.webp" group-title="Dangdut", Caca Handika
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/CACA%20HANDIKA%20-%20BEST%20CACA%20HANDIKA%20%20(%20Official%20Musik%20)%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Dangdut_koplo.webp" group-title="Dangdut", Dangdut Koplo
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/DANGDUT%20KOPLO%20FULL%20ALBUM%20TERBARU%202022%20__%20PECAH%20SERIBU-MELEPAS%20LAJANG-MENCINTAI%20DENGAN%20NGEYEL%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Evie_tamala.webp" group-title="Dangdut", Evie Tamala
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Dangdut%20Lawas%20%F0%9F%8C%B9%20Evie%20Tamala%20Full%20Album%20%F0%9F%8C%B9%20Lagu%20Dangdut%20Lawas%20Terpopuler%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Iis_dahlia.webp" group-title="Dangdut", Iis Dahlia
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/IIS%20DAHLIA%20FULL%20ALBUM%20-%20Tembang%20Dangdut%20_%20Lagu%20Dangdut%20Lawas%20Nostalgia%20Terbaik%20Sepanjang%20Masa%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Kristina.webp" group-title="Dangdut", Kristina
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/KRISTINA%20FULL%20ALBUM%20_%20HARAPAN%20DAN%20DUKA%20-%20CINTA%20SAMPAI%20DISINI%20-%20KAU%20KEKIRI%20AKU%20KEKANAN%20-%20RINDU%20BERAT%20(%20360%20X%20640%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Elvy.webp" group-title="Dangdut", Elvy Sukaesih
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Kumpulan%20Lagu%20Dangdut%20Pilihan%20Elvy%20Sukaesih%20Terbaik%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Asep_irama.webp" group-title="Dangdut", Asep Irama
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Lagu%20terbaik%20%20__%20%20Penyanyi%20-%20Asep%20Irama%20all%20album%20%20__%20%20lagu%20terbaru%2080an-%2090an%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Mansyur.webp" group-title="Dangdut", Mansyur S
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Mansyur%20S%20-%20Full%20Album%20Pilihan%20Lagu-lagu%20Terbaik%20dari%20Mansyur%20S%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Rhoma_irama.webp" group-title="indonesia", Rhoma Irama
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Rhoma%20Irama%20-%2041%20Lagu%20Terbaik%20FULL%20ALBUM%20_%20Lagu%20Dangdut%20Hits%20Terbaik%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Rita_sugiarto.webp" group-title="Dangdut", Rita Sugiarto
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Rita%20Sugiarto%20_%20Full%20Album%20Dangdut%20Lawas%20Nostalgia%20(%20720%20X%201280%20).mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Meggiez.webp" group-title="Dangdut", Meggie Z
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20dangdut/Terbaik%20Dari%20Meggi%20Z%20-%20Lagu%20Paling%20Enak%20Dinyanyikan%20Saat%20Karaoke%20(Full%20Album)%20HQ%20Audio!!%20(%20720%20X%201280%20).mp4
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Exist.webp" group-title="Malaysia", Exist
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/Exist%20%20%20Full%20Album%20%20%20Lagu%20Lawas%20Nostalgia%20%20%20Lagu%20Malaysia%20Lama%20Populer%20ukielaki.webm
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Saleem.webp" group-title="Malaysia", Saleem
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/Full%20Album%20Saleem%20Iklim%20Malaysia%20-%20Lagu%20Rock%20Malaysia%20Lama%20ukielaki.webm
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Uks.webp" group-title="Malaysia", Uk's
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/Lagu%20Uks%20Leganda.mp4
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Stingmalay.webp" group-title="Malaysia", Stings
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/S%20T%20I%20N%20G%20S%20Full%20Album%20_%20Lagu%20Slow%20Rock%20Malaysia%20Terpopuler%20ukielaki.webm
-
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Search.webp" group-title="Malaysia", Search
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/Search%20-%20Terunggul%20-%20(2004%20)ukielaki.%20Full%20Album.webm
- 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_indonesia/Slam.webp" group-title="Malaysia", Slam
-https://mutia1503.ukielaki88.workers.dev/0:/Album%20musik%20melayu/SLAM%20FULL%20ALBUM(HQ)-Kumpulan%20Lagu%20terbaik%20Slam_Top%20Lagu%20Pilihan%20Slam%20ukielaki.webm
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Pupus
+https://link-stream-audio.com/kangen.mp3
