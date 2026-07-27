@@ -1,25 +1,25 @@
 #EXTM3U
 
 # Kategori English - Album/Artis Linkin Park
-#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - In the End
+#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi3EYtQJ-eyupNI3D2rWoFjI0ZKK_opAJl1PKYY7uKwA&s=10", Linkin Park - In the End
 https://link-stream-audio.com/intheend.mp3
 
-#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/linkin-park.jpg", Linkin Park - Numb
+#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi3EYtQJ-eyupNI3D2rWoFjI0ZKK_opAJl1PKYY7uKwA&s=10", Linkin Park - Numb
 https://link-stream-audio.com/numb.mp3
 
 # Kategori English - Album/Artis Westlife
-#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Love
+#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4C_485EonsK_9XDj-8A3ozQIsDe5-gjmsU8FM3Ml2hA&s=10", Westlife - My Love
 https://link-stream-audio.com/mylove.mp3
 
 
-#EXTINF:-1 group-title="english" tvg-logo="https://link-gambar.com/westlife.jpg", Westlife - My Heart
+#EXTINF:-1 group-title="english" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4C_485EonsK_9XDj-8A3ozQIsDe5-gjmsU8FM3Ml2hA&s=10", Westlife - My Heart
 https://link-stream-audio.com/mylove.mp3
 
 
 # Kategori Indonesia - Album/Artis Dewa 19
-#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Kangen
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReEkQp_LtTi13hp4UO2jAYbz9xugMDC1JZ6VRTJ_9Hdw&s=10", Dewa 19 - Kangen
 https://link-stream-audio.com/kangen.mp3
 
 
-#EXTINF:-1 group-title="indonesia" tvg-logo="https://link-gambar.com/dewa19.jpg", Dewa 19 - Pupus
+#EXTINF:-1 group-title="indonesia" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReEkQp_LtTi13hp4UO2jAYbz9xugMDC1JZ6VRTJ_9Hdw&s=10", Dewa 19 - Pupus
 https://link-stream-audio.com/kangen.mp3
