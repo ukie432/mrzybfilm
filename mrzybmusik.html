@@ -263,10 +263,11 @@
       </div> 
     </div> 
   </div> 
-
-<audio id="media-player" preload="auto"> 
+  
+<audio id="media-player" crossorigin="anonymous" preload="auto"> 
   <source id="audio-source" src="" type="audio/mpeg"> 
 </audio>
+
 
 
   <script>
@@ -433,8 +434,19 @@
     }
 
     function initVisualizer() {
-  return;
+  if (isVisualizerInit) return;
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+    analyser = audioCtx.createAnalyser();
+    audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
+    audioSourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 64; 
+    isVisualizerInit = true;
+  } catch (e) {}
 }
+
 
 
     function renderVisualizer() {
