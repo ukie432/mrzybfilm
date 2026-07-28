@@ -21,7 +21,7 @@
       font-family: "Roboto", sans-serif; 
       user-select: none; 
       background: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), 
-                  url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop') no-repeat center center fixed;
+                  url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
       background-size: cover;
       overflow: hidden; 
       color: #fff; 
@@ -29,11 +29,14 @@
     
     .main-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     
+    /* Loading Overlay */
     #loading { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; font-family: "Changa One", cursive; font-size: 1.8em; color: #ffffff; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     
+    /* STB Remote Focus Highlight */
     .focusable { transition: transform 0.2s, box-shadow 0.2s, border 0.2s; border: 2px solid transparent; }
     .focusable:focus { border: 2px solid #ffffff !important; transform: scale(1.03); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 99; outline: none; }
 
+    /* Left Panel */
     .left-pannel { width: 5rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 0.8rem 0; }
     .left-pannel__menu { font-size: 2em; cursor: pointer; border-radius: 50%; padding: 5px; }
     
@@ -43,6 +46,7 @@
     .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 0.6rem 0.2rem; cursor: pointer; font-size: 0.8em; letter-spacing: 1px; border-radius: 4px; text-align: center; }
     .left-pannel__category.active { color: var(--accent-color); font-weight: bold; border-right: 2px solid var(--accent-color); }
 
+    /* Menu Navigation Modal (Samping) */
     .nav-container { position: absolute; background: rgba(0, 0, 0, 0.7); height: 100%; width: 100%; left: 0; top: 0; z-index: 20; display: none; }
     .nav { position: relative; background: #1e1e1e; height: 100%; width: 0; overflow: hidden; display: flex; flex-direction: column; }
     .nav-top { background: var(--accent-color); height: 30vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #ffffff; }
@@ -53,6 +57,7 @@
     .theme3 { background: #ffb762; } .theme4 { background: #3444ff; }
     .theme5 { background: #16e0aa; } .theme6 { background: #8f1fff; }
 
+    /* TOP CONTAINER ALBUM */
     .top { 
       background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75)), 
                   url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
@@ -66,21 +71,25 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
     }
     
+    /* Search Bar Styling */
     .search-container { padding: 0.8rem 1rem 0.2rem 6rem; display: flex; align-items: center; }
     .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border-radius: 25px; padding: 0.4rem 1rem; width: 100%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2); }
     .search-box i { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-right: 0.5rem; }
     .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
     .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
+    /* Cards Holder (Hanya untuk Poster Album) */
     .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 0.8rem 0 1rem 6rem; height: 100%; align-items: center; }
     .cards-holder::-webkit-scrollbar { display: none; }
     .card { background: #000; width: 20vh; height: 30vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
     
+    /* Highlight Poster Album yang Sedang Aktif Selected */
     .card.active-album { border: 2.5px solid var(--accent-color) !important; box-shadow: 0 0 18px var(--accent-color); transform: scale(1.02); }
     .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.85); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
     .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
     .card__song-info__singer { font-size: 0.7em; color: var(--accent-color); font-weight: bold; margin-top: 2px; }
 
+    /* Bottom List Container (Judul-Judul Lagu) */
     .list-view { overflow-y: auto; height: calc(48vh - 12vh); padding-left: 6rem; padding-right: 1rem; margin-top: 0.5rem; }
     .list-view::-webkit-scrollbar { display: none; }
     .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.25); border-radius: 8px; margin-bottom: 6px; backdrop-filter: blur(3px); }
@@ -88,9 +97,10 @@
     .song-list img { height: 2.8rem; width: 2.8rem; border-radius: 8px; margin-right: 1rem; object-fit: cover; }
     .song-list__singer { font-size: 0.8em; color: #aaa; }
 
+    /* Control Bar Bawah */
     .bottom-pannel { background: rgba(15, 23, 30, 0.95); backdrop-filter: blur(10px); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; border-top: 1px solid rgba(255,255,255,0.1); }
     .bottom__warpper { display: flex; align-items: center; width: 35%; }
-    .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; border-radius: 50%; }
+    .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; }
     .bottom__song-info { overflow: hidden; }
     #bottomSongName { font-weight: bold; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #bottomSingerName { font-size: 0.75em; color: #aaa; }
@@ -103,12 +113,13 @@
     
     .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; border-radius: 50%; }
 
+    /* DRAWER MODAL PLAYER */
     .bottom-drawer { background: rgba(0, 0, 0, 0.85); height: 100%; position: absolute; bottom: 0; width: 100%; z-index: 30; display: none; }
     .drawer-holder { 
       position: absolute; 
       bottom: 0; 
       width: 100%; 
-      background: linear-gradient(rgba(10, 15, 20, 0.92), rgba(10, 15, 20, 0.98)), 
+      background: linear-gradient(rgba(10, 15, 20, 0.88), rgba(10, 15, 20, 0.95)), 
                   url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
       background-size: cover;
       border-top-left-radius: 2rem; 
@@ -117,35 +128,29 @@
       overflow: hidden; 
       display: flex; 
       flex-direction: column; 
-      justify-content: space-evenly; 
-      align-items: center;
-      padding: 1.5rem 1rem 1rem 1rem; 
+      justify-content: space-around; 
+      padding: 1rem; 
       box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
     }
-    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2.2em; cursor: pointer; z-index: 35; border-radius: 50%; }
-    
-    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; }
+    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2em; cursor: pointer; z-index: 35; }
+    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 0.5rem; }
     .song-album-art-holder { width: 22vh; height: 22vh; border-radius: 50%; position: relative; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     #songAlbumArt { width: 100%; height: 100%; background-size: cover; background-position: center; }
     
-    .visualizer-container { width: 70%; height: 50px; display: flex; justify-content: center; align-items: center; }
+    .visualizer-container { width: 80%; height: 60px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
     #visualizerCanvas { width: 100%; height: 100%; }
 
-    .darwer__column2 { text-align: center; }
-    #drawerSongName { font-weight: bold; font-size: 1.2em; max-width: 80vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    #drawerSingerName { color: #b5b5b5; font-size: 0.95em; margin-top: 4px; }
-    
-    .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 12px; width: 75%; }
+    .darwer__column2 { text-align: center; margin: 0.2rem 0; }
+    #drawerSongName { font-weight: bold; font-size: 1.1em; }
+    #drawerSingerName { color: #b5b5b5; font-size: 0.9em; }
+    .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 10px; width: 80%; margin: 0 auto; }
     .column { display: none; }
-
-    .drawer-controls { display: flex; align-items: center; justify-content: center; gap: 2.5rem; }
-    .drawer-controls i { border-radius: 50%; padding: 4px; }
 
     @media screen and (min-aspect-ratio: 4/3) or (orientation: landscape) {
       .top { height: 55vh; }
       .card { width: 22vh; height: 33vh; }
       .list-view { height: calc(45vh - 12vh); }
-      .song-album-art-holder { width: 18vh; height: 18vh; }
+      .song-album-art-holder { width: 20vh; height: 20vh; }
     }
   </style>
 </head> 
@@ -156,6 +161,7 @@
   </div> 
   
   <div class="main-container"> 
+    <!-- Left Panel -->
     <div class="left-pannel"> 
       <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="navHandler()">menu</i> 
       <div class="categories-holder">
@@ -167,6 +173,7 @@
       </div>
     </div> 
 
+    <!-- Navigasi Samping -->
     <div class="nav-container" id="navContainer" onclick="navHandler();"> 
       <div class="nav" onclick="event.stopPropagation();"> 
         <div class="nav-top"> 
@@ -186,6 +193,7 @@
       </div> 
     </div> 
 
+    <!-- Top Container (Poster Album) -->
     <div class="top"> 
       <div class="search-container">
         <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
@@ -196,8 +204,10 @@
       <div class="cards-holder" id="cardsHolder"></div> 
     </div> 
 
+    <!-- Bottom List Container (Judul-judul lagu) -->
     <div class="list-view" id="listView"></div> 
 
+    <!-- Player Control Bar Bawah -->
     <div class="bottom-pannel"> 
       <div class="bottom__warpper"> 
         <i class="material-icons bottom__up-arrow focusable" tabindex="0" id="btnOpenDrawer" onclick="drawerHandler();">keyboard_arrow_up</i> 
@@ -217,6 +227,7 @@
       <i class="material-icons bottom__play-button focusable" tabindex="0" id="playBtn" onclick="playPause()">play_arrow</i> 
     </div> 
 
+    <!-- Drawer Fullscreen Player -->
     <div class="bottom-drawer" id="bottomDrawer"> 
       <div class="drawer-holder"> 
         <i class="material-icons drawer-close-btn focusable" tabindex="0" id="btnCloseDrawer" onclick="drawerHandler();">keyboard_arrow_down</i> 
@@ -244,10 +255,10 @@
           <div id="drawerSongDuration">00:00</div> 
         </div> 
 
-        <div class="drawer-controls column"> 
-          <i class="material-icons focusable" tabindex="0" id="drawerPrevBtn" style="font-size: 2.5em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
-          <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3.2em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
-          <i class="material-icons focusable" tabindex="0" id="drawerNextBtn" style="font-size: 2.5em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
+        <div class="darwer__column1 column"> 
+          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
+          <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
+          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
         </div> 
       </div> 
     </div> 
@@ -255,18 +266,25 @@
 
 <audio id="media-player" preload="auto"> 
   <source id="audio-source" src="" type="audio/mpeg"> 
-</audio> 
+</audio>
 
 
   <script>
     var mediaPlayer, audioSource;
     var isPlaying = false;
     
-    var musicData = { indonesia: [], english: [], malaysia: [], hindi: [], dangdut: [] };
-    var albumsList = [];        
-    var currentAlbumIndex = 0;  
-    var activeSongsList = [];   
-    var currentIndex = 0;       
+    var musicData = {
+      indonesia: [],
+      english: [],
+      malaysia: [],
+      hindi: [],
+      dangdut: []
+    };
+    
+    var albumsList = [];        // Berisi Daftar Album Unik
+    var currentAlbumIndex = 0;  // Index Album Terpilih
+    var activeSongsList = [];   // Lagu-lagu dalam Album Terpilih
+    var currentIndex = 0;       // Index Lagu Terpilih
     var currentCategory = 'indonesia';
     
     var isNavOpen = false;
@@ -276,26 +294,16 @@
     var isVisualizerInit = false;
     var animationId;
 
-    var wakeLock = null;
-
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-        }
-      } catch (err) {}
-    }
-
-    document.addEventListener('visibilitychange', async function() {
-      if (document.visibilityState === 'visible') {
-        if (wakeLock !== null) await requestWakeLock();
-        forceResumeAudioContext();
-      }
-    });
-
+    // TOMBOL BACK REMOTE STB
     window.tutupPopUpPoster = function() {
-        if (isDrawerOpen) { drawerHandler(); return true; } 
-        else if (isNavOpen) { navHandler(); return true; }
+        if (isDrawerOpen) {
+            drawerHandler();
+            return true;
+        } 
+        else if (isNavOpen) {
+            navHandler();
+            return true;
+        }
         return false;
     };
 
@@ -317,6 +325,7 @@
         }
     }, true);
 
+    // SPATIAL NAVIGATION REMOTE STB
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
@@ -332,36 +341,6 @@
       if (!current || !focusables.includes(current)) {
         if (focusables.length > 0) focusables[0].focus();
         return;
-      }
-
-      if ((current.id === "searchBoxContainer" || current.id === "searchInput") && direction === "down") {
-        const activeCard = document.querySelector('.card.active-album') || document.querySelector('.card.focusable');
-        if (activeCard) {
-          activeCard.focus();
-          activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-          return;
-        }
-      }
-
-      if (current.classList.contains('card') && direction === "down") {
-        const firstSong = document.querySelector('.song-list.focusable');
-        if (firstSong) {
-          firstSong.focus();
-          firstSong.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-          return;
-        }
-      }
-
-      if (current.classList.contains('song-list') && direction === "up") {
-        const allSongs = Array.from(document.querySelectorAll('.song-list.focusable'));
-        if (allSongs.indexOf(current) === 0) {
-          const activeCard = document.querySelector('.card.active-album') || document.querySelector('.card.focusable');
-          if (activeCard) {
-            activeCard.focus();
-            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-            return;
-          }
-        }
       }
 
       if (current.classList.contains('progress-bar-container')) {
@@ -433,6 +412,7 @@
       }
     });
 
+    // MEDIA SESSION & VISUALIZER
     function setupMediaSession() {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', function() { playPause(); });
@@ -453,27 +433,11 @@
     }
 
     function initVisualizer() {
-      if (isVisualizerInit) return;
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-        analyser = audioCtx.createAnalyser();
-        audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
-        audioSourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        analyser.fftSize = 64; 
-        isVisualizerInit = true;
-      } catch (e) {}
-    }
+  return;
+}
 
-    function forceResumeAudioContext() {
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
 
     function renderVisualizer() {
-      if (!isDrawerOpen) return;
       const canvas = document.getElementById("visualizerCanvas");
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
@@ -483,10 +447,6 @@
       const dataArray = new Uint8Array(bufferLength);
 
       function draw() {
-        if (!isDrawerOpen) {
-          if (animationId) cancelAnimationFrame(animationId);
-          return;
-        }
         animationId = requestAnimationFrame(draw);
         if (!analyser) return;
         analyser.getByteFrequencyData(dataArray);
@@ -512,6 +472,7 @@
       CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
     }
 
+    // PARSER M3U8 & LOGIKA GROUPING UNIK PER ALBUM/ARTIS
     function parseM3U(m3uContent) {
       const lines = m3uContent.split(/\r?\n/);
       let currentSong = null;
@@ -577,10 +538,12 @@
           }, 300);
         })
         .catch(err => {
+          console.error(err);
           document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan file tersedia.</p>";
         });
     }
 
+    // PENGELOMPOKAN: Menjadikan 1 Poster Unik per Album/Artis
     function groupSongsIntoAlbums(rawSongs) {
       let albumMap = {};
 
@@ -591,7 +554,7 @@
           albumMap[artistName] = {
             title: artistName,
             singer: artistName,
-            albumArt: song.albumArt,
+            albumArt: song.albumArt, // Mengambil gambar pertama sebagai Poster Album
             songs: []
           };
         }
@@ -606,7 +569,9 @@
       let rawSongs = musicData[catKey] || [];
       document.getElementById("searchInput").value = "";
 
+      // Dapatkan Daftar Poster Album yang Unik
       albumsList = groupSongsIntoAlbums(rawSongs);
+
       renderAlbums();
 
       if (albumsList.length > 0) {
@@ -627,6 +592,7 @@
       if(catMap[catKey]) $(catMap[catKey]).addClass('active');
     }
 
+    // 1. Tampilkan Poster Album di Bagian Atas
     function renderAlbums() {
       let cardsHtml = "";
 
@@ -649,6 +615,7 @@
       document.getElementById("cardsHolder").innerHTML = cardsHtml;
     }
 
+    // 2. Klik Poster Album $\rightarrow$ Perbarui Judul Lagu Bersusun di Bawah
     function selectAlbum(index) {
       currentAlbumIndex = index;
 
@@ -664,6 +631,7 @@
       renderSongList();
     }
 
+    // 3. Tampilkan Daftar Judul Lagu di Bawah
     function renderSongList() {
       let listHtml = "";
 
@@ -688,6 +656,7 @@
       document.getElementById("listView").innerHTML = listHtml;
     }
 
+    // FILTER SEARCHING
     function filterSongs() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
       let rawSongs = musicData[currentCategory] || [];
@@ -720,6 +689,7 @@
       }
     }
 
+    // MEDIA PLAYER CONTROLLER
     function seekRelative(seconds) {
       if (mediaPlayer && mediaPlayer.duration) {
         let newTime = mediaPlayer.currentTime + seconds;
@@ -745,24 +715,14 @@
       return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    // --- HARD RESET SETIAP KALI PLAY DITEKAN ATAU PILIH LAGU ---
     function playSong(index) {
       currentIndex = index;
       const song = activeSongsList[currentIndex];
       if(!song) return;
       
       initVisualizer();
-      forceResumeAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
 
-      // Paksa lepas buffer Audio yang macet
-      try {
-        mediaPlayer.pause();
-        mediaPlayer.removeAttribute('src');
-        audioSource.src = "";
-        mediaPlayer.load();
-      } catch(e){}
-
-      // Inject URL Baru
       audioSource.src = song.url;
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
@@ -781,48 +741,29 @@
           $("#drawerPlay").text("pause");
           updateMediaSessionInfo(song);
         }).catch(error => {
-          forceResumeAudioContext();
-          // Fallback paksa play sekali lagi
-          mediaPlayer.play();
-          isPlaying = true;
-          document.getElementById("playBtn").innerText = "pause";
-          $("#drawerPlay").text("pause");
+          console.error("Autoplay ditahan:", error);
         });
       }
     }
 
     function playPause() {
       initVisualizer();
-      forceResumeAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
 
       if(!audioSource.src && activeSongsList.length > 0) {
         playSong(0);
         return;
       }
-
       if (isPlaying) {
         mediaPlayer.pause();
         document.getElementById("playBtn").innerText = "play_arrow";
         $("#drawerPlay").text("play_arrow");
         isPlaying = false;
       } else {
-        // PERBAIKAN UTAMA: Jika player menolak play karena status 'stalled/error'
-        if (mediaPlayer.networkState === 3 || mediaPlayer.readyState === 0 || mediaPlayer.error) {
-          playSong(currentIndex);
-          return;
-        }
-
-        var promise = mediaPlayer.play();
-        if (promise !== undefined) {
-          promise.then(_ => {
-            isPlaying = true;
-            document.getElementById("playBtn").innerText = "pause";
-            $("#drawerPlay").text("pause");
-          }).catch(e => {
-            // Jika tombol play gagal merespon, muat ulang lagu secara paksa
-            playSong(currentIndex);
-          });
-        }
+        mediaPlayer.play();
+        document.getElementById("playBtn").innerText = "pause";
+        $("#drawerPlay").text("pause");
+        isPlaying = true;
       }
     }
 
@@ -860,7 +801,7 @@
       $("#drawerSingerName").text(song.singer);
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
       
-      $(".drawer-holder").animate({ height: "82vh" }, 300, function () {
+      $(".drawer-holder").animate({ height: "80vh" }, 300, function () {
         $(".column").css("display", "flex");
         isDrawerOpen = true;
         updateAndroidGembok();
@@ -902,23 +843,8 @@
 
       setupMediaSession();
       loadM3UPlaylist();
-      requestWakeLock();
 
       mediaPlayer.addEventListener("ended", function() { nextSong(); });
-
-      // SISTEM PEMULIHAN OTOMATIS JIKA KONEKSI STREAMING TERPUTUS
-      mediaPlayer.addEventListener("error", function() {
-        if (isPlaying) {
-          setTimeout(() => { playSong(currentIndex); }, 1000);
-        }
-      });
-
-      mediaPlayer.addEventListener("stalled", function() {
-        if (isPlaying && mediaPlayer.paused) {
-          mediaPlayer.load();
-          mediaPlayer.play();
-        }
-      });
 
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
