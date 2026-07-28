@@ -299,6 +299,24 @@
     var isVisualizerInit = false;
     var animationId;
 
+    // --- STRUKTUR ANTI-SLEEP (WAKE LOCK) ---
+    var wakeLock = null;
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {}
+    }
+
+    document.addEventListener('visibilitychange', async function() {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    });
+    // ----------------------------------------
+
     // TOMBOL BACK REMOTE STB
     window.tutupPopUpPoster = function() {
         if (isDrawerOpen) {
@@ -330,7 +348,7 @@
         }
     }, true);
 
-    // SPATIAL NAVIGATION REMOTE STB
+    // SPATIAL NAVIGATION REMOTE STB (DENGAN CUSTOM OVERRIDES)
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
@@ -348,11 +366,48 @@
         return;
       }
 
+      // === ATURAN NAVIGASI KHUSUS (OVERRIDE) ===
+
+      // 1. Dari Bar Pencarian + Tekan BAWAH -> Langsung ke Poster Album Aktif
+      if ((current.id === "searchBoxContainer" || current.id === "searchInput") && direction === "down") {
+        const activeCard = document.querySelector('.card.active-album') || document.querySelector('.card.focusable');
+        if (activeCard) {
+          activeCard.focus();
+          activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          return;
+        }
+      }
+
+      // 2. Dari Poster Album Mana Saja + Tekan BAWAH -> Langsung ke Lagu Pertama di List Bawah
+      if (current.classList.contains('card') && direction === "down") {
+        const firstSong = document.querySelector('.song-list.focusable');
+        if (firstSong) {
+          firstSong.focus();
+          firstSong.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          return;
+        }
+      }
+
+      // 3. Dari Lagu Paling Atas di List + Tekan ATAS -> Kembali ke Poster Album Aktif
+      if (current.classList.contains('song-list') && direction === "up") {
+        const allSongs = Array.from(document.querySelectorAll('.song-list.focusable'));
+        if (allSongs.indexOf(current) === 0) {
+          const activeCard = document.querySelector('.card.active-album') || document.querySelector('.card.focusable');
+          if (activeCard) {
+            activeCard.focus();
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            return;
+          }
+        }
+      }
+
+      // 4. Pengontrol Progress Bar (Geser Kiri/Kanan)
       if (current.classList.contains('progress-bar-container')) {
         if (direction === 'left') { seekRelative(-5); return; } 
         else if (direction === 'right') { seekRelative(5); return; }
       }
 
+      // === ALGORITMA SPATIAL NAVIGASI UMUM (FALLBACK) ===
       const cRect = current.getBoundingClientRect();
       const cCenter = { x: cRect.left + cRect.width / 2, y: cRect.top + cRect.height / 2 };
 
@@ -850,6 +905,8 @@
 
       setupMediaSession();
       loadM3UPlaylist();
+
+      requestWakeLock();
 
       mediaPlayer.addEventListener("ended", function() { nextSong(); });
 
