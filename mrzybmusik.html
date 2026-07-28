@@ -2,7 +2,7 @@
 <html lang="id" style="--accent-color:#ff4b66;">
 <head> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="UTF-8"> 
-  <title>Music Player STB & Mobile</title> 
+  <title>Music Player Album & Playlist</title> 
   <script>
     console.log = function(){};
     console.error = function(){};
@@ -14,7 +14,18 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
     :root { --accent-color: #ff4b66; --bottom-bg-color: #20343f; }
-    body, html { width: 100%; height: 100%; font-family: "Roboto", sans-serif; user-select: none; background: #121212; overflow: hidden; color: #fff; }
+    
+    body, html { 
+      width: 100%; 
+      height: 100%; 
+      font-family: "Roboto", sans-serif; 
+      user-select: none; 
+      background: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), 
+                  url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden; 
+      color: #fff; 
+    }
     
     .main-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     
@@ -23,16 +34,20 @@
     
     /* STB Remote Focus Highlight */
     .focusable { transition: transform 0.2s, box-shadow 0.2s, border 0.2s; border: 2px solid transparent; }
-    .focusable:focus { border: 2px solid #ffffff !important; transform: scale(1.05); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 99; outline: none; }
+    .focusable:focus { border: 2px solid #ffffff !important; transform: scale(1.03); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 99; outline: none; }
 
     /* Left Panel */
-    .left-pannel { width: 4.5rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 1rem 0; }
+    .left-pannel { width: 5rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 0.8rem 0; }
     .left-pannel__menu { font-size: 2em; cursor: pointer; border-radius: 50%; padding: 5px; }
-    .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 1rem 0; cursor: pointer; font-size: 0.9em; letter-spacing: 1px; }
-    .left-pannel__category.active { color: var(--accent-color); font-weight: bold; }
+    
+    .categories-holder { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; overflow-y: auto; max-height: 75vh; }
+    .categories-holder::-webkit-scrollbar { display: none; }
+    
+    .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 0.6rem 0.2rem; cursor: pointer; font-size: 0.8em; letter-spacing: 1px; border-radius: 4px; text-align: center; }
+    .left-pannel__category.active { color: var(--accent-color); font-weight: bold; border-right: 2px solid var(--accent-color); }
 
     /* Menu Navigation Modal (Samping) */
-    .nav-container { position: absolute; background: rgba(0, 0, 0, 0.6); height: 100%; width: 100%; left: 0; top: 0; z-index: 20; display: none; }
+    .nav-container { position: absolute; background: rgba(0, 0, 0, 0.7); height: 100%; width: 100%; left: 0; top: 0; z-index: 20; display: none; }
     .nav { position: relative; background: #1e1e1e; height: 100%; width: 0; overflow: hidden; display: flex; flex-direction: column; }
     .nav-top { background: var(--accent-color); height: 30vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #ffffff; }
     .nav-bottom { padding: 1.5rem; text-align: left; }
@@ -42,78 +57,123 @@
     .theme3 { background: #ffb762; } .theme4 { background: #3444ff; }
     .theme5 { background: #16e0aa; } .theme6 { background: #8f1fff; }
 
-    /* Top Cards Container */
-    .top { background: var(--accent-color); height: 50vh; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; transition: all 0.5s; }
-    .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 1.5rem 0 1rem 5.5rem; height: 100%; align-items: center; }
-    .cards-holder::-webkit-scrollbar { display: none; }
-    .card { background: #000; width: 22vh; height: 32vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
-    .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.8); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
-    .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
-    .card__song-info__singer { font-size: 0.7em; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* TOP CONTAINER ALBUM */
+    .top { 
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75)), 
+                  url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
+      background-size: cover;
+      height: 52vh; 
+      border-bottom-left-radius: 20px; 
+      border-bottom-right-radius: 20px; 
+      transition: all 0.5s; 
+      display: flex; 
+      flex-direction: column; 
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Search Bar Styling */
+    .search-container { padding: 0.8rem 1rem 0.2rem 6rem; display: flex; align-items: center; }
+    .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border-radius: 25px; padding: 0.4rem 1rem; width: 100%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .search-box i { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-right: 0.5rem; }
+    .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
+    .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
-    /* Bottom List Container */
-    .list-view { overflow-y: auto; height: calc(50vh - 12vh); padding-left: 5.5rem; padding-right: 1rem; }
+    /* Cards Holder (Hanya untuk Poster Album) */
+    .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 0.8rem 0 1rem 6rem; height: 100%; align-items: center; }
+    .cards-holder::-webkit-scrollbar { display: none; }
+    .card { background: #000; width: 20vh; height: 30vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
+    
+    /* Highlight Poster Album yang Sedang Aktif Selected */
+    .card.active-album { border: 2.5px solid var(--accent-color) !important; box-shadow: 0 0 18px var(--accent-color); transform: scale(1.02); }
+    .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.85); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+    .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
+    .card__song-info__singer { font-size: 0.7em; color: var(--accent-color); font-weight: bold; margin-top: 2px; }
+
+    /* Bottom List Container (Judul-Judul Lagu) */
+    .list-view { overflow-y: auto; height: calc(48vh - 12vh); padding-left: 6rem; padding-right: 1rem; margin-top: 0.5rem; }
     .list-view::-webkit-scrollbar { display: none; }
-    .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 4px; }
+    .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.25); border-radius: 8px; margin-bottom: 6px; backdrop-filter: blur(3px); }
     .song-list__info { display: flex; align-items: center; }
     .song-list img { height: 2.8rem; width: 2.8rem; border-radius: 8px; margin-right: 1rem; object-fit: cover; }
-    .song-list__singer { font-size: 0.8em; color: grey; }
+    .song-list__singer { font-size: 0.8em; color: #aaa; }
 
-    /* Player Controls Bar Bawah */
-    .bottom-pannel { background: var(--bottom-bg-color); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; }
-    .bottom__warpper { display: flex; align-items: center; width: 40%; }
+    /* Control Bar Bawah */
+    .bottom-pannel { background: rgba(15, 23, 30, 0.95); backdrop-filter: blur(10px); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; border-top: 1px solid rgba(255,255,255,0.1); }
+    .bottom__warpper { display: flex; align-items: center; width: 35%; }
     .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; }
     .bottom__song-info { overflow: hidden; }
     #bottomSongName { font-weight: bold; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #bottomSingerName { font-size: 0.75em; color: #aaa; }
-    .bottom__progress-warpper { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
+    .bottom__progress-warpper { display: flex; flex-direction: column; align-items: flex-end; width: 40%; }
     #progressTimeDuration { font-size: 0.75em; margin-bottom: 4px; color: #ccc; }
-    #bottomProgress { width: 100%; background: #444; border-radius: 5px; cursor: pointer; position: relative; height: 5px; }
-    #bottomBar, #bufferedBar { position: absolute; height: 100%; border-radius: 5px; }
-    #bottomBar { background: var(--accent-color); width: 0%; }
-    #bufferedBar { background: #777; width: 0%; }
+    
+    .progress-bar-container { width: 100%; background: rgba(255, 255, 255, 0.2); border-radius: 5px; cursor: pointer; position: relative; height: 10px; border: 1px solid transparent; }
+    .progress-bar-container:focus { border-color: #fff; box-shadow: 0 0 10px var(--accent-color); }
+    #bottomBar, #drawerBar { position: absolute; height: 100%; border-radius: 5px; background: var(--accent-color); width: 0%; pointer-events: none; }
+    
     .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; border-radius: 50%; }
 
-    /* Drawer Modal Player Melayang */
+    /* DRAWER MODAL PLAYER */
     .bottom-drawer { background: rgba(0, 0, 0, 0.85); height: 100%; position: absolute; bottom: 0; width: 100%; z-index: 30; display: none; }
-    .drawer-holder { position: absolute; bottom: 0; width: 100%; background: var(--bottom-bg-color); border-top-left-radius: 2rem; border-top-right-radius: 2rem; height: 12vh; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; padding: 1rem; }
-    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2em; cursor: pointer; }
-    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 1rem; }
-    .song-album-art-holder { width: 26vh; height: 26vh; border-radius: 50%; position: relative; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+    .drawer-holder { 
+      position: absolute; 
+      bottom: 0; 
+      width: 100%; 
+      background: linear-gradient(rgba(10, 15, 20, 0.88), rgba(10, 15, 20, 0.95)), 
+                  url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
+      background-size: cover;
+      border-top-left-radius: 2rem; 
+      border-top-right-radius: 2rem; 
+      height: 12vh; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-around; 
+      padding: 1rem; 
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+    }
+    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2em; cursor: pointer; z-index: 35; }
+    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 0.5rem; }
+    .song-album-art-holder { width: 22vh; height: 22vh; border-radius: 50%; position: relative; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     #songAlbumArt { width: 100%; height: 100%; background-size: cover; background-position: center; }
-    .darwer__column2 { text-align: center; margin: 0.5rem 0; }
+    
+    .visualizer-container { width: 80%; height: 60px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+    #visualizerCanvas { width: 100%; height: 100%; }
+
+    .darwer__column2 { text-align: center; margin: 0.2rem 0; }
     #drawerSongName { font-weight: bold; font-size: 1.1em; }
     #drawerSingerName { color: #b5b5b5; font-size: 0.9em; }
     .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 10px; width: 80%; margin: 0 auto; }
-    #dawerProgress { position: relative; cursor: pointer; height: 5px; flex-grow: 1; background: #555; border-radius: 5px; }
-    #drawerBar { height: 100%; background: var(--accent-color); border-radius: 5px; width: 0; }
     .column { display: none; }
 
     @media screen and (min-aspect-ratio: 4/3) or (orientation: landscape) {
       .top { height: 55vh; }
-      .card { width: 25vh; height: 38vh; }
+      .card { width: 22vh; height: 33vh; }
       .list-view { height: calc(45vh - 12vh); }
-      .song-album-art-holder { width: 22vh; height: 22vh; }
+      .song-album-art-holder { width: 20vh; height: 20vh; }
     }
   </style>
 </head> 
 <body> 
   
   <div id="loading"> 
-    <div>Memuat Musik...</div> 
+    <div>Memuat Playlist MP3...</div> 
   </div> 
   
   <div class="main-container"> 
-    <!-- Menu Samping Kiri -->
+    <!-- Left Panel -->
     <div class="left-pannel"> 
       <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="navHandler()">menu</i> 
-      <div>
-        <div class="left-pannel__category active focusable" tabindex="0" id="catEnglish" onclick="switchCategory(false)">English</div> 
-        <div class="left-pannel__category focusable" tabindex="0" id="catHindi" onclick="switchCategory(true)">Hindi</div> 
+      <div class="categories-holder">
+        <div class="left-pannel__category active focusable" tabindex="0" id="catIndonesia" onclick="switchCategory('indonesia')">Indonesia</div> 
+        <div class="left-pannel__category focusable" tabindex="0" id="catEnglish" onclick="switchCategory('english')">English</div> 
+        <div class="left-pannel__category focusable" tabindex="0" id="catMalaysia" onclick="switchCategory('malaysia')">Malaysia</div> 
+        <div class="left-pannel__category focusable" tabindex="0" id="catHindi" onclick="switchCategory('hindi')">Hindi</div> 
+        <div class="left-pannel__category focusable" tabindex="0" id="catDangdut" onclick="switchCategory('dangdut')">Dangdut</div> 
       </div>
     </div> 
 
-    <!-- Menu Slide Navigasi Samping (Tema) -->
+    <!-- Navigasi Samping -->
     <div class="nav-container" id="navContainer" onclick="navHandler();"> 
       <div class="nav" onclick="event.stopPropagation();"> 
         <div class="nav-top"> 
@@ -133,15 +193,21 @@
       </div> 
     </div> 
 
-    <!-- Bagian Kartu / Top Poster -->
+    <!-- Top Container (Poster Album) -->
     <div class="top"> 
+      <div class="search-container">
+        <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
+          <i class="material-icons">search</i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" onfocus="this.select()">
+        </div>
+      </div>
       <div class="cards-holder" id="cardsHolder"></div> 
     </div> 
 
-    <!-- Bagian Daftar Lagu / Bottom List -->
+    <!-- Bottom List Container (Judul-judul lagu) -->
     <div class="list-view" id="listView"></div> 
 
-    <!-- Control Bar Bawah -->
+    <!-- Player Control Bar Bawah -->
     <div class="bottom-pannel"> 
       <div class="bottom__warpper"> 
         <i class="material-icons bottom__up-arrow focusable" tabindex="0" id="btnOpenDrawer" onclick="drawerHandler();">keyboard_arrow_up</i> 
@@ -153,8 +219,7 @@
 
       <div class="bottom__progress-warpper"> 
         <div id="progressTimeDuration">00:00 / 00:00</div> 
-        <div id="bottomProgress"> 
-          <div id="bufferedBar"></div> 
+        <div class="progress-bar-container focusable" tabindex="0" id="bottomProgress" onclick="seekByClick(event, this)"> 
           <div id="bottomBar"></div> 
         </div> 
       </div> 
@@ -162,7 +227,7 @@
       <i class="material-icons bottom__play-button focusable" tabindex="0" id="playBtn" onclick="playPause()">play_arrow</i> 
     </div> 
 
-    <!-- Player Melayang / Drawer Full Display -->
+    <!-- Drawer Fullscreen Player -->
     <div class="bottom-drawer" id="bottomDrawer"> 
       <div class="drawer-holder"> 
         <i class="material-icons drawer-close-btn focusable" tabindex="0" id="btnCloseDrawer" onclick="drawerHandler();">keyboard_arrow_down</i> 
@@ -173,6 +238,10 @@
           </div> 
         </div> 
         
+        <div class="visualizer-container column">
+          <canvas id="visualizerCanvas"></canvas>
+        </div>
+
         <div class="darwer__column2 column"> 
           <div id="drawerSongName">Judul Lagu</div> 
           <div id="drawerSingerName">Penyanyi</div> 
@@ -180,7 +249,7 @@
 
         <div class="darwer__column3 column"> 
           <div id="drawerCurrentTime">00:00</div> 
-          <div id="dawerProgress"> 
+          <div class="progress-bar-container focusable" tabindex="0" id="dawerProgress" onclick="seekByClick(event, this)"> 
             <div id="drawerBar"></div> 
           </div> 
           <div id="drawerSongDuration">00:00</div> 
@@ -195,22 +264,36 @@
     </div> 
   </div> 
 
-  <audio id="media-player" preload="metadata"> 
+  <audio id="media-player" crossorigin="anonymous" preload="metadata"> 
     <source id="audio-source" src="" type="audio/mpeg"> 
   </audio> 
 
   <script>
     var mediaPlayer, audioSource;
     var isPlaying = false;
-    var songs = [], english = [], hindi = [];
-    var currentIndex = 0;
-    var isHindiCat = false;
+    
+    var musicData = {
+      indonesia: [],
+      english: [],
+      malaysia: [],
+      hindi: [],
+      dangdut: []
+    };
+    
+    var albumsList = [];        // Berisi Daftar Album Unik
+    var currentAlbumIndex = 0;  // Index Album Terpilih
+    var activeSongsList = [];   // Lagu-lagu dalam Album Terpilih
+    var currentIndex = 0;       // Index Lagu Terpilih
+    var currentCategory = 'indonesia';
+    
     var isNavOpen = false;
     var isDrawerOpen = false;
 
-    // ========================================================
-    // 1. LOGIKA ANTI-MENTAL NATIVE BERTINGKAT (SANGAT KETAT)
-    // ========================================================
+    var audioCtx, analyser, audioSourceNode;
+    var isVisualizerInit = false;
+    var animationId;
+
+    // TOMBOL BACK REMOTE STB
     window.tutupPopUpPoster = function() {
         if (isDrawerOpen) {
             drawerHandler();
@@ -229,7 +312,6 @@
         }
     }
 
-    // Tangkap tombol Back di semua varian KeyCode Remote / Native (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         const code = event.keyCode || event.which;
         if (code === 4 || code === 27 || code === 10009 || event.key === "Backspace" || event.key === "GoBack") {
@@ -242,9 +324,7 @@
         }
     }, true);
 
-    // ========================================================
-    // 2. NAVIGASI SPASIAL (KOORDINAT KURSOR TV)
-    // ========================================================
+    // SPATIAL NAVIGATION REMOTE STB
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
@@ -260,6 +340,11 @@
       if (!current || !focusables.includes(current)) {
         if (focusables.length > 0) focusables[0].focus();
         return;
+      }
+
+      if (current.classList.contains('progress-bar-container')) {
+        if (direction === 'left') { seekRelative(-5); return; } 
+        else if (direction === 'right') { seekRelative(5); return; }
       }
 
       const cRect = current.getBoundingClientRect();
@@ -280,10 +365,8 @@
         if (direction === 'down' && eCenter.y > cCenter.y + 5) isValid = true;
 
         if (isValid) {
-          // Hitung Jarak Euclid
           const dx = eCenter.x - cCenter.x;
           const dy = eCenter.y - cCenter.y;
-          // Bobot tambahan agar perpindahan sejajar lebih diprioritaskan
           const dist = (direction === 'left' || direction === 'right') ? Math.abs(dx) + Math.abs(dy) * 2 : Math.abs(dy) + Math.abs(dx) * 2;
 
           if (dist < minDistance) {
@@ -295,32 +378,29 @@
 
       if (bestCandidate) {
         bestCandidate.focus();
+        if (bestCandidate.id === "searchBoxContainer") {
+          document.getElementById("searchInput").focus();
+        }
         bestCandidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
       }
     }
 
     document.addEventListener("keydown", function(e) {
       const code = e.keyCode || e.which;
-      
-      // Lewatkan logika jika tombol back
       if (code === 4 || code === 27 || code === 10009 || e.key === "Backspace") return;
 
       switch(e.key) {
         case "ArrowRight":
-          e.preventDefault();
-          navigateSpatial('right');
+          if (document.activeElement.id !== "searchInput") { e.preventDefault(); navigateSpatial('right'); }
           break;
         case "ArrowLeft":
-          e.preventDefault();
-          navigateSpatial('left');
+          if (document.activeElement.id !== "searchInput") { e.preventDefault(); navigateSpatial('left'); }
           break;
         case "ArrowDown":
-          e.preventDefault();
-          navigateSpatial('down');
+          e.preventDefault(); navigateSpatial('down');
           break;
         case "ArrowUp":
-          e.preventDefault();
-          navigateSpatial('up');
+          e.preventDefault(); navigateSpatial('up');
           break;
         case "Enter":
         case "OK":
@@ -331,20 +411,133 @@
       }
     });
 
-    // ========================================================
-    // 3. LOGIKA PEMUTAR MUSIK & DATA
-    // ========================================================
-    function loadMusicJSON() {
-      fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/musikku')
-        .then(res => {
-          if (!res.ok) throw new Error("File JSON tidak ditemukan");
-          return res.json();
-        })
-        .then(data => {
-          english = data.english || [];
-          hindi = data.hindi || [];
+    // MEDIA SESSION & VISUALIZER
+    function setupMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', function() { playPause(); });
+        navigator.mediaSession.setActionHandler('pause', function() { playPause(); });
+        navigator.mediaSession.setActionHandler('previoustrack', function() { prevSong(); });
+        navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
+      }
+    }
+
+    function updateMediaSessionInfo(song) {
+      if ('mediaSession' in navigator && song) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.name || 'Musik',
+          artist: song.singer || 'Unknown Artist',
+          artwork: [{ src: song.albumArt || 'https://via.placeholder.com/300', sizes: '300x300', type: 'image/png' }]
+        });
+      }
+    }
+
+    function initVisualizer() {
+      if (isVisualizerInit) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        analyser = audioCtx.createAnalyser();
+        audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
+        audioSourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 64; 
+        isVisualizerInit = true;
+      } catch (e) {}
+    }
+
+    function renderVisualizer() {
+      const canvas = document.getElementById("visualizerCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      const bufferLength = analyser ? analyser.frequencyBinCount : 0;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function draw() {
+        animationId = requestAnimationFrame(draw);
+        if (!analyser) return;
+        analyser.getByteFrequencyData(dataArray);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / bufferLength) * 1.8;
+        let barHeight;
+        let x = 0;
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#ff4b66';
+
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = (dataArray[i] / 255) * canvas.height;
+          ctx.fillStyle = accentColor;
+          ctx.beginPath();
+          ctx.roundRect(x, canvas.height - barHeight, barWidth, barHeight, [4, 4, 0, 0]);
+          ctx.fill();
+          x += barWidth + 3;
+        }
+      }
+      draw();
+    }
+
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+    }
+
+    // PARSER M3U8 & LOGIKA GROUPING UNIK PER ALBUM/ARTIS
+    function parseM3U(m3uContent) {
+      const lines = m3uContent.split(/\r?\n/);
+      let currentSong = null;
+
+      musicData = { indonesia: [], english: [], malaysia: [], hindi: [], dangdut: [] };
+
+      lines.forEach(line => {
+        line = line.trim();
+        if (line.startsWith('#EXTINF:')) {
+          currentSong = {};
           
-          switchCategory(false);
+          const catMatch = line.match(/group-title="([^"]+)"/i);
+          currentSong.category = catMatch ? catMatch[1].toLowerCase() : 'indonesia';
+
+          const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
+          currentSong.albumArt = logoMatch ? logoMatch[1] : 'https://via.placeholder.com/300';
+
+          const commaIndex = line.indexOf(',');
+          if (commaIndex !== -1) {
+            const rawTitle = line.substring(commaIndex + 1).trim();
+            if (rawTitle.includes('-')) {
+              const parts = rawTitle.split('-');
+              currentSong.singer = parts[0].trim();
+              currentSong.name = parts.slice(1).join('-').trim();
+            } else {
+              currentSong.singer = "Berbagai Artis";
+              currentSong.name = rawTitle;
+            }
+          } else {
+            currentSong.singer = "Berbagai Artis";
+            currentSong.name = "Tanpa Judul";
+          }
+        } 
+        else if (line.length > 0 && !line.startsWith('#')) {
+          if (currentSong) {
+            currentSong.url = line;
+            const cat = currentSong.category;
+            if (musicData[cat]) {
+              musicData[cat].push(currentSong);
+            } else {
+              musicData.indonesia.push(currentSong);
+            }
+            currentSong = null;
+          }
+        }
+      });
+    }
+
+    function loadM3UPlaylist() {
+      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u')
+        .then(res => {
+          if (!res.ok) throw new Error("File M3U8 tidak ditemukan");
+          return res.text();
+        })
+        .then(textData => {
+          parseM3U(textData);
+          switchCategory('indonesia');
           document.getElementById("loading").style.display = "none";
 
           setTimeout(() => {
@@ -354,56 +547,190 @@
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat songs.json!<br>Pastikan file tersedia.</p>";
+          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan file tersedia.</p>";
         });
     }
 
-    function switchCategory(isHindi) {
-      isHindiCat = isHindi;
-      songs = isHindi ? hindi : english;
-      
-      document.getElementById("catEnglish").classList.toggle("active", !isHindi);
-      document.getElementById("catHindi").classList.toggle("active", isHindi);
+    // PENGELOMPOKAN: Menjadikan 1 Poster Unik per Album/Artis
+    function groupSongsIntoAlbums(rawSongs) {
+      let albumMap = {};
 
-      renderElements();
-    }
-
-    function renderElements() {
-      let cardsHtml = "";
-      let listHtml = "";
-
-      songs.forEach((song, i) => {
-        cardsHtml += `
-          <div class="card focusable" tabindex="0" onclick="playSong(${i});">
-            <img src="${song.albumArt}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;" />
-            <div class="card__song-info">
-              <div class="card__song-info__name">${song.name}</div>
-              <div class="card__song-info__singer">${song.singer}</div>
-            </div>
-          </div>`;
-
-        listHtml += `
-          <div class="song-list focusable" tabindex="0" onclick="playSong(${i});">
-            <div class="song-list__info">
-              <img src="${song.albumArt}">
-              <div>
-                <div><b>${song.name}</b></div>
-                <div class="song-list__singer">${song.singer}</div>
-              </div>
-            </div>
-            <div>${song.duration}</div>
-          </div>`;
+      rawSongs.forEach(song => {
+        let artistName = song.singer || "Berbagai Artis";
+        
+        if (!albumMap[artistName]) {
+          albumMap[artistName] = {
+            title: artistName,
+            singer: artistName,
+            albumArt: song.albumArt, // Mengambil gambar pertama sebagai Poster Album
+            songs: []
+          };
+        }
+        albumMap[artistName].songs.push(song);
       });
 
+      return Object.values(albumMap);
+    }
+
+    function switchCategory(catKey) {
+      currentCategory = catKey;
+      let rawSongs = musicData[catKey] || [];
+      document.getElementById("searchInput").value = "";
+
+      // Dapatkan Daftar Poster Album yang Unik
+      albumsList = groupSongsIntoAlbums(rawSongs);
+
+      renderAlbums();
+
+      if (albumsList.length > 0) {
+        selectAlbum(0);
+      } else {
+        activeSongsList = [];
+        renderSongList();
+      }
+
+      $('.left-pannel__category').removeClass('active');
+      const catMap = {
+        'indonesia': '#catIndonesia',
+        'english': '#catEnglish',
+        'malaysia': '#catMalaysia',
+        'hindi': '#catHindi',
+        'dangdut': '#catDangdut'
+      };
+      if(catMap[catKey]) $(catMap[catKey]).addClass('active');
+    }
+
+    // 1. Tampilkan Poster Album di Bagian Atas
+    function renderAlbums() {
+      let cardsHtml = "";
+
+      if(albumsList.length === 0) {
+        cardsHtml = "<div style='padding:20px; color:#aaa;'>Tidak ada album/poster.</div>";
+      } else {
+        albumsList.forEach((album, i) => {
+          let activeClass = (i === currentAlbumIndex) ? "active-album" : "";
+          cardsHtml += `
+            <div class="card focusable ${activeClass}" id="albumCard_${i}" tabindex="0" onclick="selectAlbum(${i});">
+              <img src="${album.albumArt}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;" />
+              <div class="card__song-info">
+                <div class="card__song-info__name">${album.title}</div>
+                <div class="card__song-info__singer">${album.songs.length} Lagu</div>
+              </div>
+            </div>`;
+        });
+      }
+
       document.getElementById("cardsHolder").innerHTML = cardsHtml;
+    }
+
+    // 2. Klik Poster Album $\rightarrow$ Perbarui Judul Lagu Bersusun di Bawah
+    function selectAlbum(index) {
+      currentAlbumIndex = index;
+
+      $('.card').removeClass('active-album');
+      $(`#albumCard_${index}`).addClass('active-album');
+
+      if (albumsList[index]) {
+        activeSongsList = albumsList[index].songs;
+      } else {
+        activeSongsList = [];
+      }
+
+      renderSongList();
+    }
+
+    // 3. Tampilkan Daftar Judul Lagu di Bawah
+    function renderSongList() {
+      let listHtml = "";
+
+      if(activeSongsList.length === 0) {
+        listHtml = "<div style='padding:20px; color:#aaa;'>Lagu tidak ditemukan.</div>";
+      } else {
+        activeSongsList.forEach((song, i) => {
+          listHtml += `
+            <div class="song-list focusable" tabindex="0" onclick="playSong(${i});">
+              <div class="song-list__info">
+                <img src="${song.albumArt}">
+                <div>
+                  <div><b>${song.name}</b></div>
+                  <div class="song-list__singer">${song.singer}</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:rgba(255,255,255,0.4);">play_circle_outline</i>
+            </div>`;
+        });
+      }
+
       document.getElementById("listView").innerHTML = listHtml;
+    }
+
+    // FILTER SEARCHING
+    function filterSongs() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      let rawSongs = musicData[currentCategory] || [];
+      
+      if (!query) {
+        albumsList = groupSongsIntoAlbums(rawSongs);
+      } else {
+        let allSongs = [].concat(
+          musicData.indonesia || [],
+          musicData.english || [],
+          musicData.malaysia || [],
+          musicData.hindi || [],
+          musicData.dangdut || []
+        );
+
+        let filtered = allSongs.filter(song => 
+          song.name.toLowerCase().includes(query) || 
+          song.singer.toLowerCase().includes(query)
+        );
+
+        albumsList = groupSongsIntoAlbums(filtered);
+      }
+      
+      renderAlbums();
+      if (albumsList.length > 0) {
+        selectAlbum(0);
+      } else {
+        activeSongsList = [];
+        renderSongList();
+      }
+    }
+
+    // MEDIA PLAYER CONTROLLER
+    function seekRelative(seconds) {
+      if (mediaPlayer && mediaPlayer.duration) {
+        let newTime = mediaPlayer.currentTime + seconds;
+        if (newTime < 0) newTime = 0;
+        if (newTime > mediaPlayer.duration) newTime = mediaPlayer.duration;
+        mediaPlayer.currentTime = newTime;
+      }
+    }
+
+    function seekByClick(event, element) {
+      if (mediaPlayer && mediaPlayer.duration) {
+        const rect = element.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const width = rect.width;
+        mediaPlayer.currentTime = (clickX / width) * mediaPlayer.duration;
+      }
+    }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds === Infinity) return "00:00";
+      let m = Math.floor(seconds / 60);
+      let s = Math.floor(seconds % 60);
+      return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
     function playSong(index) {
       currentIndex = index;
-      const song = songs[currentIndex];
+      const song = activeSongsList[currentIndex];
       if(!song) return;
       
+      initVisualizer();
+      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+
       audioSource.src = song.url;
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
@@ -413,14 +740,25 @@
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
 
       mediaPlayer.load();
-      mediaPlayer.play();
-      isPlaying = true;
-      document.getElementById("playBtn").innerText = "pause";
-      $("#drawerPlay").text("pause");
+      
+      var playPromise = mediaPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+          isPlaying = true;
+          document.getElementById("playBtn").innerText = "pause";
+          $("#drawerPlay").text("pause");
+          updateMediaSessionInfo(song);
+        }).catch(error => {
+          console.error("Autoplay ditahan:", error);
+        });
+      }
     }
 
     function playPause() {
-      if(!audioSource.src && songs.length > 0) {
+      initVisualizer();
+      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+
+      if(!audioSource.src && activeSongsList.length > 0) {
         playSong(0);
         return;
       }
@@ -428,26 +766,30 @@
         mediaPlayer.pause();
         document.getElementById("playBtn").innerText = "play_arrow";
         $("#drawerPlay").text("play_arrow");
+        isPlaying = false;
       } else {
         mediaPlayer.play();
         document.getElementById("playBtn").innerText = "pause";
         $("#drawerPlay").text("pause");
+        isPlaying = true;
       }
-      isPlaying = !isPlaying;
     }
 
     function nextSong() {
-      let nextIndex = (currentIndex + 1) % songs.length;
+      if(activeSongsList.length === 0) return;
+      let nextIndex = (currentIndex + 1) % activeSongsList.length;
       playSong(nextIndex);
     }
 
     function prevSong() {
-      let prevIndex = (currentIndex - 1 + songs.length) % songs.length;
+      if(activeSongsList.length === 0) return;
+      let prevIndex = (currentIndex - 1 + activeSongsList.length) % activeSongsList.length;
       playSong(prevIndex);
     }
 
     function drawerHandler() {
       if (isDrawerOpen) {
+        if (animationId) cancelAnimationFrame(animationId);
         $(".column").hide();
         $(".drawer-holder").animate({ height: "12vh" }, 300, function () {
           isDrawerOpen = false;
@@ -462,7 +804,7 @@
 
     function openDrawer() {
       $(".bottom-drawer").show();
-      const song = songs[currentIndex] || { name: "Pilih Lagu", singer: "-", albumArt: "" };
+      const song = activeSongsList[currentIndex] || { name: "Pilih Lagu", singer: "-", albumArt: "" };
       $("#drawerSongName").text(song.name);
       $("#drawerSingerName").text(song.singer);
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
@@ -471,6 +813,7 @@
         $(".column").css("display", "flex");
         isDrawerOpen = true;
         updateAndroidGembok();
+        renderVisualizer();
         document.getElementById("btnCloseDrawer").focus();
       });
     }
@@ -506,25 +849,28 @@
       mediaPlayer = document.getElementById("media-player");
       audioSource = document.getElementById("audio-source");
 
-      loadMusicJSON();
+      setupMediaSession();
+      loadM3UPlaylist();
+
+      mediaPlayer.addEventListener("ended", function() { nextSong(); });
 
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
           let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
           document.getElementById("bottomBar").style.width = pct + "%";
-          if(document.getElementById("drawerBar")) document.getElementById("drawerBar").style.width = pct + "%";
           
-          let curMin = Math.floor(mediaPlayer.currentTime / 60);
-          let curSec = Math.floor(mediaPlayer.currentTime % 60);
-          let durMin = Math.floor(mediaPlayer.duration / 60);
-          let durSec = Math.floor(mediaPlayer.duration % 60);
-
-          let curStr = `${curMin}:${curSec < 10 ? '0':''}${curSec}`;
-          let durStr = `${durMin}:${durSec < 10 ? '0':''}${durStr}`;
+          const drawerBar = document.getElementById("drawerBar");
+          if(drawerBar) drawerBar.style.width = pct + "%";
+          
+          let curStr = formatTime(mediaPlayer.currentTime);
+          let durStr = formatTime(mediaPlayer.duration);
 
           document.getElementById("progressTimeDuration").innerText = `${curStr} / ${durStr}`;
-          if(document.getElementById("drawerCurrentTime")) document.getElementById("drawerCurrentTime").innerText = curStr;
-          if(document.getElementById("drawerSongDuration")) document.getElementById("drawerSongDuration").innerText = durStr;
+          
+          const dCur = document.getElementById("drawerCurrentTime");
+          const dDur = document.getElementById("drawerSongDuration");
+          if(dCur) dCur.innerText = curStr;
+          if(dDur) dDur.innerText = durStr;
         }
       });
     };
