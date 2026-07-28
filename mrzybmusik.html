@@ -21,7 +21,7 @@
       font-family: "Roboto", sans-serif; 
       user-select: none; 
       background: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), 
-                  url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+                  url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop') no-repeat center center fixed;
       background-size: cover;
       overflow: hidden; 
       color: #fff; 
@@ -78,18 +78,18 @@
     .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
     .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
-    /* Cards Holder (Hanya untuk Poster Album) */
+    /* Cards Holder (Poster Album) */
     .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 0.8rem 0 1rem 6rem; height: 100%; align-items: center; }
     .cards-holder::-webkit-scrollbar { display: none; }
     .card { background: #000; width: 20vh; height: 30vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
     
-    /* Highlight Poster Album yang Sedang Aktif Selected */
+    /* Highlight Poster Album */
     .card.active-album { border: 2.5px solid var(--accent-color) !important; box-shadow: 0 0 18px var(--accent-color); transform: scale(1.02); }
     .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.85); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
     .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
     .card__song-info__singer { font-size: 0.7em; color: var(--accent-color); font-weight: bold; margin-top: 2px; }
 
-    /* Bottom List Container (Judul-Judul Lagu) */
+    /* Bottom List Container */
     .list-view { overflow-y: auto; height: calc(48vh - 12vh); padding-left: 6rem; padding-right: 1rem; margin-top: 0.5rem; }
     .list-view::-webkit-scrollbar { display: none; }
     .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.25); border-radius: 8px; margin-bottom: 6px; backdrop-filter: blur(3px); }
@@ -100,7 +100,7 @@
     /* Control Bar Bawah */
     .bottom-pannel { background: rgba(15, 23, 30, 0.95); backdrop-filter: blur(10px); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; border-top: 1px solid rgba(255,255,255,0.1); }
     .bottom__warpper { display: flex; align-items: center; width: 35%; }
-    .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; }
+    .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; border-radius: 50%; }
     .bottom__song-info { overflow: hidden; }
     #bottomSongName { font-weight: bold; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #bottomSingerName { font-size: 0.75em; color: #aaa; }
@@ -119,7 +119,7 @@
       position: absolute; 
       bottom: 0; 
       width: 100%; 
-      background: linear-gradient(rgba(10, 15, 20, 0.88), rgba(10, 15, 20, 0.95)), 
+      background: linear-gradient(rgba(10, 15, 20, 0.92), rgba(10, 15, 20, 0.98)), 
                   url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
       background-size: cover;
       border-top-left-radius: 2rem; 
@@ -128,29 +128,35 @@
       overflow: hidden; 
       display: flex; 
       flex-direction: column; 
-      justify-content: space-around; 
-      padding: 1rem; 
+      justify-content: space-evenly; 
+      align-items: center;
+      padding: 1.5rem 1rem 1rem 1rem; 
       box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
     }
-    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2em; cursor: pointer; z-index: 35; }
-    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 0.5rem; }
+    .drawer-close-btn { position: absolute; top: 1rem; left: 1.5rem; font-size: 2.2em; cursor: pointer; z-index: 35; border-radius: 50%; }
+    
+    .darwer__column1 { display: flex; align-items: center; justify-content: center; gap: 2rem; }
     .song-album-art-holder { width: 22vh; height: 22vh; border-radius: 50%; position: relative; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     #songAlbumArt { width: 100%; height: 100%; background-size: cover; background-position: center; }
     
-    .visualizer-container { width: 80%; height: 60px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+    .visualizer-container { width: 70%; height: 50px; display: flex; justify-content: center; align-items: center; }
     #visualizerCanvas { width: 100%; height: 100%; }
 
-    .darwer__column2 { text-align: center; margin: 0.2rem 0; }
-    #drawerSongName { font-weight: bold; font-size: 1.1em; }
-    #drawerSingerName { color: #b5b5b5; font-size: 0.9em; }
-    .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 10px; width: 80%; margin: 0 auto; }
+    .darwer__column2 { text-align: center; }
+    #drawerSongName { font-weight: bold; font-size: 1.2em; max-width: 80vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #drawerSingerName { color: #b5b5b5; font-size: 0.95em; margin-top: 4px; }
+    
+    .darwer__column3 { display: flex; align-items: center; justify-content: center; gap: 12px; width: 75%; }
     .column { display: none; }
+
+    .drawer-controls { display: flex; align-items: center; justify-content: center; gap: 2.5rem; }
+    .drawer-controls i { border-radius: 50%; padding: 4px; }
 
     @media screen and (min-aspect-ratio: 4/3) or (orientation: landscape) {
       .top { height: 55vh; }
       .card { width: 22vh; height: 33vh; }
       .list-view { height: calc(45vh - 12vh); }
-      .song-album-art-holder { width: 20vh; height: 20vh; }
+      .song-album-art-holder { width: 18vh; height: 18vh; }
     }
   </style>
 </head> 
@@ -255,10 +261,10 @@
           <div id="drawerSongDuration">00:00</div> 
         </div> 
 
-        <div class="darwer__column1 column"> 
-          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
-          <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
-          <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
+        <div class="drawer-controls column"> 
+          <i class="material-icons focusable" tabindex="0" id="drawerPrevBtn" style="font-size: 2.5em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
+          <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3.2em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
+          <i class="material-icons focusable" tabindex="0" id="drawerNextBtn" style="font-size: 2.5em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
         </div> 
       </div> 
     </div> 
@@ -280,10 +286,10 @@
       dangdut: []
     };
     
-    var albumsList = [];        // Berisi Daftar Album Unik
-    var currentAlbumIndex = 0;  // Index Album Terpilih
-    var activeSongsList = [];   // Lagu-lagu dalam Album Terpilih
-    var currentIndex = 0;       // Index Lagu Terpilih
+    var albumsList = [];        
+    var currentAlbumIndex = 0;  
+    var activeSongsList = [];   
+    var currentIndex = 0;       
     var currentCategory = 'indonesia';
     
     var isNavOpen = false;
@@ -551,7 +557,6 @@
         });
     }
 
-    // PENGELOMPOKAN: Menjadikan 1 Poster Unik per Album/Artis
     function groupSongsIntoAlbums(rawSongs) {
       let albumMap = {};
 
@@ -562,7 +567,7 @@
           albumMap[artistName] = {
             title: artistName,
             singer: artistName,
-            albumArt: song.albumArt, // Mengambil gambar pertama sebagai Poster Album
+            albumArt: song.albumArt,
             songs: []
           };
         }
@@ -577,7 +582,6 @@
       let rawSongs = musicData[catKey] || [];
       document.getElementById("searchInput").value = "";
 
-      // Dapatkan Daftar Poster Album yang Unik
       albumsList = groupSongsIntoAlbums(rawSongs);
 
       renderAlbums();
@@ -600,7 +604,6 @@
       if(catMap[catKey]) $(catMap[catKey]).addClass('active');
     }
 
-    // 1. Tampilkan Poster Album di Bagian Atas
     function renderAlbums() {
       let cardsHtml = "";
 
@@ -623,7 +626,6 @@
       document.getElementById("cardsHolder").innerHTML = cardsHtml;
     }
 
-    // 2. Klik Poster Album $\rightarrow$ Perbarui Judul Lagu Bersusun di Bawah
     function selectAlbum(index) {
       currentAlbumIndex = index;
 
@@ -639,7 +641,6 @@
       renderSongList();
     }
 
-    // 3. Tampilkan Daftar Judul Lagu di Bawah
     function renderSongList() {
       let listHtml = "";
 
@@ -664,7 +665,6 @@
       document.getElementById("listView").innerHTML = listHtml;
     }
 
-    // FILTER SEARCHING
     function filterSongs() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
       let rawSongs = musicData[currentCategory] || [];
@@ -697,7 +697,6 @@
       }
     }
 
-    // MEDIA PLAYER CONTROLLER
     function seekRelative(seconds) {
       if (mediaPlayer && mediaPlayer.duration) {
         let newTime = mediaPlayer.currentTime + seconds;
@@ -809,7 +808,7 @@
       $("#drawerSingerName").text(song.singer);
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
       
-      $(".drawer-holder").animate({ height: "80vh" }, 300, function () {
+      $(".drawer-holder").animate({ height: "82vh" }, 300, function () {
         $(".column").css("display", "flex");
         isDrawerOpen = true;
         updateAndroidGembok();
