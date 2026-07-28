@@ -255,10 +255,13 @@
           <div id="drawerSongDuration">00:00</div> 
         </div> 
 
+        <!-- Bagian Tombol Kontrol Diperbarui dengan Shuffle & Repeat -->
         <div class="darwer__column1 column"> 
+          <i class="material-icons focusable" tabindex="0" id="btnShuffle" style="font-size: 1.8em; cursor:pointer; color: #888;" onclick="toggleShuffle()" title="Shuffle">shuffle</i> 
           <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
           <i class="material-icons focusable" tabindex="0" id="drawerPlay" style="font-size: 3em; cursor:pointer;" onclick="playPause()">play_arrow</i> 
           <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="nextSong()">skip_next</i> 
+          <i class="material-icons focusable" tabindex="0" id="btnRepeat" style="font-size: 1.8em; cursor:pointer; color: #888;" onclick="toggleRepeat()" title="Repeat">repeat</i> 
         </div> 
       </div> 
     </div> 
@@ -268,11 +271,13 @@
   <source id="audio-source" src="" type="audio/mpeg"> 
 </audio>
 
-
-
   <script>
     var mediaPlayer, audioSource;
     var isPlaying = false;
+    
+    // Variabel Status Shuffle & Repeat
+    var isShuffle = false;
+    var repeatMode = 0; // 0 = Off, 1 = Repeat All, 2 = Repeat One
     
     var musicData = {
       indonesia: [],
@@ -282,10 +287,10 @@
       dangdut: []
     };
     
-    var albumsList = [];        // Berisi Daftar Album Unik
-    var currentAlbumIndex = 0;  // Index Album Terpilih
-    var activeSongsList = [];   // Lagu-lagu dalam Album Terpilih
-    var currentIndex = 0;       // Index Lagu Terpilih
+    var albumsList = [];        
+    var currentAlbumIndex = 0;  
+    var activeSongsList = [];   
+    var currentIndex = 0;       
     var currentCategory = 'indonesia';
     
     var isNavOpen = false;
@@ -294,6 +299,33 @@
     var audioCtx, analyser, audioSourceNode;
     var isVisualizerInit = false;
     var animationId;
+
+    // FUNGSI SHUFFLE & REPEAT
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      const btn = document.getElementById("btnShuffle");
+      if (isShuffle) {
+        btn.style.color = "var(--accent-color)";
+      } else {
+        btn.style.color = "#888";
+      }
+    }
+
+    function toggleRepeat() {
+      repeatMode = (repeatMode + 1) % 3;
+      const btn = document.getElementById("btnRepeat");
+      
+      if (repeatMode === 0) {
+        btn.innerText = "repeat";
+        btn.style.color = "#888"; 
+      } else if (repeatMode === 1) {
+        btn.innerText = "repeat";
+        btn.style.color = "var(--accent-color)"; 
+      } else if (repeatMode === 2) {
+        btn.innerText = "repeat_one";
+        btn.style.color = "var(--accent-color)"; 
+      }
+    }
 
     // TOMBOL BACK REMOTE STB
     window.tutupPopUpPoster = function() {
@@ -434,20 +466,18 @@
     }
 
     function initVisualizer() {
-  if (isVisualizerInit) return;
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContext();
-    analyser = audioCtx.createAnalyser();
-    audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
-    audioSourceNode.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    analyser.fftSize = 64; 
-    isVisualizerInit = true;
-  } catch (e) {}
-}
-
-
+      if (isVisualizerInit) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        analyser = audioCtx.createAnalyser();
+        audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
+        audioSourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 64; 
+        isVisualizerInit = true;
+      } catch (e) {}
+    }
 
     function renderVisualizer() {
       const canvas = document.getElementById("visualizerCanvas");
@@ -555,7 +585,6 @@
         });
     }
 
-    // PENGELOMPOKAN: Menjadikan 1 Poster Unik per Album/Artis
     function groupSongsIntoAlbums(rawSongs) {
       let albumMap = {};
 
@@ -566,7 +595,7 @@
           albumMap[artistName] = {
             title: artistName,
             singer: artistName,
-            albumArt: song.albumArt, // Mengambil gambar pertama sebagai Poster Album
+            albumArt: song.albumArt, 
             songs: []
           };
         }
@@ -581,7 +610,6 @@
       let rawSongs = musicData[catKey] || [];
       document.getElementById("searchInput").value = "";
 
-      // Dapatkan Daftar Poster Album yang Unik
       albumsList = groupSongsIntoAlbums(rawSongs);
 
       renderAlbums();
@@ -604,7 +632,6 @@
       if(catMap[catKey]) $(catMap[catKey]).addClass('active');
     }
 
-    // 1. Tampilkan Poster Album di Bagian Atas
     function renderAlbums() {
       let cardsHtml = "";
 
@@ -627,7 +654,6 @@
       document.getElementById("cardsHolder").innerHTML = cardsHtml;
     }
 
-    // 2. Klik Poster Album $\rightarrow$ Perbarui Judul Lagu Bersusun di Bawah
     function selectAlbum(index) {
       currentAlbumIndex = index;
 
@@ -643,7 +669,6 @@
       renderSongList();
     }
 
-    // 3. Tampilkan Daftar Judul Lagu di Bawah
     function renderSongList() {
       let listHtml = "";
 
@@ -668,7 +693,6 @@
       document.getElementById("listView").innerHTML = listHtml;
     }
 
-    // FILTER SEARCHING
     function filterSongs() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
       let rawSongs = musicData[currentCategory] || [];
@@ -701,7 +725,6 @@
       }
     }
 
-    // MEDIA PLAYER CONTROLLER
     function seekRelative(seconds) {
       if (mediaPlayer && mediaPlayer.duration) {
         let newTime = mediaPlayer.currentTime + seconds;
@@ -779,10 +802,17 @@
       }
     }
 
+    // FUNGSI NEXT SONG YANG MENGAKOMODASI SHUFFLE
     function nextSong() {
       if(activeSongsList.length === 0) return;
-      let nextIndex = (currentIndex + 1) % activeSongsList.length;
-      playSong(nextIndex);
+      
+      if (isShuffle) {
+        let randomIndex = Math.floor(Math.random() * activeSongsList.length);
+        playSong(randomIndex);
+      } else {
+        let nextIndex = (currentIndex + 1) % activeSongsList.length;
+        playSong(nextIndex);
+      }
     }
 
     function prevSong() {
@@ -856,7 +886,18 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      mediaPlayer.addEventListener("ended", function() { nextSong(); });
+      // PENGATURAN EVENT KETIKA LAGU SELESAI (MENGAKOMODASI REPEAT MODE & SHUFFLE)
+      mediaPlayer.addEventListener("ended", function() {
+        if (repeatMode === 2) {
+          playSong(currentIndex); // Repeat One
+        } else if (repeatMode === 1) {
+          nextSong(); // Repeat All
+        } else {
+          if (isShuffle || currentIndex < activeSongsList.length - 1) {
+            nextSong();
+          }
+        }
+      });
 
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
