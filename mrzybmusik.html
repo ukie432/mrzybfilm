@@ -267,9 +267,9 @@
     </div> 
   </div> 
   
-<audio id="media-player" crossorigin="anonymous" preload="auto"> 
-  <source id="audio-source" src="" type="audio/mpeg"> 
-</audio>
+  <audio id="media-player" crossorigin="anonymous" preload="auto"> 
+    <source id="audio-source" src="" type="audio/mpeg"> 
+  </audio>
 
   <script>
     var mediaPlayer, audioSource;
@@ -469,6 +469,7 @@
       if (isVisualizerInit) return;
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
         audioCtx = new AudioContext();
         analyser = audioCtx.createAnalyser();
         audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
@@ -476,7 +477,9 @@
         analyser.connect(audioCtx.destination);
         analyser.fftSize = 64; 
         isVisualizerInit = true;
-      } catch (e) {}
+      } catch (e) {
+        // Mencegah Web Audio API memblokir pemutaran utama jika dibatasi platform/STB
+      }
     }
 
     function renderVisualizer() {
@@ -580,7 +583,6 @@
           }, 300);
         })
         .catch(err => {
-          console.error(err);
           document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan file tersedia.</p>";
         });
     }
@@ -750,14 +752,23 @@
       return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
+    // PENGELOLAAN PLAYSONG DENGAN PELEPASAN MEMORI LAMA
     function playSong(index) {
       currentIndex = index;
       const song = activeSongsList[currentIndex];
       if(!song) return;
       
-      initVisualizer();
-      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+      // Hentikan pemutaran lama & bersihkan RAM buffer
+      mediaPlayer.pause();
+      
+      if (isDrawerOpen) {
+        initVisualizer();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') { 
+        audioCtx.resume(); 
+      }
 
+      // Pasang lagu baru
       audioSource.src = song.url;
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
@@ -776,13 +787,15 @@
           $("#drawerPlay").text("pause");
           updateMediaSessionInfo(song);
         }).catch(error => {
-          console.error("Autoplay ditahan:", error);
+          isPlaying = false;
         });
       }
     }
 
     function playPause() {
-      initVisualizer();
+      if (isDrawerOpen) {
+        initVisualizer();
+      }
       if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
 
       if(!audioSource.src && activeSongsList.length > 0) {
@@ -847,6 +860,7 @@
         $(".column").css("display", "flex");
         isDrawerOpen = true;
         updateAndroidGembok();
+        initVisualizer();
         renderVisualizer();
         document.getElementById("btnCloseDrawer").focus();
       });
@@ -885,6 +899,15 @@
 
       setupMediaSession();
       loadM3UPlaylist();
+
+      // PENANGANAN JIKA TERJADI ERROR STREAMING SAAT LAGU BERPINDAH
+      mediaPlayer.addEventListener("error", function() {
+        setTimeout(function() {
+          if (activeSongsList.length > 0) {
+            nextSong();
+          }
+        }, 1000);
+      });
 
       // PENGATURAN EVENT KETIKA LAGU SELESAI (MENGAKOMODASI REPEAT MODE & SHUFFLE)
       mediaPlayer.addEventListener("ended", function() {
