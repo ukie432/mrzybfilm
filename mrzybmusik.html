@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" style="--accent-color:#ff4b66;">
 <head> 
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="UTF-8"> 
   <title>Music Player Album & Playlist</title> 
   <script>
@@ -29,25 +28,17 @@
     }
     
     .main-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    
-    /* Loading Overlay */
     #loading { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; font-family: "Changa One", cursive; font-size: 1.8em; color: #ffffff; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    
-    /* STB Remote Focus Highlight */
     .focusable { transition: transform 0.2s, box-shadow 0.2s, border 0.2s; border: 2px solid transparent; }
     .focusable:focus { border: 2px solid #ffffff !important; transform: scale(1.03); box-shadow: 0 0 15px var(--accent-color) !important; z-index: 99; outline: none; }
 
-    /* Left Panel */
     .left-pannel { width: 5rem; position: absolute; left: 0; top: 0; bottom: 12vh; color: #fff; z-index: 5; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 0.8rem 0; }
     .left-pannel__menu { font-size: 2em; cursor: pointer; border-radius: 50%; padding: 5px; }
-    
     .categories-holder { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; overflow-y: auto; max-height: 75vh; }
     .categories-holder::-webkit-scrollbar { display: none; }
-    
     .left-pannel__category { writing-mode: vertical-rl; transform: rotate(180deg); padding: 0.6rem 0.2rem; cursor: pointer; font-size: 0.8em; letter-spacing: 1px; border-radius: 4px; text-align: center; }
     .left-pannel__category.active { color: var(--accent-color); font-weight: bold; border-right: 2px solid var(--accent-color); }
 
-    /* Menu Navigation Modal (Samping) */
     .nav-container { position: absolute; background: rgba(0, 0, 0, 0.7); height: 100%; width: 100%; left: 0; top: 0; z-index: 40; display: none; }
     .nav { position: relative; background: #1e1e1e; height: 100%; width: 0; overflow: hidden; display: flex; flex-direction: column; }
     .nav-top { background: var(--accent-color); height: 30vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #ffffff; }
@@ -58,7 +49,6 @@
     .theme3 { background: #ffb762; } .theme4 { background: #3444ff; }
     .theme5 { background: #16e0aa; } .theme6 { background: #8f1fff; }
 
-    /* TOP CONTAINER ALBUM */
     .top { 
       background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75)), 
                   url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
@@ -72,14 +62,12 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
     }
     
-    /* Search Bar Styling */
     .search-container { padding: 0.8rem 1rem 0.2rem 6rem; display: flex; align-items: center; }
     .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border-radius: 25px; padding: 0.4rem 1rem; width: 100%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2); }
     .search-box i { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-right: 0.5rem; }
     .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
     .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
-    /* Cards Holder (Poster Album) */
     .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 0.8rem 0 1rem 6rem; height: 100%; align-items: center; }
     .cards-holder::-webkit-scrollbar { display: none; }
     .card { background: #000; width: 20vh; height: 30vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
@@ -89,7 +77,6 @@
     .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
     .card__song-info__singer { font-size: 0.7em; color: var(--accent-color); font-weight: bold; margin-top: 2px; }
 
-    /* Bottom List Container */
     .list-view { overflow-y: auto; height: calc(48vh - 12vh); padding-left: 6rem; padding-right: 1rem; margin-top: 0.5rem; }
     .list-view::-webkit-scrollbar { display: none; }
     .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.25); border-radius: 8px; margin-bottom: 6px; backdrop-filter: blur(3px); }
@@ -97,7 +84,6 @@
     .song-list img { height: 2.8rem; width: 2.8rem; border-radius: 8px; margin-right: 1rem; object-fit: cover; }
     .song-list__singer { font-size: 0.8em; color: #aaa; }
 
-    /* Control Bar Bawah */
     .bottom-pannel { background: rgba(15, 23, 30, 0.95); backdrop-filter: blur(10px); height: 12vh; position: absolute; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; color: #fff; z-index: 6; border-top: 1px solid rgba(255,255,255,0.1); }
     .bottom__warpper { display: flex; align-items: center; width: 35%; }
     .bottom__up-arrow { font-size: 2.2em; cursor: pointer; margin-right: 0.5rem; transition: transform 0.3s; }
@@ -113,7 +99,6 @@
     
     .bottom__play-button { font-size: 2.5em; cursor: pointer; margin-left: 1rem; border-radius: 50%; }
 
-    /* DRAWER MODAL PLAYER */
     .bottom-drawer { background: rgba(0, 0, 0, 0.85); height: 100%; position: absolute; bottom: 0; width: 100%; z-index: 30; display: none; }
     .drawer-holder { 
       position: absolute; 
@@ -161,7 +146,6 @@
   </div> 
   
   <div class="main-container"> 
-    <!-- Left Panel -->
     <div class="left-pannel"> 
       <i class="material-icons left-pannel__menu focusable" tabindex="0" id="btnMenu" onclick="navHandler()">menu</i> 
       <div class="categories-holder">
@@ -173,7 +157,6 @@
       </div>
     </div> 
 
-    <!-- Navigasi Samping -->
     <div class="nav-container" id="navContainer" onclick="navHandler();"> 
       <div class="nav" onclick="event.stopPropagation();"> 
         <div class="nav-top"> 
@@ -193,7 +176,6 @@
       </div> 
     </div> 
 
-    <!-- Top Container (Poster Album) -->
     <div class="top"> 
       <div class="search-container">
         <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
@@ -204,10 +186,8 @@
       <div class="cards-holder" id="cardsHolder"></div> 
     </div> 
 
-    <!-- Bottom List Container (Judul-judul lagu) -->
     <div class="list-view" id="listView"></div> 
 
-    <!-- Player Control Bar Bawah -->
     <div class="bottom-pannel"> 
       <div class="bottom__warpper"> 
         <i class="material-icons bottom__up-arrow focusable" tabindex="0" id="btnOpenDrawer" onclick="drawerHandler();">keyboard_arrow_up</i> 
@@ -227,7 +207,6 @@
       <i class="material-icons bottom__play-button focusable" tabindex="0" id="playBtn" onclick="playPause()">play_arrow</i> 
     </div> 
 
-    <!-- Drawer Fullscreen Player -->
     <div class="bottom-drawer" id="bottomDrawer"> 
       <div class="drawer-holder"> 
         <i class="material-icons drawer-close-btn focusable" tabindex="0" id="btnCloseDrawer" onclick="drawerHandler();">keyboard_arrow_down</i> 
@@ -266,26 +245,18 @@
     </div> 
   </div> 
   
-  <audio id="media-player" preload="auto"> 
-    <source id="audio-source" src="" type="audio/mpeg"> 
-  </audio>
+  <!-- Ditambahkan keep-alive atribut untuk STB -->
+  <audio id="media-player" preload="auto" playsinline webkit-playsinline></audio>
 
   <script>
     var mediaPlayer, audioSource;
     var isPlaying = false;
+    var retryCount = 0;
     
-    // Status Shuffle & Repeat
     var isShuffle = false;
-    var repeatMode = 0; // 0 = Off, 1 = Repeat All, 2 = Repeat One
+    var repeatMode = 0; 
     
-    var musicData = {
-      indonesia: [],
-      english: [],
-      malaysia: [],
-      hindi: [],
-      dangdut: []
-    };
-    
+    var musicData = { indonesia: [], english: [], malaysia: [], hindi: [], dangdut: [] };
     var albumsList = [];        
     var currentAlbumIndex = 0;  
     var activeSongsList = [];   
@@ -296,7 +267,6 @@
     var isDrawerOpen = false;
     var animationId;
 
-    // FUNGSI SHUFFLE & REPEAT
     function toggleShuffle() {
       isShuffle = !isShuffle;
       const btn = document.getElementById("btnShuffle");
@@ -306,7 +276,6 @@
     function toggleRepeat() {
       repeatMode = (repeatMode + 1) % 3;
       const btn = document.getElementById("btnRepeat");
-      
       if (repeatMode === 0) {
         btn.innerText = "repeat";
         btn.style.color = "#888"; 
@@ -319,16 +288,9 @@
       }
     }
 
-    // TOMBOL BACK REMOTE STB
     window.tutupPopUpPoster = function() {
-        if (isDrawerOpen) {
-            drawerHandler();
-            return true;
-        } 
-        else if (isNavOpen) {
-            navHandler();
-            return true;
-        }
+        if (isDrawerOpen) { drawerHandler(); return true; } 
+        else if (isNavOpen) { navHandler(); return true; }
         return false;
     };
 
@@ -350,15 +312,12 @@
         }
     }, true);
 
-    // SPATIAL NAVIGATION REMOTE STB
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
         const rect = el.getBoundingClientRect();
-        
         if (isDrawerOpen && !el.closest('#bottomDrawer')) return false;
         if (isNavOpen && !el.closest('#navContainer')) return false;
-
         return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
       });
     }
@@ -377,7 +336,6 @@
           const bProgress = document.getElementById('bottomProgress');
           if (bProgress) { bProgress.focus(); return; }
         }
-        
         if (current.id === 'bottomProgress') {
           if (direction === 'right') {
             const pBtn = document.getElementById('playBtn');
@@ -387,7 +345,6 @@
             if (btnOpen) { btnOpen.focus(); return; }
           }
         }
-
         if (current.id === 'playBtn' && direction === 'left') {
           const bProgress = document.getElementById('bottomProgress');
           if (bProgress) { bProgress.focus(); return; }
@@ -440,7 +397,6 @@
         if (isValid) {
           const dx = eCenter.x - cCenter.x;
           const dy = eCenter.y - cCenter.y;
-          
           let dist = (direction === 'left' || direction === 'right') 
             ? Math.abs(dx) + Math.abs(dy) * 2 
             : Math.abs(dy) + Math.abs(dx) * 4;
@@ -487,7 +443,6 @@
       }
     });
 
-    // MEDIA SESSION
     function setupMediaSession() {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', function() { playPause(); });
@@ -507,17 +462,20 @@
       }
     }
 
-    // VISUALIZER AMAN (PROSEDURAL ANIMATED CANVAS - BEBAS BUG PEMBISUAN CROS-ORIGIN AUDIO)
+    // VISUALIZER AMAN (Hanya berjalan jika Drawer terbuka untuk menghemat RAM STB)
     var numBars = 20;
     var barPhases = Array.from({length: numBars}, () => Math.random() * Math.PI * 2);
 
     function renderVisualizer() {
       if (animationId) cancelAnimationFrame(animationId);
+      if (!isDrawerOpen) return;
+
       const canvas = document.getElementById("visualizerCanvas");
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
 
       function draw() {
+        if (!isDrawerOpen) return;
         animationId = requestAnimationFrame(draw);
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -549,7 +507,6 @@
       draw();
     }
 
-    // PARSER M3U8
     function parseM3U(m3uContent) {
       const lines = m3uContent.split(/\r?\n/);
       let currentSong = null;
@@ -599,7 +556,8 @@
     }
 
     function loadM3UPlaylist() {
-      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u)
+      // PERBAIKAN: Kutip penutup link Github yang hilang
+      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u')
         .then(res => {
           if (!res.ok) throw new Error("File M3U8 tidak ditemukan");
           return res.text();
@@ -615,7 +573,7 @@
           }, 300);
         })
         .catch(err => {
-          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan koneksi internet tersedia.</p>";
+          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u!<br>Pastikan koneksi internet tersedia.</p>";
         });
     }
 
@@ -785,12 +743,15 @@
 
     function playSong(index) {
       currentIndex = index;
+      retryCount = 0;
       const song = activeSongsList[currentIndex];
       if(!song) return;
-      
-      mediaPlayer.pause();
 
-      audioSource.src = song.url;
+      mediaPlayer.pause();
+      
+      // PERBAIKAN: Mengatur src secara langsung ke tag audio tanpa menggunakan tag <source> dinamis yang sering bug di WebView STB
+      mediaPlayer.src = song.url;
+
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
 
@@ -814,7 +775,7 @@
     }
 
     function playPause() {
-      if(!audioSource.src && activeSongsList.length > 0) {
+      if(!mediaPlayer.src && activeSongsList.length > 0) {
         playSong(0);
         return;
       }
@@ -909,17 +870,37 @@
 
     window.onload = function() {
       mediaPlayer = document.getElementById("media-player");
-      audioSource = document.getElementById("audio-source");
 
       setupMediaSession();
       loadM3UPlaylist();
 
+      // PERBAIKAN STB: Penanganan error dengan Auto-Retry (Max 2x), jika gagal baru lanjut lagu berikutnya
       mediaPlayer.addEventListener("error", function() {
-        setTimeout(function() {
-          if (activeSongsList.length > 0) {
-            nextSong();
-          }
-        }, 1000);
+        if (retryCount < 2) {
+          retryCount++;
+          setTimeout(function() {
+            if (mediaPlayer.src) {
+              mediaPlayer.load();
+              mediaPlayer.play();
+            }
+          }, 1000);
+        } else {
+          retryCount = 0;
+          setTimeout(function() {
+            if (activeSongsList.length > 0) nextSong();
+          }, 1000);
+        }
+      });
+
+      // PERBAIKAN STB: Auto Next jika stream "Stalled" atau terputus jaringan sejenak
+      mediaPlayer.addEventListener("stalled", function() {
+        if (isPlaying) {
+          setTimeout(function() {
+            if (mediaPlayer.paused && isPlaying) {
+              mediaPlayer.play();
+            }
+          }, 2000);
+        }
       });
 
       mediaPlayer.addEventListener("ended", function() {
