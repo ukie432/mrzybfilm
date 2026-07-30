@@ -1470,7 +1470,6 @@ https://movieku.ukielaki8387.workers.dev/0:/Musikmrzyb/15%20Rita%20Sugiarto%20Za
 #EXTINF:-1 group-title="dangdut" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJuKeOl40tuGJ4ffT0lrmEySCJNaNevP683nchUMUAwQ&s=10", Dangdut Koplo - Album Koplo
 https://archive.org/serve/dangdut-koplo-terbaik-paling-dicari-2021-full-album-dangdut-terbaru-2021-rembulan-alam/DANGDUT%20KOPLO%20TERBAIK%20PALING%20DICARI%202021%20FULL%20ALBUM%20DANGDUT%20TERBARU%202021%20REMBULAN%20ALAM.mp3
 
-
 ===== scan ====
 
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Scan.webp" group-title="Malaysia",Scan - Yang Kalut Difikirkan 
@@ -1515,6 +1514,7 @@ https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Kita%20Sama-sama%20Suka.mp3
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Kau%20Tetap%20Ku%20Hajati.mp3
 
 
+
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Stings.webp" group-title="Malaysia",Stings - Adakah Kau Setia
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Adakah%20Kau%20Setia.mp3
 
@@ -1523,6 +1523,7 @@ https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Cinta%20Memerlukan%20Kesetia
 
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Stings.webp" group-title="Malaysia",Stings - Dalam Diam Aku Mencintaimu
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Dalam%20Diam%20Aku%20Mencintaimu.mp3
+
 
 
 
@@ -1582,7 +1583,7 @@ https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/U.Ks%20-%20Tergamak%20Kau.mp
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Uks.webp" group-title="Malaysia",U.Ks - Pahit Ku Telan Jua
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Ukays%20-%20Pahit%20Ku%20Telan%20Jua.mp3
 
-#EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Uks.webp" group-title="Malaysia",U.Ks cinta itu buta
+#EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Uks.webp" group-title="Malaysia",U.Ks - cinta itu buta
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/UKS%20cinta%20itu%20buta.mp3
 
 
@@ -1595,13 +1596,13 @@ https://posterfilm.pages.dev/poster/film_lawas/Exists.webp" group-title="Malaysi
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Langkah%20Seiringan.mp3
 
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_animasi/Avatarapi.webp" group-title="Malaysia",Exists - Dirantai Digelangi Rindu (Official Music Video)
+#EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Exists.webp" group-title="Malaysia",Exists - Dirantai Digelangi Rindu (Official Music Video)
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Exists%20-%20Dirantai%20Digelangi%20Rindu%20(Official%20Music%20Video).mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_animasi/Avatarapi.webp" group-title="Malaysia",Exists - Masih Terserlah Ayumu 
+#EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Exists.webp" group-title="Malaysia",Exists - Masih Terserlah Ayumu 
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Exists%20Masih%20Terserlah%20Ayumu%20(Official%20Lyric%20Video).mp3
 
-#EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/Ukie4321/iptv-posterku/main/poster/film_animasi/Avatarapi.webp" group-title="Malaysia",Exists - usah tinggal daku kekasih
+#EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Exists.webp" group-title="Malaysia",Exists - usah tinggal daku kekasih
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/usah%20tinggal%20daku%20kekasih%20-%20exist.mp3
 
 
@@ -1617,8 +1618,10 @@ https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Bencana.mp3
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Bisa.mp3
 
 
+
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Search.webp" group-title="Malaysia",Search - Cinta Buatan Malaysia
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Cinta%20Buatan%20Malaysia.mp3
+
 
 
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Search.webp" group-title="Malaysia",Search - Cinta Pertama
@@ -1713,3 +1716,9 @@ https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Sirih%20Gambir.mp3
 
 #EXTINF:-1 tvg-logo="https://posterfilm.pages.dev/poster/film_lawas/Search.webp" group-title="Malaysia",Search - Tumbuk Rusuk
 https://filmmrzyb.ukielaki8387.workers.dev/0:/Musik/Tumbuk%20Rusuk.mp3
+
+
+
+
+
+
