@@ -599,7 +599,7 @@
     }
 
     function loadM3UPlaylist() {
-      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u?refresh=1')
+      fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u)
         .then(res => {
           if (!res.ok) throw new Error("File M3U8 tidak ditemukan");
           return res.text();
