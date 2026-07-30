@@ -556,7 +556,6 @@
     }
 
     function loadM3UPlaylist() {
-      // PERBAIKAN: Kutip penutup link Github yang hilang
       fetch('https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/musikku.m3u')
         .then(res => {
           if (!res.ok) throw new Error("File M3U8 tidak ditemukan");
@@ -749,7 +748,6 @@
 
       mediaPlayer.pause();
       
-      // PERBAIKAN: Mengatur src secara langsung ke tag audio tanpa menggunakan tag <source> dinamis yang sering bug di WebView STB
       mediaPlayer.src = song.url;
 
       document.getElementById("bottomSongName").innerText = song.name;
@@ -874,7 +872,6 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      // PERBAIKAN STB: Penanganan error dengan Auto-Retry (Max 2x), jika gagal baru lanjut lagu berikutnya
       mediaPlayer.addEventListener("error", function() {
         if (retryCount < 2) {
           retryCount++;
@@ -892,7 +889,6 @@
         }
       });
 
-      // PERBAIKAN STB: Auto Next jika stream "Stalled" atau terputus jaringan sejenak
       mediaPlayer.addEventListener("stalled", function() {
         if (isPlaying) {
           setTimeout(function() {
