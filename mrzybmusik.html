@@ -265,7 +265,6 @@
     </div> 
   </div> 
   
-  <!-- Disatukan tanpa crossorigin agar kompatibel dengan beragam link audio M3U -->
   <audio id="media-player" preload="auto"> 
     <source id="audio-source" src="" type="audio/mpeg"> 
   </audio>
@@ -294,9 +293,6 @@
     
     var isNavOpen = false;
     var isDrawerOpen = false;
-
-    var audioCtx, analyser, audioSourceNode;
-    var isVisualizerInit = false;
     var animationId;
 
     // FUNGSI SHUFFLE & REPEAT
@@ -353,13 +349,12 @@
         }
     }, true);
 
-    // SPATIAL NAVIGATION REMOTE STB (AKURAT & PRESISI)
+    // SPATIAL NAVIGATION REMOTE STB
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
         const rect = el.getBoundingClientRect();
         
-        // Mencegah elemen dibelakang modal tertembus fokus
         if (isDrawerOpen && !el.closest('#bottomDrawer')) return false;
         if (isNavOpen && !el.closest('#navContainer')) return false;
 
@@ -376,7 +371,6 @@
         return;
       }
 
-      // 1. NAVIGASI KHUSUS CONTROL BAR BAWAH
       if (!isDrawerOpen) {
         if (current.id === 'btnOpenDrawer' && direction === 'right') {
           const bProgress = document.getElementById('bottomProgress');
@@ -399,13 +393,11 @@
         }
       }
 
-      // 2. JIKA PROGRESS BAR DI DALAM DRAWER BERADA DALAM FOKUS
       if (isDrawerOpen && current.classList.contains('progress-bar-container')) {
         if (direction === 'left') { seekRelative(-5); return; } 
         else if (direction === 'right') { seekRelative(5); return; }
       }
 
-      // 3. NAVIGASI DARI POSTER ALBUM KE LIST LAGU (VERTIKAL)
       if (direction === 'down' && current.classList.contains('card')) {
         const firstSong = document.querySelector('#listView .song-list.focusable');
         if (firstSong) {
@@ -415,7 +407,6 @@
         }
       }
 
-      // 4. NAVIGASI DARI LIST LAGU PERTAMA KE POSTER ALBUM
       if (direction === 'up' && current.classList.contains('song-list')) {
         const songItems = Array.from(document.querySelectorAll('#listView .song-list.focusable'));
         if (songItems.indexOf(current) === 0) {
@@ -428,7 +419,6 @@
         }
       }
 
-      // 5. LOGIKA SPATIAL NAVIGATION MATRIKS JARAK
       const cRect = current.getBoundingClientRect();
       const cCenter = { x: cRect.left + cRect.width / 2, y: cRect.top + cRect.height / 2 };
 
@@ -496,7 +486,7 @@
       }
     });
 
-    // MEDIA SESSION & VISUALIZER (FIXED RE-INITIALIZATION BUG)
+    // MEDIA SESSION
     function setupMediaSession() {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', function() { playPause(); });
@@ -516,44 +506,35 @@
       }
     }
 
-    function initVisualizer() {
-      if (isVisualizerInit) return;
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        audioCtx = new AudioContext();
-        analyser = audioCtx.createAnalyser();
-        audioSourceNode = audioCtx.createMediaElementSource(mediaPlayer);
-        audioSourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        analyser.fftSize = 64; 
-        isVisualizerInit = true;
-      } catch (e) {
-        // Safe catch jika dibatasi oleh sistem Android STB
-      }
-    }
+    // VISUALIZER AMAN (PROSEDURAL ANIMATED CANVAS - BEBAS BUG PEMBISUAN CROS-ORIGIN AUDIO)
+    var numBars = 20;
+    var barPhases = Array.from({length: numBars}, () => Math.random() * Math.PI * 2);
 
     function renderVisualizer() {
+      if (animationId) cancelAnimationFrame(animationId);
       const canvas = document.getElementById("visualizerCanvas");
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-      const bufferLength = analyser ? analyser.frequencyBinCount : 0;
-      const dataArray = new Uint8Array(bufferLength);
 
       function draw() {
         animationId = requestAnimationFrame(draw);
-        if (!analyser) return;
-        analyser.getByteFrequencyData(dataArray);
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const barWidth = (canvas.width / bufferLength) * 1.8;
-        let barHeight;
-        let x = 0;
+
+        const barWidth = (canvas.width / numBars) * 0.65;
+        const gap = (canvas.width / numBars) * 0.35;
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#ff4b66';
 
-        for (let i = 0; i < bufferLength; i++) {
-          barHeight = (dataArray[i] / 255) * canvas.height;
+        for (let i = 0; i < numBars; i++) {
+          let heightPct = 0.15;
+          if (isPlaying) {
+            barPhases[i] += 0.08 + (i % 3) * 0.02;
+            heightPct = 0.2 + (Math.sin(barPhases[i]) * 0.35 + Math.cos(barPhases[i] * 1.5) * 0.35 + 0.35);
+          }
+          let barHeight = heightPct * canvas.height;
+          let x = i * (barWidth + gap) + gap / 2;
+
           ctx.fillStyle = accentColor;
           ctx.beginPath();
           if (ctx.roundRect) {
@@ -562,13 +543,12 @@
             ctx.rect(x, canvas.height - barHeight, barWidth, barHeight);
           }
           ctx.fill();
-          x += barWidth + 3;
         }
       }
       draw();
     }
 
-    // PARSER M3U8 & LOGIKA GROUPING
+    // PARSER M3U8
     function parseM3U(m3uContent) {
       const lines = m3uContent.split(/\r?\n/);
       let currentSong = null;
@@ -808,13 +788,6 @@
       if(!song) return;
       
       mediaPlayer.pause();
-      
-      if (isDrawerOpen) {
-        initVisualizer();
-      }
-      if (audioCtx && audioCtx.state === 'suspended') { 
-        audioCtx.resume(); 
-      }
 
       audioSource.src = song.url;
       document.getElementById("bottomSongName").innerText = song.name;
@@ -840,11 +813,6 @@
     }
 
     function playPause() {
-      if (isDrawerOpen) {
-        initVisualizer();
-      }
-      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
-
       if(!audioSource.src && activeSongsList.length > 0) {
         playSong(0);
         return;
@@ -906,7 +874,6 @@
         $(".column").css("display", "flex");
         isDrawerOpen = true;
         updateAndroidGembok();
-        initVisualizer();
         renderVisualizer();
         document.getElementById("btnCloseDrawer").focus();
       });
