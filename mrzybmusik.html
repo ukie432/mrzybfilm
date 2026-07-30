@@ -47,7 +47,7 @@
     .left-pannel__category.active { color: var(--accent-color); font-weight: bold; border-right: 2px solid var(--accent-color); }
 
     /* Menu Navigation Modal (Samping) */
-    .nav-container { position: absolute; background: rgba(0, 0, 0, 0.7); height: 100%; width: 100%; left: 0; top: 0; z-index: 20; display: none; }
+    .nav-container { position: absolute; background: rgba(0, 0, 0, 0.7); height: 100%; width: 100%; left: 0; top: 0; z-index: 40; display: none; }
     .nav { position: relative; background: #1e1e1e; height: 100%; width: 0; overflow: hidden; display: flex; flex-direction: column; }
     .nav-top { background: var(--accent-color); height: 30vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #ffffff; }
     .nav-bottom { padding: 1.5rem; text-align: left; }
@@ -78,18 +78,17 @@
     .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
     .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
-    /* Cards Holder (Hanya untuk Poster Album) */
+    /* Cards Holder (Poster Album) */
     .cards-holder { display: flex; overflow-x: auto; overflow-y: hidden; padding: 0.8rem 0 1rem 6rem; height: 100%; align-items: center; }
     .cards-holder::-webkit-scrollbar { display: none; }
     .card { background: #000; width: 20vh; height: 30vh; border-radius: 15px; background-size: cover; background-position: center; flex: none; margin-right: 1.2rem; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5); position: relative; cursor: pointer; }
     
-    /* Highlight Poster Album yang Sedang Aktif Selected */
     .card.active-album { border: 2.5px solid var(--accent-color) !important; box-shadow: 0 0 18px var(--accent-color); transform: scale(1.02); }
     .card__song-info { position: absolute; background: rgba(0, 0, 0, 0.85); width: 100%; bottom: 0; text-align: center; padding: 0.4rem 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
     .card__song-info__name { font-size: 0.85em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
     .card__song-info__singer { font-size: 0.7em; color: var(--accent-color); font-weight: bold; margin-top: 2px; }
 
-    /* Bottom List Container (Judul-Judul Lagu) */
+    /* Bottom List Container */
     .list-view { overflow-y: auto; height: calc(48vh - 12vh); padding-left: 6rem; padding-right: 1rem; margin-top: 0.5rem; }
     .list-view::-webkit-scrollbar { display: none; }
     .song-list { padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.25); border-radius: 8px; margin-bottom: 6px; backdrop-filter: blur(3px); }
@@ -255,7 +254,6 @@
           <div id="drawerSongDuration">00:00</div> 
         </div> 
 
-        <!-- Bagian Tombol Kontrol Diperbarui dengan Shuffle & Repeat -->
         <div class="darwer__column1 column"> 
           <i class="material-icons focusable" tabindex="0" id="btnShuffle" style="font-size: 1.8em; cursor:pointer; color: #888;" onclick="toggleShuffle()" title="Shuffle">shuffle</i> 
           <i class="material-icons focusable" tabindex="0" style="font-size: 2.2em; cursor:pointer;" onclick="prevSong()">skip_previous</i> 
@@ -267,7 +265,8 @@
     </div> 
   </div> 
   
-  <audio id="media-player" crossorigin="anonymous" preload="auto"> 
+  <!-- Disatukan tanpa crossorigin agar kompatibel dengan beragam link audio M3U -->
+  <audio id="media-player" preload="auto"> 
     <source id="audio-source" src="" type="audio/mpeg"> 
   </audio>
 
@@ -275,7 +274,7 @@
     var mediaPlayer, audioSource;
     var isPlaying = false;
     
-    // Variabel Status Shuffle & Repeat
+    // Status Shuffle & Repeat
     var isShuffle = false;
     var repeatMode = 0; // 0 = Off, 1 = Repeat All, 2 = Repeat One
     
@@ -304,11 +303,7 @@
     function toggleShuffle() {
       isShuffle = !isShuffle;
       const btn = document.getElementById("btnShuffle");
-      if (isShuffle) {
-        btn.style.color = "var(--accent-color)";
-      } else {
-        btn.style.color = "#888";
-      }
+      btn.style.color = isShuffle ? "var(--accent-color)" : "#888";
     }
 
     function toggleRepeat() {
@@ -358,11 +353,16 @@
         }
     }, true);
 
-    // SPATIAL NAVIGATION REMOTE STB
+    // SPATIAL NAVIGATION REMOTE STB (AKURAT & PRESISI)
     function getVisibleFocusables() {
       return Array.from(document.querySelectorAll('.focusable')).filter(el => {
         const style = window.getComputedStyle(el);
         const rect = el.getBoundingClientRect();
+        
+        // Mencegah elemen dibelakang modal tertembus fokus
+        if (isDrawerOpen && !el.closest('#bottomDrawer')) return false;
+        if (isNavOpen && !el.closest('#navContainer')) return false;
+
         return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
       });
     }
@@ -376,11 +376,59 @@
         return;
       }
 
-      if (current.classList.contains('progress-bar-container')) {
+      // 1. NAVIGASI KHUSUS CONTROL BAR BAWAH
+      if (!isDrawerOpen) {
+        if (current.id === 'btnOpenDrawer' && direction === 'right') {
+          const bProgress = document.getElementById('bottomProgress');
+          if (bProgress) { bProgress.focus(); return; }
+        }
+        
+        if (current.id === 'bottomProgress') {
+          if (direction === 'right') {
+            const pBtn = document.getElementById('playBtn');
+            if (pBtn) { pBtn.focus(); return; }
+          } else if (direction === 'left') {
+            const btnOpen = document.getElementById('btnOpenDrawer');
+            if (btnOpen) { btnOpen.focus(); return; }
+          }
+        }
+
+        if (current.id === 'playBtn' && direction === 'left') {
+          const bProgress = document.getElementById('bottomProgress');
+          if (bProgress) { bProgress.focus(); return; }
+        }
+      }
+
+      // 2. JIKA PROGRESS BAR DI DALAM DRAWER BERADA DALAM FOKUS
+      if (isDrawerOpen && current.classList.contains('progress-bar-container')) {
         if (direction === 'left') { seekRelative(-5); return; } 
         else if (direction === 'right') { seekRelative(5); return; }
       }
 
+      // 3. NAVIGASI DARI POSTER ALBUM KE LIST LAGU (VERTIKAL)
+      if (direction === 'down' && current.classList.contains('card')) {
+        const firstSong = document.querySelector('#listView .song-list.focusable');
+        if (firstSong) {
+          firstSong.focus();
+          firstSong.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+      }
+
+      // 4. NAVIGASI DARI LIST LAGU PERTAMA KE POSTER ALBUM
+      if (direction === 'up' && current.classList.contains('song-list')) {
+        const songItems = Array.from(document.querySelectorAll('#listView .song-list.focusable'));
+        if (songItems.indexOf(current) === 0) {
+          const activeCard = document.querySelector('.card.active-album.focusable') || document.querySelector('.card.focusable');
+          if (activeCard) {
+            activeCard.focus();
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+          }
+        }
+      }
+
+      // 5. LOGIKA SPATIAL NAVIGATION MATRIKS JARAK
       const cRect = current.getBoundingClientRect();
       const cCenter = { x: cRect.left + cRect.width / 2, y: cRect.top + cRect.height / 2 };
 
@@ -401,7 +449,10 @@
         if (isValid) {
           const dx = eCenter.x - cCenter.x;
           const dy = eCenter.y - cCenter.y;
-          const dist = (direction === 'left' || direction === 'right') ? Math.abs(dx) + Math.abs(dy) * 2 : Math.abs(dy) + Math.abs(dx) * 2;
+          
+          let dist = (direction === 'left' || direction === 'right') 
+            ? Math.abs(dx) + Math.abs(dy) * 2 
+            : Math.abs(dy) + Math.abs(dx) * 4;
 
           if (dist < minDistance) {
             minDistance = dist;
@@ -445,7 +496,7 @@
       }
     });
 
-    // MEDIA SESSION & VISUALIZER
+    // MEDIA SESSION & VISUALIZER (FIXED RE-INITIALIZATION BUG)
     function setupMediaSession() {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', function() { playPause(); });
@@ -478,7 +529,7 @@
         analyser.fftSize = 64; 
         isVisualizerInit = true;
       } catch (e) {
-        // Mencegah Web Audio API memblokir pemutaran utama jika dibatasi platform/STB
+        // Safe catch jika dibatasi oleh sistem Android STB
       }
     }
 
@@ -505,7 +556,11 @@
           barHeight = (dataArray[i] / 255) * canvas.height;
           ctx.fillStyle = accentColor;
           ctx.beginPath();
-          ctx.roundRect(x, canvas.height - barHeight, barWidth, barHeight, [4, 4, 0, 0]);
+          if (ctx.roundRect) {
+            ctx.roundRect(x, canvas.height - barHeight, barWidth, barHeight, [4, 4, 0, 0]);
+          } else {
+            ctx.rect(x, canvas.height - barHeight, barWidth, barHeight);
+          }
           ctx.fill();
           x += barWidth + 3;
         }
@@ -513,11 +568,7 @@
       draw();
     }
 
-    if (!CanvasRenderingContext2D.prototype.roundRect) {
-      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
-    }
-
-    // PARSER M3U8 & LOGIKA GROUPING UNIK PER ALBUM/ARTIS
+    // PARSER M3U8 & LOGIKA GROUPING
     function parseM3U(m3uContent) {
       const lines = m3uContent.split(/\r?\n/);
       let currentSong = null;
@@ -583,7 +634,7 @@
           }, 300);
         })
         .catch(err => {
-          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan file tersedia.</p>";
+          document.getElementById("loading").innerHTML = "<p style='padding:20px;'>Gagal memuat playlist.m3u8!<br>Pastikan koneksi internet tersedia.</p>";
         });
     }
 
@@ -613,7 +664,6 @@
       document.getElementById("searchInput").value = "";
 
       albumsList = groupSongsIntoAlbums(rawSongs);
-
       renderAlbums();
 
       if (albumsList.length > 0) {
@@ -752,13 +802,11 @@
       return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    // PENGELOLAAN PLAYSONG DENGAN PELEPASAN MEMORI LAMA
     function playSong(index) {
       currentIndex = index;
       const song = activeSongsList[currentIndex];
       if(!song) return;
       
-      // Hentikan pemutaran lama & bersihkan RAM buffer
       mediaPlayer.pause();
       
       if (isDrawerOpen) {
@@ -768,7 +816,6 @@
         audioCtx.resume(); 
       }
 
-      // Pasang lagu baru
       audioSource.src = song.url;
       document.getElementById("bottomSongName").innerText = song.name;
       document.getElementById("bottomSingerName").innerText = song.singer;
@@ -815,7 +862,6 @@
       }
     }
 
-    // FUNGSI NEXT SONG YANG MENGAKOMODASI SHUFFLE
     function nextSong() {
       if(activeSongsList.length === 0) return;
       
@@ -900,7 +946,6 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      // PENANGANAN JIKA TERJADI ERROR STREAMING SAAT LAGU BERPINDAH
       mediaPlayer.addEventListener("error", function() {
         setTimeout(function() {
           if (activeSongsList.length > 0) {
@@ -909,12 +954,11 @@
         }, 1000);
       });
 
-      // PENGATURAN EVENT KETIKA LAGU SELESAI (MENGAKOMODASI REPEAT MODE & SHUFFLE)
       mediaPlayer.addEventListener("ended", function() {
         if (repeatMode === 2) {
-          playSong(currentIndex); // Repeat One
+          playSong(currentIndex);
         } else if (repeatMode === 1) {
-          nextSong(); // Repeat All
+          nextSong();
         } else {
           if (isShuffle || currentIndex < activeSongsList.length - 1) {
             nextSong();
