@@ -245,13 +245,14 @@
     </div> 
   </div> 
   
-  <!-- Ditambahkan keep-alive atribut untuk STB -->
   <audio id="media-player" preload="auto" playsinline webkit-playsinline></audio>
 
   <script>
-    var mediaPlayer, audioSource;
+    var mediaPlayer;
     var isPlaying = false;
     var retryCount = 0;
+    var lastPlayedTime = 0; // Mengingat posisi detik terakhir jika pemutaran terputus
+    var stallTimer = null;
     
     var isShuffle = false;
     var repeatMode = 0; 
@@ -462,7 +463,6 @@
       }
     }
 
-    // VISUALIZER AMAN (Hanya berjalan jika Drawer terbuka untuk menghemat RAM STB)
     var numBars = 20;
     var barPhases = Array.from({length: numBars}, () => Math.random() * Math.PI * 2);
 
@@ -721,6 +721,7 @@
         if (newTime < 0) newTime = 0;
         if (newTime > mediaPlayer.duration) newTime = mediaPlayer.duration;
         mediaPlayer.currentTime = newTime;
+        lastPlayedTime = newTime;
       }
     }
 
@@ -729,7 +730,9 @@
         const rect = element.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const width = rect.width;
-        mediaPlayer.currentTime = (clickX / width) * mediaPlayer.duration;
+        let targetTime = (clickX / width) * mediaPlayer.duration;
+        mediaPlayer.currentTime = targetTime;
+        lastPlayedTime = targetTime;
       }
     }
 
@@ -743,11 +746,11 @@
     function playSong(index) {
       currentIndex = index;
       retryCount = 0;
+      lastPlayedTime = 0; // Reset detik untuk lagu baru
       const song = activeSongsList[currentIndex];
       if(!song) return;
 
       mediaPlayer.pause();
-      
       mediaPlayer.src = song.url;
 
       document.getElementById("bottomSongName").innerText = song.name;
@@ -772,21 +775,55 @@
       }
     }
 
+    // FUNGSI PEMULIHAN RECONNECT ANTI MACET
+    function recoverStream() {
+      if (!mediaPlayer.src || activeSongsList.length === 0) return;
+      
+      var targetTime = lastPlayedTime;
+      mediaPlayer.load();
+      
+      var onCanPlay = function() {
+        mediaPlayer.removeEventListener("loadeddata", onCanPlay);
+        if (targetTime > 0 && targetTime < mediaPlayer.duration) {
+          mediaPlayer.currentTime = targetTime; // Resume tepat di detik terputus
+        }
+        mediaPlayer.play().then(function() {
+          isPlaying = true;
+          document.getElementById("playBtn").innerText = "pause";
+          $("#drawerPlay").text("pause");
+        }).catch(function(){});
+      };
+
+      mediaPlayer.addEventListener("loadeddata", onCanPlay);
+    }
+
     function playPause() {
       if(!mediaPlayer.src && activeSongsList.length > 0) {
         playSong(0);
         return;
       }
       if (isPlaying) {
+        lastPlayedTime = mediaPlayer.currentTime;
         mediaPlayer.pause();
         document.getElementById("playBtn").innerText = "play_arrow";
         $("#drawerPlay").text("play_arrow");
         isPlaying = false;
       } else {
-        mediaPlayer.play();
-        document.getElementById("playBtn").innerText = "pause";
-        $("#drawerPlay").text("pause");
-        isPlaying = true;
+        // Jika koneksi terputus saat pause, paksa re-stream
+        if (mediaPlayer.readyState < 2 || mediaPlayer.error) {
+          recoverStream();
+        } else {
+          if (lastPlayedTime > 0 && mediaPlayer.currentTime === 0) {
+            mediaPlayer.currentTime = lastPlayedTime;
+          }
+          mediaPlayer.play().then(_ => {
+            isPlaying = true;
+            document.getElementById("playBtn").innerText = "pause";
+            $("#drawerPlay").text("pause");
+          }).catch(err => {
+            recoverStream();
+          });
+        }
       }
     }
 
@@ -872,15 +909,11 @@
       setupMediaSession();
       loadM3UPlaylist();
 
+      // Penanganan Otomatis Saat Terjadi Pemutusan Koneksi Jaringan / Stalled
       mediaPlayer.addEventListener("error", function() {
-        if (retryCount < 2) {
+        if (retryCount < 3) {
           retryCount++;
-          setTimeout(function() {
-            if (mediaPlayer.src) {
-              mediaPlayer.load();
-              mediaPlayer.play();
-            }
-          }, 1000);
+          recoverStream();
         } else {
           retryCount = 0;
           setTimeout(function() {
@@ -889,17 +922,29 @@
         }
       });
 
+      mediaPlayer.addEventListener("waiting", function() {
+        if (!isPlaying) return;
+        clearTimeout(stallTimer);
+        stallTimer = setTimeout(function() {
+          if (mediaPlayer.readyState < 3 && isPlaying) {
+            recoverStream();
+          }
+        }, 3000);
+      });
+
       mediaPlayer.addEventListener("stalled", function() {
         if (isPlaying) {
-          setTimeout(function() {
+          clearTimeout(stallTimer);
+          stallTimer = setTimeout(function() {
             if (mediaPlayer.paused && isPlaying) {
-              mediaPlayer.play();
+              recoverStream();
             }
-          }, 2000);
+          }, 2500);
         }
       });
 
       mediaPlayer.addEventListener("ended", function() {
+        lastPlayedTime = 0;
         if (repeatMode === 2) {
           playSong(currentIndex);
         } else if (repeatMode === 1) {
@@ -913,6 +958,10 @@
 
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
+          if (mediaPlayer.currentTime > 0 && !mediaPlayer.paused) {
+            lastPlayedTime = mediaPlayer.currentTime; // Simpan posisi detik secara kontinu
+          }
+
           let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
           document.getElementById("bottomBar").style.width = pct + "%";
           
