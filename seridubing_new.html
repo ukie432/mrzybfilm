@@ -250,7 +250,7 @@
     const LOAD_SIZE = 40;
 
     // ========================================================
-    // FUNGSI PARSER M3U KE JSON
+    // PARSER M3U SUPER OTOMATIS & AUTO SORT EPISODE
     // ========================================================
     function parseM3U(text) {
         const lines = text.split('\n');
@@ -265,34 +265,39 @@
 
             if (line.startsWith("#EXTINF")) {
                 const logoMatch = line.match(/tvg-logo=["']([^"']+)["']/);
-                currentPoster = logoMatch ? logoMatch[1] : "https://via.placeholder.com/300x400?text=No+Poster";
+                currentPoster = logoMatch ? logoMatch[1] : "";
 
                 const groupMatch = line.match(/group-title=["']([^"']+)["']/);
-                
                 const commaIndex = line.lastIndexOf(',');
                 let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
 
                 if (groupMatch && groupMatch[1]) {
-                    currentTitle = groupMatch[1];
+                    currentTitle = groupMatch[1].trim();
                     currentEpName = rawTitle;
+                } else if (rawTitle.includes("-")) {
+                    let parts = rawTitle.split("-");
+                    currentTitle = parts[0].trim();
+                    currentEpName = parts.slice(1).join("-").trim(); 
                 } else {
-                    if (rawTitle.includes("-")) {
-                        let parts = rawTitle.split("-");
-                        currentTitle = parts[0].trim();
-                        currentEpName = parts.slice(1).join("-").trim(); 
-                    } else {
-                        currentTitle = rawTitle;
-                        currentEpName = "Play"; 
-                    }
+                    currentTitle = rawTitle.trim();
+                    currentEpName = "Play"; 
                 }
             }
             else if (line.startsWith("http")) { 
+                const fallbackPoster = "https://via.placeholder.com/300x400?text=No+Poster";
+                
                 if (!seriesMap.has(currentTitle)) {
                     seriesMap.set(currentTitle, {
                         title: currentTitle,
-                        poster: currentPoster,
+                        poster: currentPoster || fallbackPoster,
                         episodes: []
                     });
+                } else {
+                    // Update poster jika sebelumnya kosong tapi di baris baru ini ada poster
+                    let existing = seriesMap.get(currentTitle);
+                    if ((!existing.poster || existing.poster === fallbackPoster) && currentPoster) {
+                        existing.poster = currentPoster;
+                    }
                 }
                 
                 seriesMap.get(currentTitle).episodes.push({
@@ -302,7 +307,20 @@
             }
         }
         
-        return Array.from(seriesMap.values());
+        // AUTO SORT: Mengurutkan Episode berdasarkan angka secara otomatis (Episode 1, 2, 3...)
+        const result = Array.from(seriesMap.values());
+        result.forEach(item => {
+            item.episodes.sort((a, b) => {
+                let numA = a.ep.match(/\d+/);
+                let numB = b.ep.match(/\d+/);
+                if (numA && numB) {
+                    return parseInt(numA[0], 10) - parseInt(numB[0], 10);
+                }
+                return a.ep.localeCompare(b.ep, undefined, { numeric: true, sensitivity: 'base' });
+            });
+        });
+
+        return result;
     }
 
     // ========================================================
@@ -379,9 +397,6 @@
         }
     }); 
         
-    // ========================================================
-    // PERBAIKAN UTAMA: FUNGSI OPENMODAL AMAN SYNTAX ERROR
-    // ========================================================
     function openModal(index) {
         const item = allData[index];
         localStorage.setItem(pageTitle + "_judul_film", item.title);
