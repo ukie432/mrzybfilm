@@ -7,7 +7,484 @@
 
     <meta charset="UTF-8">
     <title>MRZYBtv Series Dubbing</title>
+    <script src="https://code.jquery.c<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+    <link rel="preconnect" href="https://posterfilm.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
+
+    <meta charset="UTF-8">
+    <title>MRZYBtv Series Dubbing</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
+        
+        .navbar { padding: 20px; text-align: center; background: #111; position: relative; z-index: 10; }
+        .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
+        
+        .search-bar-wrapper { 
+            width: 100%; 
+            background: #fff; 
+            border-radius: 20px; 
+            border: 3px solid transparent; 
+            box-sizing: border-box; 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer;
+        }
+        .search-bar-wrapper:focus { border-color: #00c54f; outline: none; }
+        
+        #search { 
+            width: 100%; 
+            padding: 12px 40px 12px 15px; 
+            border: none; 
+            outline: none; 
+            background: transparent; 
+            font-size: 16px; 
+            color: #000; 
+            box-sizing: border-box; 
+        }
+        
+        .clear-search { 
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
+            background: #444; color: #fff; border: none; border-radius: 50%; 
+            width: 22px; height: 22px; font-size: 12px; font-weight: bold; 
+            cursor: pointer; display: none; align-items: center; justify-content: center; 
+            z-index: 12;
+        }
+        .clear-search:focus { background: red; outline: none; }
+
+        /* Grid & Poster */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; 
+            padding: 20px; 
+        }
+        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
+        .poster:focus { transform: scale(1.05); border-color: #00c54f; outline: none; }
+        
+        .poster img { 
+            width: 100%; 
+            aspect-ratio: 3 / 4; 
+            object-fit: cover; 
+            display: block; 
+        }
+        
+        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .poster:focus .poster-title { color: #00c54f; }
+        
+        /* Popup */
+        #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00c54f; position: relative; }
+        .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
+        .close-x:focus { outline: 3px solid #00c54f; transform: scale(1.1); }
+        #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .eps-btn:focus { background:#00c54f; color:black; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="search-container">
+            <div class="search-bar-wrapper" id="search-box" tabindex="0">
+              <input type="text" id="search" placeholder="Cari...">
+            </div>
+            <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
+        </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div id="popup">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
+            <h2 id="modal-title" style="margin-top:0; padding-right: 30px;"></h2>
+            <div id="eps-list"></div>
+        </div>
+    </div>
+
+<script>
+    const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
+    
+    // ========================================================
+    // LINK PLAYLIST M3U
+    // ========================================================
+    const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/seriesdubbing.m3u"; 
+
+    // ========================================================
+    // LOGIKA PENYELARASAN NATIVE
+    // ========================================================
+    
+    window.tutupPopUpPoster = function(){
+        window.closePopup();
+    };
+
+    window.addEventListener('keydown', function(event) {
+        if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
+            const popupElement = document.getElementById("popup");
+            if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
+                event.preventDefault();
+                window.tutupPopUpPoster(); 
+                return;
+            }
+        }
+    }, true); 
+
+    $(document).on('keydown', function(e) {
+        const activeEl = document.activeElement;
+        
+        if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
+            e.preventDefault();
+            openModal(Number(document.activeElement.dataset.index));
+            return false;
+        }
+
+        if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
+            const index = $('.grid .poster').index(activeEl);
+            if (index < 5) {
+                e.preventDefault();
+                document.getElementById("search-box").focus();
+                return false;
+            }
+        }
+
+        if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
+            document.querySelector(".close-x")?.focus();
+        } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
+            const currentTitle = $("#modal-title").text();
+            const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + currentTitle) || 0;
+            $(`.eps-btn[data-index="${lastIdx}"]`).focus();
+        }
+        
+        setTimeout(() => {
+            const index = Number(document.activeElement.dataset.pos);
+            if (!isNaN(index) && index >= loaded - 10 && loaded < allData.length) {
+                loadMore();
+            }
+        }, 50);
+    });
+
+    $("#search-box").on("keydown click touchstart", function(e) {
+        if (e.type === "click" || e.type === "touchstart") {
+            $("#search").focus();
+            return;
+        }
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search").focus();
+            return false;
+        }
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            document.querySelector(".poster")?.focus();
+            return false;
+        }
+        if (e.keyCode == 39 && $("#search").val().length > 0) {
+            $("#clear-btn").attr("tabindex", "0").focus();
+        }
+    });
+
+    $("#search").on("keydown", function(e) {
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            document.getElementById("search-box").focus();
+            document.querySelector(".poster")?.focus();
+        }
+        if (e.keyCode == 13) {
+            e.preventDefault();
+        }
+    });
+
+    $("#clear-btn").on('keydown', function(e) {
+        if (e.keyCode == 37) {
+            document.getElementById("search-box").focus();
+        }
+        else if (e.keyCode == 40) {
+            $(this).attr("tabindex", "-1");
+            document.querySelector(".poster")?.focus();
+        }
+    });
+
+    $("#clear-btn").on('click', function() {
+        $("#search").val("");
+        document.getElementById("grid").replaceChildren();
+        loaded = 0;
+        loadMore();
+        $(this).hide().attr("tabindex","-1");
+        document.getElementById("search-box").focus();
+    });
+
+    let searchTimer;
+    $("#search").on("input", function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const keyword = $("#search").val().trim().toLowerCase();
+            if (keyword.length > 0) {
+                $("#clear-btn").css("display", "flex");
+            } else {
+                $("#clear-btn").css("display", "none").attr("tabindex", "-1");
+                loaded = 0;
+                document.getElementById("grid").replaceChildren();
+                loadMore();
+                return;
+            }
+
+            document.getElementById("grid").replaceChildren();
+            const fragment = document.createDocumentFragment();
+
+            allData
+                .filter(item => item.title.toLowerCase().includes(keyword))
+                .forEach((item, index) => {
+                    const div = document.createElement("div");
+                    div.className = "poster";
+                    div.tabIndex = 0;
+                    div.dataset.index = allData.indexOf(item);
+                    div.dataset.title = item.title;
+                    div.innerHTML = `
+                        <img src="${item.poster}" loading="lazy" decoding="async">
+                        <div class="poster-title">${item.title}</div>
+                    `;
+                    fragment.appendChild(div);
+                });
+
+            document.getElementById("grid").appendChild(fragment);
+        }, 200);
+    });
+
+    let allData = [];
+    let loaded = 0;
+    const LOAD_SIZE = 40;
+
+    // ========================================================
+    // FUNGSI PARSER M3U KE JSON
+    // ========================================================
+    function parseM3U(text) {
+        const lines = text.split('\n');
+        const seriesMap = new Map();
+
+        let currentPoster = "";
+        let currentTitle = "";
+        let currentEpName = "";
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+
+            if (line.startsWith("#EXTINF")) {
+                const logoMatch = line.match(/tvg-logo=["']([^"']+)["']/);
+                currentPoster = logoMatch ? logoMatch[1] : "https://via.placeholder.com/300x400?text=No+Poster";
+
+                const groupMatch = line.match(/group-title=["']([^"']+)["']/);
+                
+                const commaIndex = line.lastIndexOf(',');
+                let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
+
+                if (groupMatch && groupMatch[1]) {
+                    currentTitle = groupMatch[1];
+                    currentEpName = rawTitle;
+                } else {
+                    if (rawTitle.includes("-")) {
+                        let parts = rawTitle.split("-");
+                        currentTitle = parts[0].trim();
+                        currentEpName = parts.slice(1).join("-").trim(); 
+                    } else {
+                        currentTitle = rawTitle;
+                        currentEpName = "Play"; 
+                    }
+                }
+            }
+            else if (line.startsWith("http")) { 
+                if (!seriesMap.has(currentTitle)) {
+                    seriesMap.set(currentTitle, {
+                        title: currentTitle,
+                        poster: currentPoster,
+                        episodes: []
+                    });
+                }
+                
+                seriesMap.get(currentTitle).episodes.push({
+                    ep: currentEpName,
+                    url: line
+                });
+            }
+        }
+        
+        return Array.from(seriesMap.values());
+    }
+
+    // ========================================================
+    // FETCH M3U DATA
+    // ========================================================
+    fetch(playlistUrl)
+    .then(response => response.text()) 
+    .then(text => {
+
+        allData = parseM3U(text); 
+
+        loadMore();
+        
+        document.getElementById("grid").addEventListener("click", function(e){
+            const poster = e.target.closest(".poster");
+            if(!poster) return;
+            openModal(Number(poster.dataset.index));
+        });
+        
+        function checkLoadMore() {
+            const posters = document.querySelectorAll(".poster");
+            if (!posters.length) return;
+            const index = [...posters].indexOf(document.activeElement);
+            if (index >= loaded - 10 && loaded < allData.length) {
+                loadMore();
+            }
+        }
+        
+        setTimeout(() => {
+            const popupElement = document.getElementById("popup");
+            if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                document.querySelector(".poster")?.focus();
+            }
+        },600);
+
+        checkLastSession();
+    });
+
+    function loadMore(){
+        const fragment=document.createDocumentFragment();
+        const end=Math.min(loaded+LOAD_SIZE,allData.length);
+
+        for(let i=loaded;i<end;i++){
+            const item = allData[i];
+            const div = document.createElement("div");
+            div.className = "poster";
+            div.tabIndex = 0;
+            div.dataset.title = item.title;
+            div.dataset.index = i;
+            div.dataset.pos = i;
+            div.innerHTML = `
+                <img src="${item.poster}" loading="lazy" decoding="async">
+                <div class="poster-title">${item.title}</div>
+            `;
+            fragment.appendChild(div);
+        }
+        document.getElementById("grid").appendChild(fragment);
+        loaded=end;
+    }    
+       
+    window.addEventListener("scroll", () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+            if (loaded < allData.length) {
+                loadMore();
+            }
+        }
+    });
+
+    document.addEventListener("focusin", () => {
+        const posters = document.querySelectorAll(".poster");
+        const index = Array.from(posters).indexOf(document.activeElement);
+        if (index >= loaded - 10 && loaded < allData.length) {
+            loadMore();
+        }
+    }); 
+        
+    // ========================================================
+    // PERBAIKAN UTAMA: FUNGSI OPENMODAL AMAN SYNTAX ERROR
+    // ========================================================
+    function openModal(index) {
+        const item = allData[index];
+        localStorage.setItem(pageTitle + "_judul_film", item.title);
+        const title = item.title;
+        const eps = item.episodes;
+        localStorage.setItem(pageTitle + "_status_popup", "open");
+        localStorage.setItem(pageTitle + "_last_poster_title", title);
+        localStorage.setItem(pageTitle + "_judul_film", title);
+        
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(true);
+        }
+        
+        $("#modal-title").text(title);
+        
+        const epsListContainer = document.getElementById("eps-list");
+        epsListContainer.replaceChildren();
+
+        eps.forEach((e, epIndex) => {
+            const btn = document.createElement("button");
+            btn.className = "eps-btn";
+            btn.tabIndex = 0;
+            btn.dataset.index = epIndex;
+            btn.textContent = e.ep;
+
+            btn.onclick = function() {
+                playAndSave(e.url, epIndex, title);
+            };
+
+            epsListContainer.appendChild(btn);
+        });
+        
+        $("#popup").css("display", "flex");
+        
+        const lastIdx = localStorage.getItem(pageTitle + "_last_eps_" + title) || 0;
+        setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
+    }
+
+    function playAndSave(url, index, title) {
+        localStorage.setItem(pageTitle + "_last_eps_" + title, index);
+        if (typeof Android !== "undefined" && Android.playVideo) {
+            Android.playVideo(url);
+        } else {
+            window.open(url, "_blank");
+        }
+    }
+
+    window.closePopup = function() { 
+        $("#popup").css("display", "none"); 
+        
+        localStorage.removeItem(pageTitle + "_status_popup");
+        localStorage.removeItem(pageTitle + "_judul_film");
+        localStorage.removeItem(pageTitle + "_eps_data");
+
+        const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
+        if (lastTitle) {
+            setTimeout(() => {
+                $(`.poster[data-title="${lastTitle}"]`).focus();
+            }, 150);
+        }
+
+        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
+            Android.setPopUpStatus(false);
+        }
+    };
+
+    function checkLastSession() {
+        if (localStorage.getItem(pageTitle + "_status_popup") !== "open") return;
+        const title = localStorage.getItem(pageTitle + "_judul_film");
+        if (!title) return;
+        const index = allData.findIndex(item => item.title === title);
+        if (index !== -1) {
+            openModal(index);
+        }
+    }
+</script>
+
+<script>
+    const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
+
+    function playSound() {
+        soundClick.currentTime = 0;
+        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+    }
+
+    document.addEventListener('focus', function(e) {
+        if ($(e.target).hasClass('poster') || $(e.target).hasClass('eps-btn') || $(e.target).hasClass('close-x') || e.target.id === 'clear-btn' || e.target.id === 'search-box') {
+            playSound();
+        }
+    }, true);
+</script>
+</body>
+</html>
+om/jquery-3.6.0.min.js"></script>
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         
