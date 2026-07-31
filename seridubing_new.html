@@ -250,7 +250,7 @@
     const LOAD_SIZE = 40;
 
     // ========================================================
-    // PARSER M3U SUPER OTOMATIS & AUTO SORT EPISODE
+    // PARSER PINTAR: OTOMATIS MEMISAHKAN JUDUL FILM & EPISODE (S01E01)
     // ========================================================
     function parseM3U(text) {
         const lines = text.split('\n');
@@ -268,19 +268,35 @@
                 currentPoster = logoMatch ? logoMatch[1] : "";
 
                 const groupMatch = line.match(/group-title=["']([^"']+)["']/);
+                const groupName = groupMatch ? groupMatch[1].trim() : "";
+
                 const commaIndex = line.lastIndexOf(',');
                 let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
 
-                if (groupMatch && groupMatch[1]) {
-                    currentTitle = groupMatch[1].trim();
-                    currentEpName = rawTitle;
-                } else if (rawTitle.includes("-")) {
-                    let parts = rawTitle.split("-");
-                    currentTitle = parts[0].trim();
-                    currentEpName = parts.slice(1).join("-").trim(); 
+                // JIKA CUMA ADA GROUP "Film" / "Series" ATAU TIDAK ADA GROUP BERSIH:
+                if (!groupName || groupName.toLowerCase() === "film" || groupName.toLowerCase() === "series") {
+                    
+                    // Deteksi pola S01E01, S1E1, E01, Episode 01, dll.
+                    const seasonEpRegex = /(S\d+E\d+|S\d+\s*E\d+|E\d+|Episode\s*\d+)/i;
+                    const match = rawTitle.match(seasonEpRegex);
+
+                    if (match) {
+                        const splitIndex = match.index;
+                        currentTitle = rawTitle.substring(0, splitIndex).trim(); // Hasil: "Yu Yu Hakusho"
+                        currentEpName = match[0].toUpperCase();                  // Hasil: "S01E01"
+                    } else if (rawTitle.includes("-")) {
+                        let parts = rawTitle.split("-");
+                        currentTitle = parts[0].trim();
+                        currentEpName = parts.slice(1).join("-").trim();
+                    } else {
+                        currentTitle = rawTitle.trim();
+                        currentEpName = "Play";
+                    }
+
                 } else {
-                    currentTitle = rawTitle.trim();
-                    currentEpName = "Play"; 
+                    // Jika group-title berisi nama film beneran
+                    currentTitle = groupName;
+                    currentEpName = rawTitle;
                 }
             }
             else if (line.startsWith("http")) { 
@@ -293,7 +309,6 @@
                         episodes: []
                     });
                 } else {
-                    // Update poster jika sebelumnya kosong tapi di baris baru ini ada poster
                     let existing = seriesMap.get(currentTitle);
                     if ((!existing.poster || existing.poster === fallbackPoster) && currentPoster) {
                         existing.poster = currentPoster;
@@ -307,14 +322,16 @@
             }
         }
         
-        // AUTO SORT: Mengurutkan Episode berdasarkan angka secara otomatis (Episode 1, 2, 3...)
+        // AUTO SORT EPISODE (Urut dari S01E01, S01E02, S01E03, dst)
         const result = Array.from(seriesMap.values());
         result.forEach(item => {
             item.episodes.sort((a, b) => {
-                let numA = a.ep.match(/\d+/);
-                let numB = b.ep.match(/\d+/);
+                let numA = a.ep.match(/\d+/g);
+                let numB = b.ep.match(/\d+/g);
                 if (numA && numB) {
-                    return parseInt(numA[0], 10) - parseInt(numB[0], 10);
+                    let lastA = parseInt(numA[numA.length - 1], 10);
+                    let lastB = parseInt(numB[numB.length - 1], 10);
+                    return lastA - lastB;
                 }
                 return a.ep.localeCompare(b.ep, undefined, { numeric: true, sensitivity: 'base' });
             });
