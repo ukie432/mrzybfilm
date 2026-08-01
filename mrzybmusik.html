@@ -245,12 +245,11 @@
     </div> 
   </div> 
   
-  <audio id="media-player" preload="auto" playsinline webkit-playsinline></audio>
+  <audio id="media-player" preload="metadata" playsinline webkit-playsinline></audio>
 
   <script>
     var mediaPlayer;
     var isPlaying = false;
-    var isRecovering = false;
     
     var isShuffle = false;
     var repeatMode = 0; 
@@ -741,11 +740,15 @@
 
     function playSong(index) {
       currentIndex = index;
-      isRecovering = false;
       const song = activeSongsList[currentIndex];
       if(!song) return;
 
+      // KUNCI PERBAIKAN STB: Kosongkan memori audio sebelumnya agar RAM tidak leaks
       mediaPlayer.pause();
+      mediaPlayer.removeAttribute('src');
+      mediaPlayer.load();
+
+      // Pasang source lagu baru
       mediaPlayer.src = song.url;
 
       document.getElementById("bottomSongName").innerText = song.name;
@@ -755,8 +758,6 @@
       $("#drawerSingerName").text(song.singer);
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
 
-      mediaPlayer.load();
-      
       var playPromise = mediaPlayer.play();
       if (playPromise !== undefined) {
         playPromise.then(_ => {
@@ -785,13 +786,7 @@
           isPlaying = true;
           document.getElementById("playBtn").innerText = "pause";
           $("#drawerPlay").text("pause");
-        }).catch(err => {
-          if (!isRecovering) {
-            isRecovering = true;
-            mediaPlayer.load();
-            mediaPlayer.play().catch(()=>{});
-          }
-        });
+        }).catch(err => {});
       }
     }
 
@@ -877,28 +872,24 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      // Penanganan error bawaan tanpa loop reconnect yang membebankan STB
+      // Paket Pemulihan Otomatis Saat Error / Koneksi Putus
       mediaPlayer.addEventListener("error", function() {
-        if (!isRecovering && activeSongsList.length > 0) {
-          isRecovering = true;
-          setTimeout(function() {
-            nextSong();
-          }, 1500);
-        }
+        setTimeout(function() {
+          if (activeSongsList.length > 0) nextSong();
+        }, 1000);
       });
 
+      // Pindah Otomatis ke Lagu Berikutnya (Diperkuat Fallback Manual)
       mediaPlayer.addEventListener("ended", function() {
+        isPlaying = false;
         if (repeatMode === 2) {
           playSong(currentIndex);
-        } else if (repeatMode === 1) {
-          nextSong();
         } else {
-          if (isShuffle || currentIndex < activeSongsList.length - 1) {
-            nextSong();
-          }
+          nextSong();
         }
       });
 
+      // Update UI Progress Bar
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
           let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
