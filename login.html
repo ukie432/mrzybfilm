@@ -9,7 +9,7 @@
     body {
       background-color: #111319;
       color: #ffffff;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -68,23 +68,25 @@
     const btnSubmit = document.getElementById("btnSubmit");
     const errorMsg = document.getElementById("passError");
 
-    // CEK OTOMATIS: Jika sudah pernah login sebelumnya, langsung buka Home
+    // 1. CEK DULU: Jika sudah pernah login di browser ini, langsung lempar ke Home
     if (localStorage.getItem("isLoggedIn") === "true") {
-      window.location.replace(HOME_URL);
+      window.location.href = HOME_URL;
     }
 
+    // 2. FUNGSI VERIFIKASI PASSWORD
     window.checkPassword = function() {
       const userPass = input.value.trim();
 
       if (userPass === CORRECT_PASSWORD) {
-        // SIMPAN STATUS LOGIN PERMANEN
+        // Simpan status di browser/app
         localStorage.setItem("isLoggedIn", "true");
 
         btnSubmit.innerText = "Membuka...";
         btnSubmit.disabled = true;
 
+        // Buka URL Home
         setTimeout(function() {
-          window.location.replace(HOME_URL);
+          window.location.href = HOME_URL;
         }, 100);
       } else {
         errorMsg.style.display = "block";
@@ -99,6 +101,7 @@
       }
     };
 
+    // Navigasi Remote TV / Keyboard Enter
     document.addEventListener("keydown", function(e) {
       const activeEl = document.activeElement;
       if (e.keyCode === 40 && activeEl === input) { e.preventDefault(); btnSubmit.focus(); }
