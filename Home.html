@@ -106,70 +106,67 @@
   </div>
 
   <script>
-    (function() {
-      // SETTING PASSWORD & ALAMAT HOME
-      const CORRECT_PASSWORD = "Raihan432";
-      const HOME_URL = "https://mrzybtv-api.ukielaki88.workers.dev/app/home";
+    // Deklarasi Variabel Utama
+    const CORRECT_PASSWORD = "Raihan432";
+    const HOME_URL = "https://mrzybtv-api.ukielaki88.workers.dev/app/home";
 
-      const input = document.getElementById("passInput");
-      const btnSubmit = document.getElementById("btnSubmit");
-      const errorMsg = document.getElementById("passError");
+    const input = document.getElementById("passInput");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const errorMsg = document.getElementById("passError");
 
-      // Cek apakah user sudah pernah sukses login sebelumnya
-      if (localStorage.getItem("access_granted") === "true") {
-        // Jika sudah pernah login, langsung buka halaman Home Anda
-        window.location.href = HOME_URL;
+    // Dibuat Global (window.checkPassword) agar bisa dipanggil onclick & remote TV
+    window.checkPassword = function() {
+      // Hilangkan spasi yang tidak sengaja terketik di awal/akhir
+      const userPass = input.value.trim();
+
+      if (userPass === CORRECT_PASSWORD) {
+        // Simpan status login
+        localStorage.setItem("access_granted", "true");
+        
+        // Pindah halaman ke Home
+        window.location.replace(HOME_URL);
       } else {
-        // Fokuskan remote otomatis ke kotak input
+        errorMsg.style.display = "block";
+        input.value = "";
+        input.focus();
+      }
+    };
+
+    // Auto-focus ke kotak input saat pertama dibuka
+    window.addEventListener("DOMContentLoaded", function() {
+      if (localStorage.getItem("access_granted") === "true") {
+        window.location.replace(HOME_URL);
+      } else {
         setTimeout(function() {
           input.focus();
         }, 300);
       }
+    });
 
-      // Fungsi Verifikasi Password & Redirect
-      window.checkPassword = function() {
-        if (input.value === CORRECT_PASSWORD) {
-          // Simpan status login sekali saja di browser/TV
-          localStorage.setItem("access_granted", "true");
-          
-          // Redirect (pindah) ke alamat home Anda
-          window.location.href = HOME_URL;
-        } else {
-          errorMsg.style.display = "block";
-          input.value = "";
-          input.focus();
+    // --- NAVIGASI REMOTE TV (D-PAD) ---
+    document.addEventListener("keydown", function(e) {
+      const activeEl = document.activeElement;
+
+      // Panah Bawah (KeyCode: 40)
+      if (e.keyCode === 40 && activeEl === input) {
+        e.preventDefault();
+        btnSubmit.focus();
+      }
+
+      // Panah Atas (KeyCode: 38)
+      if (e.keyCode === 38 && activeEl === btnSubmit) {
+        e.preventDefault();
+        input.focus();
+      }
+
+      // Tombol Enter / OK Remote (KeyCode: 13 / 66)
+      if (e.keyCode === 13 || e.keyCode === 66) {
+        if (activeEl === input || activeEl === btnSubmit) {
+          e.preventDefault();
+          window.checkPassword();
         }
-      };
-
-      // --- NAVIGASI REMOTE TV (D-PAD) ---
-      document.addEventListener("keydown", function(e) {
-        const activeEl = document.activeElement;
-
-        // Panah Bawah (KeyCode: 40)
-        if (e.keyCode === 40) {
-          if (activeEl === input) {
-            e.preventDefault();
-            btnSubmit.focus(); // Pindah dari Input ke Tombol Masuk
-          }
-        }
-
-        // Panah Atas (KeyCode: 38)
-        if (e.keyCode === 38) {
-          if (activeEl === btnSubmit) {
-            e.preventDefault();
-            input.focus(); // Pindah dari Tombol Masuk ke Input
-          }
-        }
-
-        // Tombol Enter / OK Remote (KeyCode: 13 / 66)
-        if (e.keyCode === 13 || e.keyCode === 66) {
-          if (activeEl === input) {
-            e.preventDefault();
-            checkPassword();
-          }
-        }
-      });
-    })();
+      }
+    });
   </script>
 
 </body>
