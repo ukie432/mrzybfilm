@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRZYBtv - Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #111319;
+      color: #ffffff;
+      font-family: 'Lato', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .pass-box {
+      background: #2a2b36;
+      padding: 35px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      border: 1px solid #5558c9;
+    }
+    .pass-box h3 { margin-bottom: 8px; color: #fff; font-size: 22px; }
+    .pass-box p { color: #c4dcff; font-size: 14px; margin-bottom: 24px; }
+    .pass-box input {
+      width: 100%; padding: 14px; margin-bottom: 18px;
+      border-radius: 8px; border: 2px solid #5558c9;
+      background: #191a1f; color: #fff; font-size: 16px;
+      text-align: center; outline: none;
+    }
+    .pass-box button {
+      width: 100%; padding: 14px; border-radius: 8px; border: none;
+      background: #5558c9; color: #ffffff; font-size: 16px;
+      font-weight: bold; cursor: pointer;
+    }
+    .pass-box input:focus, .pass-box button:focus {
+      border: 2px solid #00e5ff !important;
+      background: #3d3d79 !important;
+      box-shadow: 0 0 15px #00e5ff;
+      outline: none;
+    }
+    #passError { color: #ff5252; font-size: 13px; margin-top: 14px; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="pass-box" id="loginBox">
+    <h3>Akses Masuk MRZYBtv</h3>
+    <p>Masukkan password untuk melanjutkan</p>
+    
+    <input type="password" id="passInput" placeholder="Password..." tabindex="0" autocomplete="off">
+    <button onclick="checkPassword()" id="btnSubmit" tabindex="0">MASUK</button>
+    
+    <div id="passError">Password salah! Silakan coba lagi.</div>
+  </div>
+
+  <script>
+    const CORRECT_PASSWORD = "Raihan432";
+    const HOME_URL = "https://mrzybtv-api.ukielaki88.workers.dev/app/home";
+
+    const input = document.getElementById("passInput");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const errorMsg = document.getElementById("passError");
+
+    // CEK OTOMATIS: Jika sudah pernah login sebelumnya, langsung buka Home
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      window.location.replace(HOME_URL);
+    }
+
+    window.checkPassword = function() {
+      const userPass = input.value.trim();
+
+      if (userPass === CORRECT_PASSWORD) {
+        // SIMPAN STATUS LOGIN PERMANEN
+        localStorage.setItem("isLoggedIn", "true");
+
+        btnSubmit.innerText = "Membuka...";
+        btnSubmit.disabled = true;
+
+        setTimeout(function() {
+          window.location.replace(HOME_URL);
+        }, 100);
+      } else {
+        errorMsg.style.display = "block";
+        input.value = "";
+        input.focus();
+      }
+    };
+
+    window.onload = function() {
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        setTimeout(function() { input.focus(); }, 300);
+      }
+    };
+
+    document.addEventListener("keydown", function(e) {
+      const activeEl = document.activeElement;
+      if (e.keyCode === 40 && activeEl === input) { e.preventDefault(); btnSubmit.focus(); }
+      if (e.keyCode === 38 && activeEl === btnSubmit) { e.preventDefault(); input.focus(); }
+      if (e.keyCode === 13 || e.keyCode === 66) {
+        if (activeEl === input || activeEl === btnSubmit) {
+          e.preventDefault();
+          window.checkPassword();
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
