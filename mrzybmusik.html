@@ -266,17 +266,16 @@
     var isDrawerOpen = false;
     var animationId;
 
-    // --- SISTEM BARU: WATCHDOG, UNLOCKER, & BUFFER CLEANUP ---
+    // --- SISTEM PEMANTAU DAN PERBAIKAN AUDIO MACET ---
     var audioWatchdogTimer = null;
     var audioStuckCount = 0;
     var audioUnlocked = false;
+    var lastTimeCheck = 0;
 
-    // 1. PEMBUKA GEMBOK AUTOPLAY (Autoplay Unlocker)
     function unlockAudioAutoplay() {
       if (audioUnlocked) return;
       if (!mediaPlayer) mediaPlayer = document.getElementById("media-player");
       
-      // Buka AudioContext / Playback lock dengan silent trigger
       let silentPlay = mediaPlayer.play();
       if (silentPlay !== undefined) {
         silentPlay.then(() => {
@@ -284,42 +283,39 @@
             mediaPlayer.pause();
           }
           audioUnlocked = true;
-        }).catch(() => {
-          // Tetap coba via eventlistener interaksi pertama
-        });
+        }).catch(() => {});
       }
     }
 
-    // Listener otomatis pembuka gembok dari tombol Remote/D-Pad/Mouse
     window.addEventListener('click', unlockAudioAutoplay, { once: true });
     window.addEventListener('keydown', unlockAudioAutoplay, { once: true });
 
-    // 2. BUFFER CLEANUP (Pembersih Cache Memory Audio)
     function performBufferCleanup() {
       if (!mediaPlayer) return;
       try {
         mediaPlayer.pause();
         mediaPlayer.removeAttribute('src');
-        mediaPlayer.load(); // Paksa browser/STB mengosongkan buffer audio dari RAM
+        mediaPlayer.load();
       } catch (e) {}
     }
 
-    // 3. WATCHDOG RECOVERY (Sistem Deteksi Audio Macet/Stuck)
     function startAudioWatchdog() {
       stopAudioWatchdog();
       audioStuckCount = 0;
+      if (mediaPlayer) lastTimeCheck = mediaPlayer.currentTime;
       
       audioWatchdogTimer = setInterval(() => {
         if (isPlaying && mediaPlayer) {
-          // Jika status playing tapi audio paused, stalled, atau timeupdate tidak berjalan
-          if (mediaPlayer.paused || mediaPlayer.readyState < 2) {
+          // Jika status playing tapi detik lagu tidak bertambah selama 3 detik
+          if (mediaPlayer.currentTime === lastTimeCheck && !mediaPlayer.paused) {
             audioStuckCount++;
-            if (audioStuckCount >= 5) { // Macet > 5 detik
+            if (audioStuckCount >= 3) {
               audioStuckCount = 0;
               recoverStuckAudio();
             }
           } else {
             audioStuckCount = 0;
+            lastTimeCheck = mediaPlayer.currentTime;
           }
         }
       }, 1000);
@@ -333,14 +329,21 @@
     }
 
     function recoverStuckAudio() {
-      if (activeSongsList.length > 0) {
-        performBufferCleanup();
-        setTimeout(() => {
-          playSong(currentIndex); // Muat ulang lagu yang macet
-        }, 500);
+      if (!mediaPlayer || !mediaPlayer.src) return;
+      let currentPos = mediaPlayer.currentTime;
+      
+      mediaPlayer.load();
+      mediaPlayer.currentTime = currentPos;
+      
+      var p = mediaPlayer.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          mediaPlayer.currentTime = currentPos + 1;
+          mediaPlayer.play();
+        });
       }
     }
-    // --- AKHIR SISTEM BARU ---
+    // --- AKHIR SISTEM WATCHDOG ---
 
     function toggleShuffle() {
       isShuffle = !isShuffle;
@@ -816,14 +819,13 @@
     }
 
     function playSong(index) {
+      if (activeSongsList.length === 0) return;
       currentIndex = index;
       const song = activeSongsList[currentIndex];
       if(!song) return;
 
-      // Pembersihan Buffer RAM sebelum lagu dimainkan
       performBufferCleanup();
 
-      // Pasang source lagu baru
       mediaPlayer.src = song.url;
 
       document.getElementById("bottomSongName").innerText = song.name;
@@ -833,19 +835,37 @@
       $("#drawerSingerName").text(song.singer);
       $("#songAlbumArt").css("background-image", "url(" + song.albumArt + ")");
 
-      var playPromise = mediaPlayer.play();
-      if (playPromise !== undefined) {
-        playPromise.then(_ => {
-          isPlaying = true;
-          document.getElementById("playBtn").innerText = "pause";
-          $("#drawerPlay").text("pause");
-          updateMediaSessionInfo(song);
-          startAudioWatchdog(); // Jalankan watchdog setelah berhasil diputar
-        }).catch(error => {
-          isPlaying = false;
-          stopAudioWatchdog();
-        });
-      }
+      mediaPlayer.load();
+
+      var startPlayPromise = function() {
+        var playPromise = mediaPlayer.play();
+        if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            isPlaying = true;
+            document.getElementById("playBtn").innerText = "pause";
+            $("#drawerPlay").text("pause");
+            updateMediaSessionInfo(song);
+            startAudioWatchdog();
+          }).catch(error => {
+            isPlaying = false;
+            // Trik Bypass Autoplay Restriction (Mute sementara lalu Play)
+            mediaPlayer.muted = true;
+            mediaPlayer.play().then(() => {
+              mediaPlayer.muted = false;
+              isPlaying = true;
+              document.getElementById("playBtn").innerText = "pause";
+              $("#drawerPlay").text("pause");
+              startAudioWatchdog();
+            }).catch(() => {
+              setTimeout(function() {
+                nextSong();
+              }, 1500);
+            });
+          });
+        }
+      };
+
+      startPlayPromise();
     }
 
     function playPause() {
@@ -951,7 +971,6 @@
     window.onload = function() {
       mediaPlayer = document.getElementById("media-player");
 
-      // Muat warna tema yang pernah disimpan sebelumnya
       try {
         var savedColor = localStorage.getItem("saved_accent_color");
         if (savedColor) {
@@ -962,7 +981,21 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      // Recovery Otomatis Saat Error Streaming
+      // Listener penanganan kendala jaringan / buffer terhenti di tengah lagu
+      mediaPlayer.addEventListener("stalled", function() {
+        if (isPlaying) recoverStuckAudio();
+      });
+
+      mediaPlayer.addEventListener("waiting", function() {
+        if (isPlaying) {
+          setTimeout(() => {
+            if (mediaPlayer.readyState < 3 && isPlaying) {
+              recoverStuckAudio();
+            }
+          }, 2000);
+        }
+      });
+
       mediaPlayer.addEventListener("error", function() {
         stopAudioWatchdog();
         setTimeout(function() {
@@ -970,18 +1003,18 @@
         }, 1000);
       });
 
-      // Pindah Otomatis ke Lagu Berikutnya
       mediaPlayer.addEventListener("ended", function() {
         isPlaying = false;
         stopAudioWatchdog();
-        if (repeatMode === 2) {
-          playSong(currentIndex);
-        } else {
-          nextSong();
-        }
+        setTimeout(function() {
+          if (repeatMode === 2) {
+            playSong(currentIndex);
+          } else {
+            nextSong();
+          }
+        }, 300);
       });
 
-      // Update UI Progress Bar
       mediaPlayer.addEventListener("timeupdate", function() {
         if (mediaPlayer.duration) {
           let pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
