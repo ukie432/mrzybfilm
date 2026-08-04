@@ -7,7 +7,7 @@
     <meta http-equiv="Expires" content="0" />
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TV Online</title>
+    <title>TV Online Multi-Playlist</title>
 
     <style>
     body {
@@ -23,6 +23,8 @@
         align-items: center;
         padding: 10px 15px;
         background: #1a1a1a;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     h2 {
@@ -30,12 +32,42 @@
         font-size: 18px;
     }
 
-    /* Style Tombol Pengaturan & Fokus Remote */
+    /* Container Switcher Playlist Utama */
+    .playlist-tabs {
+        display: flex;
+        gap: 8px;
+    }
+
+    .tab-btn {
+        background: #222;
+        color: #aaa;
+        border: 2px solid #444;
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .tab-btn.active {
+        background: #00bfff;
+        color: #000;
+        border-color: #00bfff;
+    }
+
+    .tab-btn:focus {
+        border-color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px #00bfff;
+    }
+
     #btnPengaturan {
         background: #333;
         color: #fff;
         border: 2px solid transparent;
-        padding: 8px 12px;
+        padding: 6px 12px;
         border-radius: 6px;
         cursor: pointer;
         font-size: 13px;
@@ -52,6 +84,7 @@
         box-shadow: 0 0 10px #00bfff;
     }
 
+    /* Modal Form Custom Playlist */
     #modalPlaylist {
         display: none;
         background: #222;
@@ -63,7 +96,7 @@
         box-sizing: border-box;
     }
 
-    #modalPlaylist input {
+    #modalPlaylist input[type="text"] {
         width: 100%;
         padding: 10px;
         margin-bottom: 10px;
@@ -75,18 +108,23 @@
         outline: none;
     }
 
-    #modalPlaylist input:focus {
+    #modalPlaylist input[type="text"]:focus {
         border-color: #00bfff;
         box-shadow: 0 0 8px #00bfff;
     }
 
     .modal-buttons {
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .button-group-row {
+        display: flex;
+        gap: 8px;
     }
 
     .modal-buttons button {
-        flex: 1;
         padding: 10px;
         border-radius: 6px;
         border: 2px solid transparent;
@@ -96,20 +134,13 @@
         transition: 0.2s;
     }
 
-    .btn-save { background: #00bfff; color: #000; }
-    .btn-reset { background: #ff4757; color: #fff; }
+    .btn-file { background: #2ed573; color: #000; width: 100%; }
+    .btn-save { background: #00bfff; color: #000; flex: 1; }
+    .btn-reset { background: #ff4757; color: #fff; flex: 1; }
 
-    .btn-save:focus {
-        border-color: #fff;
-        transform: scale(1.03);
-        box-shadow: 0 0 10px #00bfff;
-    }
-
-    .btn-reset:focus {
-        border-color: #fff;
-        transform: scale(1.03);
-        box-shadow: 0 0 10px #ff4757;
-    }
+    .btn-file:focus { border-color: #fff; transform: scale(1.02); box-shadow: 0 0 10px #2ed573; }
+    .btn-save:focus { border-color: #fff; transform: scale(1.03); box-shadow: 0 0 10px #00bfff; }
+    .btn-reset:focus { border-color: #fff; transform: scale(1.03); box-shadow: 0 0 10px #ff4757; }
 
     #search {
         width: 90%;
@@ -209,7 +240,6 @@
         border: 3px solid #00bfff;
     }
 
-    /* CSS Toast Notification (Pengganti Pop-up Alert Bawaan) */
     #customToast {
         visibility: hidden;
         min-width: 220px;
@@ -249,17 +279,32 @@
 
 <div class="header-container">
     <h2>TV ONLINE</h2>
-    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Playlist Saya</button>
+    
+    <!-- Switcher 2 Playlist Utama -->
+    <div class="playlist-tabs">
+        <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')" onkeydown="handleTabKey(event, 'p1')">Playlist 1</button>
+        <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')" onkeydown="handleTabKey(event, 'p2')">Playlist 2</button>
+    </div>
+
+    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Custom</button>
 </div>
 
-<!-- Modal Form Playlist Pribadi -->
+<!-- Modal Custom Playlist -->
 <div id="modalPlaylist">
-    <p style="margin: 0 0 10px 0; font-size: 13px; color: #ccc;">Tambah URL Playlist M3U Pribadi Anda:</p>
-    <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://bit.ly/3Omtj1W atau .m3u" onkeydown="handleModalInputKey(event)">
+    <p style="margin: 0 0 10px 0; font-size: 13px; color: #ccc;">Tambah URL Custom / File Local:</p>
+    
+    <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://contoh.com/playlist.m3u" onkeydown="handleModalInputKey(event)">
+    
     <div class="modal-buttons">
-        <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPlaylistCustom()" onkeydown="handleModalSaveKey(event)">Gunakan Playlist Saya</button>
-        <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()" onkeydown="handleModalResetKey(event)">Kembali ke Utama</button>
+        <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()" onkeydown="handleModalFileKey(event)">📁 Impor File (.m3u) Internal</button>
+        
+        <div class="button-group-row">
+            <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPlaylistCustom()" onkeydown="handleModalSaveKey(event)">Gunakan URL Custom</button>
+            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()" onkeydown="handleModalResetKey(event)">Reset Ke Utama</button>
+        </div>
     </div>
+
+    <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
 </div>
 
 <input 
@@ -274,18 +319,20 @@ onkeydown="handleSearchKey(event)">
 
 <div class="grid" id="tvList">Memuat TV...</div>
 
-<!-- Elemen Toast Melayang -->
 <div id="customToast">Notifikasi</div>
 
 <script>
-// --- URL PLAYLIST UTAMA DISAMARKAN (Base64) ---
-const _encryptedMainUrl = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA==";
-const playlistUtama = atob(_encryptedMainUrl);
+// --- MASUKKAN 2 PLAYLIST UTAMA ANDA DI SINI (Dalam Base64) ---
+// Contoh ini berisi Base64 dari 2 URL M3U berbeda
+const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA=="; // URL Utama 1
+const _playlist2_Base64 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JhbWFkaGFuL21haW4vcGxheWxpc3QubTN1"; // Isi dengan Base64 URL Utama 2 Anda
+
+const PLAYLIST_1 = atob(_playlist1_Base64);
+const PLAYLIST_2 = atob(_playlist2_Base64);
 
 let semuaTV = [];
 let kategoriAktif = localStorage.getItem("lastCategory") || "Semua";
 
-// Fungsi Notifikasi Toast (Sembunyikan domain)
 function showToast(pesan) {
     let toast = document.getElementById("customToast");
     toast.innerText = pesan;
@@ -295,16 +342,55 @@ function showToast(pesan) {
     }, 3000);
 }
 
+function updateTabUI(activeTab) {
+    document.getElementById("tab-p1").classList.remove("active");
+    document.getElementById("tab-p2").classList.remove("active");
+    
+    if (activeTab === "p1") document.getElementById("tab-p1").classList.add("active");
+    if (activeTab === "p2") document.getElementById("tab-p2").classList.add("active");
+}
+
+function gantiPlaylistUtama(tipe) {
+    localStorage.removeItem("customPlaylistURL");
+    localStorage.removeItem("localM3uContent");
+    localStorage.setItem("activeTabPlaylist", tipe);
+    localStorage.setItem("lastCategory", "Semua");
+    
+    updateTabUI(tipe);
+    muatDataTV();
+    showToast(`Beralih ke ${tipe === 'p1' ? 'Playlist 1' : 'Playlist 2'}`);
+}
+
 function ambilURLAktif() {
     let customUrl = localStorage.getItem("customPlaylistURL");
-    return customUrl ? customUrl : playlistUtama;
+    if (customUrl) return customUrl;
+
+    let activeTab = localStorage.getItem("activeTabPlaylist") || "p1";
+    updateTabUI(activeTab);
+
+    return (activeTab === "p2") ? PLAYLIST_2 : PLAYLIST_1;
 }
 
 function muatDataTV() {
+    let localData = localStorage.getItem("localM3uContent");
+    let customUrl = localStorage.getItem("customPlaylistURL");
+
+    // Jika sedang pakai file lokal
+    if (localData && !customUrl) {
+        document.getElementById("tab-p1").classList.remove("active");
+        document.getElementById("tab-p2").classList.remove("active");
+        let tvData = parseM3U(localData);
+        if (tvData.length > 0) {
+            semuaTV = tvData;
+            prosesTampilan();
+            return;
+        }
+    }
+
     let targetURL = ambilURLAktif();
     document.getElementById("tvList").innerHTML = "Memuat TV...";
 
-    // 1. Dukungan Native Android Fetch (Bypass CORS/Bitly 100% jika ada interface Android)
+    // 1. Fetch via Android Native (Bypass CORS/Bitly)
     if (window.Android && typeof window.Android.fetchUrl === "function") {
         setTimeout(() => {
             try {
@@ -325,16 +411,16 @@ function muatDataTV() {
         return;
     }
 
-    // 2. Fallback Browser Proxy
+    // 2. Fetch via Web Browser Fallback
     let fetchURL = targetURL;
     if (targetURL.includes("bit.ly") || targetURL.includes("tinyurl.com") || targetURL.includes("cutt.ly") || targetURL.includes("s.id")) {
         fetchURL = "https://corsproxy.io/?" + encodeURIComponent(targetURL);
     }
 
     fetch(fetchURL)
-    .then(response => {
-        if (!response.ok) throw new Error("Gagal memuat");
-        return response.text();
+    .then(res => {
+        if (!res.ok) throw new Error("Gagal memuat");
+        return res.text();
     })
     .then(data => {
         let tvData = parseM3U(data);
@@ -343,8 +429,8 @@ function muatDataTV() {
         semuaTV = tvData;
         prosesTampilan();
     })
-    .catch(error => {
-        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL valid.";
+    .catch(() => {
+        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL/File valid.";
     });
 }
 
@@ -364,6 +450,36 @@ function prosesTampilan() {
 
 muatDataTV();
 
+// --- OPERASI MODAL & FILE LOKAL ---
+function pilihFileInternal() {
+    if (window.Android && typeof window.Android.openFileChooser === "function") {
+        Android.openFileChooser();
+    } else {
+        document.getElementById("filePicker").click();
+    }
+}
+
+function terimaFileM3U(isiM3U) {
+    if (isiM3U && isiM3U.trim() !== "") {
+        localStorage.removeItem("customPlaylistURL");
+        localStorage.setItem("localM3uContent", isiM3U);
+        localStorage.setItem("lastCategory", "Semua");
+        toggleModal();
+        muatDataTV();
+        showToast("Playlist Lokal Berhasil Diimpor!");
+    } else {
+        showToast("File M3U Kosong!");
+    }
+}
+
+function bacaFileWeb(e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function(evt) { terimaFileM3U(evt.target.result); };
+    reader.readAsText(file);
+}
+
 function toggleModal() {
     let modal = document.getElementById("modalPlaylist");
     if (modal.style.display === "block") {
@@ -373,37 +489,51 @@ function toggleModal() {
         modal.style.display = "block";
         let saved = localStorage.getItem("customPlaylistURL");
         if (saved) document.getElementById("inputCustomUrl").value = saved;
-        setTimeout(() => {
-            document.getElementById("inputCustomUrl").focus();
-        }, 100);
+        setTimeout(() => { document.getElementById("inputCustomUrl").focus(); }, 100);
     }
 }
 
 function simpanPlaylistCustom() {
     let urlBaru = document.getElementById("inputCustomUrl").value.trim();
     if (urlBaru !== "") {
+        localStorage.removeItem("localM3uContent");
         localStorage.setItem("customPlaylistURL", urlBaru);
         localStorage.setItem("lastCategory", "Semua");
+        document.getElementById("tab-p1").classList.remove("active");
+        document.getElementById("tab-p2").classList.remove("active");
         toggleModal();
         muatDataTV();
-        showToast("Playlist berhasil diubah!");
+        showToast("Playlist Custom disimpan!");
     } else {
         showToast("URL tidak boleh kosong!");
     }
 }
 
 function resetKeUtama() {
-    localStorage.removeItem("customPlaylistURL");
-    localStorage.setItem("lastCategory", "Semua");
-    document.getElementById("inputCustomUrl").value = "";
+    gantiPlaylistUtama("p1");
     toggleModal();
-    muatDataTV();
-    showToast("Kembali menggunakan Playlist Utama.");
 }
 
-// --- NAVIGASI REMOTE UNTUK MODAL & PENGATURAN ---
+// --- NAVIGASI REMOTE CONTROL (D-PAD) ---
+function handleTabKey(event, currentTab) {
+    if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        if (currentTab === 'p1') document.getElementById('tab-p2').focus();
+        else if (currentTab === 'p2') document.getElementById('btnPengaturan').focus();
+    } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        if (currentTab === 'p2') document.getElementById('tab-p1').focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById('search').focus();
+    }
+}
+
 function handleBtnPengaturanKey(event) {
-    if (event.key === 'ArrowDown') {
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        document.getElementById('tab-p2').focus();
+    } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         let modal = document.getElementById("modalPlaylist");
         if (modal.style.display === "block") {
@@ -417,11 +547,18 @@ function handleBtnPengaturanKey(event) {
 function handleModalInputKey(event) {
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        document.getElementById("btnSavePlaylist").focus();
+        document.getElementById("btnFileM3u").focus();
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
         document.getElementById("btnPengaturan").focus();
-    } else if (event.key === 'Enter') {
+    }
+}
+
+function handleModalFileKey(event) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById("inputCustomUrl").focus();
+    } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         document.getElementById("btnSavePlaylist").focus();
     }
@@ -430,7 +567,7 @@ function handleModalInputKey(event) {
 function handleModalSaveKey(event) {
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        document.getElementById("inputCustomUrl").focus();
+        document.getElementById("btnFileM3u").focus();
     } else if (event.key === 'ArrowRight') {
         event.preventDefault();
         document.getElementById("btnResetPlaylist").focus();
@@ -443,7 +580,7 @@ function handleModalSaveKey(event) {
 function handleModalResetKey(event) {
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        document.getElementById("inputCustomUrl").focus();
+        document.getElementById("btnFileM3u").focus();
     } else if (event.key === 'ArrowLeft') {
         event.preventDefault();
         document.getElementById("btnSavePlaylist").focus();
@@ -453,11 +590,10 @@ function handleModalResetKey(event) {
     }
 }
 
-// --- NAVIGASI REMOTE HALAMAN UTAMA ---
 function handleSearchKey(event) {
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        document.getElementById('btnPengaturan').focus();
+        document.getElementById('tab-p1').focus();
     } else if (event.key === 'Enter' || event.key === 'ArrowDown') {
         event.preventDefault();
         document.getElementById('search').blur();
@@ -469,8 +605,7 @@ function handleSearchKey(event) {
 function handleCategoryKey(event, index, totalKat) {
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        let searchInput = document.getElementById('search');
-        if (searchInput) searchInput.focus();
+        document.getElementById('search').focus();
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         let firstItem = document.getElementById("item-0");
@@ -500,6 +635,7 @@ function handleItemKey(event, index) {
     }
 }
 
+// --- HELPER BANTUAN UI ---
 function formatGambarOptimized(url) {
     if (!url || url.trim() === "") {
         return 'https://via.placeholder.com/300x169?text=No+Logo';
@@ -509,18 +645,10 @@ function formatGambarOptimized(url) {
 
 function buatElemenHTMLTV(tv, index) {
     const logoOptimized = formatGambarOptimized(tv.logo);
-    
     return `
     <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, 
-        '${tv.url}',
-        '${tv.userAgent}',
-        '${tv.referer}',
-        '${tv.drm}',
-        '${tv.licenseKey}',
-        '${tv.licenseUrl}'
-    )">
+         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
         <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
         <p>${tv.name}</p>
     </div>
@@ -529,24 +657,19 @@ function buatElemenHTMLTV(tv, index) {
 
 function tampilkanTV(data) {
     let html = "";
-    data.forEach((tv, index) => {
-        html += buatElemenHTMLTV(tv, index);
-    });
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
     document.getElementById("tvList").innerHTML = html;
     pulihkanFokusSTB();
 }
 
 function tampilkanTVTanpaFokus(data) {
     let html = "";
-    data.forEach((tv, index) => {
-        html += buatElemenHTMLTV(tv, index);
-    });
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
     document.getElementById("tvList").innerHTML = html;
 }
 
 function pulihkanFokusSTB() {
     let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
-    
     setTimeout(() => {
         let percobaan = 0;
         let intInterval = setInterval(() => {
@@ -569,7 +692,6 @@ function pulihkanFokusSTB() {
                     return;
                 }
             }
-            
             if (percobaan > 80) {
                 clearInterval(intInterval);
                 let fallbackItem = document.getElementById("item-0");
@@ -581,11 +703,8 @@ function pulihkanFokusSTB() {
 
 function buatKategori() {
     let grup = ["Semua"];
-
     semuaTV.forEach(tv => {
-        if (tv.group && !grup.includes(tv.group)) {
-            grup.push(tv.group);
-        }
+        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
     });
 
     let html = "";
@@ -602,7 +721,6 @@ function buatKategori() {
 
     let containerKategori = document.getElementById("kategori");
     containerKategori.innerHTML = html;
-
     containerKategori.querySelectorAll("button").forEach(btn => {
         btn.addEventListener("focus", () => {
             btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -622,10 +740,7 @@ function pilihKategori(g, element) {
     }
 
     let data = semuaTV;
-    if (g !== "Semua") {
-        data = semuaTV.filter(tv => tv.group === g);
-    }
-
+    if (g !== "Semua") data = semuaTV.filter(tv => tv.group === g);
     tampilkanTVTanpaFokus(data);
 }
 
@@ -647,19 +762,10 @@ function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUr
 function parseM3U(data) {
     let lines = data.split("\n");
     let result = [];
-
-    let name = "";
-    let logo = "";
-    let group = "";
-    let userAgent = "";
-    let referer = "";
-    let drm = "";
-    let licenseKey = "";
-    let licenseUrl = "";
+    let name = "", logo = "", group = "", userAgent = "", referer = "", drm = "", licenseKey = "", licenseUrl = "";
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i].trim();
-
         if (line.startsWith("#EXTVLCOPT:http-user-agent=")) {
             userAgent = line.replace("#EXTVLCOPT:http-user-agent=", "");
         } else if (line.startsWith("#EXTVLCOPT:http-referrer=")) {
@@ -669,60 +775,26 @@ function parseM3U(data) {
             drm = type.includes("clearkey") ? "clearkey" : type;
         } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_key=")) {
             let key = line.replace("#KODIPROP:inputstream.adaptive.license_key=", "");
-            if (key.startsWith("http")) {
-                licenseUrl = key;
-            } else {
-                licenseKey = key;
-            }
+            if (key.startsWith("http")) licenseUrl = key;
+            else licenseKey = key;
         } else if (line.startsWith("#EXTINF")) {
             let comma = line.lastIndexOf(",");
             name = line.substring(comma + 1);
-
             let logoPos = line.indexOf('tvg-logo="');
-            if (logoPos != -1) {
-                logo = line.substring(logoPos + 10, line.indexOf('"', logoPos + 10));
-            }
-
+            if (logoPos != -1) logo = line.substring(logoPos + 10, line.indexOf('"', logoPos + 10));
             let groupPos = line.indexOf('group-title="');
-            if (groupPos != -1) {
-                group = line.substring(groupPos + 13, line.indexOf('"', groupPos + 13));
-            }
+            if (groupPos != -1) group = line.substring(groupPos + 13, line.indexOf('"', groupPos + 13));
         } else if (line.startsWith("http")) {
             let url = line;
-
             if (line.includes("|")) {
                 let parts = line.split("|");
                 url = parts[0];
                 let params = parts[1];
-
-                if (params.includes("user-agent=")) {
-                    userAgent = decodeURIComponent(params.split("user-agent=")[1].split("&")[0]);
-                }
-                if (params.includes("referrer=")) {
-                    referer = decodeURIComponent(params.split("referrer=")[1]);
-                }
+                if (params.includes("user-agent=")) userAgent = decodeURIComponent(params.split("user-agent=")[1].split("&")[0]);
+                if (params.includes("referrer=")) referer = decodeURIComponent(params.split("referrer=")[1]);
             }
-
-            result.push({
-                name: name || "Tanpa Nama",
-                logo: logo,
-                group: group,
-                url: url,
-                userAgent: userAgent,
-                referer: referer,
-                drm: drm,
-                licenseKey: licenseKey,
-                licenseUrl: licenseUrl
-            });
-
-            name = "";
-            logo = "";
-            group = "";
-            userAgent = "";
-            referer = "";
-            drm = "";
-            licenseKey = "";
-            licenseUrl = "";
+            result.push({ name: name || "Tanpa Nama", logo, group, url, userAgent, referer, drm, licenseKey, licenseUrl });
+            name = ""; logo = ""; group = ""; userAgent = ""; referer = ""; drm = ""; licenseKey = ""; licenseUrl = "";
         }
     }
     return result;
