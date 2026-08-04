@@ -30,14 +30,26 @@
         font-size: 18px;
     }
 
+    /* Style Tombol Pengaturan & Fokus Remote */
     #btnPengaturan {
         background: #333;
         color: #fff;
-        border: none;
+        border: 2px solid transparent;
         padding: 8px 12px;
         border-radius: 6px;
         cursor: pointer;
         font-size: 13px;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    #btnPengaturan:focus {
+        border-color: #00bfff;
+        background: #00bfff;
+        color: #000;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px #00bfff;
     }
 
     #modalPlaylist {
@@ -56,11 +68,16 @@
         padding: 10px;
         margin-bottom: 10px;
         border-radius: 6px;
-        border: 1px solid #444;
+        border: 2px solid #444;
         background: #111;
         color: #fff;
         box-sizing: border-box;
         outline: none;
+    }
+
+    #modalPlaylist input:focus {
+        border-color: #00bfff;
+        box-shadow: 0 0 8px #00bfff;
     }
 
     .modal-buttons {
@@ -72,13 +89,27 @@
         flex: 1;
         padding: 10px;
         border-radius: 6px;
-        border: none;
+        border: 2px solid transparent;
         font-weight: bold;
         cursor: pointer;
+        outline: none;
+        transition: 0.2s;
     }
 
     .btn-save { background: #00bfff; color: #000; }
     .btn-reset { background: #ff4757; color: #fff; }
+
+    .btn-save:focus {
+        border-color: #fff;
+        transform: scale(1.03);
+        box-shadow: 0 0 10px #00bfff;
+    }
+
+    .btn-reset:focus {
+        border-color: #fff;
+        transform: scale(1.03);
+        box-shadow: 0 0 10px #ff4757;
+    }
 
     #search {
         width: 90%;
@@ -86,14 +117,17 @@
         display: block;
         padding: 12px;
         border-radius: 8px;
-        border: none;
+        border: 2px solid transparent;
         font-size: 16px;
         outline: none;
         box-sizing: border-box;
+        background: #222;
+        color: #fff;
     }
 
     #search:focus {
-        border: 2px solid #00bfff;
+        border-color: #00bfff;
+        box-shadow: 0 0 10px #00bfff;
     }
 
     #kategori {
@@ -107,7 +141,7 @@
     #kategori button {
         background: #333;
         color: #fff;
-        border: none;
+        border: 2px solid transparent;
         padding: 10px 18px;
         border-radius: 20px;
         white-space: nowrap;
@@ -128,6 +162,7 @@
         color: #000;
         transform: scale(1.05);
         box-shadow: 0 0 10px #00bfff;
+        border-color: #fff;
     }
 
     .grid {
@@ -173,26 +208,63 @@
     .item:focus img {
         border: 3px solid #00bfff;
     }
+
+    /* CSS Toast Notification (Pengganti Pop-up Alert Bawaan) */
+    #customToast {
+        visibility: hidden;
+        min-width: 220px;
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 12px 16px;
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        bottom: 30px;
+        transform: translateX(-50%);
+        font-size: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+        border: 1px solid #00bfff;
+        pointer-events: none;
+    }
+
+    #customToast.show {
+        visibility: visible;
+        animation: fadein 0.4s, fadeout 0.4s 2.6s;
+    }
+
+    @keyframes fadein {
+        from { bottom: 0; opacity: 0; }
+        to { bottom: 30px; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+        from { bottom: 30px; opacity: 1; }
+        to { bottom: 0; opacity: 0; }
+    }
     </style>
 </head>
 <body>
 
 <div class="header-container">
     <h2>TV ONLINE</h2>
-    <button id="btnPengaturan" onclick="toggleModal()">⚙️ Playlist Saya</button>
+    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Playlist Saya</button>
 </div>
 
+<!-- Modal Form Playlist Pribadi -->
 <div id="modalPlaylist">
     <p style="margin: 0 0 10px 0; font-size: 13px; color: #ccc;">Tambah URL Playlist M3U Pribadi Anda:</p>
-    <input type="text" id="inputCustomUrl" placeholder="https://contoh.com/playlist.m3u">
+    <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://bit.ly/3Omtj1W atau .m3u" onkeydown="handleModalInputKey(event)">
     <div class="modal-buttons">
-        <button class="btn-save" onclick="simpanPlaylistCustom()">Gunakan Playlist Saya</button>
-        <button class="btn-reset" onclick="resetKeUtama()">Kembali ke Utama</button>
+        <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPlaylistCustom()" onkeydown="handleModalSaveKey(event)">Gunakan Playlist Saya</button>
+        <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()" onkeydown="handleModalResetKey(event)">Kembali ke Utama</button>
     </div>
 </div>
 
 <input 
 id="search"
+tabindex="0"
 type="text"
 placeholder="Cari channel..."
 oninput="cariChannel()"
@@ -202,13 +274,26 @@ onkeydown="handleSearchKey(event)">
 
 <div class="grid" id="tvList">Memuat TV...</div>
 
+<!-- Elemen Toast Melayang -->
+<div id="customToast">Notifikasi</div>
+
 <script>
-// URL Playlist utama disamarkan (Base64)
+// --- URL PLAYLIST UTAMA DISAMARKAN (Base64) ---
 const _encryptedMainUrl = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA==";
 const playlistUtama = atob(_encryptedMainUrl);
 
 let semuaTV = [];
 let kategoriAktif = localStorage.getItem("lastCategory") || "Semua";
+
+// Fungsi Notifikasi Toast (Sembunyikan domain)
+function showToast(pesan) {
+    let toast = document.getElementById("customToast");
+    toast.innerText = pesan;
+    toast.className = "show";
+    setTimeout(() => { 
+        toast.className = toast.className.replace("show", ""); 
+    }, 3000);
+}
 
 function ambilURLAktif() {
     let customUrl = localStorage.getItem("customPlaylistURL");
@@ -219,30 +304,62 @@ function muatDataTV() {
     let targetURL = ambilURLAktif();
     document.getElementById("tvList").innerHTML = "Memuat TV...";
 
-    fetch(targetURL)
+    // 1. Dukungan Native Android Fetch (Bypass CORS/Bitly 100% jika ada interface Android)
+    if (window.Android && typeof window.Android.fetchUrl === "function") {
+        setTimeout(() => {
+            try {
+                let responseData = Android.fetchUrl(targetURL);
+                if (responseData && !responseData.startsWith("ERROR:")) {
+                    let tvData = parseM3U(responseData);
+                    if (tvData.length > 0) {
+                        semuaTV = tvData;
+                        prosesTampilan();
+                        return;
+                    }
+                }
+                throw new Error("Gagal parsing M3U");
+            } catch (err) {
+                document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL valid.";
+            }
+        }, 100);
+        return;
+    }
+
+    // 2. Fallback Browser Proxy
+    let fetchURL = targetURL;
+    if (targetURL.includes("bit.ly") || targetURL.includes("tinyurl.com") || targetURL.includes("cutt.ly") || targetURL.includes("s.id")) {
+        fetchURL = "https://corsproxy.io/?" + encodeURIComponent(targetURL);
+    }
+
+    fetch(fetchURL)
     .then(response => {
         if (!response.ok) throw new Error("Gagal memuat");
         return response.text();
     })
     .then(data => {
         let tvData = parseM3U(data);
+        if (tvData.length === 0) throw new Error("Format Kosong");
+
         semuaTV = tvData;
-        
-        let savedKat = localStorage.getItem("lastCategory") || "Semua";
-        kategoriAktif = savedKat;
-
-        buatKategori();
-
-        let dataToDisplay = semuaTV;
-        if (savedKat !== "Semua") {
-            dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
-        }
-
-        tampilkanTV(dataToDisplay);
+        prosesTampilan();
     })
     .catch(error => {
         document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL valid.";
     });
+}
+
+function prosesTampilan() {
+    let savedKat = localStorage.getItem("lastCategory") || "Semua";
+    kategoriAktif = savedKat;
+
+    buatKategori();
+
+    let dataToDisplay = semuaTV;
+    if (savedKat !== "Semua") {
+        dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
+    }
+
+    tampilkanTV(dataToDisplay);
 }
 
 muatDataTV();
@@ -251,10 +368,14 @@ function toggleModal() {
     let modal = document.getElementById("modalPlaylist");
     if (modal.style.display === "block") {
         modal.style.display = "none";
+        document.getElementById("btnPengaturan").focus();
     } else {
         modal.style.display = "block";
         let saved = localStorage.getItem("customPlaylistURL");
         if (saved) document.getElementById("inputCustomUrl").value = saved;
+        setTimeout(() => {
+            document.getElementById("inputCustomUrl").focus();
+        }, 100);
     }
 }
 
@@ -263,11 +384,11 @@ function simpanPlaylistCustom() {
     if (urlBaru !== "") {
         localStorage.setItem("customPlaylistURL", urlBaru);
         localStorage.setItem("lastCategory", "Semua");
-        alert("Playlist berhasil diubah!");
         toggleModal();
         muatDataTV();
+        showToast("Playlist berhasil diubah!");
     } else {
-        alert("URL tidak boleh kosong!");
+        showToast("URL tidak boleh kosong!");
     }
 }
 
@@ -275,9 +396,108 @@ function resetKeUtama() {
     localStorage.removeItem("customPlaylistURL");
     localStorage.setItem("lastCategory", "Semua");
     document.getElementById("inputCustomUrl").value = "";
-    alert("Kembali menggunakan Playlist Utama.");
     toggleModal();
     muatDataTV();
+    showToast("Kembali menggunakan Playlist Utama.");
+}
+
+// --- NAVIGASI REMOTE UNTUK MODAL & PENGATURAN ---
+function handleBtnPengaturanKey(event) {
+    if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let modal = document.getElementById("modalPlaylist");
+        if (modal.style.display === "block") {
+            document.getElementById("inputCustomUrl").focus();
+        } else {
+            document.getElementById("search").focus();
+        }
+    }
+}
+
+function handleModalInputKey(event) {
+    if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById("btnSavePlaylist").focus();
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById("btnPengaturan").focus();
+    } else if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById("btnSavePlaylist").focus();
+    }
+}
+
+function handleModalSaveKey(event) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById("inputCustomUrl").focus();
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        document.getElementById("btnResetPlaylist").focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById("search").focus();
+    }
+}
+
+function handleModalResetKey(event) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById("inputCustomUrl").focus();
+    } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        document.getElementById("btnSavePlaylist").focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById("search").focus();
+    }
+}
+
+// --- NAVIGASI REMOTE HALAMAN UTAMA ---
+function handleSearchKey(event) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById('btnPengaturan').focus();
+    } else if (event.key === 'Enter' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById('search').blur();
+        let firstKat = document.getElementById("kat-0");
+        if (firstKat) firstKat.focus();
+    }
+}
+
+function handleCategoryKey(event, index, totalKat) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        let searchInput = document.getElementById('search');
+        if (searchInput) searchInput.focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstItem = document.getElementById("item-0");
+        if (firstItem) firstItem.focus();
+    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
+        event.preventDefault();
+        let nextKat = document.getElementById(`kat-${index + 1}`);
+        if (nextKat) nextKat.focus();
+    } else if (event.key === 'ArrowLeft' && index > 0) {
+        event.preventDefault();
+        let prevKat = document.getElementById(`kat-${index - 1}`);
+        if (prevKat) prevKat.focus();
+    }
+}
+
+function handleItemKey(event, index) {
+    let gridContainer = document.getElementById("tvList");
+    let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
+    let columns = Math.max(1, Math.floor(containerWidth / 190));
+
+    if (event.key === 'ArrowUp') {
+        if (index < columns) {
+            event.preventDefault();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
+        }
+    }
 }
 
 function formatGambarOptimized(url) {
@@ -388,49 +608,6 @@ function buatKategori() {
             btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         });
     });
-}
-
-function handleSearchKey(event) {
-    if (event.key === 'Enter' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById('search').blur();
-        let firstKat = document.getElementById("kat-0");
-        if (firstKat) firstKat.focus();
-    }
-}
-
-function handleCategoryKey(event, index, totalKat) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        let searchInput = document.getElementById('search');
-        if (searchInput) searchInput.focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        let firstItem = document.getElementById("item-0");
-        if (firstItem) firstItem.focus();
-    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
-        event.preventDefault();
-        let nextKat = document.getElementById(`kat-${index + 1}`);
-        if (nextKat) nextKat.focus();
-    } else if (event.key === 'ArrowLeft' && index > 0) {
-        event.preventDefault();
-        let prevKat = document.getElementById(`kat-${index - 1}`);
-        if (prevKat) prevKat.focus();
-    }
-}
-
-function handleItemKey(event, index) {
-    let gridContainer = document.getElementById("tvList");
-    let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
-    let columns = Math.max(1, Math.floor(containerWidth / 190));
-
-    if (event.key === 'ArrowUp') {
-        if (index < columns) {
-            event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) activeCategoryBtn.focus();
-        }
-    }
 }
 
 function pilihKategori(g, element) {
@@ -555,7 +732,7 @@ function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     if (window.Android) {
         Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
     } else {
-        alert(url);
+        showToast("Memutar URL...");
     }
 }
 </script>
