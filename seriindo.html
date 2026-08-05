@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
- <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
+    <link rel="preconnect" href="https://posterfilm.pages.dev">
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
     <meta charset="UTF-8">
     <title>MRZYBtv Series Indonesia</title>
@@ -99,45 +99,40 @@
 
 <script>
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
-    const jsonUrl = "https://mrzybtv-api.ukielaki88.workers.dev/api/seri-indo"; 
+    
+    // ========================================================
+    // LINK PLAYLIST M3U
+    // ========================================================
+    const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/series_indo.m3u"; 
 
     // ========================================================
-    // LOGIKA PENYELARASAN NATIVE (MENCONTEK KODE YANG BERHASIL)
+    // LOGIKA PENYELARASAN NATIVE
     // ========================================================
     
-    // Fungsi jembatan yang dipanggil oleh tombol Back dari aplikasi Android kamu
     window.tutupPopUpPoster = function(){
         window.closePopup();
     };
 
-    // Event Keydown Global untuk mendeteksi tombol Back Remote (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const popupElement = document.getElementById("popup");
-            // Jika popup sedang aktif terbuka di layar
             if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
                 event.preventDefault();
-                window.tutupPopUpPoster(); // Jalankan fungsi penutupan resmi
+                window.tutupPopUpPoster(); 
                 return;
             }
         }
     }, true); 
 
-    // Logika Navigasi Arah Atas/Bawah/Kiri/Kanan Remote
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
         
-if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
+        if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
+            e.preventDefault();
+            openModal(Number(document.activeElement.dataset.index));
+            return false;
+        }
 
-    e.preventDefault();
-
-    openModal(Number(document.activeElement.dataset.index));
-
-    return false;
-
-}
-
-        // Jika menekan ATAS di baris poster pertama, naik ke pencarian
         if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
             const index = $('.grid .poster').index(activeEl);
             if (index < 5) {
@@ -147,7 +142,6 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
             }
         }
 
-        // Navigasi internal di dalam Popup
         if (e.keyCode == 39 && $(activeEl).hasClass('eps-btn')) {
             document.querySelector(".close-x")?.focus();
         } else if (e.keyCode == 37 && $(activeEl).hasClass('close-x')) {
@@ -156,61 +150,45 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
         
-        
         setTimeout(() => {
-
-    const index = Number(document.activeElement.dataset.pos);
-
-    if (!isNaN(index) && index >= loaded - 10 && loaded < allData.length) {
-        loadMore();
-    }
-
-}, 50);
-        
-        
+            const index = Number(document.activeElement.dataset.pos);
+            if (!isNaN(index) && index >= loaded - 10 && loaded < allData.length) {
+                loadMore();
+            }
+        }, 50);
     });
 
-    // 2. Logika Khusus di Bar Pencarian Utama
     $("#search-box").on("keydown click touchstart", function(e) {
+        if (e.type === "click" || e.type === "touchstart") {
+            $("#search").focus();
+            return;
+        }
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search").focus();
+            return false;
+        }
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            document.querySelector(".poster")?.focus();
+            return false;
+        }
+        if (e.keyCode == 39 && $("#search").val().length > 0) {
+            $("#clear-btn").attr("tabindex", "0").focus();
+        }
+    });
 
-    if (e.type === "click" || e.type === "touchstart") {
-        $("#search").focus();
-        return;
-    }
-
-    if (e.keyCode == 13) {
-        e.preventDefault();
-        $("#search").focus();
-        return false;
-    }
-
-    if (e.keyCode == 40) {
-        e.preventDefault();
-        document.querySelector(".poster")?.focus();
-        return false;
-    }
-
-    if (e.keyCode == 39 && $("#search").val().length > 0) {
-        $("#clear-btn").attr("tabindex", "0").focus();
-    }
-
-});
-
-    // 3. Logika Saat Mengetik di Dalam Input Asli
     $("#search").on("keydown", function(e) {
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            document.getElementById("search-box").focus();
+            document.querySelector(".poster")?.focus();
+        }
+        if (e.keyCode == 13) {
+            e.preventDefault();
+        }
+    });
 
-    if (e.keyCode == 40) {
-        e.preventDefault();
-        document.getElementById("search-box").focus();
-        document.querySelector(".poster")?.focus();
-    }
-
-    if (e.keyCode == 13) {
-        e.preventDefault();
-    }
-
-});
-    // Navigasi di tombol X hapus pencarian
     $("#clear-btn").on('keydown', function(e) {
         if (e.keyCode == 37) {
             document.getElementById("search-box").focus();
@@ -221,220 +199,255 @@ if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
         }
     });
 
-    // Fungsi klik/OK pada tombol X hapus pencarian
     $("#clear-btn").on('click', function() {
-
-    $("#search").val("");
-
-    document.getElementById("grid").replaceChildren();
-
-    loaded = 0;
-
-    loadMore();
-
-    $(this).hide().attr("tabindex","-1");
-
-    document.getElementById("search-box").focus();
-
-});
-
-    // Logika filter ketikan pencarian
-    
-
-let searchTimer;
-
-$("#search").on("input", function () {
-
-    clearTimeout(searchTimer);
-
-    searchTimer = setTimeout(() => {
-
-        const keyword = $("#search").val().trim().toLowerCase();
-
-        if (keyword.length > 0) {
-            $("#clear-btn").css("display", "flex");
-        } else {
-            $("#clear-btn").css("display", "none").attr("tabindex", "-1");
-
-            loaded = 0;
-            document.getElementById("grid").replaceChildren();
-            loadMore();
-            return;
-        }
-
+        $("#search").val("");
         document.getElementById("grid").replaceChildren();
-
-        const fragment = document.createDocumentFragment();
-
-        allData
-            .filter(item => item.title.toLowerCase().includes(keyword))
-            .forEach((item, index) => {
-
-                const div = document.createElement("div");
-
-                div.className = "poster";
-                div.tabIndex = 0;
-                div.dataset.index = allData.indexOf(item);
-                div.dataset.title = item.title;
-
-                div.innerHTML = `
-                    <img src="${item.poster}" loading="lazy" decoding="async">
-                    <div class="poster-title">${item.title}</div>
-                `;
-
-                fragment.appendChild(div);
-
-            });
-
-        document.getElementById("grid").appendChild(fragment);
-
-    }, 200);
-
-});
-
-    // Load Data JSON Utama
-    let allData = [];
-let loaded = 0;
-const LOAD_SIZE = 40;
-
-fetch(jsonUrl)
-.then(response => response.json())
-.then(data => {
-
-    allData = data;
-
-    loadMore();
-    
-    
-    
-document.getElementById("grid").addEventListener("click", function(e){
-
-    const poster = e.target.closest(".poster");
-
-    if(!poster) return;
-
-    openModal(Number(poster.dataset.index));
-
-});
-    
-    
-    
-    
-    function checkLoadMore() {
-
-    const posters = document.querySelectorAll(".poster");
-
-    if (!posters.length) return;
-
-    const index = [...posters].indexOf(document.activeElement);
-
-    if (index >= loaded - 10 && loaded < allData.length) {
+        loaded = 0;
         loadMore();
-    }
+        $(this).hide().attr("tabindex","-1");
+        document.getElementById("search-box").focus();
+    });
 
-}
-    
-    
-    
+    let searchTimer;
+    $("#search").on("input", function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const keyword = $("#search").val().trim().toLowerCase();
+            if (keyword.length > 0) {
+                $("#clear-btn").css("display", "flex");
+            } else {
+                $("#clear-btn").css("display", "none").attr("tabindex", "-1");
+                loaded = 0;
+                document.getElementById("grid").replaceChildren();
+                loadMore();
+                return;
+            }
 
-    setTimeout(() => {
-        const popupElement = document.getElementById("popup");
-        if (popupElement && window.getComputedStyle(popupElement).display === "none") {
-            document.querySelector(".poster")?.focus();
+            document.getElementById("grid").replaceChildren();
+            const fragment = document.createDocumentFragment();
+
+            allData
+                .filter(item => item.title.toLowerCase().includes(keyword))
+                .forEach((item, index) => {
+                    const div = document.createElement("div");
+                    div.className = "poster";
+                    div.tabIndex = 0;
+                    div.dataset.index = allData.indexOf(item);
+                    div.dataset.title = item.title;
+                    div.innerHTML = `
+                        <img src="${item.poster}" loading="lazy" decoding="async">
+                        <div class="poster-title">${item.title}</div>
+                    `;
+                    fragment.appendChild(div);
+                });
+
+            document.getElementById("grid").appendChild(fragment);
+        }, 200);
+    });
+
+    let allData = [];
+    let loaded = 0;
+    const LOAD_SIZE = 40;
+
+    // ========================================================
+    // PARSER PINTAR: HAPUS TITIK PADA JUDUL & AUTO-SORT EPISODE
+    // ========================================================
+    function parseM3U(text) {
+        const lines = text.split('\n');
+        const seriesMap = new Map();
+
+        let currentPoster = "";
+        let currentTitle = "";
+        let currentEpName = "";
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+
+            if (line.startsWith("#EXTINF")) {
+                const logoMatch = line.match(/tvg-logo=["']([^"']+)["']/);
+                currentPoster = logoMatch ? logoMatch[1] : "";
+
+                const groupMatch = line.match(/group-title=["']([^"']+)["']/);
+                const groupName = groupMatch ? groupMatch[1].trim() : "";
+
+                const commaIndex = line.lastIndexOf(',');
+                let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
+
+                // JIKA CUMA ADA GROUP "Film" / "Series" ATAU TIDAK ADA GROUP BERSIH:
+                if (!groupName || groupName.toLowerCase() === "film" || groupName.toLowerCase() === "series") {
+                    
+                    // Deteksi pola S01E01, S1E1, E01, Episode 01, dll.
+                    const seasonEpRegex = /(S\d+E\d+|S\d+\s*E\d+|E\d+|Episode\s*\d+)/i;
+                    const match = rawTitle.match(seasonEpRegex);
+
+                    if (match) {
+                        const splitIndex = match.index;
+                        currentTitle = rawTitle.substring(0, splitIndex).trim();
+                        currentEpName = match[0].toUpperCase();
+                    } else if (rawTitle.includes("-")) {
+                        let parts = rawTitle.split("-");
+                        currentTitle = parts[0].trim();
+                        currentEpName = parts.slice(1).join("-").trim();
+                    } else {
+                        currentTitle = rawTitle.trim();
+                        currentEpName = "Play";
+                    }
+
+                } else {
+                    currentTitle = groupName;
+                    currentEpName = rawTitle;
+                }
+
+                // ========================================================
+                // PEMBERSIH TITIK: Ubah titik (.) pada judul menjadi spasi
+                // ========================================================
+                currentTitle = currentTitle.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
+            }
+            else if (line.startsWith("http")) { 
+                const fallbackPoster = "https://via.placeholder.com/300x400?text=No+Poster";
+                
+                if (!seriesMap.has(currentTitle)) {
+                    seriesMap.set(currentTitle, {
+                        title: currentTitle,
+                        poster: currentPoster || fallbackPoster,
+                        episodes: []
+                    });
+                } else {
+                    let existing = seriesMap.get(currentTitle);
+                    if ((!existing.poster || existing.poster === fallbackPoster) && currentPoster) {
+                        existing.poster = currentPoster;
+                    }
+                }
+                
+                seriesMap.get(currentTitle).episodes.push({
+                    ep: currentEpName,
+                    url: line
+                });
+            }
         }
-    },600);
-
-    checkLastSession();
-
-});
-
-function loadMore(){
-
-    const fragment=document.createDocumentFragment();
-
-    const end=Math.min(loaded+LOAD_SIZE,allData.length);
-
-    for(let i=loaded;i<end;i++){
-
-        const item = allData[i];
-
-const div = document.createElement("div");
-div.className = "poster";
-div.tabIndex = 0;
-div.dataset.title = item.title;
-
-div.dataset.index = i;
-div.dataset.pos = i;
-
-div.innerHTML = `
-    <img src="${item.poster}" loading="lazy" decoding="async">
-    <div class="poster-title">${item.title}</div>
-`;
-
-fragment.appendChild(div);
-
         
+        // AUTO SORT EPISODE (Urut dari S01E01, S01E02, S01E03, dst)
+        const result = Array.from(seriesMap.values());
+        result.forEach(item => {
+            item.episodes.sort((a, b) => {
+                let numA = a.ep.match(/\d+/g);
+                let numB = b.ep.match(/\d+/g);
+                if (numA && numB) {
+                    let lastA = parseInt(numA[numA.length - 1], 10);
+                    let lastB = parseInt(numB[numB.length - 1], 10);
+                    return lastA - lastB;
+                }
+                return a.ep.localeCompare(b.ep, undefined, { numeric: true, sensitivity: 'base' });
+            });
+        });
 
+        return result;
     }
 
-    grid.appendChild(fragment);
+    // ========================================================
+    // FETCH M3U DATA
+    // ========================================================
+    fetch(playlistUrl)
+    .then(response => response.text()) 
+    .then(text => {
 
-    loaded=end;
+        allData = parseM3U(text); 
 
-}    
-
-
-
+        loadMore();
         
+        document.getElementById("grid").addEventListener("click", function(e){
+            const poster = e.target.closest(".poster");
+            if(!poster) return;
+            openModal(Number(poster.dataset.index));
+        });
+        
+        function checkLoadMore() {
+            const posters = document.querySelectorAll(".poster");
+            if (!posters.length) return;
+            const index = [...posters].indexOf(document.activeElement);
+            if (index >= loaded - 10 && loaded < allData.length) {
+                loadMore();
+            }
+        }
+        
+        setTimeout(() => {
+            const popupElement = document.getElementById("popup");
+            if (popupElement && window.getComputedStyle(popupElement).display === "none") {
+                document.querySelector(".poster")?.focus();
+            }
+        },600);
+
+        checkLastSession();
+    });
+
+    function loadMore(){
+        const fragment=document.createDocumentFragment();
+        const end=Math.min(loaded+LOAD_SIZE,allData.length);
+
+        for(let i=loaded;i<end;i++){
+            const item = allData[i];
+            const div = document.createElement("div");
+            div.className = "poster";
+            div.tabIndex = 0;
+            div.dataset.title = item.title;
+            div.dataset.index = i;
+            div.dataset.pos = i;
+            div.innerHTML = `
+                <img src="${item.poster}" loading="lazy" decoding="async">
+                <div class="poster-title">${item.title}</div>
+            `;
+            fragment.appendChild(div);
+        }
+        document.getElementById("grid").appendChild(fragment);
+        loaded=end;
+    }    
        
-window.addEventListener("scroll", () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-        if (loaded < allData.length) {
+    window.addEventListener("scroll", () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+            if (loaded < allData.length) {
+                loadMore();
+            }
+        }
+    });
+
+    document.addEventListener("focusin", () => {
+        const posters = document.querySelectorAll(".poster");
+        const index = Array.from(posters).indexOf(document.activeElement);
+        if (index >= loaded - 10 && loaded < allData.length) {
             loadMore();
         }
-    }
-});
-
-document.addEventListener("focusin", () => {
-    const posters = document.querySelectorAll(".poster");
-    const index = Array.from(posters).indexOf(document.activeElement);
-
-    if (index >= loaded - 10 && loaded < allData.length) {
-        loadMore();
-    }
-}); 
+    }); 
         
-
-
-
-            
-        
-        
-    
-
-    // FUNGSI BUKA POPUP (MODAL)
     function openModal(index) {
-
-    const item = allData[index];
-
-localStorage.setItem(pageTitle + "_judul_film", item.title);
-    const title = item.title;
-    const eps = item.episodes;
+        const item = allData[index];
+        localStorage.setItem(pageTitle + "_judul_film", item.title);
+        const title = item.title;
+        const eps = item.episodes;
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title);
         localStorage.setItem(pageTitle + "_judul_film", title);
         
-
-        // Beritahu aplikasi Android bahwa ada popup aktif (Kunci Back agar dihandle web)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
-
         
         $("#modal-title").text(title);
-        $("#eps-list").empty();
-        eps.forEach((e, index) => {
-            $("#eps-list").append(`<button class="eps-btn" tabindex="0" data-index="${index}" onclick="playAndSave('${e.url}', ${index}, '${title.replace(/'/g, "\\'")}')">${e.ep}</button>`);
+        
+        const epsListContainer = document.getElementById("eps-list");
+        epsListContainer.replaceChildren();
+
+        eps.forEach((e, epIndex) => {
+            const btn = document.createElement("button");
+            btn.className = "eps-btn";
+            btn.tabIndex = 0;
+            btn.dataset.index = epIndex;
+            btn.textContent = e.ep;
+
+            btn.onclick = function() {
+                playAndSave(e.url, epIndex, title);
+            };
+
+            epsListContainer.appendChild(btn);
         });
         
         $("#popup").css("display", "flex");
@@ -443,7 +456,6 @@ localStorage.setItem(pageTitle + "_judul_film", item.title);
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // FUNGSI PLAY VIDEO
     function playAndSave(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         if (typeof Android !== "undefined" && Android.playVideo) {
@@ -453,17 +465,13 @@ localStorage.setItem(pageTitle + "_judul_film", item.title);
         }
     }
 
-    // FUNGSI TUTUP POPUP (MODAL) - SEKARANG SEJAJAR DENGAN KODE SUKSES KAMU
     window.closePopup = function() { 
-        // 1. Sembunyikan popup secara instan
         $("#popup").css("display", "none"); 
         
-        // 2. Bersihkan penyimpanan lokal
         localStorage.removeItem(pageTitle + "_status_popup");
         localStorage.removeItem(pageTitle + "_judul_film");
         localStorage.removeItem(pageTitle + "_eps_data");
 
-        // 3. Kembalikan fokus ke poster terakhir agar kursor remote tidak hilang/loncat
         const lastTitle = localStorage.getItem(pageTitle + "_last_poster_title");
         if (lastTitle) {
             setTimeout(() => {
@@ -471,32 +479,23 @@ localStorage.setItem(pageTitle + "_judul_film", item.title);
             }, 150);
         }
 
-        // 4. Langsung matikan status gembok popup di sisi Android (Tanpa setTimeout delay)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
     };
 
-    // Memeriksa Sesi Terakhir (Jika aplikasi tidak sengaja ter-reload)
     function checkLastSession() {
-
-    if (localStorage.getItem(pageTitle + "_status_popup") !== "open") return;
-
-    const title = localStorage.getItem(pageTitle + "_judul_film");
-
-    if (!title) return;
-
-    const index = allData.findIndex(item => item.title === title);
-
-    if (index !== -1) {
-        openModal(index);
+        if (localStorage.getItem(pageTitle + "_status_popup") !== "open") return;
+        const title = localStorage.getItem(pageTitle + "_judul_film");
+        if (!title) return;
+        const index = allData.findIndex(item => item.title === title);
+        if (index !== -1) {
+            openModal(index);
+        }
     }
-
-}
 </script>
 
 <script>
-    // Efek Suara Navigasi Remote
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     function playSound() {
