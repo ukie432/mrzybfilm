@@ -7,132 +7,35 @@
     <meta http-equiv="Expires" content="0" />
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TV Online Multi-Playlist</title>
+    <title>TV Online Multi-Playlist & Custom UA</title>
 
     <style>
-    body {
-        margin: 0;
-        background: #111;
-        font-family: Arial, sans-serif;
-        color: #fff;
-    }
+    body { margin: 0; background: #111; font-family: Arial, sans-serif; color: #fff; }
+    .header-container { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #1a1a1a; flex-wrap: wrap; gap: 10px; }
+    h2 { margin: 0; font-size: 18px; }
 
-    .header-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 15px;
-        background: #1a1a1a;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+    .playlist-tabs { display: flex; gap: 8px; }
+    .tab-btn { background: #222; color: #aaa; border: 2px solid #444; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; outline: none; transition: 0.2s; }
+    .tab-btn.active { background: #00bfff; color: #000; border-color: #00bfff; }
+    .tab-btn:focus { border-color: #fff; transform: scale(1.05); box-shadow: 0 0 10px #00bfff; }
 
-    h2 {
-        margin: 0;
-        font-size: 18px;
-    }
+    #btnPengaturan { background: #333; color: #fff; border: 2px solid transparent; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; outline: none; transition: 0.2s; }
+    #btnPengaturan:focus { border-color: #00bfff; background: #00bfff; color: #000; font-weight: bold; transform: scale(1.05); box-shadow: 0 0 10px #00bfff; }
 
-    /* Container Switcher Playlist Utama */
-    .playlist-tabs {
-        display: flex;
-        gap: 8px;
-    }
+    /* Modal Form Custom Playlist & UA */
+    #modalPlaylist { display: none; background: #222; padding: 15px; margin: 10px auto; width: 90%; border-radius: 8px; border: 1px solid #444; box-sizing: border-box; }
+    
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
 
-    .tab-btn {
-        background: #222;
-        color: #aaa;
-        border: 2px solid #444;
-        padding: 6px 14px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: bold;
-        outline: none;
-        transition: 0.2s;
+    #modalPlaylist input[type="text"], #modalPlaylist select {
+        width: 100%; padding: 10px; border-radius: 6px; border: 2px solid #444; background: #111; color: #fff; box-sizing: border-box; outline: none; font-size: 13px;
     }
+    #modalPlaylist input[type="text"]:focus, #modalPlaylist select:focus { border-color: #00bfff; box-shadow: 0 0 8px #00bfff; }
 
-    .tab-btn.active {
-        background: #00bfff;
-        color: #000;
-        border-color: #00bfff;
-    }
-
-    .tab-btn:focus {
-        border-color: #fff;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px #00bfff;
-    }
-
-    #btnPengaturan {
-        background: #333;
-        color: #fff;
-        border: 2px solid transparent;
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        outline: none;
-        transition: 0.2s;
-    }
-
-    #btnPengaturan:focus {
-        border-color: #00bfff;
-        background: #00bfff;
-        color: #000;
-        font-weight: bold;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px #00bfff;
-    }
-
-    /* Modal Form Custom Playlist */
-    #modalPlaylist {
-        display: none;
-        background: #222;
-        padding: 15px;
-        margin: 10px auto;
-        width: 90%;
-        border-radius: 8px;
-        border: 1px solid #444;
-        box-sizing: border-box;
-    }
-
-    #modalPlaylist input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        border: 2px solid #444;
-        background: #111;
-        color: #fff;
-        box-sizing: border-box;
-        outline: none;
-    }
-
-    #modalPlaylist input[type="text"]:focus {
-        border-color: #00bfff;
-        box-shadow: 0 0 8px #00bfff;
-    }
-
-    .modal-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .button-group-row {
-        display: flex;
-        gap: 8px;
-    }
-
-    .modal-buttons button {
-        padding: 10px;
-        border-radius: 6px;
-        border: 2px solid transparent;
-        font-weight: bold;
-        cursor: pointer;
-        outline: none;
-        transition: 0.2s;
-    }
+    .modal-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+    .button-group-row { display: flex; gap: 8px; }
+    .modal-buttons button { padding: 10px; border-radius: 6px; border: 2px solid transparent; font-weight: bold; cursor: pointer; outline: none; transition: 0.2s; }
 
     .btn-file { background: #2ed573; color: #000; width: 100%; }
     .btn-save { background: #00bfff; color: #000; flex: 1; }
@@ -142,137 +45,26 @@
     .btn-save:focus { border-color: #fff; transform: scale(1.03); box-shadow: 0 0 10px #00bfff; }
     .btn-reset:focus { border-color: #fff; transform: scale(1.03); box-shadow: 0 0 10px #ff4757; }
 
-    #search {
-        width: 90%;
-        margin: 10px auto;
-        display: block;
-        padding: 12px;
-        border-radius: 8px;
-        border: 2px solid transparent;
-        font-size: 16px;
-        outline: none;
-        box-sizing: border-box;
-        background: #222;
-        color: #fff;
-    }
+    #search { width: 90%; margin: 10px auto; display: block; padding: 12px; border-radius: 8px; border: 2px solid transparent; font-size: 16px; outline: none; box-sizing: border-box; background: #222; color: #fff; }
+    #search:focus { border-color: #00bfff; box-shadow: 0 0 10px #00bfff; }
 
-    #search:focus {
-        border-color: #00bfff;
-        box-shadow: 0 0 10px #00bfff;
-    }
+    #kategori { display: flex; gap: 10px; overflow-x: auto; padding: 10px; scroll-behavior: smooth; }
+    #kategori button { background: #333; color: #fff; border: 2px solid transparent; padding: 10px 18px; border-radius: 20px; white-space: nowrap; cursor: pointer; outline: none; transition: .2s; flex-shrink: 0; }
+    #kategori button.active { background: #00bfff; color: #000; font-weight: bold; }
+    #kategori button:focus { background: #00bfff; color: #000; transform: scale(1.05); box-shadow: 0 0 10px #00bfff; border-color: #fff; }
 
-    #kategori {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding: 10px;
-        scroll-behavior: smooth;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; padding: 20px; }
+    .item { cursor: pointer; outline: none; transition: .2s; content-visibility: auto; contain-intrinsic-size: 1px 120px; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
+    .item img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #222; display: block; }
+    .item p { text-align: center; margin: 8px 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
+    .item:focus { transform: scale(1.08); }
+    .item:focus img { border: 3px solid #00bfff; }
 
-    #kategori button {
-        background: #333;
-        color: #fff;
-        border: 2px solid transparent;
-        padding: 10px 18px;
-        border-radius: 20px;
-        white-space: nowrap;
-        cursor: pointer;
-        outline: none;
-        transition: .2s;
-        flex-shrink: 0;
-    }
+    #customToast { visibility: hidden; min-width: 220px; background-color: #222; color: #fff; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 9999; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.7); border: 1px solid #00bfff; pointer-events: none; }
+    #customToast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.6s; }
 
-    #kategori button.active {
-        background: #00bfff;
-        color: #000;
-        font-weight: bold;
-    }
-
-    #kategori button:focus {
-        background: #00bfff;
-        color: #000;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px #00bfff;
-        border-color: #fff;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .item {
-        cursor: pointer;
-        outline: none;
-        transition: .2s;
-        content-visibility: auto;
-        contain-intrinsic-size: 1px 120px;
-        background: #1a1a1a;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .item img {
-        width: 100%;
-        aspect-ratio: 16/9;
-        object-fit: contain;
-        background: #222;
-        display: block;
-    }
-
-    .item p {
-        text-align: center;
-        margin: 8px 0;
-        font-size: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 0 5px;
-    }
-
-    .item:focus {
-        transform: scale(1.08);
-    }
-
-    .item:focus img {
-        border: 3px solid #00bfff;
-    }
-
-    #customToast {
-        visibility: hidden;
-        min-width: 220px;
-        background-color: #222;
-        color: #fff;
-        text-align: center;
-        border-radius: 8px;
-        padding: 12px 16px;
-        position: fixed;
-        z-index: 9999;
-        left: 50%;
-        bottom: 30px;
-        transform: translateX(-50%);
-        font-size: 14px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
-        border: 1px solid #00bfff;
-        pointer-events: none;
-    }
-
-    #customToast.show {
-        visibility: visible;
-        animation: fadein 0.4s, fadeout 0.4s 2.6s;
-    }
-
-    @keyframes fadein {
-        from { bottom: 0; opacity: 0; }
-        to { bottom: 30px; opacity: 1; }
-    }
-
-    @keyframes fadeout {
-        from { bottom: 30px; opacity: 1; }
-        to { bottom: 0; opacity: 0; }
-    }
+    @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+    @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body>
@@ -280,52 +72,57 @@
 <div class="header-container">
     <h2>TV ONLINE</h2>
     
-    <!-- Switcher 2 Playlist Utama -->
     <div class="playlist-tabs">
         <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')" onkeydown="handleTabKey(event, 'p1')">Playlist 1</button>
         <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')" onkeydown="handleTabKey(event, 'p2')">Playlist 2</button>
     </div>
 
-    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Custom</button>
+    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Sunting</button>
 </div>
 
-<!-- Modal Custom Playlist -->
+<!-- Modal Sunting Playlist & User-Agent -->
 <div id="modalPlaylist">
-    <p style="margin: 0 0 10px 0; font-size: 13px; color: #ccc;">Tambah URL Custom / File Local:</p>
-    
-    <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://contoh.com/playlist.m3u" onkeydown="handleModalInputKey(event)">
+    <div class="form-group">
+        <label for="inputCustomUrl">URL Remote Playlist:</label>
+        <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://contoh.com/playlist.m3u">
+    </div>
+
+    <div class="form-group">
+        <label for="selectUAMode">Pilih User-Agent Mode:</label>
+        <select id="selectUAMode" tabindex="0" onchange="gantiUAMode()">
+            <option value="default">Default / Bawaan</option>
+            <option value="ott_nav">OTT Navigator 1.9.6.4</option>
+            <option value="tivimate">TiviMate / 4.6.1</option>
+            <option value="vlc">VLC / 3.0.18</option>
+            <option value="custom">Custom (Ketik Manual)</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="containerCustomUA" style="display: none;">
+        <label for="inputCustomUA">Teks User-Agent Custom:</label>
+        <input type="text" id="inputCustomUA" tabindex="0" placeholder="Contoh: Mozilla/5.0 ...">
+    </div>
     
     <div class="modal-buttons">
-        <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()" onkeydown="handleModalFileKey(event)">📁 Impor File (.m3u) Internal</button>
-        
+        <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()">📁 Impor Media Lokal (.m3u)</button>
         <div class="button-group-row">
-            <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPlaylistCustom()" onkeydown="handleModalSaveKey(event)">Gunakan URL Custom</button>
-            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()" onkeydown="handleModalResetKey(event)">Reset Ke Utama</button>
+            <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPengaturan()">SIMPAN</button>
+            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET</button>
         </div>
     </div>
 
     <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
 </div>
 
-<input 
-id="search"
-tabindex="0"
-type="text"
-placeholder="Cari channel..."
-oninput="cariChannel()"
-onkeydown="handleSearchKey(event)">
+<input id="search" tabindex="0" type="text" placeholder="Cari channel..." oninput="cariChannel()" onkeydown="handleSearchKey(event)">
 
 <div id="kategori"></div>
-
 <div class="grid" id="tvList">Memuat TV...</div>
-
 <div id="customToast">Notifikasi</div>
 
 <script>
-// --- MASUKKAN 2 PLAYLIST UTAMA ANDA DI SINI (Dalam Base64) ---
-// Contoh ini berisi Base64 dari 2 URL M3U berbeda
-const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA=="; // URL Utama 1
-const _playlist2_Base64 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JhbWFkaGFuL21haW4vcGxheWxpc3QubTN1"; // Isi dengan Base64 URL Utama 2 Anda
+const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA=="; 
+const _playlist2_Base64 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JhbWFkaGFuL21haW4vcGxheWxpc3QubTN1"; 
 
 const PLAYLIST_1 = atob(_playlist1_Base64);
 const PLAYLIST_2 = atob(_playlist2_Base64);
@@ -333,19 +130,44 @@ const PLAYLIST_2 = atob(_playlist2_Base64);
 let semuaTV = [];
 let kategoriAktif = localStorage.getItem("lastCategory") || "Semua";
 
+// --- PENGELOLAAN USER-AGENT ---
+const PRESET_UA = {
+    "ott_nav": "OTT Navigator 1.9.6.4 (Android; TV)",
+    "tivimate": "TiviMate/4.6.1 (Android TV)",
+    "vlc": "VLC/3.0.18 (Linux; Android 10)"
+};
+
+function gantiUAMode() {
+    let mode = document.getElementById("selectUAMode").value;
+    let customContainer = document.getElementById("containerCustomUA");
+    
+    if (mode === "custom") {
+        customContainer.style.display = "block";
+    } else {
+        customContainer.style.display = "none";
+    }
+}
+
+function ambilUserAgentAktif() {
+    let mode = localStorage.getItem("ua_mode") || "default";
+    if (mode === "custom") {
+        return localStorage.getItem("custom_ua_text") || "";
+    } else if (PRESET_UA[mode]) {
+        return PRESET_UA[mode];
+    }
+    return ""; // Default
+}
+
 function showToast(pesan) {
     let toast = document.getElementById("customToast");
     toast.innerText = pesan;
     toast.className = "show";
-    setTimeout(() => { 
-        toast.className = toast.className.replace("show", ""); 
-    }, 3000);
+    setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 }
 
 function updateTabUI(activeTab) {
     document.getElementById("tab-p1").classList.remove("active");
     document.getElementById("tab-p2").classList.remove("active");
-    
     if (activeTab === "p1") document.getElementById("tab-p1").classList.add("active");
     if (activeTab === "p2") document.getElementById("tab-p2").classList.add("active");
 }
@@ -375,7 +197,6 @@ function muatDataTV() {
     let localData = localStorage.getItem("localM3uContent");
     let customUrl = localStorage.getItem("customPlaylistURL");
 
-    // Jika sedang pakai file lokal
     if (localData && !customUrl) {
         document.getElementById("tab-p1").classList.remove("active");
         document.getElementById("tab-p2").classList.remove("active");
@@ -390,11 +211,11 @@ function muatDataTV() {
     let targetURL = ambilURLAktif();
     document.getElementById("tvList").innerHTML = "Memuat TV...";
 
-    // 1. Fetch via Android Native (Bypass CORS/Bitly)
     if (window.Android && typeof window.Android.fetchUrl === "function") {
         setTimeout(() => {
             try {
-                let responseData = Android.fetchUrl(targetURL);
+                let activeUA = ambilUserAgentAktif();
+                let responseData = window.Android.fetchUrl(targetURL, activeUA);
                 if (responseData && !responseData.startsWith("ERROR:")) {
                     let tvData = parseM3U(responseData);
                     if (tvData.length > 0) {
@@ -403,54 +224,98 @@ function muatDataTV() {
                         return;
                     }
                 }
-                throw new Error("Gagal parsing M3U");
+                throw new Error("Gagal parsing");
             } catch (err) {
-                document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL valid.";
+                document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.";
             }
         }, 100);
         return;
     }
 
-    // 2. Fetch via Web Browser Fallback
     let fetchURL = targetURL;
-    if (targetURL.includes("bit.ly") || targetURL.includes("tinyurl.com") || targetURL.includes("cutt.ly") || targetURL.includes("s.id")) {
+    if (targetURL.includes("bit.ly") || targetURL.includes("tinyurl.com") || targetURL.includes("s.id")) {
         fetchURL = "https://corsproxy.io/?" + encodeURIComponent(targetURL);
     }
 
     fetch(fetchURL)
-    .then(res => {
-        if (!res.ok) throw new Error("Gagal memuat");
-        return res.text();
-    })
+    .then(res => res.text())
     .then(data => {
         let tvData = parseM3U(data);
-        if (tvData.length === 0) throw new Error("Format Kosong");
-
         semuaTV = tvData;
         prosesTampilan();
     })
     .catch(() => {
-        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist. Pastikan URL/File valid.";
+        document.getElementById("tvList").innerHTML = "Gagal membaca Playlist.";
     });
 }
 
 function prosesTampilan() {
     let savedKat = localStorage.getItem("lastCategory") || "Semua";
     kategoriAktif = savedKat;
-
     buatKategori();
 
     let dataToDisplay = semuaTV;
     if (savedKat !== "Semua") {
         dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
     }
-
     tampilkanTV(dataToDisplay);
 }
 
 muatDataTV();
 
-// --- OPERASI MODAL & FILE LOKAL ---
+// --- OPERASI MODAL & SETTINGS ---
+function toggleModal() {
+    let modal = document.getElementById("modalPlaylist");
+    if (modal.style.display === "block") {
+        modal.style.display = "none";
+        document.getElementById("btnPengaturan").focus();
+    } else {
+        modal.style.display = "block";
+        
+        // Load data tersimpan ke input modal
+        let savedUrl = localStorage.getItem("customPlaylistURL") || "";
+        let savedUAMode = localStorage.getItem("ua_mode") || "default";
+        let savedUAText = localStorage.getItem("custom_ua_text") || "";
+
+        document.getElementById("inputCustomUrl").value = savedUrl;
+        document.getElementById("selectUAMode").value = savedUAMode;
+        document.getElementById("inputCustomUA").value = savedUAText;
+
+        gantiUAMode();
+        setTimeout(() => { document.getElementById("inputCustomUrl").focus(); }, 100);
+    }
+}
+
+function simpanPengaturan() {
+    let urlBaru = document.getElementById("inputCustomUrl").value.trim();
+    let modeUA = document.getElementById("selectUAMode").value;
+    let customUAText = document.getElementById("inputCustomUA").value.trim();
+
+    // Simpan User-Agent
+    localStorage.setItem("ua_mode", modeUA);
+    localStorage.setItem("custom_ua_text", customUAText);
+
+    // Simpan URL Playlist jika ada
+    if (urlBaru !== "") {
+        localStorage.removeItem("localM3uContent");
+        localStorage.setItem("customPlaylistURL", urlBaru);
+        document.getElementById("tab-p1").classList.remove("active");
+        document.getElementById("tab-p2").classList.remove("active");
+    }
+
+    localStorage.setItem("lastCategory", "Semua");
+    toggleModal();
+    muatDataTV();
+    showToast("Pengaturan Berhasil Disimpan!");
+}
+
+function resetKeUtama() {
+    localStorage.removeItem("ua_mode");
+    localStorage.removeItem("custom_ua_text");
+    gantiPlaylistUtama("p1");
+    toggleModal();
+}
+
 function pilihFileInternal() {
     if (window.Android && typeof window.Android.openFileChooser === "function") {
         Android.openFileChooser();
@@ -467,8 +332,6 @@ function terimaFileM3U(isiM3U) {
         toggleModal();
         muatDataTV();
         showToast("Playlist Lokal Berhasil Diimpor!");
-    } else {
-        showToast("File M3U Kosong!");
     }
 }
 
@@ -480,283 +343,23 @@ function bacaFileWeb(e) {
     reader.readAsText(file);
 }
 
-function toggleModal() {
-    let modal = document.getElementById("modalPlaylist");
-    if (modal.style.display === "block") {
-        modal.style.display = "none";
-        document.getElementById("btnPengaturan").focus();
-    } else {
-        modal.style.display = "block";
-        let saved = localStorage.getItem("customPlaylistURL");
-        if (saved) document.getElementById("inputCustomUrl").value = saved;
-        setTimeout(() => { document.getElementById("inputCustomUrl").focus(); }, 100);
-    }
-}
-
-function simpanPlaylistCustom() {
-    let urlBaru = document.getElementById("inputCustomUrl").value.trim();
-    if (urlBaru !== "") {
-        localStorage.removeItem("localM3uContent");
-        localStorage.setItem("customPlaylistURL", urlBaru);
-        localStorage.setItem("lastCategory", "Semua");
-        document.getElementById("tab-p1").classList.remove("active");
-        document.getElementById("tab-p2").classList.remove("active");
-        toggleModal();
-        muatDataTV();
-        showToast("Playlist Custom disimpan!");
-    } else {
-        showToast("URL tidak boleh kosong!");
-    }
-}
-
-function resetKeUtama() {
-    gantiPlaylistUtama("p1");
-    toggleModal();
-}
-
-// --- NAVIGASI REMOTE CONTROL (D-PAD) ---
-function handleTabKey(event, currentTab) {
-    if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        if (currentTab === 'p1') document.getElementById('tab-p2').focus();
-        else if (currentTab === 'p2') document.getElementById('btnPengaturan').focus();
-    } else if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        if (currentTab === 'p2') document.getElementById('tab-p1').focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById('search').focus();
-    }
-}
-
-function handleBtnPengaturanKey(event) {
-    if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        document.getElementById('tab-p2').focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        let modal = document.getElementById("modalPlaylist");
-        if (modal.style.display === "block") {
-            document.getElementById("inputCustomUrl").focus();
-        } else {
-            document.getElementById("search").focus();
-        }
-    }
-}
-
-function handleModalInputKey(event) {
-    if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById("btnFileM3u").focus();
-    } else if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById("btnPengaturan").focus();
-    }
-}
-
-function handleModalFileKey(event) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById("inputCustomUrl").focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById("btnSavePlaylist").focus();
-    }
-}
-
-function handleModalSaveKey(event) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById("btnFileM3u").focus();
-    } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        document.getElementById("btnResetPlaylist").focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById("search").focus();
-    }
-}
-
-function handleModalResetKey(event) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById("btnFileM3u").focus();
-    } else if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        document.getElementById("btnSavePlaylist").focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById("search").focus();
-    }
-}
-
-function handleSearchKey(event) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById('tab-p1').focus();
-    } else if (event.key === 'Enter' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        document.getElementById('search').blur();
-        let firstKat = document.getElementById("kat-0");
-        if (firstKat) firstKat.focus();
-    }
-}
-
-function handleCategoryKey(event, index, totalKat) {
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        document.getElementById('search').focus();
-    } else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        let firstItem = document.getElementById("item-0");
-        if (firstItem) firstItem.focus();
-    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
-        event.preventDefault();
-        let nextKat = document.getElementById(`kat-${index + 1}`);
-        if (nextKat) nextKat.focus();
-    } else if (event.key === 'ArrowLeft' && index > 0) {
-        event.preventDefault();
-        let prevKat = document.getElementById(`kat-${index - 1}`);
-        if (prevKat) prevKat.focus();
-    }
-}
-
-function handleItemKey(event, index) {
-    let gridContainer = document.getElementById("tvList");
-    let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
-    let columns = Math.max(1, Math.floor(containerWidth / 190));
-
-    if (event.key === 'ArrowUp') {
-        if (index < columns) {
-            event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) activeCategoryBtn.focus();
-        }
-    }
-}
-
-// --- HELPER BANTUAN UI ---
-function formatGambarOptimized(url) {
-    if (!url || url.trim() === "") {
-        return 'https://via.placeholder.com/300x169?text=No+Logo';
-    }
-    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
-}
-
-function buatElemenHTMLTV(tv, index) {
-    const logoOptimized = formatGambarOptimized(tv.logo);
-    return `
-    <div class="item" tabindex="0" id="item-${index}" 
-         onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
-        <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
-        <p>${tv.name}</p>
-    </div>
-    `;
-}
-
-function tampilkanTV(data) {
-    let html = "";
-    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
-    document.getElementById("tvList").innerHTML = html;
-    pulihkanFokusSTB();
-}
-
-function tampilkanTVTanpaFokus(data) {
-    let html = "";
-    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
-    document.getElementById("tvList").innerHTML = html;
-}
-
-function pulihkanFokusSTB() {
-    let lastIndex = localStorage.getItem("lastFocusedIndex") || sessionStorage.getItem("lastFocusedIndex");
-    setTimeout(() => {
-        let percobaan = 0;
-        let intInterval = setInterval(() => {
-            percobaan++;
-            if (lastIndex !== null && lastIndex !== undefined) {
-                let targetItem = document.getElementById(`item-${lastIndex}`);
-                if (targetItem) {
-                    targetItem.focus();
-                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    localStorage.removeItem("lastFocusedIndex");
-                    sessionStorage.removeItem("lastFocusedIndex");
-                    clearInterval(intInterval);
-                    return;
-                }
-            } else {
-                let firstItem = document.getElementById("item-0");
-                if (firstItem) {
-                    firstItem.focus();
-                    clearInterval(intInterval);
-                    return;
-                }
-            }
-            if (percobaan > 80) {
-                clearInterval(intInterval);
-                let fallbackItem = document.getElementById("item-0");
-                if (fallbackItem) fallbackItem.focus();
-            }
-        }, 50);
-    }, 400);
-}
-
-function buatKategori() {
-    let grup = ["Semua"];
-    semuaTV.forEach(tv => {
-        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
-    });
-
-    let html = "";
-    grup.forEach((g, idx) => {
-        let activeClass = (g === kategoriAktif) ? "active" : "";
-        html += `
-        <button tabindex="0" id="kat-${idx}" class="${activeClass}"
-                onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
-                onclick="pilihKategori('${g}', this)">
-            ${g}
-        </button>
-        `;
-    });
-
-    let containerKategori = document.getElementById("kategori");
-    containerKategori.innerHTML = html;
-    containerKategori.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("focus", () => {
-            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        });
-    });
-}
-
-function pilihKategori(g, element) {
-    kategoriAktif = g;
-    localStorage.setItem("lastCategory", g);
-    sessionStorage.setItem("lastCategory", g);
-
-    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
-    if (element) {
-        element.classList.add("active");
-        element.focus();
-    }
-
-    let data = semuaTV;
-    if (g !== "Semua") data = semuaTV.filter(tv => tv.group === g);
-    tampilkanTVTanpaFokus(data);
-}
-
-function cariChannel() {
-    let text = document.getElementById("search").value.toLowerCase();
-    let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
-    tampilkanTVTanpaFokus(data);
-}
-
+// --- PLAYER & PARSER M3U ---
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     localStorage.setItem("lastFocusedIndex", index);
-    sessionStorage.setItem("lastFocusedIndex", index);
     localStorage.setItem("lastCategory", kategoriAktif);
-    sessionStorage.setItem("lastCategory", kategoriAktif);
 
-    playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
+    // Utamakan UA bawaan channel, jika kosong pakai UA dari Setting Global Aplikasi
+    let finalUA = userAgent || ambilUserAgentAktif();
+
+    playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+}
+
+function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    if (window.Android) {
+        Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
+    } else {
+        showToast("Memutar URL...");
+    }
 }
 
 function parseM3U(data) {
@@ -800,12 +403,56 @@ function parseM3U(data) {
     return result;
 }
 
-function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    if (window.Android) {
-        Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
-    } else {
-        showToast("Memutar URL...");
-    }
+function formatGambarOptimized(url) {
+    if (!url || url.trim() === "") return 'https://via.placeholder.com/300x169?text=No+Logo';
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
+}
+
+function buatElemenHTMLTV(tv, index) {
+    return `
+    <div class="item" tabindex="0" id="item-${index}" 
+         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+        <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
+        <p>${tv.name}</p>
+    </div>
+    `;
+}
+
+function tampilkanTV(data) {
+    let html = "";
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
+    document.getElementById("tvList").innerHTML = html;
+}
+
+function buatKategori() {
+    let grup = ["Semua"];
+    semuaTV.forEach(tv => {
+        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
+    });
+
+    let html = "";
+    grup.forEach((g, idx) => {
+        let activeClass = (g === kategoriAktif) ? "active" : "";
+        html += `<button tabindex="0" id="kat-${idx}" class="${activeClass}" onclick="pilihKategori('${g}', this)">${g}</button>`;
+    });
+
+    document.getElementById("kategori").innerHTML = html;
+}
+
+function pilihKategori(g, element) {
+    kategoriAktif = g;
+    localStorage.setItem("lastCategory", g);
+    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
+    if (element) element.classList.add("active");
+
+    let data = (g === "Semua") ? semuaTV : semuaTV.filter(tv => tv.group === g);
+    tampilkanTV(data);
+}
+
+function cariChannel() {
+    let text = document.getElementById("search").value.toLowerCase();
+    let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
+    tampilkanTV(data);
 }
 </script>
 
