@@ -73,16 +73,17 @@
     <h2>TV ONLINE</h2>
     
     <div class="playlist-tabs">
-        <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')" onkeydown="handleTabKey(event, 'p1')">Playlist 1</button>
-        <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')" onkeydown="handleTabKey(event, 'p2')">Playlist 2</button>
+        <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')">Playlist 1</button>
+        <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')">Playlist 2</button>
+        <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">Playlist 3</button>
     </div>
 
-    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()" onkeydown="handleBtnPengaturanKey(event)">⚙️ Sunting</button>
+    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️ Sunting</button>
 </div>
 
 <!-- Modal Sunting Playlist & User-Agent -->
 <div id="modalPlaylist">
-    <div class="form-group">
+    <div class="form-group" id="containerCustomUrl">
         <label for="inputCustomUrl">URL Remote Playlist:</label>
         <input type="text" id="inputCustomUrl" tabindex="0" placeholder="https://contoh.com/playlist.m3u">
     </div>
@@ -107,14 +108,14 @@
         <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()">📁 Impor Media Lokal (.m3u)</button>
         <div class="button-group-row">
             <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPengaturan()">SIMPAN</button>
-            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET</button>
+            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET SLOT INI</button>
         </div>
     </div>
 
     <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
 </div>
 
-<input id="search" tabindex="0" type="text" placeholder="Cari channel..." oninput="cariChannel()" onkeydown="handleSearchKey(event)">
+<input id="search" tabindex="0" type="text" placeholder="Cari channel..." oninput="cariChannel()">
 
 <div id="kategori"></div>
 <div class="grid" id="tvList">Memuat TV...</div>
@@ -122,15 +123,36 @@
 
 <script>
 const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA=="; 
-const _playlist2_Base64 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JhbWFkaGFuL21haW4vcGxheWxpc3QubTN1"; 
-
-const PLAYLIST_1 = atob(_playlist1_Base64);
-const PLAYLIST_2 = atob(_playlist2_Base64);
+const PLAYLIST_1 = atob(_playlist1_Base64); // Playlist Utama Bawaan
 
 let semuaTV = [];
-let kategoriAktif = localStorage.getItem("lastCategory") || "Semua";
 
-// --- PENGELOLAAN USER-AGENT ---
+// --- BRIDGE SIMPAN KE HP & FALLBACK BROWSING ---
+function simpanDataStorage(key, val) {
+    if (window.Android && typeof window.Android.savePlaylistData === "function") {
+        window.Android.savePlaylistData(key, val);
+    }
+    localStorage.setItem(key, val);
+}
+
+function ambilDataStorage(key) {
+    if (window.Android && typeof window.Android.getPlaylistData === "function") {
+        let val = window.Android.getPlaylistData(key);
+        if (val && val !== "") return val;
+    }
+    return localStorage.getItem(key) || "";
+}
+
+function hapusDataStorage(key) {
+    if (window.Android && typeof window.Android.savePlaylistData === "function") {
+        window.Android.savePlaylistData(key, "");
+    }
+    localStorage.removeItem(key);
+}
+
+let kategoriAktif = ambilDataStorage("lastCategory") || "Semua";
+
+// --- PRESET USER-AGENT ---
 const PRESET_UA = {
     "ott_nav": "OTT Navigator 1.9.6.4 (Android; TV)",
     "tivimate": "TiviMate/4.6.1 (Android TV)",
@@ -140,22 +162,14 @@ const PRESET_UA = {
 function gantiUAMode() {
     let mode = document.getElementById("selectUAMode").value;
     let customContainer = document.getElementById("containerCustomUA");
-    
-    if (mode === "custom") {
-        customContainer.style.display = "block";
-    } else {
-        customContainer.style.display = "none";
-    }
+    customContainer.style.display = (mode === "custom") ? "block" : "none";
 }
 
 function ambilUserAgentAktif() {
-    let mode = localStorage.getItem("ua_mode") || "default";
-    if (mode === "custom") {
-        return localStorage.getItem("custom_ua_text") || "";
-    } else if (PRESET_UA[mode]) {
-        return PRESET_UA[mode];
-    }
-    return ""; // Default
+    let mode = ambilDataStorage("ua_mode") || "default";
+    if (mode === "custom") return ambilDataStorage("custom_ua_text");
+    if (PRESET_UA[mode]) return PRESET_UA[mode];
+    return "";
 }
 
 function showToast(pesan) {
@@ -166,40 +180,37 @@ function showToast(pesan) {
 }
 
 function updateTabUI(activeTab) {
-    document.getElementById("tab-p1").classList.remove("active");
-    document.getElementById("tab-p2").classList.remove("active");
-    if (activeTab === "p1") document.getElementById("tab-p1").classList.add("active");
-    if (activeTab === "p2") document.getElementById("tab-p2").classList.add("active");
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    let btn = document.getElementById(`tab-${activeTab}`);
+    if (btn) btn.classList.add("active");
 }
 
 function gantiPlaylistUtama(tipe) {
-    localStorage.removeItem("customPlaylistURL");
-    localStorage.removeItem("localM3uContent");
-    localStorage.setItem("activeTabPlaylist", tipe);
-    localStorage.setItem("lastCategory", "Semua");
+    simpanDataStorage("activeTabPlaylist", tipe);
+    simpanDataStorage("lastCategory", "Semua");
     
     updateTabUI(tipe);
     muatDataTV();
-    showToast(`Beralih ke ${tipe === 'p1' ? 'Playlist 1' : 'Playlist 2'}`);
-}
-
-function ambilURLAktif() {
-    let customUrl = localStorage.getItem("customPlaylistURL");
-    if (customUrl) return customUrl;
-
-    let activeTab = localStorage.getItem("activeTabPlaylist") || "p1";
-    updateTabUI(activeTab);
-
-    return (activeTab === "p2") ? PLAYLIST_2 : PLAYLIST_1;
+    
+    let label = (tipe === 'p1') ? 'Playlist 1 (Utama)' : ((tipe === 'p2') ? 'Playlist 2' : 'Playlist 3');
+    showToast(`Beralih ke ${label}`);
 }
 
 function muatDataTV() {
-    let localData = localStorage.getItem("localM3uContent");
-    let customUrl = localStorage.getItem("customPlaylistURL");
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    updateTabUI(activeTab);
+
+    // Jika Playlist 1 -> Muat Playlist Bawaan Aplikasi
+    if (activeTab === "p1") {
+        muatDariURL(PLAYLIST_1);
+        return;
+    }
+
+    // Untuk Playlist 2 dan 3 -> Cek apakah ada File M3U Lokal atau URL Custom
+    let localData = ambilDataStorage(`localM3uContent_${activeTab}`);
+    let customUrl = ambilDataStorage(`customPlaylistURL_${activeTab}`);
 
     if (localData && !customUrl) {
-        document.getElementById("tab-p1").classList.remove("active");
-        document.getElementById("tab-p2").classList.remove("active");
         let tvData = parseM3U(localData);
         if (tvData.length > 0) {
             semuaTV = tvData;
@@ -208,7 +219,16 @@ function muatDataTV() {
         }
     }
 
-    let targetURL = ambilURLAktif();
+    if (customUrl) {
+        muatDariURL(customUrl);
+    } else {
+        semuaTV = [];
+        document.getElementById("tvList").innerHTML = "Slot ini masih kosong. Klik '⚙️ Sunting' untuk menambah URL / Impor File.";
+        buatKategori();
+    }
+}
+
+function muatDariURL(targetURL) {
     document.getElementById("tvList").innerHTML = "Memuat TV...";
 
     if (window.Android && typeof window.Android.fetchUrl === "function") {
@@ -250,7 +270,7 @@ function muatDataTV() {
 }
 
 function prosesTampilan() {
-    let savedKat = localStorage.getItem("lastCategory") || "Semua";
+    let savedKat = ambilDataStorage("lastCategory") || "Semua";
     kategoriAktif = savedKat;
     buatKategori();
 
@@ -263,7 +283,7 @@ function prosesTampilan() {
 
 muatDataTV();
 
-// --- OPERASI MODAL & SETTINGS ---
+// --- OPERASI MODAL SUNTING ---
 function toggleModal() {
     let modal = document.getElementById("modalPlaylist");
     if (modal.style.display === "block") {
@@ -272,66 +292,97 @@ function toggleModal() {
     } else {
         modal.style.display = "block";
         
-        // Load data tersimpan ke input modal
-        let savedUrl = localStorage.getItem("customPlaylistURL") || "";
-        let savedUAMode = localStorage.getItem("ua_mode") || "default";
-        let savedUAText = localStorage.getItem("custom_ua_text") || "";
+        let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+        let savedUrl = ambilDataStorage(`customPlaylistURL_${activeTab}`);
+        let savedUAMode = ambilDataStorage("ua_mode") || "default";
+        let savedUAText = ambilDataStorage("custom_ua_text");
+
+        let containerUrl = document.getElementById("containerCustomUrl");
+        let btnFile = document.getElementById("btnFileM3u");
+        
+        // Playlist 1 dikunci dari URL/impor luar agar playlist utama kamu aman
+        if (activeTab === "p1") {
+            containerUrl.style.display = "none";
+            btnFile.style.display = "none";
+        } else {
+            containerUrl.style.display = "block";
+            btnFile.style.display = "block";
+        }
 
         document.getElementById("inputCustomUrl").value = savedUrl;
         document.getElementById("selectUAMode").value = savedUAMode;
         document.getElementById("inputCustomUA").value = savedUAText;
 
         gantiUAMode();
-        setTimeout(() => { document.getElementById("inputCustomUrl").focus(); }, 100);
+        setTimeout(() => { 
+            if (activeTab !== "p1") document.getElementById("inputCustomUrl").focus(); 
+            else document.getElementById("selectUAMode").focus();
+        }, 100);
     }
 }
 
 function simpanPengaturan() {
-    let urlBaru = document.getElementById("inputCustomUrl").value.trim();
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
     let modeUA = document.getElementById("selectUAMode").value;
     let customUAText = document.getElementById("inputCustomUA").value.trim();
 
-    // Simpan User-Agent
-    localStorage.setItem("ua_mode", modeUA);
-    localStorage.setItem("custom_ua_text", customUAText);
+    simpanDataStorage("ua_mode", modeUA);
+    simpanDataStorage("custom_ua_text", customUAText);
 
-    // Simpan URL Playlist jika ada
-    if (urlBaru !== "") {
-        localStorage.removeItem("localM3uContent");
-        localStorage.setItem("customPlaylistURL", urlBaru);
-        document.getElementById("tab-p1").classList.remove("active");
-        document.getElementById("tab-p2").classList.remove("active");
+    if (activeTab !== "p1") {
+        let urlBaru = document.getElementById("inputCustomUrl").value.trim();
+        if (urlBaru !== "") {
+            hapusDataStorage(`localM3uContent_${activeTab}`);
+            simpanDataStorage(`customPlaylistURL_${activeTab}`, urlBaru);
+        }
     }
 
-    localStorage.setItem("lastCategory", "Semua");
+    simpanDataStorage("lastCategory", "Semua");
     toggleModal();
     muatDataTV();
     showToast("Pengaturan Berhasil Disimpan!");
 }
 
 function resetKeUtama() {
-    localStorage.removeItem("ua_mode");
-    localStorage.removeItem("custom_ua_text");
-    gantiPlaylistUtama("p1");
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    
+    if (activeTab === "p1") {
+        hapusDataStorage("ua_mode");
+        hapusDataStorage("custom_ua_text");
+        showToast("User-Agent Playlist 1 di-reset");
+    } else {
+        hapusDataStorage(`customPlaylistURL_${activeTab}`);
+        hapusDataStorage(`localM3uContent_${activeTab}`);
+        showToast(`Slot ${activeTab.toUpperCase()} Berhasil Di-reset!`);
+    }
+
     toggleModal();
+    muatDataTV();
 }
 
+// --- FUNGSI PILIH & IMPOR FILE LOKAL TERINTEGRASI ---
 function pilihFileInternal() {
     if (window.Android && typeof window.Android.openFileChooser === "function") {
-        Android.openFileChooser();
+        window.Android.openFileChooser(); // Memanggil File Picker bawaan Android
     } else {
-        document.getElementById("filePicker").click();
+        document.getElementById("filePicker").click(); // Fallback web biasa
     }
 }
 
 function terimaFileM3U(isiM3U) {
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    if (activeTab === "p1") {
+        showToast("Playlist 1 adalah bawaan, gunakan Playlist 2 atau 3!");
+        return;
+    }
+
     if (isiM3U && isiM3U.trim() !== "") {
-        localStorage.removeItem("customPlaylistURL");
-        localStorage.setItem("localM3uContent", isiM3U);
-        localStorage.setItem("lastCategory", "Semua");
+        hapusDataStorage(`customPlaylistURL_${activeTab}`);
+        simpanDataStorage(`localM3uContent_${activeTab}`, isiM3U);
+        simpanDataStorage("lastCategory", "Semua");
         toggleModal();
         muatDataTV();
-        showToast("Playlist Lokal Berhasil Diimpor!");
+        showToast(`Playlist Lokal Tersimpan di ${activeTab.toUpperCase()}!`);
     }
 }
 
@@ -345,18 +396,16 @@ function bacaFileWeb(e) {
 
 // --- PLAYER & PARSER M3U ---
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    localStorage.setItem("lastFocusedIndex", index);
-    localStorage.setItem("lastCategory", kategoriAktif);
+    simpanDataStorage("lastFocusedIndex", index);
+    simpanDataStorage("lastCategory", kategoriAktif);
 
-    // Utamakan UA bawaan channel, jika kosong pakai UA dari Setting Global Aplikasi
     let finalUA = userAgent || ambilUserAgentAktif();
-
     playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
 }
 
 function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    if (window.Android) {
-        Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
+    if (window.Android && typeof window.Android.playTv === "function") {
+        window.Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
     } else {
         showToast("Memutar URL...");
     }
@@ -441,7 +490,7 @@ function buatKategori() {
 
 function pilihKategori(g, element) {
     kategoriAktif = g;
-    localStorage.setItem("lastCategory", g);
+    simpanDataStorage("lastCategory", g);
     document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
     if (element) element.classList.add("active");
 
