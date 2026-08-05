@@ -86,7 +86,9 @@
     <div class="form-group" id="containerCustomUrl">
         <label for="inputCustomUrl">URL Remote Playlist:</label>
         <input type="text" id="inputCustomUrl" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
-               onclick="aktifkanKeyboard(this)" onblur="nonaktifkanKeyboard(this)">
+               onkeydown="handleInputKey(event, this)"
+               onclick="aktifkanKeyboard(this)" 
+               onblur="nonaktifkanKeyboard(this)">
     </div>
 
     <div class="form-group">
@@ -103,7 +105,9 @@
     <div class="form-group" id="containerCustomUA" style="display: none;">
         <label for="inputCustomUA">Teks User-Agent Custom:</label>
         <input type="text" id="inputCustomUA" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
-               onclick="aktifkanKeyboard(this)" onblur="nonaktifkanKeyboard(this)">
+               onkeydown="handleInputKey(event, this)"
+               onclick="aktifkanKeyboard(this)" 
+               onblur="nonaktifkanKeyboard(this)">
     </div>
     
     <div class="modal-buttons">
@@ -133,7 +137,7 @@ const PLAYLIST_1 = atob(_playlist1_Base64);
 
 let semuaTV = [];
 
-// --- LOGIKA MENCEGAH KEYBOARD OTOMATIS MUNCUL SAAT FOKUS ---
+// --- LOGIKA KONTROL KEYBOARD D-PAD ---
 function aktifkanKeyboard(elem) {
     elem.removeAttribute('readonly');
     elem.focus();
@@ -141,6 +145,16 @@ function aktifkanKeyboard(elem) {
 
 function nonaktifkanKeyboard(elem) {
     elem.setAttribute('readonly', 'readonly');
+}
+
+// Handler khusus untuk input modal (URL Remote & Custom UA) saat ditekan OK / Enter
+function handleInputKey(event, elem) {
+    if (event.key === 'Enter') {
+        if (elem.hasAttribute('readonly')) {
+            event.preventDefault();
+            aktifkanKeyboard(elem);
+        }
+    }
 }
 
 // --- BRIDGE SIMPAN KE HP & FALLBACK BROWSING ---
@@ -399,7 +413,6 @@ function handleSearchKey(event) {
     let searchElem = document.getElementById('search');
 
     if (event.key === 'Enter') {
-        // Klik OK: Aktifkan input agar keyboard layar muncul
         if (searchElem.hasAttribute('readonly')) {
             event.preventDefault();
             aktifkanKeyboard(searchElem);
