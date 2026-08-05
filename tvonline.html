@@ -115,7 +115,7 @@
     <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
 </div>
 
-<input id="search" tabindex="0" type="text" placeholder="Cari channel..." oninput="cariChannel()">
+<input id="search" tabindex="0" type="text" placeholder="Cari channel..." oninput="cariChannel()" onkeydown="handleSearchKey(event)">
 
 <div id="kategori"></div>
 <div class="grid" id="tvList">Memuat TV...</div>
@@ -123,7 +123,7 @@
 
 <script>
 const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZGV2L2FwaS9wbGF5bGlzdA=="; 
-const PLAYLIST_1 = atob(_playlist1_Base64); // Playlist Utama Bawaan
+const PLAYLIST_1 = atob(_playlist1_Base64);
 
 let semuaTV = [];
 
@@ -133,6 +133,7 @@ function simpanDataStorage(key, val) {
         window.Android.savePlaylistData(key, val);
     }
     localStorage.setItem(key, val);
+    sessionStorage.setItem(key, val);
 }
 
 function ambilDataStorage(key) {
@@ -140,7 +141,7 @@ function ambilDataStorage(key) {
         let val = window.Android.getPlaylistData(key);
         if (val && val !== "") return val;
     }
-    return localStorage.getItem(key) || "";
+    return localStorage.getItem(key) || sessionStorage.getItem(key) || "";
 }
 
 function hapusDataStorage(key) {
@@ -148,6 +149,7 @@ function hapusDataStorage(key) {
         window.Android.savePlaylistData(key, "");
     }
     localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
 }
 
 let kategoriAktif = ambilDataStorage("lastCategory") || "Semua";
@@ -188,6 +190,7 @@ function updateTabUI(activeTab) {
 function gantiPlaylistUtama(tipe) {
     simpanDataStorage("activeTabPlaylist", tipe);
     simpanDataStorage("lastCategory", "Semua");
+    hapusDataStorage("lastFocusedIndex");
     
     updateTabUI(tipe);
     muatDataTV();
@@ -200,13 +203,11 @@ function muatDataTV() {
     let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
     updateTabUI(activeTab);
 
-    // Jika Playlist 1 -> Muat Playlist Bawaan Aplikasi
     if (activeTab === "p1") {
         muatDariURL(PLAYLIST_1);
         return;
     }
 
-    // Untuk Playlist 2 dan 3 -> Cek apakah ada File M3U Lokal atau URL Custom
     let localData = ambilDataStorage(`localM3uContent_${activeTab}`);
     let customUrl = ambilDataStorage(`customPlaylistURL_${activeTab}`);
 
@@ -272,16 +273,194 @@ function muatDariURL(targetURL) {
 function prosesTampilan() {
     let savedKat = ambilDataStorage("lastCategory") || "Semua";
     kategoriAktif = savedKat;
+
     buatKategori();
 
     let dataToDisplay = semuaTV;
     if (savedKat !== "Semua") {
         dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
     }
+
     tampilkanTV(dataToDisplay);
 }
 
-muatDataTV();
+function formatGambarOptimized(url) {
+    if (!url || url.trim() === "") return 'https://via.placeholder.com/300x169?text=No+Logo';
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
+}
+
+function buatElemenHTMLTV(tv, index) {
+    const logoOptimized = formatGambarOptimized(tv.logo);
+    return `
+    <div class="item" tabindex="0" id="item-${index}" 
+         onkeydown="handleItemKey(event, ${index})"
+         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+        <img loading="lazy" decoding="async" src="${logoOptimized}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
+        <p>${tv.name}</p>
+    </div>
+    `;
+}
+
+function tampilkanTV(data) {
+    let html = "";
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
+    document.getElementById("tvList").innerHTML = html;
+
+    pulihkanFokusSTB();
+}
+
+function tampilkanTVTanpaFokus(data) {
+    let html = "";
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
+    document.getElementById("tvList").innerHTML = html;
+}
+
+// --- LOGIKA RESTORASI FOKUS STB ---
+function pulihkanFokusSTB() {
+    let lastIndex = ambilDataStorage("lastFocusedIndex");
+    
+    setTimeout(() => {
+        let percobaan = 0;
+        let intInterval = setInterval(() => {
+            percobaan++;
+            if (lastIndex !== null && lastIndex !== "" && lastIndex !== undefined) {
+                let targetItem = document.getElementById(`item-${lastIndex}`);
+                if (targetItem) {
+                    targetItem.focus();
+                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    hapusDataStorage("lastFocusedIndex");
+                    clearInterval(intInterval);
+                    return;
+                }
+            } else {
+                let firstItem = document.getElementById("item-0");
+                if (firstItem) {
+                    firstItem.focus();
+                    clearInterval(intInterval);
+                    return;
+                }
+            }
+            
+            if (percobaan > 80) {
+                clearInterval(intInterval);
+                let fallbackItem = document.getElementById("item-0");
+                if (fallbackItem) fallbackItem.focus();
+            }
+        }, 50);
+    }, 400);
+}
+
+function buatKategori() {
+    let grup = ["Semua"];
+    semuaTV.forEach(tv => {
+        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
+    });
+
+    let html = "";
+    grup.forEach((g, idx) => {
+        let activeClass = (g === kategoriAktif) ? "active" : "";
+        html += `
+        <button tabindex="0" id="kat-${idx}" class="${activeClass}"
+                onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
+                onclick="pilihKategori('${g}', this)">
+            ${g}
+        </button>
+        `;
+    });
+
+    let containerKategori = document.getElementById("kategori");
+    containerKategori.innerHTML = html;
+
+    containerKategori.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("focus", () => {
+            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+    });
+}
+
+// --- NAVIGASI PANAH / D-PAD KEY LISTENERS ---
+function handleSearchKey(event) {
+    if (event.key === 'Enter' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        document.getElementById('search').blur();
+        let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+        if (activeCategoryBtn) activeCategoryBtn.focus();
+    }
+}
+
+function handleCategoryKey(event, index, totalKat) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        let searchInput = document.getElementById('search');
+        if (searchInput) searchInput.focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstItem = document.getElementById("item-0");
+        if (firstItem) firstItem.focus();
+    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
+        event.preventDefault();
+        let nextKat = document.getElementById(`kat-${index + 1}`);
+        if (nextKat) nextKat.focus();
+    } else if (event.key === 'ArrowLeft' && index > 0) {
+        event.preventDefault();
+        let prevKat = document.getElementById(`kat-${index - 1}`);
+        if (prevKat) prevKat.focus();
+    }
+}
+
+function handleItemKey(event, index) {
+    let gridContainer = document.getElementById("tvList");
+    let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
+    let columns = Math.max(1, Math.floor(containerWidth / 190));
+
+    if (event.key === 'ArrowUp') {
+        if (index < columns) {
+            event.preventDefault();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
+        }
+    }
+}
+
+function pilihKategori(g, element) {
+    kategoriAktif = g;
+    simpanDataStorage("lastCategory", g);
+
+    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
+    if (element) {
+        element.classList.add("active");
+        element.focus();
+    }
+
+    let data = semuaTV;
+    if (g !== "Semua") {
+        data = semuaTV.filter(tv => tv.group === g);
+    }
+
+    tampilkanTVTanpaFokus(data);
+}
+
+function cariChannel() {
+    let text = document.getElementById("search").value.toLowerCase();
+    let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
+    tampilkanTVTanpaFokus(data);
+}
+
+function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    simpanDataStorage("lastFocusedIndex", index);
+    simpanDataStorage("lastCategory", kategoriAktif);
+
+    let finalUA = userAgent || ambilUserAgentAktif();
+    playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+}
+
+function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    if (window.Android && typeof window.Android.playTv === "function") {
+        window.Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
+    } else {
+        showToast("Memutar URL...");
+    }
+}
 
 // --- OPERASI MODAL SUNTING ---
 function toggleModal() {
@@ -300,7 +479,6 @@ function toggleModal() {
         let containerUrl = document.getElementById("containerCustomUrl");
         let btnFile = document.getElementById("btnFileM3u");
         
-        // Playlist 1 dikunci dari URL/impor luar agar playlist utama kamu aman
         if (activeTab === "p1") {
             containerUrl.style.display = "none";
             btnFile.style.display = "none";
@@ -360,12 +538,11 @@ function resetKeUtama() {
     muatDataTV();
 }
 
-// --- FUNGSI PILIH & IMPOR FILE LOKAL TERINTEGRASI ---
 function pilihFileInternal() {
     if (window.Android && typeof window.Android.openFileChooser === "function") {
-        window.Android.openFileChooser(); // Memanggil File Picker bawaan Android
+        window.Android.openFileChooser();
     } else {
-        document.getElementById("filePicker").click(); // Fallback web biasa
+        document.getElementById("filePicker").click();
     }
 }
 
@@ -392,23 +569,6 @@ function bacaFileWeb(e) {
     let reader = new FileReader();
     reader.onload = function(evt) { terimaFileM3U(evt.target.result); };
     reader.readAsText(file);
-}
-
-// --- PLAYER & PARSER M3U ---
-function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    simpanDataStorage("lastFocusedIndex", index);
-    simpanDataStorage("lastCategory", kategoriAktif);
-
-    let finalUA = userAgent || ambilUserAgentAktif();
-    playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
-}
-
-function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    if (window.Android && typeof window.Android.playTv === "function") {
-        window.Android.playTv(url, userAgent, referer, drm, licenseKey, licenseUrl);
-    } else {
-        showToast("Memutar URL...");
-    }
 }
 
 function parseM3U(data) {
@@ -452,57 +612,8 @@ function parseM3U(data) {
     return result;
 }
 
-function formatGambarOptimized(url) {
-    if (!url || url.trim() === "") return 'https://via.placeholder.com/300x169?text=No+Logo';
-    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=250&output=webp&q=75`;
-}
-
-function buatElemenHTMLTV(tv, index) {
-    return `
-    <div class="item" tabindex="0" id="item-${index}" 
-         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
-        <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x169?text=No+Logo';">
-        <p>${tv.name}</p>
-    </div>
-    `;
-}
-
-function tampilkanTV(data) {
-    let html = "";
-    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
-    document.getElementById("tvList").innerHTML = html;
-}
-
-function buatKategori() {
-    let grup = ["Semua"];
-    semuaTV.forEach(tv => {
-        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
-    });
-
-    let html = "";
-    grup.forEach((g, idx) => {
-        let activeClass = (g === kategoriAktif) ? "active" : "";
-        html += `<button tabindex="0" id="kat-${idx}" class="${activeClass}" onclick="pilihKategori('${g}', this)">${g}</button>`;
-    });
-
-    document.getElementById("kategori").innerHTML = html;
-}
-
-function pilihKategori(g, element) {
-    kategoriAktif = g;
-    simpanDataStorage("lastCategory", g);
-    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
-    if (element) element.classList.add("active");
-
-    let data = (g === "Semua") ? semuaTV : semuaTV.filter(tv => tv.group === g);
-    tampilkanTV(data);
-}
-
-function cariChannel() {
-    let text = document.getElementById("search").value.toLowerCase();
-    let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
-    tampilkanTV(data);
-}
+// Inisialisasi awal
+muatDataTV();
 </script>
 
 </body>
