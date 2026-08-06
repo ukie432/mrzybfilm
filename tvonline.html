@@ -147,7 +147,6 @@ function nonaktifkanKeyboard(elem) {
     elem.setAttribute('readonly', 'readonly');
 }
 
-// Handler khusus untuk input modal (URL Remote & Custom UA) saat ditekan OK / Enter
 function handleInputKey(event, elem) {
     if (event.key === 'Enter') {
         if (elem.hasAttribute('readonly')) {
@@ -408,7 +407,7 @@ function buatKategori() {
     });
 }
 
-// --- NAVIGASI PANAH / D-PAD KEY LISTENERS ---
+// --- NAVIGASI PANAH / D-PAD KEY LISTENERS (PERBAIKAN FITUR FOKUS NAIK/TURUN) ---
 function handleSearchKey(event) {
     let searchElem = document.getElementById('search');
 
@@ -417,6 +416,11 @@ function handleSearchKey(event) {
             event.preventDefault();
             aktifkanKeyboard(searchElem);
         }
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        searchElem.blur();
+        let activeTab = document.querySelector(".tab-btn.active") || document.getElementById("tab-p1");
+        if (activeTab) activeTab.focus();
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         searchElem.blur();
