@@ -64,7 +64,7 @@
     }
     
     .search-container { padding: 0.8rem 1rem 0.2rem 6rem; display: flex; align-items: center; }
-    .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border-radius: 25px; padding: 0.4rem 1rem; width: 100%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border-radius: 25px; padding: 0.4rem 1rem; width: 100%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; }
     .search-box i { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-right: 0.5rem; }
     .search-input { background: transparent; border: none; color: #fff; width: 100%; font-size: 0.9em; }
     .search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
@@ -179,7 +179,8 @@
 
     <div class="top"> 
       <div class="search-container">
-        <div class="search-box focusable" tabindex="0" id="searchBoxContainer" onclick="activateSearchInput()">
+        <!-- WRAPPER LUAR PERTAMA YANG DITERIMA NAVIGATION SPATIAL REMOTE -->
+        <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
           <i class="material-icons">search</i>
           <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" readonly tabindex="-1">
         </div>
@@ -272,17 +273,57 @@
     var audioUnlocked = false;
     var lastTimeCheck = 0;
 
-    function activateSearchInput() {
-      const input = document.getElementById("searchInput");
-      if (input) {
-        input.removeAttribute("readonly");
-        // Beri jeda 50ms agar DOM Android TV memperbarui status readonly sebelum pemanggilan focus
-        setTimeout(function() {
-          input.focus();
-          input.click(); // Memicu event klik fisik agar OS memunculkan soft keyboard
-        }, 50);
-      }
-    }
+    // ========================================================
+    // LOGIKA PENANGANAN POPUP KEYBOARD SEARCH (SAMA DENGAN FILE SERIES)
+    // ========================================================
+    $("#searchBoxContainer").on("keydown click touchstart", function(e) {
+        if (e.type === "click" || e.type === "touchstart") {
+            $("#searchInput").removeAttr("readonly").focus();
+            return;
+        }
+        // Jika tekan Enter/OK pada wrapper -> Fokuskan ke input untuk membuka keyboard
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#searchInput").removeAttr("readonly").focus();
+            return false;
+        }
+        // Jika tekan Panah Bawah -> Lempar langsung ke Kartu/Album pertama
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            const firstCard = document.querySelector('.card.focusable');
+            if (firstCard) firstCard.focus();
+            return false;
+        }
+    });
+
+    $("#searchInput").on("keydown", function(e) {
+        // A. DPAD Bawah (40): Lepas keyboard dan pindah ke album/kartu pertama
+        if (e.keyCode == 40) {
+            e.preventDefault();
+            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
+            setTimeout(() => {
+                const firstCard = document.querySelector('.card.focusable');
+                if (firstCard) firstCard.focus();
+            }, 50);
+            return false;
+        }
+        
+        // B. OK / Enter (13): Tutup keyboard dan kembali ke wrapper luar (#searchBoxContainer)
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
+            document.getElementById("searchBoxContainer").focus();
+            return false;
+        }
+
+        // C. Tombol Back / Escape (27, 8, 10009): Tutup keyboard dan balik ke wrapper
+        if (e.keyCode == 27 || e.keyCode == 8 || e.keyCode == 10009) {
+            e.preventDefault();
+            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
+            document.getElementById("searchBoxContainer").focus();
+            return false;
+        }
+    });
 
     function unlockAudioAutoplay() {
       if (audioUnlocked) return;
@@ -507,6 +548,7 @@
       const code = e.keyCode || e.which;
       if (code === 4 || code === 27 || code === 10009 || e.key === "Backspace") return;
 
+      // CEK APAKAH INPUT SEARCH SEDANG DITINGGAL MENGETIK (AKTIF / BUKAN READONLY)
       const isInputActive = document.activeElement && document.activeElement.id === "searchInput" && !document.activeElement.hasAttribute("readonly");
 
       switch(e.key) {
