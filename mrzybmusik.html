@@ -276,8 +276,11 @@
       const input = document.getElementById("searchInput");
       if (input) {
         input.removeAttribute("readonly");
-        input.focus();
-        input.select();
+        // Beri jeda 50ms agar DOM Android TV memperbarui status readonly sebelum pemanggilan focus
+        setTimeout(function() {
+          input.focus();
+          input.click(); // Memicu event klik fisik agar OS memunculkan soft keyboard
+        }, 50);
       }
     }
 
@@ -315,7 +318,6 @@
       
       audioWatchdogTimer = setInterval(() => {
         if (isPlaying && mediaPlayer) {
-          // Jika status playing tapi detik lagu tidak bertambah selama 3 detik
           if (mediaPlayer.currentTime === lastTimeCheck && !mediaPlayer.paused) {
             audioStuckCount++;
             if (audioStuckCount >= 3) {
@@ -856,7 +858,6 @@
             startAudioWatchdog();
           }).catch(error => {
             isPlaying = false;
-            // Trik Bypass Autoplay Restriction (Mute sementara lalu Play)
             mediaPlayer.muted = true;
             mediaPlayer.play().then(() => {
               mediaPlayer.muted = false;
@@ -1001,7 +1002,6 @@
       setupMediaSession();
       loadM3UPlaylist();
 
-      // Listener penanganan kendala jaringan / buffer terhenti di tengah lagu
       mediaPlayer.addEventListener("stalled", function() {
         if (isPlaying) recoverStuckAudio();
       });
