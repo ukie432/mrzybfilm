@@ -179,10 +179,11 @@
 
     <div class="top"> 
       <div class="search-container">
-        <!-- WRAPPER LUAR PERTAMA YANG DITERIMA NAVIGATION SPATIAL REMOTE -->
+        <!-- WRAPPER SEARCH UNTUK NAVIGASI SPATIAL -->
         <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
           <i class="material-icons">search</i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" readonly tabindex="-1">
+          <!-- INPUT DIKUNCI (READONLY) DEFAULT AGAR TIDAK MUNCUL KEYBOARD SAAT DISOROT -->
+          <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" readonly>
         </div>
       </div>
       <div class="cards-holder" id="cardsHolder"></div> 
@@ -267,28 +268,33 @@
     var isDrawerOpen = false;
     var animationId;
 
-    // --- SISTEM PEMANTAU DAN PERBAIKAN AUDIO MACET ---
     var audioWatchdogTimer = null;
     var audioStuckCount = 0;
     var audioUnlocked = false;
     var lastTimeCheck = 0;
 
     // ========================================================
-    // LOGIKA PENANGANAN POPUP KEYBOARD SEARCH (SAMA DENGAN FILE SERIES)
+    // LOGIKA PENANGANAN KEYBOARD SEARCH (OK DULU BARU BUKA POPUP)
     // ========================================================
+
+    // A. Penanganan pada Wrapper (#searchBoxContainer)
     $("#searchBoxContainer").on("keydown click touchstart", function(e) {
-        if (e.type === "click" || e.type === "touchstart") {
-            $("#searchInput").removeAttr("readonly").focus();
-            return;
-        }
-        // Jika tekan Enter/OK pada wrapper -> Fokuskan ke input untuk membuka keyboard
-        if (e.keyCode == 13) {
+        const inputElement = document.getElementById("searchInput");
+
+        // Jika diklik atau ditekan OK (13) dari remote
+        if (e.type === "click" || e.type === "touchstart" || e.keyCode === 13) {
             e.preventDefault();
-            $("#searchInput").removeAttr("readonly").focus();
+            // Lepas readonly agar Android TV mengizinkan keyboard virtual muncul
+            inputElement.removeAttribute("readonly");
+            
+            setTimeout(function() {
+                inputElement.focus();
+            }, 50);
             return false;
         }
-        // Jika tekan Panah Bawah -> Lempar langsung ke Kartu/Album pertama
-        if (e.keyCode == 40) {
+
+        // Jika ditekan DPAD Bawah saat fokus di wrapper -> Pindah ke album pertama
+        if (e.keyCode === 40) {
             e.preventDefault();
             const firstCard = document.querySelector('.card.focusable');
             if (firstCard) firstCard.focus();
@@ -296,33 +302,48 @@
         }
     });
 
+    // B. Penanganan pada Input Teks (#searchInput)
     $("#searchInput").on("keydown", function(e) {
-        // A. DPAD Bawah (40): Lepas keyboard dan pindah ke album/kartu pertama
-        if (e.keyCode == 40) {
+        const code = e.keyCode || e.which;
+        const inputElement = this;
+
+        // Fungsi pembantu untuk mengunci input dan melepaskan keyboard TV
+        function closeKeyboardAndLock() {
+            inputElement.setAttribute("readonly", "true");
+            inputElement.blur();
+        }
+
+        // 1. Tekan OK / Enter (13) -> Tutup keyboard, kembalikan fokus ke wrapper
+        if (code === 13) {
             e.preventDefault();
-            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
-            setTimeout(() => {
+            closeKeyboardAndLock();
+            document.getElementById("searchBoxContainer").focus();
+            return false;
+        }
+
+        // 2. Tekan DPAD Bawah (40) -> Tutup keyboard, pindah ke album pertama
+        if (code === 40) {
+            e.preventDefault();
+            closeKeyboardAndLock();
+            setTimeout(function() {
                 const firstCard = document.querySelector('.card.focusable');
                 if (firstCard) firstCard.focus();
             }, 50);
             return false;
         }
-        
-        // B. OK / Enter (13): Tutup keyboard dan kembali ke wrapper luar (#searchBoxContainer)
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
-            document.getElementById("searchBoxContainer").focus();
-            return false;
-        }
 
-        // C. Tombol Back / Escape (27, 8, 10009): Tutup keyboard dan balik ke wrapper
-        if (e.keyCode == 27 || e.keyCode == 8 || e.keyCode == 10009) {
+        // 3. Tekan Back / Escape (27, 8, 10009) -> Tutup keyboard dan kunci kembali
+        if (code === 27 || code === 8 || code === 10009) {
             e.preventDefault();
-            $("#searchInput").attr("readonly", "true").blur(); // LEPAS KEYBOARD & KURSOR
+            closeKeyboardAndLock();
             document.getElementById("searchBoxContainer").focus();
             return false;
         }
+    });
+
+    // Kunci kembali input secara otomatis apabila kehilangan fokus
+    $("#searchInput").on("blur", function() {
+        this.setAttribute("readonly", "true");
     });
 
     function unlockAudioAutoplay() {
@@ -395,7 +416,6 @@
         });
       }
     }
-    // --- AKHIR SISTEM WATCHDOG ---
 
     function toggleShuffle() {
       isShuffle = !isShuffle;
@@ -548,7 +568,7 @@
       const code = e.keyCode || e.which;
       if (code === 4 || code === 27 || code === 10009 || e.key === "Backspace") return;
 
-      // CEK APAKAH INPUT SEARCH SEDANG DITINGGAL MENGETIK (AKTIF / BUKAN READONLY)
+      // CEK APAKAH USER SEDANG DALAM PROSES MENGETIK DI SEARCH INPUT
       const isInputActive = document.activeElement && document.activeElement.id === "searchInput" && !document.activeElement.hasAttribute("readonly");
 
       switch(e.key) {
@@ -1021,18 +1041,6 @@
 
     window.onload = function() {
       mediaPlayer = document.getElementById("media-player");
-
-      const sBox = document.getElementById("searchBoxContainer");
-      const sInput = document.getElementById("searchInput");
-
-      if (sBox && sInput) {
-        sBox.addEventListener("blur", function() {
-          sInput.setAttribute("readonly", "true");
-        });
-        sInput.addEventListener("blur", function() {
-          sInput.setAttribute("readonly", "true");
-        });
-      }
 
       try {
         var savedColor = localStorage.getItem("saved_accent_color");
