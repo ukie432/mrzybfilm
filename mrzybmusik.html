@@ -179,9 +179,9 @@
 
     <div class="top"> 
       <div class="search-container">
-        <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
+        <div class="search-box focusable" tabindex="0" id="searchBoxContainer" onclick="activateSearchInput()">
           <i class="material-icons">search</i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" onfocus="this.select()">
+          <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" readonly tabindex="-1">
         </div>
       </div>
       <div class="cards-holder" id="cardsHolder"></div> 
@@ -271,6 +271,15 @@
     var audioStuckCount = 0;
     var audioUnlocked = false;
     var lastTimeCheck = 0;
+
+    function activateSearchInput() {
+      const input = document.getElementById("searchInput");
+      if (input) {
+        input.removeAttribute("readonly");
+        input.focus();
+        input.select();
+      }
+    }
 
     function unlockAudioAutoplay() {
       if (audioUnlocked) return;
@@ -488,9 +497,6 @@
 
       if (bestCandidate) {
         bestCandidate.focus();
-        if (bestCandidate.id === "searchBoxContainer") {
-          document.getElementById("searchInput").focus();
-        }
         bestCandidate.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
       }
     }
@@ -499,18 +505,20 @@
       const code = e.keyCode || e.which;
       if (code === 4 || code === 27 || code === 10009 || e.key === "Backspace") return;
 
+      const isInputActive = document.activeElement && document.activeElement.id === "searchInput" && !document.activeElement.hasAttribute("readonly");
+
       switch(e.key) {
         case "ArrowRight":
-          if (document.activeElement.id !== "searchInput") { e.preventDefault(); navigateSpatial('right'); }
+          if (!isInputActive) { e.preventDefault(); navigateSpatial('right'); }
           break;
         case "ArrowLeft":
-          if (document.activeElement.id !== "searchInput") { e.preventDefault(); navigateSpatial('left'); }
+          if (!isInputActive) { e.preventDefault(); navigateSpatial('left'); }
           break;
         case "ArrowDown":
-          e.preventDefault(); navigateSpatial('down');
+          if (!isInputActive) { e.preventDefault(); navigateSpatial('down'); }
           break;
         case "ArrowUp":
-          e.preventDefault(); navigateSpatial('up');
+          if (!isInputActive) { e.preventDefault(); navigateSpatial('up'); }
           break;
         case "Enter":
         case "OK":
@@ -970,6 +978,18 @@
 
     window.onload = function() {
       mediaPlayer = document.getElementById("media-player");
+
+      const sBox = document.getElementById("searchBoxContainer");
+      const sInput = document.getElementById("searchInput");
+
+      if (sBox && sInput) {
+        sBox.addEventListener("blur", function() {
+          sInput.setAttribute("readonly", "true");
+        });
+        sInput.addEventListener("blur", function() {
+          sInput.setAttribute("readonly", "true");
+        });
+      }
 
       try {
         var savedColor = localStorage.getItem("saved_accent_color");
