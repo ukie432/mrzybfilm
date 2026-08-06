@@ -90,9 +90,13 @@
         <label for="selectUAMode">Pilih User-Agent Mode:</label>
         <select id="selectUAMode" tabindex="0" onchange="gantiUAMode()">
             <option value="default">Default / Bawaan</option>
+            <option value="lgadrm">LGADRM MPD Player (Rekomendasi URL Gelap)</option>
+            <option value="tivimate_new">TiviMate 5.1.6</option>
+            <option value="ott_player">OTT Player 1.7.4.1</option>
+            <option value="mozilla_m3u">Mozilla m3u-ip.tv</option>
             <option value="ott_nav">OTT Navigator 1.9.6.4</option>
-            <option value="tivimate">TiviMate / 4.6.1</option>
-            <option value="vlc">VLC / 3.0.18</option>
+            <option value="tivimate">TiviMate 4.6.1</option>
+            <option value="vlc">VLC 3.0.18</option>
             <option value="custom">Custom (Ketik Manual)</option>
         </select>
     </div>
@@ -177,6 +181,10 @@ function hapusDataStorage(key) {
 let kategoriAktif = ambilDataStorage("lastCategory") || "Semua";
 
 const PRESET_UA = {
+    "lgadrm": "lgadrm.mpdplayer/v1;SM-M215F",
+    "tivimate_new": "TiviMate/5.1.6",
+    "ott_player": "OTT Player / 1.7.4.1 (Linux; Android 12; in; SM-M215F)",
+    "mozilla_m3u": "Mozilla/5.0 (m3u-ip.tv 3.0.0) Android",
     "ott_nav": "OTT Navigator 1.9.6.4 (Android; TV)",
     "tivimate": "TiviMate/4.6.1 (Android TV)",
     "vlc": "VLC/3.0.18 (Linux; Android 10)"
@@ -449,7 +457,10 @@ function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUr
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
 
-    let finalUA = userAgent || ambilUserAgentAktif();
+    // Kirim User-Agent M3U bawaan jika ada, atau gunakan User-Agent yang dipilih di Pengaturan
+    let activeGlobalUA = ambilUserAgentAktif();
+    let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
+
     playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
 }
 
