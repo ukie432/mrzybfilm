@@ -9,7 +9,39 @@
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'PT Sans', sans-serif; background-color: #000000; color: #ffffff; overflow-x: hidden; padding-bottom: 50px; }
+    
+    body { 
+        font-family: 'PT Sans', sans-serif; 
+        background-color: #000000; 
+        color: #ffffff; 
+        overflow-x: hidden; 
+        padding-bottom: 50px; 
+        position: relative;
+    }
+
+    /* BACKGROUND POSTER TAJAM (TANPA BLUR) */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: var(--bg-poster, none);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(0.4); /* Gelap terang background, ubah ke 0.5 jika ingin lebih terang */
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out, background-image 0.3s ease;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    body.has-bg-focus::before {
+        opacity: 1;
+    }
+
     .header-banner { text-align: center; padding: 20px 0 10px 0; }
     .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
     .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
@@ -125,16 +157,15 @@ document.addEventListener("DOMContentLoaded", function() {
     let dataAktif = [];
     let currentIndex = 0;
     
-    // OPTIMASI 1: Kurangi beban awal render dari 40 menjadi 16 (4 baris x 4 kolom)
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // OPTIMASI 2: Helper CDN Proxy untuk kompres poster otomatis ke WebP ukuran 320px
+    // GAMBAR DITINGKATKAN KE 1280px AGAR HD & TAJAM SAAT JADI BACKGROUND
     function getOptimizedImg(originalUrl) {
         if (!originalUrl || originalUrl.includes('placeholder.com')) {
             return 'https://via.placeholder.com/400x225?text=No+Image';
         }
-        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=320&output=webp&q=75`;
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
     window.addEventListener("keydown", function(e) {
@@ -257,6 +288,20 @@ document.addEventListener("DOMContentLoaded", function() {
         if(fav){
             e.preventDefault();
             fav.click();
+        }
+    });
+
+    // EVENT DETEKSI FOKUS UNTUK UBAH BACKGROUND
+    document.addEventListener("focusin", function(e) {
+        const card = e.target.closest(".card-film");
+        if (card) {
+            const img = card.querySelector(".poster-wrapper img");
+            if (img && img.src) {
+                document.body.style.setProperty('--bg-poster', `url('${img.src}')`);
+                document.body.classList.add('has-bg-focus');
+            }
+        } else {
+            document.body.classList.remove('has-bg-focus');
         }
     });
 
