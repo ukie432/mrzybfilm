@@ -311,7 +311,472 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (commaIndex !== -1) {
                     currentTitle = line.substring(commaIndex + 1).trim();
                 }
+            } else if (line && !line<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+
+    <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
+
+    <title>MRZYB TV - Koleksi Film animasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+        font-family: 'PT Sans', sans-serif; 
+        background-color: #000000; 
+        color: #ffffff; 
+        overflow-x: hidden; 
+        padding-bottom: 50px; 
+        position: relative;
+    }
+
+    /* BACKGROUND POSTER TAJAM (TANPA BLUR) */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: var(--bg-poster, none);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(0.4); 
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out, background-image 0.3s ease;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    body.has-bg-focus::before {
+        opacity: 1;
+    }
+
+    .header-banner { text-align: center; padding: 20px 0 10px 0; }
+    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+    .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
+    .search-box:focus { border-color: #E50914; }
+    .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+
+    .container-film {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px !important;
+        padding: 20px !important;
+    }
+
+    /* OPTIMASI PERFORMANSA STB/TV */
+    .card-film {
+        width: 100% !important;
+        background-color: #181818;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 200px;
+    }
+
+    .poster-wrapper { 
+        width: 100%; 
+        aspect-ratio: 16 / 9 !important; 
+        position: relative; 
+        background-color: #2a2a2a; 
+    }
+    .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+
+    .btn-fav { 
+        width: 100%; 
+        padding: 2px 0 !important; 
+        background-color: #222; 
+        color: #bbb; 
+        border: none; 
+        font-size: 6px !important; 
+        font-weight: 700; 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 4px; 
+        border-top: 1px solid #333; 
+        outline: none; 
+    }
+
+    .film-title { 
+        padding: 8px !important; 
+        font-size: 10px !important; 
+        text-align: center !important; 
+        font-weight: 700; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        background-color: #181818;
+        color: #fff; 
+        direction: ltr;
+    }
+
+    .btn-fav:focus { background-color: #E50914; color: #fff; }
+    .btn-fav.active { color: #ffcc00; }
+    .btn-fav span { font-size: 8px; }
+    #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
+
+    .play-link:focus {
+        outline: 3px solid #E50914 !important;
+        outline-offset: 2px;
+    }
+
+    .card-film:focus-within {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px #E50914;
+        z-index: 10;
+    }
+    </style>
+</head>
+<body>
+
+<div class="header-banner">
+    <h1>MRZYB TV</h1>
+</div>
+
+<div class="search-wrapper">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film animasi..." tabindex="0" readonly>
+    <button id="btnClear" class="btn-clear">&times;</button>
+</div>
+
+<div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
+<div class="container-film" id="containerFav"></div>
+
+<div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM ANIMASI</div>
+<div class="container-film" id="containerUtama"></div>
+
+<div id="noResultsText">Film tidak ditemukan...</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchBox = document.getElementById('searchBox');
+    const btnClear = document.getElementById('btnClear');
+    const noResultsText = document.getElementById('noResultsText');
+    const containerUtama = document.getElementById('containerUtama');
+    const containerFav = document.getElementById('containerFav');
+    const favSectionTitle = document.getElementById('favSectionTitle');
+
+    let listFavorit = JSON.parse(localStorage.getItem('animasi_favorit')) || [];
+
+    let semuaFilm = [];
+    let dataAktif = [];
+    let currentIndex = 0;
+    
+    const PER_PAGE = 16; 
+    let searchTimer;
+
+    function getOptimizedImg(originalUrl) {
+        if (!originalUrl || originalUrl.includes('placeholder.com')) {
+            return 'https://via.placeholder.com/400x225?text=No+Image';
+        }
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
+    }
+
+    window.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
+            if (typeof Android !== "undefined" && Android.exitApp) {
+                e.preventDefault();
+                Android.exitApp(); 
+            }
+        }
+    });
+
+    // FUNGSI AKTIVASI KEYBOARD (UNTUK HP DAN STB/TV)
+    function aktifkanKeyboard() {
+        if (searchBox.hasAttribute("readonly")) {
+            searchBox.removeAttribute("readonly");
+            searchBox.focus();
+        }
+    }
+
+    // Aksi Klik/Sentuh di Layar HP
+    searchBox.addEventListener("click", aktifkanKeyboard);
+    searchBox.addEventListener("touchstart", aktifkanKeyboard);
+
+    // Aksi Tombol OK/Enter di Remote STB/TV
+    searchBox.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.keyCode === 13) {
+            aktifkanKeyboard();
+        }
+    });
+
+    // Kembalikan ke mode readonly saat kursor keluar
+    searchBox.addEventListener("blur", function() {
+        this.setAttribute("readonly", "true");
+    });
+
+    function updateTampilanFavorit() {
+        containerFav.innerHTML = "";
+        if (listFavorit.length === 0) {
+            favSectionTitle.style.display = "none";
+            containerFav.style.display = "none";
+        } else {
+            favSectionTitle.style.display = "block";
+            containerFav.style.display = "grid";
+            listFavorit.forEach(idFilm => {
+                const film = semuaFilm.find(f => f.id === idFilm);
+                if(!film) return;
+
+                const optimizedImg = getOptimizedImg(film.img);
+
+                containerFav.insertAdjacentHTML("beforeend", `
+                    <div class="card-film" data-id="${film.id}" id="fav-${film.id}">
+                        <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                            <div class="poster-wrapper">
+                                <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                            </div>
+                        </a>
+                        <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                            <span>★</span> Favorit
+                        </button>
+                        <div class="film-title">${film.title}</div>
+                    </div>
+                `);
+            });
+        }
+        pasangEventAksi();
+        perbaruiStatusTombolBintang();
+    }
+
+    function perbaruiStatusTombolBintang() {
+        document.querySelectorAll('.btn-fav').forEach(btn => {
+            const idTarget = btn.getAttribute('data-target');
+            if (listFavorit.includes(idTarget)) {
+                btn.classList.add('active');
+                btn.innerHTML = "<span>★</span> Favorit";
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = "<span>☆</span> Favorit";
+            }
+        });
+    }
+
+    function renderNext(){
+        const html = dataAktif
+            .slice(currentIndex, currentIndex + PER_PAGE)
+            .map(film => {
+                const optimizedImg = getOptimizedImg(film.img);
+                return `
+                <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
+                    <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                        <div class="poster-wrapper">
+                            <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                        </div>
+                    </a>
+                    <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                        <span>☆</span> Favorit
+                    </button>
+                    <div class="film-title">${film.title}</div>
+                </div>
+            `}).join("");
+
+        containerUtama.insertAdjacentHTML("beforeend", html);
+        currentIndex += PER_PAGE;
+        perbaruiStatusTombolBintang();
+    }
+
+    function pasangEventAksi() {}
+
+    document.addEventListener("click", function(e){
+        const play = e.target.closest(".play-link");
+        if(play){
+            e.preventDefault();
+            const card = play.closest(".card-film");
+            localStorage.setItem("animasi_idPosterTerakhir", card.id);
+            localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
+            if(typeof Android !== "undefined" && Android.playVideo){
+                Android.playVideo(play.href);
+            }
+            return;
+        }
+
+        const fav = e.target.closest(".btn-fav");
+        if(fav){
+            e.preventDefault();
+            const id = fav.dataset.target;
+            if(listFavorit.includes(id)){
+                listFavorit = listFavorit.filter(x => x !== id);
+            }else{
+                listFavorit.push(id);
+            }
+            localStorage.setItem("animasi_favorit", JSON.stringify(listFavorit));
+            updateTampilanFavorit();
+        }
+    });
+
+    document.addEventListener("keydown", function(e){
+        if(e.key !== "Enter") return;
+        const play = e.target.closest(".play-link");
+        if(play){
+            e.preventDefault();
+            play.click();
+            return;
+        }
+        const fav = e.target.closest(".btn-fav");
+        if(fav){
+            e.preventDefault();
+            fav.click();
+        }
+    });
+
+    // EVENT DETEKSI FOKUS UNTUK UBAH BACKGROUND
+    document.addEventListener("focusin", function(e) {
+        const card = e.target.closest(".card-film");
+        if (card) {
+            const img = card.querySelector(".poster-wrapper img");
+            if (img && img.src) {
+                document.body.style.setProperty('--bg-poster', `url('${img.src}')`);
+                document.body.classList.add('has-bg-focus');
+            }
+        } else {
+            document.body.classList.remove('has-bg-focus');
+        }
+    });
+
+    function saringFilm(keyword){
+        currentIndex = 0;
+        containerUtama.innerHTML = "";
+        if(keyword === ""){
+            dataAktif = semuaFilm;
+            renderNext();
+            noResultsText.style.display = "none";
+            return;
+        }
+        dataAktif = semuaFilm.filter(film => film.title.toLowerCase().includes(keyword));
+        if(dataAktif.length){
+            renderNext();
+            noResultsText.style.display = "none";
+        }else{
+            noResultsText.style.display = "block";
+        }
+    }
+
+    searchBox.addEventListener("input", function(){
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const filterText = searchBox.value.toLowerCase().trim();
+            btnClear.style.display = searchBox.value.length > 0 ? "flex" : "none";
+            saringFilm(filterText);
+        }, 200);
+    });
+
+    btnClear.addEventListener('click', function() {
+        searchBox.value = "";
+        btnClear.style.display = "none";
+        saringFilm("");
+        searchBox.focus();
+    });
+
+    function parseM3U(m3uText) {
+        const lines = m3uText.split('\n');
+        const listFilm = [];
+        let currentTitle = '';
+        let currentImg = '';
+        let idCounter = 1;
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('#EXTINF')) {
+                const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                currentImg = logoMatch ? logoMatch[1] : '';
+
+                const commaIndex = line.lastIndexOf(',');
+                if (commaIndex !== -1) {
+                    currentTitle = line.substring(commaIndex + 1).trim();
+                }
             } else if (line && !line.startsWith('#')) {
+                const cleanUrl = line.trim();
+                if (currentTitle && cleanUrl) {
+                    listFilm.push({
+                        id: String(idCounter++),
+                        title: currentTitle,
+                        url: cleanUrl,
+                        img: currentImg || 'https://via.placeholder.com/400x225?text=No+Image'
+                    });
+                }
+                currentTitle = '';
+                currentImg = '';
+            }
+        }
+        return listFilm;
+    }
+
+    fetch('https://mrzybtv-api.ukielaki88.workers.dev/api/animasi')
+        .then(response => response.text())
+        .then(m3uText => {
+            const data = parseM3U(m3uText);
+            semuaFilm = data;
+            dataAktif = data;
+
+            renderNext();
+            updateTampilanFavorit();
+            
+            containerUtama.addEventListener("focusin", function(e){
+                const card = e.target.closest(".card-film");
+                if(!card) return;
+                const cards = containerUtama.querySelectorAll(".card-film");
+                const index = Array.from(cards).indexOf(card);
+                if(index >= currentIndex - 6 && currentIndex < dataAktif.length){
+                    renderNext();
+                }
+            });
+
+            window.addEventListener("scroll", function() {
+                if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 500)) {
+                    if (currentIndex < dataAktif.length) {
+                        renderNext();
+                    }
+                }
+            });
+
+            setTimeout(() => {
+                const statusNontonSTB = localStorage.getItem("animasi_sedangNontonVideoSTB");
+                const idPosterTerakhir = localStorage.getItem("animasi_idPosterTerakhir");
+                if (statusNontonSTB === "ya" && idPosterTerakhir) {
+                    let targetPoster = document.getElementById(idPosterTerakhir);
+
+                    while (!targetPoster && currentIndex < dataAktif.length) {
+                        renderNext();
+                        targetPoster = document.getElementById(idPosterTerakhir);
+                    }
+
+                    if (targetPoster) {
+                        const tombolPlay = targetPoster.querySelector('.play-link');
+                        if (tombolPlay) {
+                            tombolPlay.focus();
+                            targetPoster.scrollIntoView({ behavior: "auto", block: "center" });
+                            localStorage.removeItem("animasi_sedangNontonVideoSTB");
+                            localStorage.removeItem("animasi_idPosterTerakhir");
+                            return;
+                        }
+                    }
+                }
+                const firstPoster = document.querySelector("#containerUtama .play-link");
+                if (firstPoster) {
+                    firstPoster.focus();
+                }
+            }, 180);
+        })
+        .catch(err => {
+            console.error("Gagal load playlist M3U:", err);
+            const firstPoster = document.querySelector("#containerUtama .play-link");
+            if (firstPoster) {
+                firstPoster.focus();
+            }
+        });
+});
+</script>
+</body>
+</html>
+.startsWith('#')) {
                 const cleanUrl = line.trim();
                 if (currentTitle && cleanUrl) {
                     listFilm.push({
