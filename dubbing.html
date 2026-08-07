@@ -31,7 +31,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        filter: brightness(0.4); /* Gelap terang background, ubah ke 0.5 jika ingin lebih terang */
+        filter: brightness(0.4); 
         opacity: 0;
         transition: opacity 0.4s ease-in-out, background-image 0.3s ease;
         z-index: -1;
@@ -57,7 +57,7 @@
         padding: 20px !important;
     }
 
-    /* OPTIMASI PERFORMANSA STB/TV: Hemat memori untuk elemen di luar viewport */
+    /* OPTIMASI PERFORMANSA STB/TV */
     .card-film {
         width: 100% !important;
         background-color: #181818;
@@ -130,7 +130,7 @@
 </div>
 
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film dubbing..." tabindex="0">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari film dubbing..." tabindex="0" readonly>
     <button id="btnClear" class="btn-clear">&times;</button>
 </div>
 
@@ -160,7 +160,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // GAMBAR DITINGKATKAN KE 1280px AGAR HD & TAJAM SAAT JADI BACKGROUND
     function getOptimizedImg(originalUrl) {
         if (!originalUrl || originalUrl.includes('placeholder.com')) {
             return 'https://via.placeholder.com/400x225?text=No+Image';
@@ -175,6 +174,30 @@ document.addEventListener("DOMContentLoaded", function() {
                 Android.exitApp(); 
             }
         }
+    });
+
+    // FUNGSI AKTIVASI KEYBOARD (UNTUK HP DAN STB/TV)
+    function aktifkanKeyboard() {
+        if (searchBox.hasAttribute("readonly")) {
+            searchBox.removeAttribute("readonly");
+            searchBox.focus();
+        }
+    }
+
+    // Aksi Klik/Sentuh di Layar HP
+    searchBox.addEventListener("click", aktifkanKeyboard);
+    searchBox.addEventListener("touchstart", aktifkanKeyboard);
+
+    // Aksi Tombol OK/Enter di Remote STB/TV
+    searchBox.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.keyCode === 13) {
+            aktifkanKeyboard();
+        }
+    });
+
+    // Kembalikan ke mode readonly saat kursor keluar
+    searchBox.addEventListener("blur", function() {
+        this.setAttribute("readonly", "true");
     });
 
     function updateTampilanFavorit() {
