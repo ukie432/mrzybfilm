@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
     <title>MRZYB TV - Koleksi Film dubbing</title>
@@ -42,17 +41,33 @@
         opacity: 1;
     }
 
-    .header-banner { text-align: center; padding: 20px 0 10px 0; }
+    /* DIBUAT TANPA PADDING BAWAH LOGO */
+    .header-banner { 
+        text-align: center; 
+        padding: 10px 0 0 0 !important; 
+        line-height: 0;
+    }
     
-    /* GAYA UNTUK LOGO HEADER */
+    /* UKURAN LOGO DIPERBAIKI */
     .header-logo { 
-        max-height: 50px; 
+        max-height: 75px; 
         width: auto; 
         display: inline-block; 
         object-fit: contain; 
+        margin-bottom: -5px; /* Margin negatif dipaksa mendekat */
     }
 
-    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+    /* DIBUAT DENGAN MARGIN ATAS MINIMAL */
+    .search-wrapper { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        max-width: 500px; 
+        margin: 5px auto 20px auto !important; 
+        padding: 0 10px; 
+        position: relative; 
+    }
+
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
     .search-box:focus { border-color: #E50914; }
     .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
@@ -134,7 +149,6 @@
 <body>
 
 <div class="header-banner">
-    <!-- TEKS DITUKAR DENGAN LOGO GAMBAR WEBP -->
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
@@ -185,7 +199,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // FUNGSI AKTIVASI KEYBOARD (UNTUK HP DAN STB/TV)
     function aktifkanKeyboard() {
         if (searchBox.hasAttribute("readonly")) {
             searchBox.removeAttribute("readonly");
