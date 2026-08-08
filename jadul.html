@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
     <title>MRZYB TV - Koleksi Film lawas</title>
@@ -42,12 +41,36 @@
         opacity: 1;
     }
 
-    .header-banner { text-align: center; padding: 20px 0 10px 0; }
-    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
-    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+    /* WADAH PENCARIAN & LOGO SEJAJAR */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        max-width: 650px;
+        margin: 15px auto 20px auto;
+        padding: 0 15px;
+    }
+
+    /* POSISI KOTAK PENCARIAN */
+    .search-wrapper { 
+        display: flex; 
+        align-items: center; 
+        flex: 1;
+        position: relative; 
+    }
+
+    /* UKURAN LOGO DI SAMPING KANAN */
+    .header-logo { 
+        max-height: 45px; 
+        width: auto; 
+        object-fit: contain; 
+        flex-shrink: 0;
+    }
+
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
     .search-box:focus { border-color: #E50914; }
-    .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
+    .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
     .container-film {
@@ -125,13 +148,12 @@
 </head>
 <body>
 
-<div class="header-banner">
-    <h1>MRZYB TV</h1>
-</div>
-
-<div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film lawas..." tabindex="0" readonly>
-    <button id="btnClear" class="btn-clear">&times;</button>
+<div class="header-container">
+    <div class="search-wrapper">
+        <input type="text" id="searchBox" class="search-box" placeholder="Cari film lawas..." tabindex="0" readonly>
+        <button id="btnClear" class="btn-clear">&times;</button>
+    </div>
+    <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
@@ -176,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // FUNGSI AKTIVASI KEYBOARD (UNTUK HP DAN STB/TV)
     function aktifkanKeyboard() {
         if (searchBox.hasAttribute("readonly")) {
             searchBox.removeAttribute("readonly");
@@ -184,18 +205,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Aksi Klik/Sentuh di Layar HP
     searchBox.addEventListener("click", aktifkanKeyboard);
     searchBox.addEventListener("touchstart", aktifkanKeyboard);
 
-    // Aksi Tombol OK/Enter di Remote STB/TV
     searchBox.addEventListener("keydown", function(e) {
         if (e.key === "Enter" || e.keyCode === 13) {
             aktifkanKeyboard();
         }
     });
 
-    // Kembalikan ke mode readonly saat kursor keluar
     searchBox.addEventListener("blur", function() {
         this.setAttribute("readonly", "true");
     });
