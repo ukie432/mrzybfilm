@@ -2,10 +2,9 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
-    <title>MRZYB TV - Koleksi Film Alur Cerita</title>
+    <title>MRZYB TV - Koleksi Alur Cerita Film</title>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,9 +41,33 @@
         opacity: 1;
     }
 
-    .header-banner { text-align: center; padding: 20px 0 10px 0; }
-    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
-    .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
+    /* DIBUAT TANPA PADDING BAWAH LOGO */
+    .header-banner { 
+        text-align: center; 
+        padding: 10px 0 0 0 !important; 
+        line-height: 0;
+    }
+    
+    /* UKURAN LOGO DIPERBAIKI */
+    .header-logo { 
+        max-height: 75px; 
+        width: auto; 
+        display: inline-block; 
+        object-fit: contain; 
+        margin-bottom: -5px; /* Margin negatif dipaksa mendekat */
+    }
+
+    /* DIBUAT DENGAN MARGIN ATAS MINIMAL */
+    .search-wrapper { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        max-width: 500px; 
+        margin: 5px auto 20px auto !important; 
+        padding: 0 10px; 
+        position: relative; 
+    }
+
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
     .search-box:focus { border-color: #E50914; }
     .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
@@ -126,11 +149,11 @@
 <body>
 
 <div class="header-banner">
-    <h1>MRZYB TV</h1>
+    <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
 <div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film alurcerita..." tabindex="0" readonly>
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari alur cerita film..." tabindex="0" readonly>
     <button id="btnClear" class="btn-clear">&times;</button>
 </div>
 
@@ -176,7 +199,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // FUNGSI AKTIVASI KEYBOARD (UNTUK HP DAN STB/TV)
     function aktifkanKeyboard() {
         if (searchBox.hasAttribute("readonly")) {
             searchBox.removeAttribute("readonly");
@@ -184,18 +206,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Aksi Klik/Sentuh di Layar HP
     searchBox.addEventListener("click", aktifkanKeyboard);
     searchBox.addEventListener("touchstart", aktifkanKeyboard);
 
-    // Aksi Tombol OK/Enter di Remote STB/TV
     searchBox.addEventListener("keydown", function(e) {
         if (e.key === "Enter" || e.keyCode === 13) {
             aktifkanKeyboard();
         }
     });
 
-    // Kembalikan ke mode readonly saat kursor keluar
     searchBox.addEventListener("blur", function() {
         this.setAttribute("readonly", "true");
     });
