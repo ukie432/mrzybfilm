@@ -43,7 +43,15 @@
     }
 
     .header-banner { text-align: center; padding: 20px 0 10px 0; }
-    .header-banner h1 { color: #E50914; font-size: 38px; letter-spacing: 3px; font-weight: 700; }
+    
+    /* GAYA UNTUK LOGO HEADER */
+    .header-logo { 
+        max-height: 50px; 
+        width: auto; 
+        display: inline-block; 
+        object-fit: contain; 
+    }
+
     .search-wrapper { display: flex; align-items: center; justify-content: center; max-width: 500px; margin: 0 auto 20px auto; padding: 0 10px; position: relative; }
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
     .search-box:focus { border-color: #E50914; }
@@ -126,7 +134,8 @@
 <body>
 
 <div class="header-banner">
-    <h1>MRZYB TV</h1>
+    <!-- TEKS DITUKAR DENGAN LOGO GAMBAR WEBP -->
+    <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
 <div class="search-wrapper">
@@ -184,18 +193,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Aksi Klik/Sentuh di Layar HP
     searchBox.addEventListener("click", aktifkanKeyboard);
     searchBox.addEventListener("touchstart", aktifkanKeyboard);
 
-    // Aksi Tombol OK/Enter di Remote STB/TV
     searchBox.addEventListener("keydown", function(e) {
         if (e.key === "Enter" || e.keyCode === 13) {
             aktifkanKeyboard();
         }
     });
 
-    // Kembalikan ke mode readonly saat kursor keluar
     searchBox.addEventListener("blur", function() {
         this.setAttribute("readonly", "true");
     });
