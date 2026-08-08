@@ -5,10 +5,8 @@
     <meta charset="utf-8">
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
 
-    
     <title>MRZYB TV - High Quality Background</title>
 
-    
     <!-- PRELOAD GAMBAR UTAMA AGAR DILUAT SERENTAK SAAT PERTAMA KALI DIBUKA -->
     <link rel="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing1.webp">
     <link rel="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo%201.webp">
@@ -55,10 +53,10 @@
             text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* === CONTAINER THUMBNAIL === */
+        /* === CONTAINER THUMBNAIL (LANDSCAPE) === */
         .thumbnail { 
             position: absolute; 
-            bottom: 100px; 
+            bottom: 80px; 
             width: 100%; 
             z-index: 100; 
             display: flex; 
@@ -69,12 +67,12 @@
         }
         
         .item { 
-            width: 160px; 
-            height: 240px; 
+            width: 240px; 
+            height: 135px; 
             position: relative; 
             cursor: pointer;
             border: 4px solid rgba(255,255,255,0.5); 
-            border-radius: 20px; 
+            border-radius: 16px; 
             background: #111;
             box-sizing: border-box;
         }
@@ -83,7 +81,7 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            border-radius: 16px; 
+            border-radius: 12px; 
         }
         
         .item:focus {
@@ -98,7 +96,7 @@
 
         .label {
             position: absolute;
-            bottom: -45px;
+            bottom: -40px;
             width: 100%;
             text-align: center;
             font-weight: 700;
@@ -122,31 +120,31 @@
 <body>
 
     <div class="bg-container">
-        <img id="main-bg" src="https://iptv-posterku.pages.dev/poster/film_dubbing/ChatGPTImage23Jun2026,19.45.53_copy_800x308.png" width="800" height="308" fetchpriority="high" >
+        <img id="main-bg" src="https://iptv-posterku.pages.dev/poster/film_dubbing/ChatGPTImage23Jun2026,19.45.53_copy_800x308.png" width="800" height="308" fetchpriority="high">
     </div>
     <div class="overlay"></div>
 
     <div class="brand-logo">
-        <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png"  width="150" height="70">
+        <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Logo%20_mrzybtv_%20dengan%20ikon%20Wi-Fi.png" width="150" height="70">
     </div>
     <div id="digital-clock">00:00:00</div>
 
     <div class="thumbnail">
         <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_dubbing" class="item" data-id="p1" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing1.webp" width="160" height="240"  > 
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing2.webp" width="240" height="135"> 
             <div class="label">Series Dubbing</div>
         </a>    
 
         <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_indo" class="item" data-id="p2" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo%201.webp" width="160" height="240"  > 
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo2.webp" width="240" height="135"> 
             <div class="label">Series Indo</div>
         </a>    
 
         <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_animasi" class="item" data-id="p3" 
            data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime2.webp" tabindex="0">
-            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime1.webp" width="160" height="240"  >
+            <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime2.webp" width="240" height="135">
             <div class="label">Series Animasi</div>
         </a>    
     </div>
@@ -201,7 +199,7 @@
                             bgImage.style.opacity = 0.7;
                         }
                     }
-                }, 200); // Dikurangi menjadi 200ms agar pemulihan fokus lebih responsif
+                }, 200);
             } else {
                 const firstItem = document.querySelector('.item');
                 if(firstItem) firstItem.focus();
