@@ -41,36 +41,36 @@
         opacity: 1;
     }
 
-    /* DIBUAT TANPA PADDING BAWAH LOGO */
-    .header-banner { 
-        text-align: center; 
-        padding: 10px 0 0 0 !important; 
-        line-height: 0;
-    }
-    
-    /* UKURAN LOGO DIPERBAIKI */
-    .header-logo { 
-        max-height: 75px; 
-        width: auto; 
-        display: inline-block; 
-        object-fit: contain; 
-        margin-bottom: -5px; /* Margin negatif dipaksa mendekat */
+    /* WADAH PENCARIAN & LOGO SEJAJAR */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        max-width: 650px;
+        margin: 15px auto 20px auto;
+        padding: 0 15px;
     }
 
-    /* DIBUAT DENGAN MARGIN ATAS MINIMAL */
+    /* POSISI KOTAK PENCARIAN */
     .search-wrapper { 
         display: flex; 
         align-items: center; 
-        justify-content: center; 
-        max-width: 500px; 
-        margin: 5px auto 20px auto !important; 
-        padding: 0 10px; 
+        flex: 1;
         position: relative; 
+    }
+
+    /* UKURAN LOGO DI SAMPING KANAN */
+    .header-logo { 
+        max-height: 45px; 
+        width: auto; 
+        object-fit: contain; 
+        flex-shrink: 0;
     }
 
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
     .search-box:focus { border-color: #E50914; }
-    .btn-clear { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
+    .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
     .container-film {
@@ -148,13 +148,12 @@
 </head>
 <body>
 
-<div class="header-banner">
+<div class="header-container">
+    <div class="search-wrapper">
+        <input type="text" id="searchBox" class="search-box" placeholder="Cari film animasi..." tabindex="0" readonly>
+        <button id="btnClear" class="btn-clear">&times;</button>
+    </div>
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
-</div>
-
-<div class="search-wrapper">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari film animasi..." tabindex="0" readonly>
-    <button id="btnClear" class="btn-clear">&times;</button>
 </div>
 
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
