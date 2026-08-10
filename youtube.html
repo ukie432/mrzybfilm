@@ -17,7 +17,7 @@
         .player-side { flex: 1.8; display: flex; flex-direction: column; gap: 6px; position: relative; background: #050505; }
         .header-title { color: #00ffff; font-weight: bold; font-size: 13px; text-shadow: 0 0 5px #00ffff; display: flex; align-items: center; gap: 6px; }
         
-        /* CONTAINER PLAYER DISINGKIRKAN DARI SISTEM FOKUS & POINTER */
+        /* PLAYER DIBUAT NON-POINTER AGAR TIDAK MENCURI FOKUS REMOTE */
         .video-wrapper { position: relative; width: 100%; flex: 1; border: 2px solid #00ffff; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); overflow: hidden; background: #000; pointer-events: none; }
         
         .video-wrapper .plyr { width: 100% !important; height: 100% !important; background: #000 !important; pointer-events: none !important; }
@@ -73,7 +73,6 @@
                 📺 MRZYBtv STB PLAYER
             </div>
             
-            <!-- Tambahkan tabindex="-1" agar kotak player dilewati oleh fokus remote -->
             <div class="video-wrapper" tabindex="-1">
                 <div id="player-container" class="js-player" data-type="youtube" data-video-id="" tabindex="-1"></div>
             </div>
@@ -126,7 +125,10 @@
 
     var player = plyr.setup(".js-player", { 
         controls: [],
+        autoplay: true,
         youtube: {
+            autoplay: 1,
+            mute: 0,
             cc_load_policy: 0,
             cc_lang_pref: '',
             hl: 'id',
@@ -141,16 +143,9 @@
     
     let currentVideoUrl = "";
 
-    // PENCEGAHAN FOKUS KE PLAYER SECARA OTOMATIS OLEH EVENT BROWSER/PLYR
     player.on('ready', function() {
         $(".video-wrapper, .plyr, iframe").attr("tabindex", "-1");
-    });
-
-    // Mencegah browser memindahkan fokus ke iframe saat video mulai dimainkan
-    player.on('playing', function() {
-        if (document.activeElement && (document.activeElement.tagName === 'IFRAME' || $(document.activeElement).hasClass('plyr'))) {
-            $("#btnPlayPause").focus();
-        }
+        player.setVolume(100);
     });
 
     player.on('ended', function () {
@@ -203,14 +198,15 @@
         }
     }
 
-    $("#search").on('focus click', function() {
+    // FIX 1: KEYBOARD POPUP HANYA MUNCUL SAAT TEKAN OK (ENTER / KEYCODE 13)
+    $("#search").on('click', function() {
         if (typeof Android !== "undefined" && Android.showKeyboard) {
             Android.showKeyboard();
         }
     });
 
     $("#search").on('keydown', function(e) {
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13) { // Hanya panggil keyboard jika tombol OK/Enter ditekan
             if (typeof Android !== "undefined" && Android.showKeyboard) {
                 Android.showKeyboard();
             }
@@ -242,16 +238,16 @@
         });
     });
 
-    // SISTEM NAVIGASI REMOT DI PANEL KONTROL PLAYER
+    // NAVIGASI REMOTE CONTROL
     $(".btn-ctrl").on('keydown', function(e) {
-        if (e.keyCode === 38) { // Up -> Ke Seek Bar
+        if (e.keyCode === 38) {
             e.preventDefault();
             $("#seek-bar").focus();
         }
     });
 
     $("#btnFullscreen").on('keydown', function(e) {
-        if (e.keyCode === 39) { // Panah Kanan -> Langsung Ke Kolom Cari (Melompati Player)
+        if (e.keyCode === 39) {
             e.preventDefault();
             $("#search").focus();
         }
@@ -284,7 +280,7 @@
     });
 
     $(document).on('keydown', '.poster', function(e) {
-        if (e.keyCode === 37) { // Panah Kiri -> Langsung ke Tombol Play/Pause
+        if (e.keyCode === 37) {
             e.preventDefault();
             $("#btnPlayPause").focus();
         }
@@ -330,6 +326,7 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
+    // FIX 2 & 3: AUTOPLAY DAN SUARA DIPASTIKAN BISA DI STB & HP
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
@@ -343,10 +340,14 @@
         if (currentVideoUrl !== url) {
             currentVideoUrl = url;
             player.pause();
+            
+            // Muat sumber baru dengan dukungan autoplay dan audio unmuted
             player.source({
                 type: "video",
                 sources: [{ src: url, type: "youtube" }],
                 youtube: {
+                    autoplay: 1,
+                    mute: 0,
                     cc_load_policy: 0,
                     hl: 'id',
                     iv_load_policy: 3,
@@ -361,20 +362,27 @@
             });
         }
         
+        // Memastikan pemutaran dan un-mute dipicu berulang secara aman agar STB merespons
         setTimeout(() => {
-            try {
-                player.play();
-                player.muted = false;
-                player.setVolume(100);
-            } catch(e) {
-                console.log("Autoplay ditahan browser");
+            player.unMute();
+            player.setVolume(100);
+            
+            var playPromise = player.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    player.unMute();
+                    player.setVolume(100);
+                }).catch(error => {
+                    // Jika autoplay terhalang aturan STB, coba ulang pemutaran
+                    player.play();
+                });
             }
             
             $("#btnPlayPause").focus(); 
 
             subtitleAktif = false;
             $("#btnCC").css("border", "1px solid #00ffff");
-        }, 800); 
+        }, 500); 
     }
 
     window.closePopup = function() { 
