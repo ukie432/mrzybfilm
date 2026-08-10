@@ -12,32 +12,32 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: #050505; color: #fff; height: 100vh; overflow: hidden; display: flex; padding: 8px; gap: 8px; }
         
-        /* LAYOUT UTAMA: SPLIT SCREEN DUA SISI */
         .main-layout { display: flex; width: 100%; height: 100%; gap: 8px; }
         
-        /* AREA KIRI: PLAYER & DISPLAY */
         .player-side { flex: 1.8; display: flex; flex-direction: column; gap: 6px; position: relative; background: #050505; }
         .header-title { color: #00ffff; font-weight: bold; font-size: 13px; text-shadow: 0 0 5px #00ffff; display: flex; align-items: center; gap: 6px; }
         
-        /* FRAME BINGKAI NEON PLAYER (PEMUTAR INLINE) */
+        /* BINGKAI PLAYER */
         .video-wrapper { position: relative; width: 100%; flex: 1; border: 2px solid #00ffff; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); overflow: hidden; background: #000; }
         
-        /* PENYESUAIAN PLYR AGAR PAS DI DALAM KOTAK KIRI */
         .video-wrapper .plyr { width: 100% !important; height: 100% !important; background: #000 !important; }
         .video-wrapper .plyr__video-wrapper, .video-wrapper .plyr__video-embed { width: 100% !important; height: 100% !important; padding-bottom: 0 !important; }
-        .video-wrapper iframe { width: 100% !important; height: 100% !important; border: none; }
+        
+        /* PENTING: Cegah IFRAME mencuri fokus remote STB */
+        .video-wrapper iframe { width: 100% !important; height: 100% !important; border: none; pointer-events: none; }
 
-        /* AREA KANAN: NAVBAR & GRID POSTER */
         .sidebar { flex: 1; display: flex; flex-direction: column; gap: 6px; background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 6px; }
         .navbar { padding: 0; background: transparent; }
         .search-container { position: relative; width: 100%; }
         .search-bar-wrapper { width: 100%; background: #1a1a1a; border-radius: 4px; border: 1px solid #333; display: flex; align-items: center; }
-        .search-bar-wrapper:focus-within, .search-bar-wrapper:focus { border-color: #00ffff; outline: none; box-shadow: 0 0 8px #00ffff; }
+        .search-bar-wrapper:focus-within { border-color: #00ffff; outline: none; box-shadow: 0 0 8px #00ffff; }
+        
         #search { width: 100%; padding: 8px 30px 8px 10px; border: none; outline: none; background: transparent; font-size: 12px; color: #fff; }
+        #search:focus { outline: 2px solid #00ffff; border-radius: 4px; background: #1a1a1a; }
+        
         .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #444; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 12; }
         .clear-search:focus { background: red; outline: none; }
 
-        /* GRID POSTER DAFTAR HORIZONTAL/VERTIKAL */
         .grid { display: flex; flex-direction: column; gap: 5px; overflow-y: auto; flex: 1; padding: 2px; }
         .poster { cursor: pointer; border: 1px solid #222; border-radius: 4px; overflow: hidden; background: #141414; display: flex; align-items: center; padding: 4px; gap: 8px; height: auto; }
         .poster:focus { outline: 2px solid #00ffff !important; background: #003333 !important; box-shadow: 0 0 10px #00ffff !important; }
@@ -45,7 +45,6 @@
         .poster-title { padding: 0; font-size: 11px; text-align: left; font-weight: bold; color: #fff; flex: 1; }
         .poster:focus .poster-title { color: #00ffff; }
         
-        /* POPUP KATEGORI NEON */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; justify-content:center; align-items:center; }
         .popup-content { background:#111; padding:20px; border-radius:8px; width:80%; max-width:450px; border:2px solid #00ffff; position: relative; box-shadow: 0 0 15px #00ffff; }
         .close-x { position: absolute; top: -12px; right: -12px; width: 35px; height: 35px; background: red; color: white; border-radius: 50%; border: 2px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
@@ -54,7 +53,6 @@
         .eps-btn { display:block; width:100%; padding:8px 12px; margin:4px 0; background:#222; border:1px solid #333; border-radius:4px; color:white; text-align: left; font-size: 12px; font-weight: bold; cursor: pointer; }
         .eps-btn:focus { background:#00ffff; color:#000; outline: none; box-shadow: 0 0 8px #00ffff; }
 
-        /* KONTROL PLAYER DI BAWAH BINGKAI KIRI */
         .custom-controls { display: flex; flex-direction: column; gap: 4px; background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 6px; }
         .progress-container { display: flex; align-items: center; justify-content: center; width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 4px 10px; border-radius: 4px; }
         #seek-bar { flex: 1; margin: 0 10px; cursor: pointer; accent-color: #00ffff; height: 4px; }
@@ -65,7 +63,6 @@
         .btn-ctrl { background: #111; color: #00ffff; border: 1px solid #00ffff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-ctrl:focus { background: #00ffff; color: #000; outline: 2px solid #fff; box-shadow: 0 0 10px #00ffff; }
 
-        /* PENYESUAIAN TAMPILAN SAAT WADAH KIRI MENJADI FULLSCREEN */
         .player-side:fullscreen { padding: 12px; background: #000; }
         .player-side:-webkit-full-screen { padding: 12px; background: #000; }
     </style>
@@ -73,7 +70,7 @@
 <body>
 
     <div class="main-layout">
-        <!-- WADAH KIRI: PLAYER + KONTROL -->
+        <!-- KIRI: PLAYER & KONTROL -->
         <div class="player-side" id="leftPanelContainer">
             <div class="header-title">
                 📺 MRZYBtv STB PLAYER
@@ -91,21 +88,20 @@
                 </div>
 
                 <div class="buttons-container">
-                    <button class="btn-ctrl" onclick="putarKontenSampingnya(-1)">⏮</button>
-                    <button class="btn-ctrl" id="btnPlayPause" onclick="togglePlay()">||</button>
-                    <button class="btn-ctrl" onclick="putarKontenSampingnya(1)">⏭</button>
-                    <button class="btn-ctrl" id="btnCC" onclick="toggleSubtitle()">CC</button>
-                    <button class="btn-ctrl" id="btnFullscreen" onclick="toggleFullscreen()">⛶</button>
+                    <button class="btn-ctrl" id="btnPrev" tabindex="0" onclick="putarKontenSampingnya(-1)">⏮</button>
+                    <button class="btn-ctrl" id="btnPlayPause" tabindex="0" onclick="togglePlay()">||</button>
+                    <button class="btn-ctrl" id="btnNext" tabindex="0" onclick="putarKontenSampingnya(1)">⏭</button>
+                    <button class="btn-ctrl" id="btnCC" tabindex="0" onclick="toggleSubtitle()">CC</button>
+                    <button class="btn-ctrl" id="btnFullscreen" tabindex="0" onclick="toggleFullscreen()">⛶</button>
                 </div>
             </div>
         </div>
 
-        <!-- TAMPILAN KANAN (DAFTAR SONG & PENCARIAN) -->
+        <!-- KANAN: PENCARIAN & DAFTAR POSTER -->
         <div class="sidebar">
             <div class="navbar">
                 <div class="search-container">
                     <div class="search-bar-wrapper">
-                        <!-- Input diberi tabindex="0" langsung agar fokus memicu keyboard -->
                         <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0">
                     </div>
                     <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
@@ -132,7 +128,6 @@
     var currentEpisodes = [];
     var subtitleAktif = false;
 
-    // Inisialisasi Player Utama
     var player = plyr.setup(".js-player", { 
         controls: [],
         youtube: {
@@ -169,7 +164,6 @@
         }
     };
 
-    // Deteksi Tombol Back Remote Fisik (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             if (document.fullscreenElement || document.webkitFullscreenElement || $("#popup").is(":visible")) {
@@ -180,7 +174,6 @@
         }
     }, true);
 
-    // TOGGLE FULLSCREEN
     function toggleFullscreen() {
         const elem = document.getElementById("leftPanelContainer");
         const isFS = document.fullscreenElement || document.webkitFullscreenElement;
@@ -202,25 +195,24 @@
         }
     }
 
-    // LOGIKA PERBAIKAN PENCARIAN & POPUP KEYBOARD VIRTUAL
+    // PEMETIKAN PENCARIAN & VIRTUAL KEYBOARD
     $("#search").on('focus click', function() {
-        // Panggil pemicu bawaan Android/STB saat elemen fokus
         if (typeof Android !== "undefined" && Android.showKeyboard) {
             Android.showKeyboard();
         }
     });
 
     $("#search").on('keydown', function(e) {
-        // Jika menekan OK / Enter (13)
         if (e.keyCode === 13) {
             if (typeof Android !== "undefined" && Android.showKeyboard) {
                 Android.showKeyboard();
             }
-        } 
-        // Jika menekan Panah Bawah (40), pindah fokus ke poster pertama
-        else if (e.keyCode === 40) {
+        } else if (e.keyCode === 40) { // Panah Bawah -> Poster Pertama
             e.preventDefault();
             $(".poster").first().focus();
+        } else if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Tombol Fullscreen Player
+            e.preventDefault();
+            $("#btnFullscreen").focus();
         }
     });
 
@@ -241,6 +233,57 @@
         $(".poster").each(function() {
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
         });
+    });
+
+    // SISTEM NAVIGASI REMOT DI PANEL KONTROL PLAYER
+    // Panah Atas dari tombol kontrol -> Pindah ke Seek Bar
+    $(".btn-ctrl").on('keydown', function(e) {
+        if (e.keyCode === 38) { // Up
+            e.preventDefault();
+            $("#seek-bar").focus();
+        }
+    });
+
+    // Navigasi Khusus Tombol Paling Kanan & Paling Kiri
+    $("#btnFullscreen").on('keydown', function(e) {
+        if (e.keyCode === 39) { // Panah Kanan -> Pindah ke Kolom Cari
+            e.preventDefault();
+            $("#search").focus();
+        }
+    });
+
+    $("#seek-bar").on('keydown', function(e) {
+        let duration = player.getDuration();
+        if (!duration) return;
+
+        let currentTime = player.getCurrentTime();
+        let lompatDetik = 15;
+
+        if (e.keyCode === 37) { // Kiri
+            e.preventDefault();
+            let targetMundur = Math.max(0, currentTime - lompatDetik);
+            player.seek(targetMundur);
+            $(this).val((targetMundur / duration) * 100);
+        } else if (e.keyCode === 39) { // Kanan
+            e.preventDefault();
+            let targetMaju = Math.min(duration, currentTime + lompatDetik);
+            player.seek(targetMaju);
+            $(this).val((targetMaju / duration) * 100);
+        } else if (e.keyCode === 40) { // Bawah -> Pindah ke Play/Pause
+            e.preventDefault();
+            $("#btnPlayPause").focus();
+        } else if (e.keyCode === 38) { // Atas -> Pindah ke Kolom Cari
+            e.preventDefault();
+            $("#search").focus();
+        }
+    });
+
+    // NAVIGASI DARI POSTER KEMBALI KE PLAYER
+    $(document).on('keydown', '.poster', function(e) {
+        if (e.keyCode === 37) { // Panah Kiri pada Poster -> Pindah ke Play/Pause Player
+            e.preventDefault();
+            $("#btnPlayPause").focus();
+        }
     });
 
     // LOAD DATA JSON
@@ -284,7 +327,6 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // PEMUTARAN VIDEO
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
@@ -420,38 +462,6 @@
         if (player.getDuration()) {
             let seekTo = player.getDuration() * ($(this).val() / 100);
             player.seek(seekTo);
-        }
-    });
-
-    $("#seek-bar").on('keydown', function(e) {
-        let duration = player.getDuration();
-        if (!duration) return;
-
-        let currentTime = player.getCurrentTime();
-        let lompatDetik = 15;
-
-        if (e.keyCode == 37) { 
-            e.preventDefault();
-            let targetMundur = Math.max(0, currentTime - lompatDetik);
-            player.seek(targetMundur);
-            $(this).val((targetMundur / duration) * 100);
-        } 
-        else if (e.keyCode == 39) { 
-            e.preventDefault();
-            let targetMaju = Math.min(duration, currentTime + lompatDetik);
-            player.seek(targetMaju);
-            $(this).val((targetMaju / duration) * 100);
-        }
-        else if (e.keyCode == 40) { 
-            e.preventDefault();
-            $("#btnPlayPause").focus();
-        }
-    });
-
-    $("#btnPlayPause").on('keydown', function(e) {
-        if (e.keyCode == 38) { 
-            e.preventDefault();
-            $("#seek-bar").focus();
         }
     });
 </script>
