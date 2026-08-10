@@ -7,127 +7,246 @@
     <meta http-equiv="Expires" content="0" />
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TV Online Multi-Playlist (Light Edition)</title>
+    <title>TV Online Multi-Playlist (Dark Theme)</title>
 
     <style>
-    /* Desain ringan tanpa animasi/box-shadow berlebih untuk performa STB */
+    /* DESAIN SESUAI TAMPILAN GAMBAR */
     * { box-sizing: border-box; }
-    body { margin: 0; background: #111; font-family: Arial, sans-serif; color: #fff; }
-    .header-container { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #1a1a1a; flex-wrap: wrap; gap: 8px; }
-    h2 { margin: 0; font-size: 16px; }
+    body { 
+        margin: 0; 
+        background: #000; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        color: #fff; 
+        display: flex;
+        justify-content: flex-end;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
+    /* Layout Panel Samping (Sidebar) Kanan */
+    .app-container {
+        width: 100%;
+        max-width: 420px;
+        background: #121212;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #222;
+        padding: 12px;
+    }
+
+    .header-container { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 4px 0 12px 0; 
+    }
+    h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+
+    /* Tab Playlist P1 P2 P3 Merah Modern */
     .playlist-tabs { display: flex; gap: 6px; }
-    .tab-btn { background: #222; color: #aaa; border: 2px solid #444; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; outline: none; }
-    .tab-btn.active { background: #00bfff; color: #000; border-color: #00bfff; }
-    .tab-btn:focus { border-color: #fff; background: #fff; color: #000; }
+    .tab-btn { 
+        background: #252525; 
+        color: #aaa; 
+        border: none; 
+        padding: 6px 12px; 
+        border-radius: 6px; 
+        cursor: pointer; 
+        font-size: 13px; 
+        font-weight: bold; 
+        outline: none; 
+    }
+    .tab-btn.active { background: #e50914; color: #fff; }
+    .tab-btn:focus { outline: 2px solid #fff; }
 
-    #btnPengaturan { background: #333; color: #fff; border: 2px solid transparent; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; outline: none; }
-    #btnPengaturan:focus { border-color: #fff; background: #00bfff; color: #000; }
+    #btnPengaturan { 
+        background: #252525; 
+        color: #fff; 
+        border: none; 
+        padding: 6px 10px; 
+        border-radius: 6px; 
+        cursor: pointer; 
+        font-size: 14px; 
+        outline: none; 
+    }
+    #btnPengaturan:focus { outline: 2px solid #fff; background: #e50914; }
 
-    /* Modal Form Custom Playlist & UA */
-    #modalPlaylist { display: none; background: #222; padding: 12px; margin: 10px auto; width: 95%; border-radius: 6px; border: 1px solid #444; }
+    /* Modal Form Custom Playlist */
+    #modalPlaylist { 
+        display: none; 
+        background: #1c1c1c; 
+        padding: 12px; 
+        margin-bottom: 12px; 
+        border-radius: 8px; 
+        border: 1px solid #333; 
+    }
     .form-group { margin-bottom: 10px; }
     .form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 4px; }
 
     #modalPlaylist input[type="text"], #modalPlaylist select {
-        width: 100%; padding: 8px; border-radius: 4px; border: 2px solid #444; background: #111; color: #fff; outline: none; font-size: 13px;
+        width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #333; background: #111; color: #fff; outline: none; font-size: 13px;
     }
-    #modalPlaylist input[type="text"]:focus, #modalPlaylist select:focus { border-color: #00bfff; }
+    #modalPlaylist input[type="text"]:focus, #modalPlaylist select:focus { border-color: #e50914; }
 
     .modal-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
     .button-group-row { display: flex; gap: 6px; }
-    .modal-buttons button { padding: 8px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; outline: none; }
+    .modal-buttons button { padding: 8px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; outline: none; }
 
     .btn-file { background: #2ed573; color: #000; width: 100%; }
-    .btn-save { background: #00bfff; color: #000; flex: 1; }
-    .btn-reset { background: #ff4757; color: #fff; flex: 1; }
+    .btn-save { background: #e50914; color: #fff; flex: 1; }
+    .btn-reset { background: #333; color: #fff; flex: 1; }
 
-    .btn-file:focus, .btn-save:focus, .btn-reset:focus { border: 2px solid #fff; }
+    /* Search Box */
+    #search { 
+        width: 100%; 
+        margin-bottom: 12px; 
+        padding: 10px 14px; 
+        border-radius: 8px; 
+        border: 1px solid #282828; 
+        font-size: 13px; 
+        outline: none; 
+        background: #1c1c1c; 
+        color: #fff; 
+    }
+    #search:focus { border-color: #e50914; background: #222; }
 
-    #search { width: 95%; margin: 8px auto; display: block; padding: 10px; border-radius: 6px; border: 2px solid #333; font-size: 14px; outline: none; background: #222; color: #fff; }
-    #search:focus { border-color: #00bfff; background: #000; }
+    /* Kategori Pill Merah Horizontal */
+    #kategori { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; scrollbar-width: none; }
+    #kategori::-webkit-scrollbar { display: none; }
+    #kategori button { 
+        background: #1c1c1c; 
+        color: #aaa; 
+        border: none; 
+        padding: 8px 16px; 
+        border-radius: 20px; 
+        white-space: nowrap; 
+        cursor: pointer; 
+        outline: none; 
+        flex-shrink: 0; 
+        font-size: 12px; 
+        font-weight: 600;
+    }
+    #kategori button.active { background: #e50914; color: #fff; }
+    #kategori button:focus { outline: 2px solid #fff; }
 
-    #kategori { display: flex; gap: 8px; overflow-x: auto; padding: 8px 10px; }
-    #kategori button { background: #333; color: #fff; border: 2px solid transparent; padding: 8px 14px; border-radius: 16px; white-space: nowrap; cursor: pointer; outline: none; flex-shrink: 0; font-size: 13px; }
-    #kategori button.active { background: #00bfff; color: #000; font-weight: bold; }
-    #kategori button:focus { background: #fff; color: #000; border-color: #00bfff; }
+    /* List Vertikal Channel seperti Gambar */
+    .grid { display: flex; flex-direction: column; gap: 8px; }
+    .item { 
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer; 
+        outline: none; 
+        background: #1c1c1c; 
+        border-radius: 8px; 
+        padding: 8px 12px;
+        border: 2px solid transparent; 
+        transition: background 0.2s;
+    }
+    .item img { 
+        width: 60px; 
+        height: 36px; 
+        object-fit: contain; 
+        background: #000; 
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+    .item-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .item-title { 
+        font-size: 14px; 
+        font-weight: bold; 
+        color: #fff;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        margin: 0;
+    }
+    .item-sub {
+        font-size: 11px;
+        color: #777;
+        margin-top: 2px;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis;
+    }
+    .item:focus { border-color: #fff; background: #282828; }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 10px; }
-    .item { cursor: pointer; outline: none; background: #1a1a1a; border-radius: 6px; overflow: hidden; border: 2px solid transparent; }
-    .item img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #222; display: block; }
-    .item p { text-align: center; margin: 6px 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
-    .item:focus { border-color: #00bfff; background: #252525; }
-
-    #customToast { visibility: hidden; min-width: 200px; background-color: #222; color: #fff; text-align: center; border-radius: 6px; padding: 8px 12px; position: fixed; z-index: 9999; left: 50%; bottom: 20px; transform: translateX(-50%); font-size: 13px; border: 1px solid #00bfff; pointer-events: none; }
+    #customToast { visibility: hidden; min-width: 200px; background-color: #222; color: #fff; text-align: center; border-radius: 6px; padding: 8px 12px; position: fixed; z-index: 9999; left: 50%; bottom: 20px; transform: translateX(-50%); font-size: 13px; border: 1px solid #e50914; pointer-events: none; }
     #customToast.show { visibility: visible; }
     </style>
 </head>
 <body>
 
-<div class="header-container">
-    <h2>TV ONLINE</h2>
-    
-    <div class="playlist-tabs">
-        <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')">Playlist 1</button>
-        <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')">Playlist 2</button>
-        <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">Playlist 3</button>
-    </div>
-
-    <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️ Sunting</button>
-</div>
-
-<!-- Modal Sunting Playlist & User-Agent -->
-<div id="modalPlaylist">
-    <div class="form-group" id="containerCustomUrl">
-        <label for="inputCustomUrl">URL Remote Playlist:</label>
-        <input type="text" id="inputCustomUrl" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
-               onkeydown="handleInputKey(event, this)"
-               onclick="aktifkanKeyboard(this)" 
-               onblur="nonaktifkanKeyboard(this)">
-    </div>
-
-    <div class="form-group">
-        <label for="selectUAMode">Pilih User-Agent Mode:</label>
-        <select id="selectUAMode" tabindex="0" onchange="gantiUAMode()">
-            <option value="default">Default / Bawaan</option>
-            <option value="lgadrm">LGADRM MPD Player (Rekomendasi URL Gelap)</option>
-            <option value="tivimate_new">TiviMate 5.1.6</option>
-            <option value="ott_player">OTT Player 1.7.4.1</option>
-            <option value="mozilla_m3u">Mozilla m3u-ip.tv</option>
-            <option value="ott_nav">OTT Navigator 1.9.6.4</option>
-            <option value="tivimate">TiviMate 4.6.1</option>
-            <option value="vlc">VLC 3.0.18</option>
-            <option value="custom">Custom (Ketik Manual)</option>
-        </select>
-    </div>
-
-    <div class="form-group" id="containerCustomUA" style="display: none;">
-        <label for="inputCustomUA">Teks User-Agent Custom:</label>
-        <input type="text" id="inputCustomUA" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
-               onkeydown="handleInputKey(event, this)"
-               onclick="aktifkanKeyboard(this)" 
-               onblur="nonaktifkanKeyboard(this)">
-    </div>
-    
-    <div class="modal-buttons">
-        <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()">📁 Impor Media Lokal (.m3u)</button>
-        <div class="button-group-row">
-            <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPengaturan()">SIMPAN</button>
-            <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET SLOT INI</button>
+<div class="app-container">
+    <div class="header-container">
+        <h2>mrzyb.tv</h2>
+        
+        <div class="playlist-tabs">
+            <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')">P1</button>
+            <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')">P2</button>
+            <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">P3</button>
         </div>
+
+        <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️</button>
     </div>
 
-    <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
+    <!-- Modal Sunting Playlist & User-Agent -->
+    <div id="modalPlaylist">
+        <div class="form-group" id="containerCustomUrl">
+            <label for="inputCustomUrl">URL Remote Playlist:</label>
+            <input type="text" id="inputCustomUrl" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
+                   onkeydown="handleInputKey(event, this)"
+                   onclick="aktifkanKeyboard(this)" 
+                   onblur="nonaktifkanKeyboard(this)">
+        </div>
+
+        <div class="form-group">
+            <label for="selectUAMode">Pilih User-Agent Mode:</label>
+            <select id="selectUAMode" tabindex="0" onchange="gantiUAMode()">
+                <option value="default">Default / Bawaan</option>
+                <option value="lgadrm">LGADRM MPD Player (Rekomendasi URL Gelap)</option>
+                <option value="tivimate_new">TiviMate 5.1.6</option>
+                <option value="ott_player">OTT Player 1.7.4.1</option>
+                <option value="mozilla_m3u">Mozilla m3u-ip.tv</option>
+                <option value="ott_nav">OTT Navigator 1.9.6.4</option>
+                <option value="tivimate">TiviMate 4.6.1</option>
+                <option value="vlc">VLC 3.0.18</option>
+                <option value="custom">Custom (Ketik Manual)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="containerCustomUA" style="display: none;">
+            <label for="inputCustomUA">Teks User-Agent Custom:</label>
+            <input type="text" id="inputCustomUA" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
+                   onkeydown="handleInputKey(event, this)"
+                   onclick="aktifkanKeyboard(this)" 
+                   onblur="nonaktifkanKeyboard(this)">
+        </div>
+        
+        <div class="modal-buttons">
+            <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()">📁 Impor Media Lokal (.m3u)</button>
+            <div class="button-group-row">
+                <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPengaturan()">SIMPAN</button>
+                <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET SLOT INI</button>
+            </div>
+        </div>
+
+        <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
+    </div>
+
+    <input id="search" tabindex="0" type="text" readonly placeholder="Cari channel... (Tekan OK)" 
+           oninput="cariChannel()" 
+           onkeydown="handleSearchKey(event)" 
+           onclick="aktifkanKeyboard(this)" 
+           onblur="nonaktifkanKeyboard(this)">
+
+    <div id="kategori"></div>
+    <div class="grid" id="tvList">Memuat TV...</div>
 </div>
-
-<input id="search" tabindex="0" type="text" readonly placeholder="Cari channel... (Tekan OK)" 
-       oninput="cariChannel()" 
-       onkeydown="handleSearchKey(event)" 
-       onclick="aktifkanKeyboard(this)" 
-       onblur="nonaktifkanKeyboard(this)">
-
-<div id="kategori"></div>
-<div class="grid" id="tvList">Memuat TV...</div>
 
 <div id="customToast">Notifikasi</div>
 
@@ -250,7 +369,7 @@ function muatDataTV() {
         muatDariURL(customUrl);
     } else {
         semuaTV = [];
-        document.getElementById("tvList").innerHTML = "Slot ini masih kosong. Klik '⚙️ Sunting' untuk menambah M3U.";
+        document.getElementById("tvList").innerHTML = "Slot ini masih kosong. Klik '⚙️' untuk menambah M3U.";
         buatKategori();
     }
 }
@@ -314,6 +433,7 @@ function formatGambarOptimized(url) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=180&output=webp&q=60`;
 }
 
+// Penyesuaian HTML item vertikal dengan sub-kategori
 function buatElemenHTMLTV(tv, index) {
     let safeUrl = (tv.url || "").replace(/'/g, "\\'");
     let safeUA = (tv.userAgent || "").replace(/'/g, "\\'");
@@ -327,7 +447,10 @@ function buatElemenHTMLTV(tv, index) {
          onkeydown="handleItemKey(event, ${index})"
          onclick="pilihDanPlay(${index}, '${safeUrl}', '${safeUA}', '${safeRef}', '${safeDrm}', '${safeKey}', '${safeLicUrl}')">
         <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x84?text=No+Logo';">
-        <p>${tv.name}</p>
+        <div class="item-info">
+            <div class="item-title">${tv.name}</div>
+            <div class="item-sub">${tv.group || "Umum"}</div>
+        </div>
     </div>
     `;
 }
@@ -423,16 +546,10 @@ function handleCategoryKey(event, index, totalKat) {
 }
 
 function handleItemKey(event, index) {
-    if (event.key === 'ArrowUp') {
-        let gridContainer = document.getElementById("tvList");
-        let containerWidth = gridContainer ? gridContainer.clientWidth : 800;
-        let columns = Math.max(1, Math.floor(containerWidth / 160));
-
-        if (index < columns) {
-            event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) activeCategoryBtn.focus();
-        }
+    if (event.key === 'ArrowUp' && index === 0) {
+        event.preventDefault();
+        let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+        if (activeCategoryBtn) activeCategoryBtn.focus();
     }
 }
 
