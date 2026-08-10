@@ -17,9 +17,7 @@
         .player-side { flex: 1.8; display: flex; flex-direction: column; gap: 6px; position: relative; background: #050505; }
         .header-title { color: #00ffff; font-weight: bold; font-size: 13px; text-shadow: 0 0 5px #00ffff; display: flex; align-items: center; gap: 6px; }
         
-        /* PLAYER DIBUAT NON-POINTER AGAR TIDAK MENCURI FOKUS REMOTE */
         .video-wrapper { position: relative; width: 100%; flex: 1; border: 2px solid #00ffff; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); overflow: hidden; background: #000; pointer-events: none; }
-        
         .video-wrapper .plyr { width: 100% !important; height: 100% !important; background: #000 !important; pointer-events: none !important; }
         .video-wrapper .plyr__video-wrapper, .video-wrapper .plyr__video-embed { width: 100% !important; height: 100% !important; padding-bottom: 0 !important; pointer-events: none !important; }
         .video-wrapper iframe { width: 100% !important; height: 100% !important; border: none; pointer-events: none !important; }
@@ -28,7 +26,6 @@
         .navbar { padding: 0; background: transparent; }
         .search-container { position: relative; width: 100%; }
         .search-bar-wrapper { width: 100%; background: #1a1a1a; border-radius: 4px; border: 1px solid #333; display: flex; align-items: center; }
-        .search-bar-wrapper:focus-within { border-color: #00ffff; outline: none; box-shadow: 0 0 8px #00ffff; }
         
         #search { width: 100%; padding: 8px 30px 8px 10px; border: none; outline: none; background: transparent; font-size: 12px; color: #fff; }
         #search:focus { outline: 2px solid #00ffff; border-radius: 4px; background: #1a1a1a; }
@@ -60,9 +57,6 @@
         .buttons-container { display: flex; justify-content: center; gap: 6px; }
         .btn-ctrl { background: #111; color: #00ffff; border: 1px solid #00ffff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-ctrl:focus { background: #00ffff; color: #000; outline: 2px solid #fff; box-shadow: 0 0 10px #00ffff; }
-
-        .player-side:fullscreen { padding: 12px; background: #000; }
-        .player-side:-webkit-full-screen { padding: 12px; background: #000; }
     </style>
 </head>
 <body>
@@ -98,7 +92,8 @@
             <div class="navbar">
                 <div class="search-container">
                     <div class="search-bar-wrapper">
-                        <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0">
+                        <!-- TAMBAHAN: readonly diset secara default agar browser STB tidak otomatis memunculkan keyboard saat kena fokus panah remote -->
+                        <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0" readonly>
                     </div>
                     <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
                 </div>
@@ -198,23 +193,36 @@
         }
     }
 
-    // FIX 1: KEYBOARD POPUP HANYA MUNCUL SAAT TEKAN OK (ENTER / KEYCODE 13)
-    $("#search").on('click', function() {
+    // --- FIX KHUSUS KEYBOARD PENCARIAN ---
+    // Ketika hanya kena fokus panah remote, input tetap readonly sehingga keyboard TIDAK MUNCUL.
+    $("#search").on('blur', function() {
+        $(this).attr('readonly', true);
+    });
+
+    // Panggil keyboard HANYA ketika tombol OK (Enter / keyCode 13) atau Klik Layar dilakukan
+    function aktifkanKeyboard() {
+        const input = $("#search");
+        input.removeAttr('readonly');
         if (typeof Android !== "undefined" && Android.showKeyboard) {
             Android.showKeyboard();
         }
+    }
+
+    $("#search").on('click', function() {
+        aktifkanKeyboard();
     });
 
     $("#search").on('keydown', function(e) {
-        if (e.keyCode === 13) { // Hanya panggil keyboard jika tombol OK/Enter ditekan
-            if (typeof Android !== "undefined" && Android.showKeyboard) {
-                Android.showKeyboard();
-            }
-        } else if (e.keyCode === 40) { 
+        if (e.keyCode === 13) { // Hanya aktif saat tekan OK / Enter
             e.preventDefault();
+            aktifkanKeyboard();
+        } else if (e.keyCode === 40) { // Panah Bawah ke Poster
+            e.preventDefault();
+            $(this).attr('readonly', true);
             $(".poster").first().focus();
-        } else if (e.keyCode === 37) { 
+        } else if (e.keyCode === 37) { // Panah Kiri ke Fullscreen
             e.preventDefault();
+            $(this).attr('readonly', true);
             $("#btnFullscreen").focus();
         }
     });
@@ -326,7 +334,6 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // FIX 2 & 3: AUTOPLAY DAN SUARA DIPASTIKAN BISA DI STB & HP
     function playFullscreen(url, index, title) {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         localStorage.setItem(pageTitle + "_index_sekarang", index);
@@ -341,7 +348,6 @@
             currentVideoUrl = url;
             player.pause();
             
-            // Muat sumber baru dengan dukungan autoplay dan audio unmuted
             player.source({
                 type: "video",
                 sources: [{ src: url, type: "youtube" }],
@@ -362,7 +368,6 @@
             });
         }
         
-        // Memastikan pemutaran dan un-mute dipicu berulang secara aman agar STB merespons
         setTimeout(() => {
             player.unMute();
             player.setVolume(100);
@@ -373,7 +378,6 @@
                     player.unMute();
                     player.setVolume(100);
                 }).catch(error => {
-                    // Jika autoplay terhalang aturan STB, coba ulang pemutaran
                     player.play();
                 });
             }
