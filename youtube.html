@@ -30,7 +30,6 @@
         #search { width: 100%; padding: 8px 30px 8px 10px; border: none; outline: none; background: transparent; font-size: 12px; color: #fff; }
         #search:focus { outline: 2px solid #00ffff; border-radius: 4px; background: #1a1a1a; }
         
-        /* Disesuaikan agar indikator fokus pada tombol X jelas saat disorot remote */
         .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 12; }
         .clear-search:focus { background: red; outline: 2px solid #00ffff; color: #fff; transform: translateY(-50%) scale(1.1); }
 
@@ -95,7 +94,6 @@
                     <div class="search-bar-wrapper">
                         <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0" readonly>
                     </div>
-                    <!-- PERBAIKAN: tabindex diubah dari -1 menjadi 0 agar bisa di-fokus oleh remote -->
                     <button id="clear-btn" class="clear-search" tabindex="0">X</button>
                 </div>
             </div>
@@ -118,6 +116,9 @@
     const jsonUrl = "https://mrzybtv-api.ukielaki88.workers.dev/api/youtube"; 
     var currentEpisodes = [];
     var subtitleAktif = false;
+    
+    // VARIABEL UNTUK MENYIMPAN POSTER HAFALAN/YANG SEDANG DIPUTAR
+    var lastActivePoster = null;
 
     var player = plyr.setup(".js-player", { 
         controls: [],
@@ -212,16 +213,16 @@
     });
 
     $("#search").on('keydown', function(e) {
-        if (e.keyCode === 13) { // OK / Enter
+        if (e.keyCode === 13) { 
             e.preventDefault();
             aktifkanKeyboard();
-        } else if (e.keyCode === 39) { // Panah Kanan -> Pindah ke tombol Hapus (X) jika muncul
+        } else if (e.keyCode === 39) { 
             if ($("#clear-btn").is(":visible")) {
                 e.preventDefault();
                 $(this).attr('readonly', true);
                 $("#clear-btn").focus();
             }
-        } else if (e.keyCode === 40) { // Panah Bawah -> Pindah ke Poster Terlihat
+        } else if (e.keyCode === 40) { 
             e.preventDefault();
             $(this).attr('readonly', true);
             $(this).blur();
@@ -230,7 +231,7 @@
             if (firstPoster.length > 0) {
                 firstPoster.focus();
             }
-        } else if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Player Control
+        } else if (e.keyCode === 37) { 
             e.preventDefault();
             $(this).attr('readonly', true);
             $(this).blur();
@@ -238,24 +239,22 @@
         }
     });
 
-    // NAVIGASI TOMBOL X (CLEAR SEARCH)
     $("#clear-btn").on('keydown', function(e) {
-        if (e.keyCode === 37) { // Panah Kiri -> Balik ke Kolom Pencarian
+        if (e.keyCode === 37) { 
             e.preventDefault();
             $("#search").focus();
-        } else if (e.keyCode === 40) { // Panah Bawah -> Ke Poster
+        } else if (e.keyCode === 40) { 
             e.preventDefault();
             const firstPoster = $(".poster:visible").first();
             if (firstPoster.length > 0) {
                 firstPoster.focus();
             }
-        } else if (e.keyCode === 13) { // Tombol OK -> Eksekusi Hapus
+        } else if (e.keyCode === 13) { 
             e.preventDefault();
             $(this).click();
         }
     });
 
-    // AKSUS HAPUS TEKS PENCARIAN
     $("#clear-btn").on('click', function() {
         $("#search").val("");
         $(".poster").show();
@@ -277,18 +276,31 @@
         });
     });
 
-    // NAVIGASI REMOTE CONTROL
+    // FUNGSI UNTUK KEMBALI KE SIDEBAR (POSTER AKTIF ATAU SEARCH)
+    function kembalikeSidebar() {
+        if (lastActivePoster && $(lastActivePoster).is(":visible")) {
+            $(lastActivePoster).focus();
+            lastActivePoster.scrollIntoView({ behavior: "auto", block: "center" });
+        } else {
+            const firstPoster = $(".poster:visible").first();
+            if (firstPoster.length > 0) {
+                firstPoster.focus();
+            } else {
+                $("#search").focus();
+            }
+        }
+    }
+
+    // NAVIGASI TOMBOL PLAYER SEBELAH KANAN
     $(".btn-ctrl").on('keydown', function(e) {
-        if (e.keyCode === 38) {
+        if (e.keyCode === 38) { // Panah Atas -> Seek Bar
             e.preventDefault();
             $("#seek-bar").focus();
-        }
-    });
-
-    $("#btnFullscreen").on('keydown', function(e) {
-        if (e.keyCode === 39) {
-            e.preventDefault();
-            $("#search").focus();
+        } else if (e.keyCode === 39) { // Panah Kanan -> Kembali ke Poster Aktif
+            if (this.id === "btnFullscreen" || this.id === "btnCC" || this.id === "btnNext") {
+                e.preventDefault();
+                kembalikeSidebar();
+            }
         }
     });
 
@@ -316,6 +328,11 @@
             e.preventDefault();
             $("#search").focus();
         }
+    });
+
+    // MENYIMPAN POSTER YANG SEDANG DIFOKUS/DIPILIH
+    $(document).on('focus', '.poster', function() {
+        lastActivePoster = this;
     });
 
     // NAVIGASI ANTAR POSTER DENGAN PANAH
