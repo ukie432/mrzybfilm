@@ -60,7 +60,7 @@
         .btn-ctrl { background: #111; color: #00ffff; border: 1px solid #00ffff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-ctrl:focus { background: #00ffff; color: #000; outline: 2px solid #fff; box-shadow: 0 0 10px #00ffff; }
 
-        /* --- ATURAN FULLSCREEN (STRETCH FULL LAYAR & OVERLAY CONTROLS) --- */
+        /* --- ATURAN FULLSCREEN --- */
         .player-side:fullscreen, .player-side:-webkit-full-screen {
             width: 100vw !important;
             height: 100vh !important;
@@ -104,7 +104,7 @@
             border: 1px solid rgba(0, 255, 255, 0.5) !important;
         }
 
-        /* --- KELAS UNTUK MENYEMBUNYIKAN KONTROL SECARA MUTLAK --- */
+        /* Kelas untuk menyembunyikan kontrol otomatis */
         .custom-controls.controls-hidden {
             opacity: 0 !important;
             visibility: hidden !important;
@@ -176,7 +176,7 @@
     
     var lastActivePoster = null;
 
-    // --- TIMEOUT UNTUK AUTO-HIDE CONTROLS (5 DETIK) ---
+    // --- TIMEOUT AUTO-HIDE CONTROLS (5 DETIK) ---
     var controlsTimeout = null;
 
     function resetControlsTimer() {
@@ -192,7 +192,6 @@
     }
 
     function hideControls() {
-        // Lepas fokus jika sedang di dalam area tombol kontrol agar CSS :focus tidak menahannya
         var activeEl = document.activeElement;
         if (activeEl && ($(activeEl).hasClass("btn-ctrl") || activeEl.id === "seek-bar")) {
             activeEl.blur();
@@ -200,18 +199,10 @@
         $("#controls").addClass("controls-hidden");
     }
 
-    // Deteksi sembarang tombol remote / keyboard / sentuhan untuk memunculkan kontrol kembali
-    window.addEventListener("keydown", function() {
-        resetControlsTimer();
-    }, true);
-
-    window.addEventListener("mousemove", function() {
-        resetControlsTimer();
-    });
-
-    window.addEventListener("touchstart", function() {
-        resetControlsTimer();
-    });
+    // Event penangkap tombol/mouse/sentuhan
+    window.addEventListener("keydown", function() { resetControlsTimer(); }, true);
+    window.addEventListener("mousemove", function() { resetControlsTimer(); });
+    window.addEventListener("touchstart", function() { resetControlsTimer(); });
 
     var player = plyr.setup(".js-player", { 
         controls: [],
@@ -545,7 +536,16 @@
             
             $("#btnPlayPause").focus(); 
 
+            // RESET STATE SUBTITLE (CC) SAAT GANTI VIDEO
             subtitleAktif = false;
+            const iframe = document.querySelector('.video-wrapper iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'unloadModule',
+                    args: ['captions']
+                }), '*');
+            }
             $("#btnCC").css("border", "1px solid #00ffff");
             resetControlsTimer();
         }, 500); 
@@ -594,16 +594,34 @@
         resetControlsTimer();
     }
     
+    // --- PERBAIKAN UTAMA FUNGSI TOGGLE SUBTITLE (CC) ---
     function toggleSubtitle() {
         subtitleAktif = !subtitleAktif;
         const iframe = document.querySelector('.video-wrapper iframe');
-        const funcCommand = subtitleAktif ? 'loadCaps' : 'unloadCaps';
-        if (player && typeof player.toggleCaptions === "function") {
-            player.toggleCaptions(subtitleAktif);
-        }
+        
         if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: funcCommand }), '*');
+            if (subtitleAktif) {
+                // Panggil modul subtitle YouTube & atur Bahasa Indonesia
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'loadModule',
+                    args: ['captions']
+                }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'setOption',
+                    args: ['captions', 'track', { languageCode: 'id' }]
+                }), '*');
+            } else {
+                // Lepas modul subtitle agar teks & latar hitam hilang total
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'unloadModule',
+                    args: ['captions']
+                }), '*');
+            }
         }
+        
         $("#btnCC").css("border", subtitleAktif ? "2px solid #00ffff" : "1px solid #00ffff");
         resetControlsTimer();
     }
