@@ -9,7 +9,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>TV Online Multi-Playlist (Light Edition)</title>
 
-    <!-- Library HLS.js untuk memutar .m3u8 di dalam HTML -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
@@ -19,20 +18,32 @@
     .main-container { display: flex; width: 100vw; height: 100vh; }
     
     /* Area Player Sisi Kiri */
-    .player-container { flex: 1; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-    #inlinePlayer { width: 100%; height: 100%; object-fit: contain; background: #000; }
-    
-    /* Tombol Overlay Fullscreen ExoPlayer Native */
-    .btn-fullscreen-native { 
-        position: absolute; bottom: 20px; left: 20px; z-index: 20; 
-        background: rgba(229, 9, 20, 0.85); color: #fff; border: 2px solid #fff; 
-        padding: 10px 16px; border-radius: 6px; font-weight: bold; font-size: 13px; 
-        cursor: pointer; outline: none; display: none;
+    .player-container { 
+        flex: 1; background: #111; display: flex; flex-direction: column; 
+        align-items: center; justify-content: center; position: relative; border-right: 1px solid #333;
     }
-    .btn-fullscreen-native:focus { background: #fff; color: #000; border-color: #e50914; }
+    #inlinePlayer { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; }
+    #inlinePlayer:focus { border: 3px solid #e50914; }
+
+    .player-overlay-info {
+        position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); 
+        padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; pointer-events: none;
+    }
+
+    /* Controls Overlay yang Bisa Di-fokus Remote */
+    .player-controls {
+        position: absolute; bottom: 20px; display: flex; gap: 10px; z-index: 20;
+    }
+    .btn-player { 
+        background: rgba(0, 0, 0, 0.85); color: #fff; border: 2px solid #555; 
+        padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 13px; 
+        cursor: pointer; outline: none;
+    }
+    /* Effect Fokus Remote STB */
+    .btn-player:focus { background: #e50914; color: #fff; border-color: #fff; transform: scale(1.05); }
 
     /* Sidebar Kanan */
-    .sidebar { width: 340px; background: rgba(20, 20, 20, 0.95); height: 100vh; display: flex; flex-direction: column; border-left: 1px solid #333; z-index: 10; }
+    .sidebar { width: 340px; background: rgba(20, 20, 20, 0.95); height: 100vh; display: flex; flex-direction: column; z-index: 10; }
     .header-container { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #181818; border-bottom: 1px solid #333; gap: 8px; }
     h2 { margin: 0; font-size: 16px; font-weight: bold; color: #fff; }
 
@@ -86,15 +97,21 @@
 <body>
 
 <div class="main-container">
-    <!-- Pemutar Sisi Kiri -->
+    <!-- Player & Tombol Remote STB -->
     <div class="player-container">
-        <video id="inlinePlayer" controls autoplay muted></video>
-        <button id="btnNativeFull" class="btn-fullscreen-native" tabindex="0" onclick="bukaExoPlayerNative()">
-            📺 Fullscreen (ExoPlayer)
-        </button>
+        <div class="player-overlay-info" id="channelInfo">Pilih Channel...</div>
+        <video id="inlinePlayer" tabindex="0"></video>
+        
+        <div class="player-controls">
+            <button id="btnNativeFull" class="btn-player" tabindex="0" 
+                    onkeydown="handlePlayerControlKey(event)" 
+                    onclick="bukaExoPlayerNative()">
+                📺 Putar ExoPlayer (Full)
+            </button>
+        </div>
     </div>
 
-    <!-- Sidebar Sisi Kanan -->
+    <!-- Sidebar Kanan -->
     <div class="sidebar">
         <div class="header-container">
             <h2>mrzyb.tv</h2>
@@ -172,7 +189,31 @@ let semuaTV = [];
 let hlsPlayer = null;
 let currentPlayingChannel = null;
 
-// --- D-PAD & KEYBOARD ---
+// --- D-PAD CONTROL UNTUK PLAYER & SIDEBAR ---
+function handleItemKey(event, index) {
+    if (event.key === 'ArrowUp') {
+        if (index === 0) {
+            event.preventDefault();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
+        }
+    } else if (event.key === 'ArrowLeft') {
+        // Navigasi D-PAD: Panah Kiri dari daftar channel berpindah ke Tombol Player
+        event.preventDefault();
+        document.getElementById("btnNativeFull").focus();
+    }
+}
+
+function handlePlayerControlKey(event) {
+    if (event.key === 'ArrowRight') {
+        // Panah Kanan dari Player kembali ke daftar channel
+        event.preventDefault();
+        let lastIndex = ambilDataStorage("lastFocusedIndex") || 0;
+        let item = document.getElementById(`item-${lastIndex}`);
+        if (item) item.focus();
+    }
+}
+
 function aktifkanKeyboard(elem) {
     elem.removeAttribute('readonly');
     elem.focus();
@@ -353,7 +394,7 @@ function buatElemenHTMLTV(tv, index) {
     return `
     <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+         onclick="pilihDanPlay(${index}, '${tv.name}', '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
         <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x84?text=No+Logo';">
         <div class="item-info">
             <span class="title">${tv.name}</span>
@@ -453,16 +494,6 @@ function handleCategoryKey(event, index, totalKat) {
     }
 }
 
-function handleItemKey(event, index) {
-    if (event.key === 'ArrowUp') {
-        if (index === 0) {
-            event.preventDefault();
-            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
-            if (activeCategoryBtn) activeCategoryBtn.focus();
-        }
-    }
-}
-
 function pilihKategori(g, element) {
     kategoriAktif = g;
     simpanDataStorage("lastCategory", g);
@@ -487,21 +518,18 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// --- PEMUTARAN VIDEO IN-APP & NATIVE ---
-function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+// --- PEMUTARAN CHANNEL ---
+function pilihDanPlay(index, name, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
 
     let activeGlobalUA = ambilUserAgentAktif();
     let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
 
-    // Simpan objek parameter untuk dikirim ke ExoPlayer jika diklik Fullscreen
-    currentPlayingChannel = { url, finalUA, referer, drm, licenseKey, licenseUrl };
-    
-    // Tampilkan tombol Fullscreen Native
-    document.getElementById("btnNativeFull").style.display = "block";
+    currentPlayingChannel = { name, url, finalUA, referer, drm, licenseKey, licenseUrl };
+    document.getElementById("channelInfo").innerText = "Menyiapkan: " + name;
 
-    // 1. Coba Putar Inline di samping pakai Tag HTML5 / Hls.js
+    // Coba putar inline jika format mendukung
     putarInlineHTML(url);
 }
 
@@ -517,28 +545,19 @@ function putarInlineHTML(url) {
         hlsPlayer = new Hls();
         hlsPlayer.loadSource(url);
         hlsPlayer.attachMedia(video);
-        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
-            video.play();
-        });
-        hlsPlayer.on(Hls.Events.ERROR, function() {
-            showToast("Video inline gagal, gunakan tombol Fullscreen ExoPlayer");
-        });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.play();
+        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () { video.play(); });
     } else {
         video.src = url;
-        video.play().catch(() => {
-            showToast("Format butuh player ExoPlayer Native (Klik Fullscreen)");
-        });
+        video.play().catch(() => {});
     }
 }
 
-// 2. Fungsi memanggil fungsi Android Native bawaan Anda saat klik Fullscreen
 function bukaExoPlayerNative() {
-    if (!currentPlayingChannel) return;
+    if (!currentPlayingChannel) {
+        showToast("Pilih channel terlebih dahulu!");
+        return;
+    }
     
-    // Hentikan video inline saat pindah ke ExoPlayer
     let video = document.getElementById("inlinePlayer");
     video.pause();
     
