@@ -92,7 +92,6 @@
             <div class="navbar">
                 <div class="search-container">
                     <div class="search-bar-wrapper">
-                        <!-- TAMBAHAN: readonly diset secara default agar browser STB tidak otomatis memunculkan keyboard saat kena fokus panah remote -->
                         <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0" readonly>
                     </div>
                     <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
@@ -193,13 +192,11 @@
         }
     }
 
-    // --- FIX KHUSUS KEYBOARD PENCARIAN ---
-    // Ketika hanya kena fokus panah remote, input tetap readonly sehingga keyboard TIDAK MUNCUL.
+    // --- NAVIGASI PENCARIAN DENGAN REMOTE ---
     $("#search").on('blur', function() {
         $(this).attr('readonly', true);
     });
 
-    // Panggil keyboard HANYA ketika tombol OK (Enter / keyCode 13) atau Klik Layar dilakukan
     function aktifkanKeyboard() {
         const input = $("#search");
         input.removeAttr('readonly');
@@ -212,17 +209,24 @@
         aktifkanKeyboard();
     });
 
+    // PERBAIKAN NAVIGASI PANAH DI KOLOM PENCARIAN
     $("#search").on('keydown', function(e) {
-        if (e.keyCode === 13) { // Hanya aktif saat tekan OK / Enter
+        if (e.keyCode === 13) { // OK / Enter
             e.preventDefault();
             aktifkanKeyboard();
-        } else if (e.keyCode === 40) { // Panah Bawah ke Poster
+        } else if (e.keyCode === 40) { // Panah Bawah: Paksa Pindah Fokus ke Poster Terlihat Pertama
             e.preventDefault();
             $(this).attr('readonly', true);
-            $(".poster").first().focus();
-        } else if (e.keyCode === 37) { // Panah Kiri ke Fullscreen
+            $(this).blur(); // Lepas fokus dari input
+            
+            const firstPoster = $(".poster:visible").first();
+            if (firstPoster.length > 0) {
+                firstPoster.focus();
+            }
+        } else if (e.keyCode === 37) { // Panah Kiri ke Tombol Player
             e.preventDefault();
             $(this).attr('readonly', true);
+            $(this).blur();
             $("#btnFullscreen").focus();
         }
     });
@@ -241,6 +245,8 @@
         } else {
             $("#clear-btn").css("display", "none").attr("tabindex", "-1");
         }
+        
+        // Filter poster
         $(".poster").each(function() {
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
         });
@@ -287,10 +293,25 @@
         }
     });
 
+    // NAVIGASI ANTAR POSTER DENGAN PANAH
     $(document).on('keydown', '.poster', function(e) {
-        if (e.keyCode === 37) {
+        if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Player Control
             e.preventDefault();
             $("#btnPlayPause").focus();
+        } else if (e.keyCode === 38) { // Panah Atas
+            e.preventDefault();
+            const prevPoster = $(this).prevAll('.poster:visible').first();
+            if (prevPoster.length > 0) {
+                prevPoster.focus();
+            } else {
+                $("#search").focus();
+            }
+        } else if (e.keyCode === 40) { // Panah Bawah
+            e.preventDefault();
+            const nextPoster = $(this).nextAll('.poster:visible').first();
+            if (nextPoster.length > 0) {
+                nextPoster.focus();
+            }
         }
     });
 
