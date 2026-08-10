@@ -50,7 +50,7 @@
         .eps-btn:focus { background:#00ffff; color:#000; outline: none; box-shadow: 0 0 8px #00ffff; }
 
         /* KONTROL PLAYER */
-        .custom-controls { display: flex; flex-direction: column; gap: 4px; background: rgba(13, 13, 13, 0.85); border: 1px solid #222; border-radius: 8px; padding: 6px; transition: opacity 0.3s ease; }
+        .custom-controls { display: flex; flex-direction: column; gap: 4px; background: rgba(13, 13, 13, 0.85); border: 1px solid #222; border-radius: 8px; padding: 6px; transition: opacity 0.4s ease, visibility 0.4s ease; opacity: 1; visibility: visible; }
         .progress-container { display: flex; align-items: center; justify-content: center; width: 100%; background: rgba(26, 26, 26, 0.8); border: 1px solid #333; padding: 4px 10px; border-radius: 4px; }
         #seek-bar { flex: 1; margin: 0 10px; cursor: pointer; accent-color: #00ffff; height: 4px; }
         #seek-bar:focus { outline: 2px solid #00ffff; transform: scaleY(1.3); }
@@ -72,7 +72,7 @@
 
         .player-side:fullscreen .header-title,
         .player-side:-webkit-full-screen .header-title {
-            display: none !important; /* Sembunyikan Judul Header saat Fullscreen */
+            display: none !important;
         }
 
         .player-side:fullscreen .video-wrapper,
@@ -84,16 +84,14 @@
             height: 100vh !important;
         }
 
-        /* Memaksa Video/iFrame memenuhi layar tanpa garis hitam */
         .player-side:fullscreen iframe,
         .player-side:-webkit-full-screen iframe {
             width: 100vw !important;
             height: 100vh !important;
-            transform: scale(1.02); /* Stretch sedikit untuk hilangkan bezel hitam */
+            transform: scale(1.02);
             object-fit: cover !important;
         }
 
-        /* Kontrol Melayang di Dalam Video saat Fullscreen */
         .player-side:fullscreen .custom-controls,
         .player-side:-webkit-full-screen .custom-controls {
             position: absolute !important;
@@ -101,14 +99,19 @@
             left: 5% !important;
             right: 5% !important;
             z-index: 9999 !important;
-            background: rgba(0, 0, 0, 0.7) !important;
+            background: rgba(0, 0, 0, 0.75) !important;
             backdrop-filter: blur(4px);
             border: 1px solid rgba(0, 255, 255, 0.5) !important;
         }
 
-        /* Kelas untuk menyembunyikan kontrol otomatis */
-        .controls-hidden {
+        /* --- KELAS UNTUK MENYEMBUNYIKAN KONTROL SECARA MUTLAK --- */
+        .custom-controls.controls-hidden {
             opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        
+        .custom-controls.controls-hidden * {
             pointer-events: none !important;
         }
     </style>
@@ -180,7 +183,6 @@
         showControls();
         clearTimeout(controlsTimeout);
         controlsTimeout = setTimeout(function() {
-            // Sembunyikan kontrol jika video sedang diputar / fokus ada di kontrol
             hideControls();
         }, 5000); // 5000ms = 5 detik
     }
@@ -190,18 +192,24 @@
     }
 
     function hideControls() {
-        // Jangan sembunyikan jika video dipause
-        if (player && player.isPlaying && player.isPlaying()) {
-            $("#controls").addClass("controls-hidden");
+        // Lepas fokus jika sedang di dalam area tombol kontrol agar CSS :focus tidak menahannya
+        var activeEl = document.activeElement;
+        if (activeEl && ($(activeEl).hasClass("btn-ctrl") || activeEl.id === "seek-bar")) {
+            activeEl.blur();
         }
+        $("#controls").addClass("controls-hidden");
     }
 
-    // Deteksi sembarang tombol remote / keyboard untuk memunculkan kontrol kembali
+    // Deteksi sembarang tombol remote / keyboard / sentuhan untuk memunculkan kontrol kembali
     window.addEventListener("keydown", function() {
         resetControlsTimer();
     }, true);
 
     window.addEventListener("mousemove", function() {
+        resetControlsTimer();
+    });
+
+    window.addEventListener("touchstart", function() {
         resetControlsTimer();
     });
 
