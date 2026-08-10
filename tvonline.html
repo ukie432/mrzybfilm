@@ -41,24 +41,38 @@
         justify-content: space-between; 
         align-items: center; 
         padding: 4px 0 12px 0; 
+        gap: 6px;
     }
-    h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    h2 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
 
-    /* Tab Playlist P1 P2 P3 Merah */
-    .playlist-tabs { display: flex; gap: 6px; }
+    /* Tab Playlist & Tombol Header */
+    .playlist-tabs { display: flex; gap: 4px; }
     .tab-btn { 
         background: #252525; 
         color: #aaa; 
         border: none; 
-        padding: 6px 12px; 
+        padding: 6px 10px; 
         border-radius: 6px; 
         cursor: pointer; 
-        font-size: 13px; 
+        font-size: 12px; 
         font-weight: bold; 
         outline: none; 
     }
     .tab-btn.active { background: #e50914; color: #fff; }
     .tab-btn:focus { outline: 2px solid #fff; }
+
+    .btn-fs {
+        background: #e50914; 
+        color: #fff; 
+        border: none; 
+        padding: 6px 10px; 
+        border-radius: 6px; 
+        cursor: pointer; 
+        font-size: 12px; 
+        font-weight: bold; 
+        outline: none;
+    }
+    .btn-fs:focus { outline: 2px solid #fff; }
 
     #btnPengaturan { 
         background: #252525; 
@@ -193,6 +207,9 @@
             <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">P3</button>
         </div>
 
+        <!-- Tombol Fullscreen Native ExoPlayer -->
+        <button id="btnFsNative" class="btn-fs" tabindex="0" onclick="panggilFullscreenNative()">⚡ Fullscreen</button>
+
         <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️</button>
     </div>
 
@@ -258,7 +275,7 @@ const PLAYLIST_1 = atob(_playlist1_Base64);
 
 let semuaTV = [];
 
-// --- KEYBOARD D-PAD CONTROL ---
+// --- CONTROL KEYBOARD & D-PAD ---
 function aktifkanKeyboard(elem) {
     elem.removeAttribute('readonly');
     elem.focus();
@@ -578,7 +595,7 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// --- LOGIKA PEMUTAR VIDEO (LANGSUNG MEMANGGIL EXOPLAYER NATIVE) ---
+// --- PEMUTAR VIDEO (PEMANGGIL EXOPLAYER NATIVE & FULLSCREEN) ---
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
@@ -586,9 +603,17 @@ function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUr
     let activeGlobalUA = ambilUserAgentAktif();
     let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
 
-    // Panggil ExoPlayer Native Android (di sebelah kiri WebView)
+    // Panggil ExoPlayer Native Android (Preview Samping WebView)
     if (window.Android && typeof window.Android.playTv === "function") {
         window.Android.playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+    }
+}
+
+function panggilFullscreenNative() {
+    if (window.Android && typeof window.Android.openTvFullscreen === "function") {
+        window.Android.openTvFullscreen();
+    } else {
+        showToast("Pilih channel terlebih dahulu.");
     }
 }
 
