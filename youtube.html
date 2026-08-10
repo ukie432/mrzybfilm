@@ -104,7 +104,7 @@
             border: 1px solid rgba(0, 255, 255, 0.5) !important;
         }
 
-        /* Kelas untuk menyembunyikan kontrol otomatis */
+        /* KELAS UNTUK HIDE CONTROLS OTOMATIS */
         .custom-controls.controls-hidden {
             opacity: 0 !important;
             visibility: hidden !important;
@@ -172,19 +172,18 @@
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
     const jsonUrl = "https://mrzybtv-api.ukielaki88.workers.dev/api/youtube"; 
     var currentEpisodes = [];
-    var subtitleAktif = false;
+    var subtitleAktif = false; // Default status CC mati
     
     var lastActivePoster = null;
-
-    // --- TIMEOUT AUTO-HIDE CONTROLS (5 DETIK) ---
     var controlsTimeout = null;
 
+    // --- TIMEOUT UNTUK AUTO-HIDE CONTROLS (5 DETIK) ---
     function resetControlsTimer() {
         showControls();
         clearTimeout(controlsTimeout);
         controlsTimeout = setTimeout(function() {
             hideControls();
-        }, 5000); // 5000ms = 5 detik
+        }, 5000);
     }
 
     function showControls() {
@@ -199,7 +198,6 @@
         $("#controls").addClass("controls-hidden");
     }
 
-    // Event penangkap tombol/mouse/sentuhan
     window.addEventListener("keydown", function() { resetControlsTimer(); }, true);
     window.addEventListener("mousemove", function() { resetControlsTimer(); });
     window.addEventListener("touchstart", function() { resetControlsTimer(); });
@@ -224,6 +222,31 @@
     
     let currentVideoUrl = "";
 
+    // --- PENJAGA KONSISTENSI STATUS SUBTITLE ---
+    function terapkanStatusSubtitle() {
+        const iframe = document.querySelector('.video-wrapper iframe');
+        if (iframe && iframe.contentWindow) {
+            if (subtitleAktif) {
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'loadModule',
+                    args: ['captions']
+                }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'setOption',
+                    args: ['captions', 'track', { languageCode: 'id' }]
+                }), '*');
+            } else {
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'unloadModule',
+                    args: ['captions']
+                }), '*');
+            }
+        }
+    }
+
     player.on('ready', function() {
         $(".video-wrapper, .plyr, iframe").attr("tabindex", "-1");
         player.setVolume(100);
@@ -231,6 +254,8 @@
 
     player.on('play', function() {
         resetControlsTimer();
+        // Memastikan subtitle tetap pada kondisinya saat video di-play kembali
+        setTimeout(terapkanStatusSubtitle, 300);
     });
 
     player.on('pause', function() {
@@ -407,11 +432,13 @@
             let targetMundur = Math.max(0, currentTime - lompatDetik);
             player.seek(targetMundur);
             $(this).val((targetMundur / duration) * 100);
+            setTimeout(terapkanStatusSubtitle, 300); // Paksa kondisi CC setelah lompat detik
         } else if (e.keyCode === 39) { 
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
             player.seek(targetMaju);
             $(this).val((targetMaju / duration) * 100);
+            setTimeout(terapkanStatusSubtitle, 300); // Paksa kondisi CC setelah lompat detik
         } else if (e.keyCode === 40) { 
             e.preventDefault();
             $("#btnPlayPause").focus();
@@ -536,17 +563,8 @@
             
             $("#btnPlayPause").focus(); 
 
-            // RESET STATE SUBTITLE (CC) SAAT GANTI VIDEO
-            subtitleAktif = false;
-            const iframe = document.querySelector('.video-wrapper iframe');
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    event: 'command',
-                    func: 'unloadModule',
-                    args: ['captions']
-                }), '*');
-            }
-            $("#btnCC").css("border", "1px solid #00ffff");
+            // Paksa penerapan status subtitle setelah perpindahan channel / episode
+            setTimeout(terapkanStatusSubtitle, 600);
             resetControlsTimer();
         }, 500); 
     }
@@ -594,34 +612,9 @@
         resetControlsTimer();
     }
     
-    // --- PERBAIKAN UTAMA FUNGSI TOGGLE SUBTITLE (CC) ---
     function toggleSubtitle() {
         subtitleAktif = !subtitleAktif;
-        const iframe = document.querySelector('.video-wrapper iframe');
-        
-        if (iframe && iframe.contentWindow) {
-            if (subtitleAktif) {
-                // Panggil modul subtitle YouTube & atur Bahasa Indonesia
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    event: 'command',
-                    func: 'loadModule',
-                    args: ['captions']
-                }), '*');
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    event: 'command',
-                    func: 'setOption',
-                    args: ['captions', 'track', { languageCode: 'id' }]
-                }), '*');
-            } else {
-                // Lepas modul subtitle agar teks & latar hitam hilang total
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    event: 'command',
-                    func: 'unloadModule',
-                    args: ['captions']
-                }), '*');
-            }
-        }
-        
+        terapkanStatusSubtitle();
         $("#btnCC").css("border", subtitleAktif ? "2px solid #00ffff" : "1px solid #00ffff");
         resetControlsTimer();
     }
@@ -661,6 +654,7 @@
         if (player.getDuration()) {
             let seekTo = player.getDuration() * ($(this).val() / 100);
             player.seek(seekTo);
+            setTimeout(terapkanStatusSubtitle, 300);
         }
         resetControlsTimer();
     });
