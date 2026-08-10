@@ -12,7 +12,6 @@
     <style>
     * { box-sizing: border-box; }
     
-    /* Body & Layout Utama Panel TV (Di Dalam WebView Kanan) */
     body { 
         margin: 0; 
         background: transparent; 
@@ -23,7 +22,6 @@
         overflow: hidden;
     }
 
-    /* Layout Panel Samping (Sidebar) Menyesuaikan Lebar WebView */
     .app-container {
         width: 100%;
         background: #121212;
@@ -45,7 +43,6 @@
     }
     h2 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
 
-    /* Tab Playlist & Tombol Header */
     .playlist-tabs { display: flex; gap: 4px; }
     .tab-btn { 
         background: #252525; 
@@ -86,7 +83,6 @@
     }
     #btnPengaturan:focus { outline: 2px solid #fff; background: #e50914; }
 
-    /* Modal Form Custom Playlist */
     #modalPlaylist { 
         display: none; 
         background: #1c1c1c; 
@@ -111,7 +107,6 @@
     .btn-save { background: #e50914; color: #fff; flex: 1; }
     .btn-reset { background: #333; color: #fff; flex: 1; }
 
-    /* Search Box */
     #search { 
         width: 100%; 
         margin-bottom: 12px; 
@@ -125,7 +120,6 @@
     }
     #search:focus { border-color: #e50914; background: #222; }
 
-    /* Kategori Pill Merah Horizontal */
     #kategori { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; scrollbar-width: none; }
     #kategori::-webkit-scrollbar { display: none; }
     #kategori button { 
@@ -144,7 +138,6 @@
     #kategori button.active { background: #e50914; color: #fff; }
     #kategori button:focus { outline: 2px solid #fff; }
 
-    /* List Vertikal Channel */
     .grid { display: flex; flex-direction: column; gap: 8px; }
     .item { 
         display: flex;
@@ -196,7 +189,6 @@
 </head>
 <body>
 
-<!-- PANEL CHANNEL DI SEBELAH KANAN -->
 <div class="app-container">
     <div class="header-container">
         <h2>mrzyb.tv</h2>
@@ -207,13 +199,10 @@
             <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">P3</button>
         </div>
 
-        <!-- Tombol Fullscreen Native ExoPlayer -->
         <button id="btnFsNative" class="btn-fs" tabindex="0" onclick="panggilFullscreenNative()">⚡ Fullscreen</button>
-
         <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️</button>
     </div>
 
-    <!-- Modal Sunting Playlist & User-Agent -->
     <div id="modalPlaylist">
         <div class="form-group" id="containerCustomUrl">
             <label for="inputCustomUrl">URL Remote Playlist:</label>
@@ -275,7 +264,6 @@ const PLAYLIST_1 = atob(_playlist1_Base64);
 
 let semuaTV = [];
 
-// --- CONTROL KEYBOARD & D-PAD ---
 function aktifkanKeyboard(elem) {
     elem.removeAttribute('readonly');
     elem.focus();
@@ -294,7 +282,6 @@ function handleInputKey(event, elem) {
     }
 }
 
-// --- LOCAL STORAGE & BRIDGE STB ---
 function simpanDataStorage(key, val) {
     if (window.Android && typeof window.Android.savePlaylistData === "function") {
         window.Android.savePlaylistData(key, val);
@@ -453,17 +440,10 @@ function formatGambarOptimized(url) {
 }
 
 function buatElemenHTMLTV(tv, index) {
-    let safeUrl = (tv.url || "").replace(/'/g, "\\'");
-    let safeUA = (tv.userAgent || "").replace(/'/g, "\\'");
-    let safeRef = (tv.referer || "").replace(/'/g, "\\'");
-    let safeDrm = (tv.drm || "").replace(/'/g, "\\'");
-    let safeKey = (tv.licenseKey || "").replace(/'/g, "\\'");
-    let safeLicUrl = (tv.licenseUrl || "").replace(/'/g, "\\'");
-
     return `
     <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, '${safeUrl}', '${safeUA}', '${safeRef}', '${safeDrm}', '${safeKey}', '${safeLicUrl}')">
+         onclick="pilihDanPlay(${index})">
         <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x84?text=No+Logo';">
         <div class="item-info">
             <div class="item-title">${tv.name}</div>
@@ -595,17 +575,26 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// --- PEMUTAR VIDEO (PEMANGGIL EXOPLAYER NATIVE & FULLSCREEN) ---
-function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+// --- FUNGSI PEMUTAR SAMPLING (PREVIEW INLINE) ---
+function pilihDanPlay(index) {
+    let item = semuaTV[index];
+    if (!item) return;
+
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
 
     let activeGlobalUA = ambilUserAgentAktif();
-    let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
+    let finalUA = (item.userAgent && item.userAgent.trim() !== "") ? item.userAgent : activeGlobalUA;
 
-    // Panggil ExoPlayer Native Android (Preview Samping WebView)
     if (window.Android && typeof window.Android.playTv === "function") {
-        window.Android.playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+        window.Android.playTv(
+            item.url || "",
+            finalUA || "",
+            item.referer || "",
+            item.drm || "",
+            item.licenseKey || "",
+            item.licenseUrl || ""
+        );
     }
 }
 
@@ -719,6 +708,7 @@ function bacaFileWeb(e) {
     reader.readAsText(file);
 }
 
+// --- PARSER M3U PRESISI DENGAN EKSTRAKSI DRM & HEADER ---
 function parseM3U(data) {
     let lines = data.split("\n");
     let result = [];
@@ -726,25 +716,29 @@ function parseM3U(data) {
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i].trim();
+        
         if (line.startsWith("#EXTVLCOPT:http-user-agent=")) {
-            userAgent = line.replace("#EXTVLCOPT:http-user-agent=", "");
+            userAgent = line.replace("#EXTVLCOPT:http-user-agent=", "").trim();
         } else if (line.startsWith("#EXTVLCOPT:http-referrer=")) {
-            referer = line.replace("#EXTVLCOPT:http-referrer=", "");
+            referer = line.replace("#EXTVLCOPT:http-referrer=", "").trim();
         } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_type=")) {
-            let type = line.replace("#KODIPROP:inputstream.adaptive.license_type=", "");
+            let type = line.replace("#KODIPROP:inputstream.adaptive.license_type=", "").trim();
             drm = type.includes("clearkey") ? "clearkey" : type;
         } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_key=")) {
-            let key = line.replace("#KODIPROP:inputstream.adaptive.license_key=", "");
-            if (key.startsWith("http")) licenseUrl = key;
-            else licenseKey = key;
+            let key = line.replace("#KODIPROP:inputstream.adaptive.license_key=", "").trim();
+            if (key.startsWith("http")) {
+                licenseUrl = key;
+            } else {
+                licenseKey = key;
+            }
         } else if (line.startsWith("#EXTINF")) {
             let comma = line.lastIndexOf(",");
-            name = line.substring(comma + 1);
+            name = line.substring(comma + 1).trim();
             let logoPos = line.indexOf('tvg-logo="');
-            if (logoPos != -1) logo = line.substring(logoPos + 10, line.indexOf('"', logoPos + 10));
+            if (logoPos !== -1) logo = line.substring(logoPos + 10, line.indexOf('"', logoPos + 10));
             let groupPos = line.indexOf('group-title="');
-            if (groupPos != -1) group = line.substring(groupPos + 13, line.indexOf('"', groupPos + 13));
-        } else if (line.startsWith("http")) {
+            if (groupPos !== -1) group = line.substring(groupPos + 13, line.indexOf('"', groupPos + 13));
+        } else if (line.startsWith("http://") || line.startsWith("https://")) {
             let url = line;
             if (line.includes("|")) {
                 let parts = line.split("|");
@@ -753,7 +747,17 @@ function parseM3U(data) {
                 if (params.includes("user-agent=")) userAgent = decodeURIComponent(params.split("user-agent=")[1].split("&")[0]);
                 if (params.includes("referrer=")) referer = decodeURIComponent(params.split("referrer=")[1]);
             }
-            result.push({ name: name || "Tanpa Nama", logo, group, url, userAgent, referer, drm, licenseKey, licenseUrl });
+            result.push({ 
+                name: name || "Tanpa Nama", 
+                logo, 
+                group, 
+                url, 
+                userAgent, 
+                referer, 
+                drm, 
+                licenseKey, 
+                licenseUrl 
+            });
             name = ""; logo = ""; group = ""; userAgent = ""; referer = ""; drm = ""; licenseKey = ""; licenseUrl = "";
         }
     }
