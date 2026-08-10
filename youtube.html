@@ -17,14 +17,12 @@
         .player-side { flex: 1.8; display: flex; flex-direction: column; gap: 6px; position: relative; background: #050505; }
         .header-title { color: #00ffff; font-weight: bold; font-size: 13px; text-shadow: 0 0 5px #00ffff; display: flex; align-items: center; gap: 6px; }
         
-        /* BINGKAI PLAYER */
-        .video-wrapper { position: relative; width: 100%; flex: 1; border: 2px solid #00ffff; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); overflow: hidden; background: #000; }
+        /* CONTAINER PLAYER DISINGKIRKAN DARI SISTEM FOKUS & POINTER */
+        .video-wrapper { position: relative; width: 100%; flex: 1; border: 2px solid #00ffff; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); overflow: hidden; background: #000; pointer-events: none; }
         
-        .video-wrapper .plyr { width: 100% !important; height: 100% !important; background: #000 !important; }
-        .video-wrapper .plyr__video-wrapper, .video-wrapper .plyr__video-embed { width: 100% !important; height: 100% !important; padding-bottom: 0 !important; }
-        
-        /* PENTING: Cegah IFRAME mencuri fokus remote STB */
-        .video-wrapper iframe { width: 100% !important; height: 100% !important; border: none; pointer-events: none; }
+        .video-wrapper .plyr { width: 100% !important; height: 100% !important; background: #000 !important; pointer-events: none !important; }
+        .video-wrapper .plyr__video-wrapper, .video-wrapper .plyr__video-embed { width: 100% !important; height: 100% !important; padding-bottom: 0 !important; pointer-events: none !important; }
+        .video-wrapper iframe { width: 100% !important; height: 100% !important; border: none; pointer-events: none !important; }
 
         .sidebar { flex: 1; display: flex; flex-direction: column; gap: 6px; background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 6px; }
         .navbar { padding: 0; background: transparent; }
@@ -70,14 +68,14 @@
 <body>
 
     <div class="main-layout">
-        <!-- KIRI: PLAYER & KONTROL -->
         <div class="player-side" id="leftPanelContainer">
             <div class="header-title">
                 📺 MRZYBtv STB PLAYER
             </div>
             
-            <div class="video-wrapper">
-                <div id="player-container" class="js-player" data-type="youtube" data-video-id=""></div>
+            <!-- Tambahkan tabindex="-1" agar kotak player dilewati oleh fokus remote -->
+            <div class="video-wrapper" tabindex="-1">
+                <div id="player-container" class="js-player" data-type="youtube" data-video-id="" tabindex="-1"></div>
             </div>
 
             <div class="custom-controls" id="controls">
@@ -97,7 +95,6 @@
             </div>
         </div>
 
-        <!-- KANAN: PENCARIAN & DAFTAR POSTER -->
         <div class="sidebar">
             <div class="navbar">
                 <div class="search-container">
@@ -112,7 +109,6 @@
         </div>
     </div>
 
-    <!-- POPUP EPISODE / KATEGORI -->
     <div id="popup">
         <div class="popup-content" onclick="event.stopPropagation()">
             <button class="close-x" onclick="closePopup()" tabindex="0">X</button>
@@ -144,6 +140,18 @@
     })[0];
     
     let currentVideoUrl = "";
+
+    // PENCEGAHAN FOKUS KE PLAYER SECARA OTOMATIS OLEH EVENT BROWSER/PLYR
+    player.on('ready', function() {
+        $(".video-wrapper, .plyr, iframe").attr("tabindex", "-1");
+    });
+
+    // Mencegah browser memindahkan fokus ke iframe saat video mulai dimainkan
+    player.on('playing', function() {
+        if (document.activeElement && (document.activeElement.tagName === 'IFRAME' || $(document.activeElement).hasClass('plyr'))) {
+            $("#btnPlayPause").focus();
+        }
+    });
 
     player.on('ended', function () {
         putarKontenSampingnya(1);
@@ -195,7 +203,6 @@
         }
     }
 
-    // PEMETIKAN PENCARIAN & VIRTUAL KEYBOARD
     $("#search").on('focus click', function() {
         if (typeof Android !== "undefined" && Android.showKeyboard) {
             Android.showKeyboard();
@@ -207,10 +214,10 @@
             if (typeof Android !== "undefined" && Android.showKeyboard) {
                 Android.showKeyboard();
             }
-        } else if (e.keyCode === 40) { // Panah Bawah -> Poster Pertama
+        } else if (e.keyCode === 40) { 
             e.preventDefault();
             $(".poster").first().focus();
-        } else if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Tombol Fullscreen Player
+        } else if (e.keyCode === 37) { 
             e.preventDefault();
             $("#btnFullscreen").focus();
         }
@@ -236,17 +243,15 @@
     });
 
     // SISTEM NAVIGASI REMOT DI PANEL KONTROL PLAYER
-    // Panah Atas dari tombol kontrol -> Pindah ke Seek Bar
     $(".btn-ctrl").on('keydown', function(e) {
-        if (e.keyCode === 38) { // Up
+        if (e.keyCode === 38) { // Up -> Ke Seek Bar
             e.preventDefault();
             $("#seek-bar").focus();
         }
     });
 
-    // Navigasi Khusus Tombol Paling Kanan & Paling Kiri
     $("#btnFullscreen").on('keydown', function(e) {
-        if (e.keyCode === 39) { // Panah Kanan -> Pindah ke Kolom Cari
+        if (e.keyCode === 39) { // Panah Kanan -> Langsung Ke Kolom Cari (Melompati Player)
             e.preventDefault();
             $("#search").focus();
         }
@@ -259,34 +264,32 @@
         let currentTime = player.getCurrentTime();
         let lompatDetik = 15;
 
-        if (e.keyCode === 37) { // Kiri
+        if (e.keyCode === 37) { 
             e.preventDefault();
             let targetMundur = Math.max(0, currentTime - lompatDetik);
             player.seek(targetMundur);
             $(this).val((targetMundur / duration) * 100);
-        } else if (e.keyCode === 39) { // Kanan
+        } else if (e.keyCode === 39) { 
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
             player.seek(targetMaju);
             $(this).val((targetMaju / duration) * 100);
-        } else if (e.keyCode === 40) { // Bawah -> Pindah ke Play/Pause
+        } else if (e.keyCode === 40) { 
             e.preventDefault();
             $("#btnPlayPause").focus();
-        } else if (e.keyCode === 38) { // Atas -> Pindah ke Kolom Cari
+        } else if (e.keyCode === 38) { 
             e.preventDefault();
             $("#search").focus();
         }
     });
 
-    // NAVIGASI DARI POSTER KEMBALI KE PLAYER
     $(document).on('keydown', '.poster', function(e) {
-        if (e.keyCode === 37) { // Panah Kiri pada Poster -> Pindah ke Play/Pause Player
+        if (e.keyCode === 37) { // Panah Kiri -> Langsung ke Tombol Play/Pause
             e.preventDefault();
             $("#btnPlayPause").focus();
         }
     });
 
-    // LOAD DATA JSON
     fetch(jsonUrl, { cache: "force-cache" })
         .then(response => response.json())
         .then(data => {
