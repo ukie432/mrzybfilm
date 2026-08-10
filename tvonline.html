@@ -10,7 +10,7 @@
     <title>TV Online Multi-Playlist (Light Edition)</title>
 
     <style>
-    /* Desain super ringan tanpa animasi/box-shadow/transition untuk STB */
+    /* Desain ringan tanpa animasi/box-shadow berlebih untuk performa STB */
     * { box-sizing: border-box; }
     body { margin: 0; background: #111; font-family: Arial, sans-serif; color: #fff; }
     .header-container { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #1a1a1a; flex-wrap: wrap; gap: 8px; }
@@ -57,15 +57,6 @@
     .item img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #222; display: block; }
     .item p { text-align: center; margin: 6px 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
     .item:focus { border-color: #00bfff; background: #252525; }
-
-    /* Tombol Fullscreen Mengambang */
-    .btn-fullscreen-float {
-        position: fixed; bottom: 15px; right: 15px; z-index: 999;
-        background: #00bfff; color: #000; border: 2px solid #fff;
-        padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 12px;
-        cursor: pointer; outline: none;
-    }
-    .btn-fullscreen-float:focus { background: #fff; color: #000; border-color: #00bfff; transform: scale(1.1); }
 
     #customToast { visibility: hidden; min-width: 200px; background-color: #222; color: #fff; text-align: center; border-radius: 6px; padding: 8px 12px; position: fixed; z-index: 9999; left: 50%; bottom: 20px; transform: translateX(-50%); font-size: 13px; border: 1px solid #00bfff; pointer-events: none; }
     #customToast.show { visibility: visible; }
@@ -137,8 +128,6 @@
 
 <div id="kategori"></div>
 <div class="grid" id="tvList">Memuat TV...</div>
-
-<button class="btn-fullscreen-float" tabindex="0" onclick="bukaFullscreenNative()">📺 Fullscreen Native</button>
 
 <div id="customToast">Notifikasi</div>
 
@@ -471,6 +460,7 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
+// --- JEMBATAN KE JAVA NATIVE (EXOPLAYER) ---
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
@@ -481,17 +471,16 @@ function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUr
     playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
 }
 
-function bukaFullscreenNative() {
-    if (window.Android && typeof window.Android.toggleFullScreen === "function") {
-        window.Android.toggleFullScreen(true);
-    } else {
-        showToast("Layar Penuh Native Active");
-    }
-}
-
 function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
     if (window.Android && typeof window.Android.playTv === "function") {
-        window.Android.playTv(url || "", userAgent || "", referer || "", drm || "", licenseKey || "", licenseUrl || "");
+        window.Android.playTv(
+            url || "", 
+            userAgent || "", 
+            referer || "", 
+            drm || "", 
+            licenseKey || "", 
+            licenseUrl || ""
+        );
     } else {
         showToast("Memutar URL...");
     }
