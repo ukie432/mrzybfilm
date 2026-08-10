@@ -7,33 +7,76 @@
     <meta http-equiv="Expires" content="0" />
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TV Online Multi-Playlist (Dark Theme)</title>
+    <title>TV Online Multi-Playlist (Split Player)</title>
 
     <style>
-    /* DESAIN SESUAI TAMPILAN GAMBAR */
     * { box-sizing: border-box; }
+    
+    /* Layout Utama Split Screen (Video Kiri, Channel Kanan) */
     body { 
         margin: 0; 
         background: #000; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
         color: #fff; 
         display: flex;
-        justify-content: flex-end;
-        min-height: 100vh;
-        overflow-x: hidden;
+        flex-direction: row;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Area Pemutar Video di Ruang Kosong Sebelah Kiri */
+    .player-container {
+        flex: 1;
+        height: 100vh;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .player-placeholder {
+        color: #555;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    /* Tombol Fullscreen Native */
+    .btn-fullscreen {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: #e50914;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        display: none;
+        z-index: 10;
+        outline: none;
+    }
+    .btn-fullscreen:focus {
+        outline: 2px solid #fff;
+        background: #ff0000;
     }
 
     /* Layout Panel Samping (Sidebar) Kanan */
     .app-container {
-        width: 100%;
-        max-width: 420px;
+        width: 380px;
         background: #121212;
-        min-height: 100vh;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         border-left: 1px solid #222;
         padding: 12px;
+        overflow-y: auto;
+        scrollbar-width: none;
     }
+    .app-container::-webkit-scrollbar { display: none; }
 
     .header-container { 
         display: flex; 
@@ -43,7 +86,7 @@
     }
     h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
 
-    /* Tab Playlist P1 P2 P3 Merah Modern */
+    /* Tab Playlist P1 P2 P3 Merah */
     .playlist-tabs { display: flex; gap: 6px; }
     .tab-btn { 
         background: #252525; 
@@ -129,7 +172,7 @@
     #kategori button.active { background: #e50914; color: #fff; }
     #kategori button:focus { outline: 2px solid #fff; }
 
-    /* List Vertikal Channel seperti Gambar */
+    /* List Vertikal Channel */
     .grid { display: flex; flex-direction: column; gap: 8px; }
     .item { 
         display: flex;
@@ -181,6 +224,16 @@
 </head>
 <body>
 
+<!-- KONTEN VIDEO DI RUANG KOSONG SEBELAH KIRI -->
+<div class="player-container">
+    <video id="inlinePlayer" controls autoplay style="width: 100%; height: 100%; display: none;"></video>
+    <div id="playerPlaceholder" class="player-placeholder">
+        <p>Pilih channel untuk memutar video</p>
+    </div>
+    <button id="btnFullscreen" class="btn-fullscreen" tabindex="0" onclick="bukaFullScreen()">⚡ Fullscreen Native</button>
+</div>
+
+<!-- PANEL CHANNEL DI SEBELAH KANAN -->
 <div class="app-container">
     <div class="header-container">
         <h2>mrzyb.tv</h2>
@@ -255,6 +308,7 @@ const _playlist1_Base64 = "aHR0cHM6Ly9tcnp5YnR2LWFwaS51a2llbGFraTg4LndvcmtlcnMuZ
 const PLAYLIST_1 = atob(_playlist1_Base64);
 
 let semuaTV = [];
+let currentVideoData = null;
 
 // --- KEYBOARD D-PAD CONTROL ---
 function aktifkanKeyboard(elem) {
@@ -433,7 +487,6 @@ function formatGambarOptimized(url) {
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=180&output=webp&q=60`;
 }
 
-// Penyesuaian HTML item vertikal dengan sub-kategori
 function buatElemenHTMLTV(tv, index) {
     let safeUrl = (tv.url || "").replace(/'/g, "\\'");
     let safeUA = (tv.userAgent || "").replace(/'/g, "\\'");
@@ -550,6 +603,13 @@ function handleItemKey(event, index) {
         event.preventDefault();
         let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
         if (activeCategoryBtn) activeCategoryBtn.focus();
+    } else if (event.key === 'ArrowLeft') {
+        // Pindah fokus remote ke tombol Fullscreen jika tombol kiri ditekan dari list channel
+        let btnFs = document.getElementById("btnFullscreen");
+        if (btnFs && btnFs.style.display !== "none") {
+            event.preventDefault();
+            btnFs.focus();
+        }
     }
 }
 
@@ -577,7 +637,7 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// --- JEMBATAN KE JAVA NATIVE (EXOPLAYER) ---
+// --- LOGIKA PEMUTAR VIDEO (INLINE SIDE-BY-SIDE) ---
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
@@ -585,21 +645,37 @@ function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUr
     let activeGlobalUA = ambilUserAgentAktif();
     let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
 
-    playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+    currentVideoData = { url, userAgent: finalUA, referer, drm, licenseKey, licenseUrl };
+
+    let videoElem = document.getElementById("inlinePlayer");
+    let placeholder = document.getElementById("playerPlaceholder");
+    let btnFs = document.getElementById("btnFullscreen");
+
+    placeholder.style.display = "none";
+    videoElem.style.display = "block";
+    btnFs.style.display = "block";
+
+    videoElem.src = url;
+    videoElem.play().catch(err => {
+        showToast("Video diputar via Fullscreen Native.");
+    });
 }
 
-function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
-    if (window.Android && typeof window.Android.playTv === "function") {
-        window.Android.playTv(
-            url || "", 
-            userAgent || "", 
-            referer || "", 
-            drm || "", 
-            licenseKey || "", 
-            licenseUrl || ""
-        );
-    } else {
-        showToast("Memutar URL...");
+function bukaFullScreen() {
+    if (currentVideoData) {
+        if (window.Android && typeof window.Android.playTv === "function") {
+            window.Android.playTv(
+                currentVideoData.url || "", 
+                currentVideoData.userAgent || "", 
+                currentVideoData.referer || "", 
+                currentVideoData.drm || "", 
+                currentVideoData.licenseKey || "", 
+                currentVideoData.licenseUrl || ""
+            );
+        } else {
+            let videoElem = document.getElementById("inlinePlayer");
+            if (videoElem.requestFullscreen) videoElem.requestFullscreen();
+        }
     }
 }
 
