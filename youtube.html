@@ -172,12 +172,11 @@
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
     const jsonUrl = "https://mrzybtv-api.ukielaki88.workers.dev/api/youtube"; 
     var currentEpisodes = [];
-    var subtitleAktif = false; // Default status CC mati
+    var subtitleAktif = false;
     
     var lastActivePoster = null;
     var controlsTimeout = null;
 
-    // --- TIMEOUT UNTUK AUTO-HIDE CONTROLS (5 DETIK) ---
     function resetControlsTimer() {
         showControls();
         clearTimeout(controlsTimeout);
@@ -222,7 +221,6 @@
     
     let currentVideoUrl = "";
 
-    // --- PENJAGA KONSISTENSI STATUS SUBTITLE ---
     function terapkanStatusSubtitle() {
         const iframe = document.querySelector('.video-wrapper iframe');
         if (iframe && iframe.contentWindow) {
@@ -254,7 +252,6 @@
 
     player.on('play', function() {
         resetControlsTimer();
-        // Memastikan subtitle tetap pada kondisinya saat video di-play kembali
         setTimeout(terapkanStatusSubtitle, 300);
     });
 
@@ -292,6 +289,7 @@
         }
     }, true);
 
+    // FIX PERBAIKAN FULLSCREEN & NAVIGATION TRAP
     function toggleFullscreen() {
         const elem = document.getElementById("leftPanelContainer");
         const isFS = document.fullscreenElement || document.webkitFullscreenElement;
@@ -312,6 +310,20 @@
             }
         }
         resetControlsTimer();
+    }
+
+    // LISTENER DETEKSI KELUAR FULLSCREEN: LEPASKAN FOKUS & KEMBALIKAN KE SIDEBAR
+    document.addEventListener("fullscreenchange", handleFullscreenExit);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenExit);
+
+    function handleFullscreenExit() {
+        const isFS = document.fullscreenElement || document.webkitFullscreenElement;
+        if (!isFS) {
+            // Ketika keluar dari Fullscreen, alihkan fokus dari tombol Fullscreen ke Sidebar
+            setTimeout(() => {
+                kembalikeSidebar();
+            }, 200);
+        }
     }
 
     $("#search").on('blur', function() {
@@ -432,13 +444,13 @@
             let targetMundur = Math.max(0, currentTime - lompatDetik);
             player.seek(targetMundur);
             $(this).val((targetMundur / duration) * 100);
-            setTimeout(terapkanStatusSubtitle, 300); // Paksa kondisi CC setelah lompat detik
+            setTimeout(terapkanStatusSubtitle, 300);
         } else if (e.keyCode === 39) { 
             e.preventDefault();
             let targetMaju = Math.min(duration, currentTime + lompatDetik);
             player.seek(targetMaju);
             $(this).val((targetMaju / duration) * 100);
-            setTimeout(terapkanStatusSubtitle, 300); // Paksa kondisi CC setelah lompat detik
+            setTimeout(terapkanStatusSubtitle, 300);
         } else if (e.keyCode === 40) { 
             e.preventDefault();
             $("#btnPlayPause").focus();
@@ -562,8 +574,6 @@
             }
             
             $("#btnPlayPause").focus(); 
-
-            // Paksa penerapan status subtitle setelah perpindahan channel / episode
             setTimeout(terapkanStatusSubtitle, 600);
             resetControlsTimer();
         }, 500); 
