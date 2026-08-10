@@ -30,8 +30,9 @@
         #search { width: 100%; padding: 8px 30px 8px 10px; border: none; outline: none; background: transparent; font-size: 12px; color: #fff; }
         #search:focus { outline: 2px solid #00ffff; border-radius: 4px; background: #1a1a1a; }
         
-        .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #444; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 12; }
-        .clear-search:focus { background: red; outline: none; }
+        /* Disesuaikan agar indikator fokus pada tombol X jelas saat disorot remote */
+        .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 12; }
+        .clear-search:focus { background: red; outline: 2px solid #00ffff; color: #fff; transform: translateY(-50%) scale(1.1); }
 
         .grid { display: flex; flex-direction: column; gap: 5px; overflow-y: auto; flex: 1; padding: 2px; }
         .poster { cursor: pointer; border: 1px solid #222; border-radius: 4px; overflow: hidden; background: #141414; display: flex; align-items: center; padding: 4px; gap: 8px; height: auto; }
@@ -94,7 +95,8 @@
                     <div class="search-bar-wrapper">
                         <input type="text" id="search" placeholder="Cari Lagu (Tekan OK)..." tabindex="0" readonly>
                     </div>
-                    <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
+                    <!-- PERBAIKAN: tabindex diubah dari -1 menjadi 0 agar bisa di-fokus oleh remote -->
+                    <button id="clear-btn" class="clear-search" tabindex="0">X</button>
                 </div>
             </div>
 
@@ -192,7 +194,7 @@
         }
     }
 
-    // --- NAVIGASI PENCARIAN DENGAN REMOTE ---
+    // --- NAVIGASI PENCARIAN & TOMBOL HAPUS (X) ---
     $("#search").on('blur', function() {
         $(this).attr('readonly', true);
     });
@@ -209,21 +211,26 @@
         aktifkanKeyboard();
     });
 
-    // PERBAIKAN NAVIGASI PANAH DI KOLOM PENCARIAN
     $("#search").on('keydown', function(e) {
         if (e.keyCode === 13) { // OK / Enter
             e.preventDefault();
             aktifkanKeyboard();
-        } else if (e.keyCode === 40) { // Panah Bawah: Paksa Pindah Fokus ke Poster Terlihat Pertama
+        } else if (e.keyCode === 39) { // Panah Kanan -> Pindah ke tombol Hapus (X) jika muncul
+            if ($("#clear-btn").is(":visible")) {
+                e.preventDefault();
+                $(this).attr('readonly', true);
+                $("#clear-btn").focus();
+            }
+        } else if (e.keyCode === 40) { // Panah Bawah -> Pindah ke Poster Terlihat
             e.preventDefault();
             $(this).attr('readonly', true);
-            $(this).blur(); // Lepas fokus dari input
+            $(this).blur();
             
             const firstPoster = $(".poster:visible").first();
             if (firstPoster.length > 0) {
                 firstPoster.focus();
             }
-        } else if (e.keyCode === 37) { // Panah Kiri ke Tombol Player
+        } else if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Player Control
             e.preventDefault();
             $(this).attr('readonly', true);
             $(this).blur();
@@ -231,10 +238,29 @@
         }
     });
 
+    // NAVIGASI TOMBOL X (CLEAR SEARCH)
+    $("#clear-btn").on('keydown', function(e) {
+        if (e.keyCode === 37) { // Panah Kiri -> Balik ke Kolom Pencarian
+            e.preventDefault();
+            $("#search").focus();
+        } else if (e.keyCode === 40) { // Panah Bawah -> Ke Poster
+            e.preventDefault();
+            const firstPoster = $(".poster:visible").first();
+            if (firstPoster.length > 0) {
+                firstPoster.focus();
+            }
+        } else if (e.keyCode === 13) { // Tombol OK -> Eksekusi Hapus
+            e.preventDefault();
+            $(this).click();
+        }
+    });
+
+    // AKSUS HAPUS TEKS PENCARIAN
     $("#clear-btn").on('click', function() {
         $("#search").val("");
         $(".poster").show();
-        $(this).css("display", "none").attr("tabindex", "-1");
+        $(this).css("display", "none");
+        $("#search").attr('readonly', true);
         $("#search").focus();
     });
 
@@ -243,10 +269,9 @@
         if (keyword.length > 0) {
             $("#clear-btn").css("display", "flex");
         } else {
-            $("#clear-btn").css("display", "none").attr("tabindex", "-1");
+            $("#clear-btn").css("display", "none");
         }
         
-        // Filter poster
         $(".poster").each(function() {
             $(this).toggle($(this).data("title").toLowerCase().includes(keyword));
         });
@@ -295,7 +320,7 @@
 
     // NAVIGASI ANTAR POSTER DENGAN PANAH
     $(document).on('keydown', '.poster', function(e) {
-        if (e.keyCode === 37) { // Panah Kiri -> Pindah ke Player Control
+        if (e.keyCode === 37) { // Panah Kiri -> Player Control
             e.preventDefault();
             $("#btnPlayPause").focus();
         } else if (e.keyCode === 38) { // Panah Atas
