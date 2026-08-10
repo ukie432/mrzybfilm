@@ -12,7 +12,6 @@
     <style>
     * { box-sizing: border-box; }
     
-    /* PERBAIKAN UTAMA: Transparan mutlak agar video ExoPlayer kelihatan */
     html, body { 
         margin: 0; 
         padding: 0;
@@ -26,7 +25,6 @@
     
     .main-container { display: flex; width: 100vw; height: 100vh; justify-content: flex-end; background: transparent !important; }
     
-    /* Overlay Kontrol Tombol Sisi Kiri */
     .player-controls-container {
         flex: 1; display: flex; flex-direction: column; 
         justify-content: space-between; padding: 20px; pointer-events: none;
@@ -45,7 +43,6 @@
     }
     .btn-player:focus { background: #e50914; color: #fff; border-color: #fff; transform: scale(1.05); }
 
-    /* Sidebar Kanan */
     .sidebar { width: 340px; background: rgba(20, 20, 20, 0.95); height: 100vh; display: flex; flex-direction: column; z-index: 10; pointer-events: auto; }
     .header-container { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #181818; border-bottom: 1px solid #333; gap: 8px; }
     h2 { margin: 0; font-size: 16px; font-weight: bold; color: #fff; }
@@ -100,7 +97,6 @@
 <body>
 
 <div class="main-container">
-    <!-- Overlay Sisi Kiri Player -->
     <div class="player-controls-container">
         <div class="player-overlay-info" id="channelInfo">Pilih Channel...</div>
         
@@ -113,7 +109,6 @@
         </div>
     </div>
 
-    <!-- Sidebar Kanan -->
     <div class="sidebar">
         <div class="header-container">
             <h2>mrzyb.tv</h2>
@@ -189,7 +184,6 @@ const PLAYLIST_1 = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/hea
 let semuaTV = [];
 let currentPlayingChannel = null;
 
-// --- NAVIGASI REMOTE STB ---
 function handleItemKey(event, index) {
     if (event.key === 'ArrowUp') {
         if (index === 0) {
@@ -230,7 +224,6 @@ function handleInputKey(event, elem) {
     }
 }
 
-// --- LOCAL STORAGE & BRIDGE STB ---
 function simpanDataStorage(key, val) {
     if (window.Android && typeof window.Android.savePlaylistData === "function") {
         window.Android.savePlaylistData(key, val);
@@ -389,10 +382,18 @@ function formatGambarOptimized(url) {
 }
 
 function buatElemenHTMLTV(tv, index) {
+    let safeName = (tv.name || "Tanpa Nama").replace(/'/g, "\\'");
+    let safeUrl = (tv.url || "").replace(/'/g, "\\'");
+    let safeUA = (tv.userAgent || "").replace(/'/g, "\\'");
+    let safeRef = (tv.referer || "").replace(/'/g, "\\'");
+    let safeDrm = (tv.drm || "").replace(/'/g, "\\'");
+    let safeKey = (tv.licenseKey || "").replace(/'/g, "\\'");
+    let safeLicUrl = (tv.licenseUrl || "").replace(/'/g, "\\'");
+
     return `
     <div class="item" tabindex="0" id="item-${index}" 
          onkeydown="handleItemKey(event, ${index})"
-         onclick="pilihDanPlay(${index}, '${tv.name}', '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+         onclick="pilihDanPlay(${index}, '${safeName}', '${safeUrl}', '${safeUA}', '${safeRef}', '${safeDrm}', '${safeKey}', '${safeLicUrl}')">
         <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x84?text=No+Logo';">
         <div class="item-info">
             <span class="title">${tv.name}</span>
@@ -516,7 +517,6 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// --- PEMUTARAN CHANNEL NATIVE VIA EXOPLAYER ---
 function pilihDanPlay(index, name, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
@@ -530,9 +530,11 @@ function pilihDanPlay(index, name, url, userAgent, referer, drm, licenseKey, lic
     playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
 }
 
+/* FUNGSI FULLSCREEN DIPERBAIKI */
 function bukaExoPlayerNative() {
-    if (window.Android && typeof window.Android.toggleFullscreen === "function") {
-        window.Android.toggleFullscreen();
+    if (window.Android && typeof window.Android.toggleFullScreen === "function") {
+        window.Android.toggleFullScreen(true);
+        showToast("Masuk Mode Fullscreen");
     } else {
         showToast("Fitur Fullscreen Native Android");
     }
