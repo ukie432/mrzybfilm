@@ -1,68 +1,693 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head>  
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRZYBtv Streaming</title>
-    <style>
-        /* PENTING: Body dan Container harus transparan agar ExoPlayer di belakang WebView terlihat */
-        body { margin: 0; background: transparent !important; font-family: Arial, sans-serif; height: 100vh; overflow: hidden; }
-        
-        .main-container { display: flex; width: 100vw; height: 100vh; }
-        
-        /* Area Kiri: Transparan & Tidak menangkap klik (Klik tembus ke ExoPlayer) */
-        .player-overlay { flex: 1; pointer-events: none; }
-        
-        /* Area Kanan: Sidebar (Hanya ini yang berwarna dan bisa diklik) */
-        .sidebar { 
-            width: 340px; 
-            background: rgba(20, 20, 20, 0.98); 
-            height: 100vh; 
-            pointer-events: auto; 
-            z-index: 10; 
-            display: flex; 
-            flex-direction: column;
-            border-left: 1px solid #333;
-        }
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TV Online Multi-Playlist (Light Edition)</title>
 
-        /* Styling Sidebar Lainnya */
-        .header { padding: 15px; background: #111; color: #fff; font-weight: bold; border-bottom: 1px solid #333; }
-        .grid { flex: 1; overflow-y: auto; padding: 10px; }
-        .item { padding: 12px; margin-bottom: 8px; background: #222; color: #fff; border-radius: 6px; cursor: pointer; }
-        .item:focus { background: #e50914; outline: none; }
+    <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: transparent !important; font-family: Arial, sans-serif; color: #fff; overflow: hidden; height: 100vh; }
+    
+    .main-container { display: flex; width: 100vw; height: 100vh; justify-content: flex-end; background: transparent !important; }
+    
+    /* Overlay Kontrol Tombol Sisi Kiri (Di Atas ExoPlayer Native) */
+    .player-controls-container {
+        flex: 1; display: flex; flex-direction: column; 
+        justify-content: space-between; padding: 20px; pointer-events: none;
+    }
+
+    .player-overlay-info {
+        background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 6px; 
+        font-size: 13px; font-weight: bold; align-self: flex-start; pointer-events: auto;
+    }
+
+    .player-controls { display: flex; gap: 10px; pointer-events: auto; }
+    .btn-player { 
+        background: rgba(0, 0, 0, 0.85); color: #fff; border: 2px solid #555; 
+        padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 13px; 
+        cursor: pointer; outline: none;
+    }
+    .btn-player:focus { background: #e50914; color: #fff; border-color: #fff; transform: scale(1.05); }
+
+    /* Sidebar Kanan */
+    .sidebar { width: 340px; background: rgba(20, 20, 20, 0.95); height: 100vh; display: flex; flex-direction: column; z-index: 10; pointer-events: auto; }
+    .header-container { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #181818; border-bottom: 1px solid #333; gap: 8px; }
+    h2 { margin: 0; font-size: 16px; font-weight: bold; color: #fff; }
+
+    .playlist-tabs { display: flex; gap: 4px; }
+    .tab-btn { background: #2a2a2a; color: #aaa; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; outline: none; }
+    .tab-btn.active { background: #e50914; color: #fff; border-color: #e50914; }
+    .tab-btn:focus { border-color: #fff; background: #fff; color: #000; }
+
+    #btnPengaturan { background: #333; color: #fff; border: 1px solid transparent; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; outline: none; }
+    #btnPengaturan:focus { border-color: #fff; background: #e50914; color: #fff; }
+
+    #modalPlaylist { display: none; background: #222; padding: 12px; margin: 10px; border-radius: 6px; border: 1px solid #444; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; color: #aaa; margin-bottom: 4px; }
+
+    #modalPlaylist input[type="text"], #modalPlaylist select {
+        width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #111; color: #fff; outline: none; font-size: 12px;
+    }
+    #modalPlaylist input[type="text"]:focus, #modalPlaylist select:focus { border-color: #e50914; }
+
+    .modal-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .button-group-row { display: flex; gap: 6px; }
+    .modal-buttons button { padding: 8px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; outline: none; font-size: 12px; }
+
+    .btn-file { background: #2ed573; color: #000; width: 100%; }
+    .btn-save { background: #e50914; color: #fff; flex: 1; }
+    .btn-reset { background: #555; color: #fff; flex: 1; }
+
+    .btn-file:focus, .btn-save:focus, .btn-reset:focus { border: 2px solid #fff; }
+
+    #search { width: calc(100% - 20px); margin: 8px 10px; padding: 8px 12px; border-radius: 6px; border: 1px solid #333; font-size: 12px; outline: none; background: #111; color: #fff; }
+    #search:focus { border-color: #e50914; background: #000; }
+
+    #kategori { display: flex; gap: 6px; overflow-x: auto; padding: 4px 10px 8px 10px; border-bottom: 1px solid #282828; }
+    #kategori button { background: #252525; color: #aaa; border: 1px solid transparent; padding: 5px 12px; border-radius: 12px; white-space: nowrap; cursor: pointer; outline: none; flex-shrink: 0; font-size: 11px; }
+    #kategori button.active { background: #e50914; color: #fff; font-weight: bold; }
+    #kategori button:focus { background: #fff; color: #000; }
+
+    .grid { flex: 1; overflow-y: auto; padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
+    .item { cursor: pointer; outline: none; background: rgba(255, 255, 255, 0.03); border-radius: 6px; border: 1px solid transparent; display: flex; align-items: center; padding: 8px; gap: 12px; }
+    .item img { width: 48px; height: 32px; object-fit: contain; background: #000; border-radius: 4px; flex-shrink: 0; }
+    .item-info { display: flex; flex-direction: column; overflow: hidden; text-align: left; }
+    .item-info .title { font-size: 13px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+    .item-info .category { font-size: 10px; color: #888; margin-top: 2px; }
+    .item:focus { border-color: #fff; background: rgba(255, 255, 255, 0.2); }
+
+    #customToast { visibility: hidden; min-width: 180px; background-color: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 6px; padding: 8px 12px; position: fixed; z-index: 9999; right: 20px; bottom: 20px; font-size: 12px; border: 1px solid #e50914; pointer-events: none; }
+    #customToast.show { visibility: visible; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <!-- Area Kiri: Tembus Pandang ke ExoPlayer Native -->
-    <div class="player-overlay"></div>
-
-    <!-- Area Kanan: UI Daftar Channel -->
-    <div class="sidebar">
-        <div class="header">Daftar Channel</div>
-        <div class="grid" id="tvList">
-            <!-- Contoh Channel -->
-            <div class="item" tabindex="0" onclick="pilihChannel('RTV', 'https://link-stream-rtv.m3u8')">RTV</div>
-            <div class="item" tabindex="0" onclick="pilihChannel('Indosiar', 'https://link-stream-indosiar.m3u8')">Indosiar</div>
+    <!-- Overlay Sisi Kiri Player -->
+    <div class="player-controls-container">
+        <div class="player-overlay-info" id="channelInfo">Pilih Channel...</div>
+        
+        <div class="player-controls">
+            <button id="btnNativeFull" class="btn-player" tabindex="0" 
+                    onkeydown="handlePlayerControlKey(event)" 
+                    onclick="bukaExoPlayerNative()">
+                📺 Fullscreen
+            </button>
         </div>
+    </div>
+
+    <!-- Sidebar Kanan -->
+    <div class="sidebar">
+        <div class="header-container">
+            <h2>mrzyb.tv</h2>
+            
+            <div class="playlist-tabs">
+                <button id="tab-p1" class="tab-btn active" tabindex="0" onclick="gantiPlaylistUtama('p1')">P1</button>
+                <button id="tab-p2" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p2')">P2</button>
+                <button id="tab-p3" class="tab-btn" tabindex="0" onclick="gantiPlaylistUtama('p3')">P3</button>
+            </div>
+
+            <button id="btnPengaturan" tabindex="0" onclick="toggleModal()">⚙️</button>
+        </div>
+
+        <div id="modalPlaylist">
+            <div class="form-group" id="containerCustomUrl">
+                <label for="inputCustomUrl">URL Remote Playlist:</label>
+                <input type="text" id="inputCustomUrl" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
+                       onkeydown="handleInputKey(event, this)"
+                       onclick="aktifkanKeyboard(this)" 
+                       onblur="nonaktifkanKeyboard(this)">
+            </div>
+
+            <div class="form-group">
+                <label for="selectUAMode">Pilih User-Agent Mode:</label>
+                <select id="selectUAMode" tabindex="0" onchange="gantiUAMode()">
+                    <option value="default">Default / Bawaan</option>
+                    <option value="lgadrm">LGADRM MPD Player (Rekomendasi URL Gelap)</option>
+                    <option value="tivimate_new">TiviMate 5.1.6</option>
+                    <option value="ott_player">OTT Player 1.7.4.1</option>
+                    <option value="mozilla_m3u">Mozilla m3u-ip.tv</option>
+                    <option value="ott_nav">OTT Navigator 1.9.6.4</option>
+                    <option value="tivimate">TiviMate 4.6.1</option>
+                    <option value="vlc">VLC 3.0.18</option>
+                    <option value="custom">Custom (Ketik Manual)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="containerCustomUA" style="display: none;">
+                <label for="inputCustomUA">Teks User-Agent Custom:</label>
+                <input type="text" id="inputCustomUA" tabindex="0" readonly placeholder="Tekan OK untuk mengetik..." 
+                       onkeydown="handleInputKey(event, this)"
+                       onclick="aktifkanKeyboard(this)" 
+                       onblur="nonaktifkanKeyboard(this)">
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="btnFileM3u" class="btn-file" tabindex="0" onclick="pilihFileInternal()">📁 Impor Media Lokal (.m3u)</button>
+                <div class="button-group-row">
+                    <button id="btnSavePlaylist" class="btn-save" tabindex="0" onclick="simpanPengaturan()">SIMPAN</button>
+                    <button id="btnResetPlaylist" class="btn-reset" tabindex="0" onclick="resetKeUtama()">RESET SLOT</button>
+                </div>
+            </div>
+
+            <input type="file" id="filePicker" accept=".m3u,.m3u8,.txt" style="display: none;" onchange="bacaFileWeb(event)">
+        </div>
+
+        <input id="search" tabindex="0" type="text" readonly placeholder="Cari channel... (Tekan OK)" 
+               oninput="cariChannel()" 
+               onkeydown="handleSearchKey(event)" 
+               onclick="aktifkanKeyboard(this)" 
+               onblur="nonaktifkanKeyboard(this)">
+
+        <div id="kategori"></div>
+        <div class="grid" id="tvList">Memuat TV...</div>
     </div>
 </div>
 
+<div id="customToast">Notifikasi</div>
+
 <script>
-    // Fungsi Bridge untuk komunikasi ke Java Native
-    function pilihChannel(name, url) {
-        console.log("Memutar: " + name);
-        
-        // Memanggil fungsi playTv yang ada di WebAppInterface (Java)
-        if (window.Android && typeof window.Android.playTv === "function") {
-            window.Android.playTv(url, "", "", "", "", "");
-        } else {
-            alert("Bridge Android tidak ditemukan!");
+// SUDAH DIUBAH SINKRON DENGAN LINK GITHUB PLAYLIST KAMU
+const PLAYLIST_1 = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/Playlist.m3u";
+
+let semuaTV = [];
+let currentPlayingChannel = null;
+
+// --- NAVIGASI REMOTE STB ---
+function handleItemKey(event, index) {
+    if (event.key === 'ArrowUp') {
+        if (index === 0) {
+            event.preventDefault();
+            let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+            if (activeCategoryBtn) activeCategoryBtn.focus();
+        }
+    } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        document.getElementById("btnNativeFull").focus();
+    }
+}
+
+function handlePlayerControlKey(event) {
+    if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        let lastIndex = ambilDataStorage("lastFocusedIndex") || 0;
+        let item = document.getElementById(`item-${lastIndex}`);
+        if (item) item.focus();
+    }
+}
+
+function aktifkanKeyboard(elem) {
+    elem.removeAttribute('readonly');
+    elem.focus();
+}
+
+function nonaktifkanKeyboard(elem) {
+    elem.setAttribute('readonly', 'readonly');
+}
+
+function handleInputKey(event, elem) {
+    if (event.key === 'Enter') {
+        if (elem.hasAttribute('readonly')) {
+            event.preventDefault();
+            aktifkanKeyboard(elem);
+        }
+    }
+}
+
+// --- LOCAL STORAGE & BRIDGE STB ---
+function simpanDataStorage(key, val) {
+    if (window.Android && typeof window.Android.savePlaylistData === "function") {
+        window.Android.savePlaylistData(key, val);
+    }
+    localStorage.setItem(key, val);
+}
+
+function ambilDataStorage(key) {
+    if (window.Android && typeof window.Android.getPlaylistData === "function") {
+        let val = window.Android.getPlaylistData(key);
+        if (val && val !== "") return val;
+    }
+    return localStorage.getItem(key) || "";
+}
+
+function hapusDataStorage(key) {
+    if (window.Android && typeof window.Android.savePlaylistData === "function") {
+        window.Android.savePlaylistData(key, "");
+    }
+    localStorage.removeItem(key);
+}
+
+let kategoriAktif = ambilDataStorage("lastCategory") || "Semua";
+
+const PRESET_UA = {
+    "lgadrm": "lgadrm.mpdplayer/v1;SM-M215F",
+    "tivimate_new": "TiviMate/5.1.6",
+    "ott_player": "OTT Player / 1.7.4.1 (Linux; Android 12; in; SM-M215F)",
+    "mozilla_m3u": "Mozilla/5.0 (m3u-ip.tv 3.0.0) Android",
+    "ott_nav": "OTT Navigator 1.9.6.4 (Android; TV)",
+    "tivimate": "TiviMate/4.6.1 (Android TV)",
+    "vlc": "VLC/3.0.18 (Linux; Android 10)"
+};
+
+function gantiUAMode() {
+    let mode = document.getElementById("selectUAMode").value;
+    document.getElementById("containerCustomUA").style.display = (mode === "custom") ? "block" : "none";
+}
+
+function ambilUserAgentAktif() {
+    let mode = ambilDataStorage("ua_mode") || "default";
+    if (mode === "custom") return ambilDataStorage("custom_ua_text");
+    if (PRESET_UA[mode]) return PRESET_UA[mode];
+    return "";
+}
+
+function showToast(pesan) {
+    let toast = document.getElementById("customToast");
+    toast.innerText = pesan;
+    toast.className = "show";
+    setTimeout(() => { toast.className = ""; }, 2500);
+}
+
+function updateTabUI(activeTab) {
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    let btn = document.getElementById(`tab-${activeTab}`);
+    if (btn) btn.classList.add("active");
+}
+
+function gantiPlaylistUtama(tipe) {
+    simpanDataStorage("activeTabPlaylist", tipe);
+    simpanDataStorage("lastCategory", "Semua");
+    hapusDataStorage("lastFocusedIndex");
+    
+    updateTabUI(tipe);
+    muatDataTV();
+}
+
+function muatDataTV() {
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    updateTabUI(activeTab);
+
+    if (activeTab === "p1") {
+        muatDariURL(PLAYLIST_1);
+        return;
+    }
+
+    let localData = ambilDataStorage(`localM3uContent_${activeTab}`);
+    let customUrl = ambilDataStorage(`customPlaylistURL_${activeTab}`);
+
+    if (localData && !customUrl) {
+        let tvData = parseM3U(localData);
+        if (tvData.length > 0) {
+            semuaTV = tvData;
+            prosesTampilan();
+            return;
         }
     }
 
-    // Tambahkan loading data playlist dari GitHub kamu di sini jika perlu
+    if (customUrl) {
+        muatDariURL(customUrl);
+    } else {
+        semuaTV = [];
+        document.getElementById("tvList").innerHTML = "<p style='font-size:12px;color:#aaa;'>Slot ini kosong. Klik '⚙️' untuk menambah playlist.</p>";
+        buatKategori();
+    }
+}
+
+function muatDariURL(targetURL) {
+    document.getElementById("tvList").innerHTML = "<p style='font-size:12px;color:#aaa;'>Memuat TV...</p>";
+
+    if (window.Android && typeof window.Android.fetchUrl === "function") {
+        setTimeout(() => {
+            try {
+                let activeUA = ambilUserAgentAktif();
+                let responseData = window.Android.fetchUrl(targetURL, activeUA);
+                if (responseData && !responseData.startsWith("ERROR:")) {
+                    let tvData = parseM3U(responseData);
+                    if (tvData.length > 0) {
+                        semuaTV = tvData;
+                        prosesTampilan();
+                        return;
+                    }
+                }
+                throw new Error("Gagal parsing");
+            } catch (err) {
+                document.getElementById("tvList").innerHTML = "<p style='font-size:12px;color:#aaa;'>Gagal membaca Playlist.</p>";
+            }
+        }, 50);
+        return;
+    }
+
+    let fetchURL = targetURL;
+    if (targetURL.includes("bit.ly") || targetURL.includes("tinyurl.com") || targetURL.includes("s.id")) {
+        fetchURL = "https://corsproxy.io/?" + encodeURIComponent(targetURL);
+    }
+
+    fetch(fetchURL)
+    .then(res => res.text())
+    .then(data => {
+        semuaTV = parseM3U(data);
+        prosesTampilan();
+    })
+    .catch(() => {
+        document.getElementById("tvList").innerHTML = "<p style='font-size:12px;color:#aaa;'>Gagal membaca Playlist.</p>";
+    });
+}
+
+function prosesTampilan() {
+    let savedKat = ambilDataStorage("lastCategory") || "Semua";
+    kategoriAktif = savedKat;
+
+    buatKategori();
+
+    let dataToDisplay = semuaTV;
+    if (savedKat !== "Semua") {
+        dataToDisplay = semuaTV.filter(tv => tv.group === savedKat);
+    }
+
+    tampilkanTV(dataToDisplay);
+}
+
+function formatGambarOptimized(url) {
+    if (!url || url.trim() === "") return 'https://via.placeholder.com/150x84?text=No+Logo';
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=180&output=webp&q=60`;
+}
+
+function buatElemenHTMLTV(tv, index) {
+    return `
+    <div class="item" tabindex="0" id="item-${index}" 
+         onkeydown="handleItemKey(event, ${index})"
+         onclick="pilihDanPlay(${index}, '${tv.name}', '${tv.url}', '${tv.userAgent}', '${tv.referer}', '${tv.drm}', '${tv.licenseKey}', '${tv.licenseUrl}')">
+        <img loading="lazy" decoding="async" src="${formatGambarOptimized(tv.logo)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x84?text=No+Logo';">
+        <div class="item-info">
+            <span class="title">${tv.name}</span>
+            <span class="category">${tv.group || 'Umum'}</span>
+        </div>
+    </div>
+    `;
+}
+
+function tampilkanTV(data) {
+    let html = "";
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
+    document.getElementById("tvList").innerHTML = html;
+
+    pulihkanFokusSTB();
+}
+
+function tampilkanTVTanpaFokus(data) {
+    let html = "";
+    data.forEach((tv, index) => html += buatElemenHTMLTV(tv, index));
+    document.getElementById("tvList").innerHTML = html;
+}
+
+function pulihkanFokusSTB() {
+    let lastIndex = ambilDataStorage("lastFocusedIndex");
+    setTimeout(() => {
+        if (lastIndex !== null && lastIndex !== "" && lastIndex !== undefined) {
+            let targetItem = document.getElementById(`item-${lastIndex}`);
+            if (targetItem) {
+                targetItem.focus();
+                hapusDataStorage("lastFocusedIndex");
+                return;
+            }
+        }
+        let firstItem = document.getElementById("item-0");
+        if (firstItem) firstItem.focus();
+    }, 100);
+}
+
+function buatKategori() {
+    let grup = ["Semua"];
+    semuaTV.forEach(tv => {
+        if (tv.group && !grup.includes(tv.group)) grup.push(tv.group);
+    });
+
+    let html = "";
+    grup.forEach((g, idx) => {
+        let activeClass = (g === kategoriAktif) ? "active" : "";
+        html += `
+        <button tabindex="0" id="kat-${idx}" class="${activeClass}"
+                onkeydown="handleCategoryKey(event, ${idx}, ${grup.length})"
+                onclick="pilihKategori('${g}', this)">
+            ${g}
+        </button>
+        `;
+    });
+
+    let containerKategori = document.getElementById("kategori");
+    containerKategori.innerHTML = html;
+}
+
+function handleSearchKey(event) {
+    let searchElem = document.getElementById('search');
+
+    if (event.key === 'Enter') {
+        if (searchElem.hasAttribute('readonly')) {
+            event.preventDefault();
+            aktifkanKeyboard(searchElem);
+        }
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        searchElem.blur();
+        let activeTab = document.querySelector(".tab-btn.active") || document.getElementById("tab-p1");
+        if (activeTab) activeTab.focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        searchElem.blur();
+        let activeCategoryBtn = document.querySelector("#kategori button.active") || document.getElementById("kat-0");
+        if (activeCategoryBtn) activeCategoryBtn.focus();
+    }
+}
+
+function handleCategoryKey(event, index, totalKat) {
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        document.getElementById('search').focus();
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        let firstItem = document.getElementById("item-0");
+        if (firstItem) firstItem.focus();
+    } else if (event.key === 'ArrowRight' && index < totalKat - 1) {
+        event.preventDefault();
+        document.getElementById(`kat-${index + 1}`).focus();
+    } else if (event.key === 'ArrowLeft' && index > 0) {
+        event.preventDefault();
+        document.getElementById(`kat-${index - 1}`).focus();
+    }
+}
+
+function pilihKategori(g, element) {
+    kategoriAktif = g;
+    simpanDataStorage("lastCategory", g);
+
+    document.querySelectorAll("#kategori button").forEach(btn => btn.classList.remove("active"));
+    if (element) {
+        element.classList.add("active");
+        element.focus();
+    }
+
+    let data = semuaTV;
+    if (g !== "Semua") {
+        data = semuaTV.filter(tv => tv.group === g);
+    }
+
+    tampilkanTVTanpaFokus(data);
+}
+
+function cariChannel() {
+    let text = document.getElementById("search").value.toLowerCase();
+    let data = semuaTV.filter(tv => tv.name.toLowerCase().includes(text));
+    tampilkanTVTanpaFokus(data);
+}
+
+// --- PEMUTARAN CHANNEL NATIVE VIA EXOPLAYER ---
+function pilihDanPlay(index, name, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    simpanDataStorage("lastFocusedIndex", index);
+    simpanDataStorage("lastCategory", kategoriAktif);
+
+    let activeGlobalUA = ambilUserAgentAktif();
+    let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
+
+    currentPlayingChannel = { name, url, finalUA, referer, drm, licenseKey, licenseUrl };
+    document.getElementById("channelInfo").innerText = "Memutar: " + name;
+
+    // Langsung instruksikan ExoPlayer Android untuk memutar video di samping
+    playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
+}
+
+function bukaExoPlayerNative() {
+    if (window.Android && typeof window.Android.toggleFullscreen === "function") {
+        window.Android.toggleFullscreen();
+    } else {
+        showToast("Fitur Fullscreen Native Android");
+    }
+}
+
+function playTv(url, userAgent, referer, drm, licenseKey, licenseUrl) {
+    if (window.Android && typeof window.Android.playTv === "function") {
+        window.Android.playTv(
+            url || "", 
+            userAgent || "", 
+            referer || "", 
+            drm || "", 
+            licenseKey || "", 
+            licenseUrl || ""
+        );
+    } else {
+        showToast("Memutar via ExoPlayer...");
+    }
+}
+
+function toggleModal() {
+    let modal = document.getElementById("modalPlaylist");
+    if (modal.style.display === "block") {
+        modal.style.display = "none";
+        document.getElementById("btnPengaturan").focus();
+    } else {
+        modal.style.display = "block";
+        
+        let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+        let savedUrl = ambilDataStorage(`customPlaylistURL_${activeTab}`);
+        let savedUAMode = ambilDataStorage("ua_mode") || "default";
+        let savedUAText = ambilDataStorage("custom_ua_text");
+
+        let containerUrl = document.getElementById("containerCustomUrl");
+        let btnFile = document.getElementById("btnFileM3u");
+        
+        if (activeTab === "p1") {
+            containerUrl.style.display = "none";
+            btnFile.style.display = "none";
+        } else {
+            containerUrl.style.display = "block";
+            btnFile.style.display = "block";
+        }
+
+        document.getElementById("inputCustomUrl").value = savedUrl;
+        document.getElementById("selectUAMode").value = savedUAMode;
+        document.getElementById("inputCustomUA").value = savedUAText;
+
+        gantiUAMode();
+        setTimeout(() => { 
+            if (activeTab !== "p1") document.getElementById("inputCustomUrl").focus(); 
+            else document.getElementById("selectUAMode").focus();
+        }, 50);
+    }
+}
+
+function simpanPengaturan() {
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    let modeUA = document.getElementById("selectUAMode").value;
+    let customUAText = document.getElementById("inputCustomUA").value.trim();
+
+    simpanDataStorage("ua_mode", modeUA);
+    simpanDataStorage("custom_ua_text", customUAText);
+
+    if (activeTab !== "p1") {
+        let urlBaru = document.getElementById("inputCustomUrl").value.trim();
+        if (urlBaru !== "") {
+            hapusDataStorage(`localM3uContent_${activeTab}`);
+            simpanDataStorage(`customPlaylistURL_${activeTab}`, urlBaru);
+        }
+    }
+
+    simpanDataStorage("lastCategory", "Semua");
+    toggleModal();
+    muatDataTV();
+    showToast("Disimpan!");
+}
+
+function resetKeUtama() {
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    if (activeTab === "p1") {
+        hapusDataStorage("ua_mode");
+        hapusDataStorage("custom_ua_text");
+    } else {
+        hapusDataStorage(`customPlaylistURL_${activeTab}`);
+        hapusDataStorage(`localM3uContent_${activeTab}`);
+    }
+    toggleModal();
+    muatDataTV();
+    showToast("Di-reset!");
+}
+
+function pilihFileInternal() {
+    if (window.Android && typeof window.Android.openFileChooser === "function") {
+        window.Android.openFileChooser();
+    } else {
+        document.getElementById("filePicker").click();
+    }
+}
+
+function terimaFileM3U(isiM3U) {
+    let activeTab = ambilDataStorage("activeTabPlaylist") || "p1";
+    if (activeTab === "p1") return;
+
+    if (isiM3U && isiM3U.trim() !== "") {
+        hapusDataStorage(`customPlaylistURL_${activeTab}`);
+        simpanDataStorage(`localM3uContent_${activeTab}`, isiM3U);
+        simpanDataStorage("lastCategory", "Semua");
+        toggleModal();
+        muatDataTV();
+        showToast("File Tersimpan!");
+    }
+}
+
+function bacaFileWeb(e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function(evt) { terimaFileM3U(evt.target.result); };
+    reader.readAsText(file);
+}
+
+function parseM3U(data) {
+    let lines = data.split("\n");
+    let result = [];
+    let name = "", logo = "", group = "", userAgent = "", referer = "", drm = "", licenseKey = "", licenseUrl = "";
+
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (line.startsWith("#EXTVLCOPT:http-user-agent=")) {
+            userAgent = line.replace("#EXTVLCOPT:http-user-agent=", "");
+        } else if (line.startsWith("#EXTVLCOPT:http-referrer=")) {
+            referer = line.replace("#EXTVLCOPT:http-referrer=", "");
+        } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_type=")) {
+            let type = line.replace("#KODIPROP:inputstream.adaptive.license_type=", "");
+            drm = type.includes("clearkey") ? "clearkey" : type;
+        } else if (line.startsWith("#KODIPROP:inputstream.adaptive.license_key=")) {
+            let key = line.replace("#KODIPROP:inputstream.adaptive.license_key=", "");
+            if (key.startsWith("http")) licenseUrl = key;
+            else licenseKey = key;
+        } else if (line.startsWith("#EXTINF")) {
+            let comma = line.lastIndexOf(",");
+            name = line.substring(comma + 1);
+            let logoPos = line.indexOf('tvg-logo="');
+            if (logoPos != -1) logo = line.substring(logoPos + 10, line.indexOf('"', logoPos + 10));
+            let groupPos = line.indexOf('group-title="');
+            if (groupPos != -1) group = line.substring(groupPos + 13, line.indexOf('"', groupPos + 13));
+        } else if (line.startsWith("http")) {
+            let url = line;
+            if (line.includes("|")) {
+                let parts = line.split("|");
+                url = parts[0];
+                let params = parts[1];
+                if (params.includes("user-agent=")) userAgent = decodeURIComponent(params.split("user-agent=")[1].split("&")[0]);
+                if (params.includes("referrer=")) referer = decodeURIComponent(params.split("referrer=")[1]);
+            }
+            result.push({ name: name || "Tanpa Nama", logo, group, url, userAgent, referer, drm, licenseKey, licenseUrl });
+            name = ""; logo = ""; group = ""; userAgent = ""; referer = ""; drm = ""; licenseKey = ""; licenseUrl = "";
+        }
+    }
+    return result;
+}
+
+muatDataTV();
 </script>
 
 </body>
