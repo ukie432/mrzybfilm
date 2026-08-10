@@ -117,7 +117,7 @@
     var currentEpisodes = [];
     var subtitleAktif = false;
     
-    // VARIABEL UNTUK MENYIMPAN POSTER HAFALAN/YANG SEDANG DIPUTAR
+    // VARIABEL UNTUK MENYIMPAN POSTER TERAKHIR YANG DIFOKUS/DIPILIH
     var lastActivePoster = null;
 
     var player = plyr.setup(".js-player", { 
@@ -276,7 +276,7 @@
         });
     });
 
-    // FUNGSI UNTUK KEMBALI KE SIDEBAR (POSTER AKTIF ATAU SEARCH)
+    // FUNGSI UNTUK KEMBALI KE SIDEBAR (POSTER TERAKHIR ATAU SEARCH)
     function kembalikeSidebar() {
         if (lastActivePoster && $(lastActivePoster).is(":visible")) {
             $(lastActivePoster).focus();
@@ -293,14 +293,17 @@
 
     // NAVIGASI TOMBOL PLAYER SEBELAH KANAN
     $(".btn-ctrl").on('keydown', function(e) {
-        if (e.keyCode === 38) { // Panah Atas -> Seek Bar
+        if (e.keyCode === 38) { // Panah Atas -> Ke Seek Bar
             e.preventDefault();
             $("#seek-bar").focus();
-        } else if (e.keyCode === 39) { // Panah Kanan -> Kembali ke Poster Aktif
-            if (this.id === "btnFullscreen" || this.id === "btnCC" || this.id === "btnNext") {
+        } else if (e.keyCode === 39) { // Panah Kanan
+            // HANYA jika kursor sedang di tombol Paling Kanan (btnFullscreen),
+            // baru melompat ke Poster Terakhir
+            if (this.id === "btnFullscreen") {
                 e.preventDefault();
                 kembalikeSidebar();
             }
+            // Untuk btnPrev, btnPlayPause, btnNext, dan btnCC biarkan navigasi bawaan berjalan berurutan ke kanan.
         }
     });
 
@@ -337,7 +340,7 @@
 
     // NAVIGASI ANTAR POSTER DENGAN PANAH
     $(document).on('keydown', '.poster', function(e) {
-        if (e.keyCode === 37) { // Panah Kiri -> Player Control
+        if (e.keyCode === 37) { // Panah Kiri -> Ke Player Control (btnPlayPause)
             e.preventDefault();
             $("#btnPlayPause").focus();
         } else if (e.keyCode === 38) { // Panah Atas
