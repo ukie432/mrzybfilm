@@ -60,8 +60,11 @@
         .btn-ctrl { background: #111; color: #00ffff; border: 1px solid #00ffff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-ctrl:focus { background: #00ffff; color: #000; outline: 2px solid #fff; box-shadow: 0 0 10px #00ffff; }
 
-        /* --- ATURAN FULLSCREEN --- */
-        .player-side:fullscreen, .player-side:-webkit-full-screen {
+        /* --- ATURAN FULLSCREEN (MENDUKUNG VENDOR PREFIX) --- */
+        .player-side:fullscreen, 
+        .player-side:-webkit-full-screen, 
+        .player-side:-moz-full-screen, 
+        .player-side:-ms-fullscreen {
             width: 100vw !important;
             height: 100vh !important;
             padding: 0 !important;
@@ -71,12 +74,16 @@
         }
 
         .player-side:fullscreen .header-title,
-        .player-side:-webkit-full-screen .header-title {
+        .player-side:-webkit-full-screen .header-title,
+        .player-side:-moz-full-screen .header-title,
+        .player-side:-ms-fullscreen .header-title {
             display: none !important;
         }
 
         .player-side:fullscreen .video-wrapper,
-        .player-side:-webkit-full-screen .video-wrapper {
+        .player-side:-webkit-full-screen .video-wrapper,
+        .player-side:-moz-full-screen .video-wrapper,
+        .player-side:-ms-fullscreen .video-wrapper {
             border: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
@@ -85,7 +92,9 @@
         }
 
         .player-side:fullscreen iframe,
-        .player-side:-webkit-full-screen iframe {
+        .player-side:-webkit-full-screen iframe,
+        .player-side:-moz-full-screen iframe,
+        .player-side:-ms-fullscreen iframe {
             width: 100vw !important;
             height: 100vh !important;
             transform: scale(1.02);
@@ -93,7 +102,9 @@
         }
 
         .player-side:fullscreen .custom-controls,
-        .player-side:-webkit-full-screen .custom-controls {
+        .player-side:-webkit-full-screen .custom-controls,
+        .player-side:-moz-full-screen .custom-controls,
+        .player-side:-ms-fullscreen .custom-controls {
             position: absolute !important;
             bottom: 20px !important;
             left: 5% !important;
@@ -111,8 +122,13 @@
             pointer-events: none !important;
         }
         
-        .custom-controls.controls-hidden * {
-            pointer-events: none !important;
+        /* MEMASTIKAN INTERAKSI PEMUTAR TETA P BEKERJA SAAT CONTROLS MUNCUL */
+        .custom-controls:not(.controls-hidden) {
+            pointer-events: auto !important;
+        }
+
+        .custom-controls:not(.controls-hidden) * {
+            pointer-events: auto !important;
         }
     </style>
 </head>
@@ -265,11 +281,16 @@
     });
     
     window.tutupPopUpPoster = function(){
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
+        const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        if (isFS) {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
             }
             return;
         }
@@ -281,7 +302,8 @@
 
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
-            if (document.fullscreenElement || document.webkitFullscreenElement || $("#popup").is(":visible")) {
+            const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            if (isFS || $("#popup").is(":visible")) {
                 event.preventDefault();
                 window.tutupPopUpPoster(); 
                 return;
@@ -289,16 +311,24 @@
         }
     }, true);
 
-    // FIX PERBAIKAN FULLSCREEN & NAVIGATION TRAP
+    // FIX PERBAIKAN FULLSCREEN (CROSS-BROWSER / iOS / HP / STB)
     function toggleFullscreen() {
         const elem = document.getElementById("leftPanelContainer");
-        const isFS = document.fullscreenElement || document.webkitFullscreenElement;
+        const videoElem = document.querySelector('.video-wrapper video') || document.querySelector('.video-wrapper iframe');
+        const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
 
         if (!isFS) {
-            if (elem.requestFullscreen) {
+            // Khusus iOS Safari (Perlu masuk fullscreen melalui elemen video langsung)
+            if (videoElem && videoElem.webkitEnterFullscreen) {
+                videoElem.webkitEnterFullscreen();
+            } 
+            // Browser Standar / Android / STB Webview
+            else if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
             } else if (elem.msRequestFullscreen) {
                 elem.msRequestFullscreen();
             }
@@ -307,19 +337,24 @@
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
             }
         }
         resetControlsTimer();
     }
 
-    // LISTENER DETEKSI KELUAR FULLSCREEN: LEPASKAN FOKUS & KEMBALIKAN KE SIDEBAR
+    // LISTENER DETEKSI KELUAR FULLSCREEN
     document.addEventListener("fullscreenchange", handleFullscreenExit);
     document.addEventListener("webkitfullscreenchange", handleFullscreenExit);
+    document.addEventListener("mozfullscreenchange", handleFullscreenExit);
+    document.addEventListener("MSFullscreenChange", handleFullscreenExit);
 
     function handleFullscreenExit() {
-        const isFS = document.fullscreenElement || document.webkitFullscreenElement;
+        const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
         if (!isFS) {
-            // Ketika keluar dari Fullscreen, alihkan fokus dari tombol Fullscreen ke Sidebar
             setTimeout(() => {
                 kembalikeSidebar();
             }, 200);
