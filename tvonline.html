@@ -32,13 +32,24 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 12px;
+            padding: 0 12px 12px 12px;
             overflow-y: auto;
             scrollbar-width: none;
         }
 
         .app-container::-webkit-scrollbar {
             display: none;
+        }
+
+        /* =====================================================
+           STICKY HEADER (Menahan Menu Atas Saat Poster Di-scroll)
+           ===================================================== */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #121212;
+            padding-top: 12px;
         }
 
         .header-container {
@@ -214,7 +225,7 @@
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 12px;
-            margin-bottom: 4px;
+            margin-bottom: 0px;
             scrollbar-width: none;
             flex-shrink: 0;
         }
@@ -250,6 +261,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            padding-top: 12px;
             padding-bottom: 20px;
         }
 
@@ -334,185 +346,191 @@
 
 <div class="app-container">
 
-    <div class="header-container">
+    <!-- SEMUA MENU ATAS DIBUNGKUS AGAR STICKY -->
+    <div class="sticky-header">
 
-        <h2>mrzyb.tv</h2>
+        <div class="header-container">
 
-        <div class="playlist-tabs">
-            <button id="tab-p1"
-                    class="tab-btn active"
-                    tabindex="0"
-                    onclick="gantiPlaylistUtama('p1')">
-                P1
-            </button>
+            <h2>mrzyb.tv</h2>
 
-            <button id="tab-p2"
-                    class="tab-btn"
-                    tabindex="0"
-                    onclick="gantiPlaylistUtama('p2')">
-                P2
-            </button>
-
-            <button id="tab-p3"
-                    class="tab-btn"
-                    tabindex="0"
-                    onclick="gantiPlaylistUtama('p3')">
-                P3
-            </button>
-        </div>
-
-        <button id="btnFsNative"
-                class="btn-fs"
-                tabindex="0"
-                onclick="panggilFullscreenNative()">
-            ⚡ Fullscreen
-        </button>
-
-        <button id="btnPengaturan"
-                tabindex="0"
-                onclick="toggleModal()">
-            ⚙️
-        </button>
-
-    </div>
-
-    <div id="modalPlaylist">
-
-        <div class="form-group" id="containerCustomUrl">
-
-            <label for="inputCustomUrl">
-                URL Remote Playlist:
-            </label>
-
-            <input type="text"
-                   id="inputCustomUrl"
-                   tabindex="0"
-                   readonly
-                   placeholder="Tekan OK untuk mengetik..."
-                   onkeydown="handleInputKey(event, this)"
-                   onclick="aktifkanKeyboard(this)"
-                   onblur="nonaktifkanKeyboard(this)">
-
-        </div>
-
-        <div class="form-group">
-
-            <label for="selectUAMode">
-                Pilih User-Agent Mode:
-            </label>
-
-            <select id="selectUAMode"
-                    tabindex="0"
-                    onchange="gantiUAMode()">
-
-                <option value="default">
-                    Default / Bawaan
-                </option>
-
-                <option value="lgadrm">
-                    LGADRM MPD Player
-                </option>
-
-                <option value="tivimate_new">
-                    TiviMate 5.1.6
-                </option>
-
-                <option value="ott_player">
-                    OTT Player 1.7.4.1
-                </option>
-
-                <option value="mozilla_m3u">
-                    Mozilla m3u-ip.tv
-                </option>
-
-                <option value="ott_nav">
-                    OTT Navigator 1.9.6.4
-                </option>
-
-                <option value="tivimate">
-                    TiviMate 4.6.1
-                </option>
-
-                <option value="vlc">
-                    VLC 3.0.18
-                </option>
-
-                <option value="custom">
-                    Custom
-                </option>
-
-            </select>
-
-        </div>
-
-        <div class="form-group"
-             id="containerCustomUA"
-             style="display:none;">
-
-            <label for="inputCustomUA">
-                Teks User-Agent Custom:
-            </label>
-
-            <input type="text"
-                   id="inputCustomUA"
-                   tabindex="0"
-                   readonly
-                   placeholder="Tekan OK untuk mengetik..."
-                   onkeydown="handleInputKey(event, this)"
-                   onclick="aktifkanKeyboard(this)"
-                   onblur="nonaktifkanKeyboard(this)">
-
-        </div>
-
-        <div class="modal-buttons">
-
-            <button id="btnFileM3u"
-                    class="btn-file"
-                    tabindex="0"
-                    onclick="pilihFileInternal()">
-                📁 Impor Media Lokal (.m3u)
-            </button>
-
-            <div class="button-group-row">
-
-                <button id="btnSavePlaylist"
-                        class="btn-save"
+            <div class="playlist-tabs">
+                <button id="tab-p1"
+                        class="tab-btn active"
                         tabindex="0"
-                        onclick="simpanPengaturan()">
-                    SIMPAN
+                        onclick="gantiPlaylistUtama('p1')">
+                    P1
                 </button>
 
-                <button id="btnResetPlaylist"
-                        class="btn-reset"
+                <button id="tab-p2"
+                        class="tab-btn"
                         tabindex="0"
-                        onclick="resetKeUtama()">
-                    RESET SLOT INI
+                        onclick="gantiPlaylistUtama('p2')">
+                    P2
                 </button>
+
+                <button id="tab-p3"
+                        class="tab-btn"
+                        tabindex="0"
+                        onclick="gantiPlaylistUtama('p3')">
+                    P3
+                </button>
+            </div>
+
+            <button id="btnFsNative"
+                    class="btn-fs"
+                    tabindex="0"
+                    onclick="panggilFullscreenNative()">
+                ⚡ Fullscreen
+            </button>
+
+            <button id="btnPengaturan"
+                    tabindex="0"
+                    onclick="toggleModal()">
+                ⚙️
+            </button>
+
+        </div>
+
+        <div id="modalPlaylist">
+
+            <div class="form-group" id="containerCustomUrl">
+
+                <label for="inputCustomUrl">
+                    URL Remote Playlist:
+                </label>
+
+                <input type="text"
+                       id="inputCustomUrl"
+                       tabindex="0"
+                       readonly
+                       placeholder="Tekan OK untuk mengetik..."
+                       onkeydown="handleInputKey(event, this)"
+                       onclick="aktifkanKeyboard(this)"
+                       onblur="nonaktifkanKeyboard(this)">
 
             </div>
 
+            <div class="form-group">
+
+                <label for="selectUAMode">
+                    Pilih User-Agent Mode:
+                </label>
+
+                <select id="selectUAMode"
+                        tabindex="0"
+                        onchange="gantiUAMode()">
+
+                    <option value="default">
+                        Default / Bawaan
+                    </option>
+
+                    <option value="lgadrm">
+                        LGADRM MPD Player
+                    </option>
+
+                    <option value="tivimate_new">
+                        TiviMate 5.1.6
+                    </option>
+
+                    <option value="ott_player">
+                        OTT Player 1.7.4.1
+                    </option>
+
+                    <option value="mozilla_m3u">
+                        Mozilla m3u-ip.tv
+                    </option>
+
+                    <option value="ott_nav">
+                        OTT Navigator 1.9.6.4
+                    </option>
+
+                    <option value="tivimate">
+                        TiviMate 4.6.1
+                    </option>
+
+                    <option value="vlc">
+                        VLC 3.0.18
+                    </option>
+
+                    <option value="custom">
+                        Custom
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group"
+                 id="containerCustomUA"
+                 style="display:none;">
+
+                <label for="inputCustomUA">
+                    Teks User-Agent Custom:
+                </label>
+
+                <input type="text"
+                       id="inputCustomUA"
+                       tabindex="0"
+                       readonly
+                       placeholder="Tekan OK untuk mengetik..."
+                       onkeydown="handleInputKey(event, this)"
+                       onclick="aktifkanKeyboard(this)"
+                       onblur="nonaktifkanKeyboard(this)">
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button id="btnFileM3u"
+                        class="btn-file"
+                        tabindex="0"
+                        onclick="pilihFileInternal()">
+                    📁 Impor Media Lokal (.m3u)
+                </button>
+
+                <div class="button-group-row">
+
+                    <button id="btnSavePlaylist"
+                            class="btn-save"
+                            tabindex="0"
+                            onclick="simpanPengaturan()">
+                        SIMPAN
+                    </button>
+
+                    <button id="btnResetPlaylist"
+                            class="btn-reset"
+                            tabindex="0"
+                            onclick="resetKeUtama()">
+                        RESET SLOT INI
+                    </button>
+
+                </div>
+
+            </div>
+
+            <input type="file"
+                   id="filePicker"
+                   accept=".m3u,.m3u8,.txt"
+                   style="display:none;"
+                   onchange="bacaFileWeb(event)">
+
         </div>
 
-        <input type="file"
-               id="filePicker"
-               accept=".m3u,.m3u8,.txt"
-               style="display:none;"
-               onchange="bacaFileWeb(event)">
+        <input id="search"
+               tabindex="0"
+               type="text"
+               readonly
+               placeholder="Cari channel... (Tekan OK)"
+               oninput="cariChannel()"
+               onkeydown="handleSearchKey(event)"
+               onclick="aktifkanKeyboard(this)"
+               onblur="nonaktifkanKeyboard(this)">
+
+        <div id="kategori"></div>
 
     </div>
 
-    <input id="search"
-           tabindex="0"
-           type="text"
-           readonly
-           placeholder="Cari channel... (Tekan OK)"
-           oninput="cariChannel()"
-           onkeydown="handleSearchKey(event)"
-           onclick="aktifkanKeyboard(this)"
-           onblur="nonaktifkanKeyboard(this)">
-
-    <div id="kategori"></div>
-
+    <!-- HANYA POSTER/ITEM TV INI YANG AKAN TERSCROLL -->
     <div class="grid" id="tvList">
         Memuat TV...
     </div>
@@ -770,10 +788,6 @@ function gantiPlaylistUtama(tipe) {
 
     updateTabUI(tipe);
 
-    /*
-     * Kalau pindah playlist,
-     * boleh otomatis memainkan channel pertama.
-     */
     sudahAutoPlay = false;
 
     muatDataTV();
@@ -998,15 +1012,6 @@ function prosesTampilan() {
 
     tampilkanTV(dataToDisplay);
 
-
-    /*
-     * ==========================================
-     * INI PERUBAHAN UTAMA
-     *
-     * Setelah playlist selesai dimuat,
-     * langsung putar channel pertama.
-     * ==========================================
-     */
     autoPlayChannelPertama(dataToDisplay);
 
 }
@@ -1072,10 +1077,6 @@ function autoPlayChannelPertama(data) {
         : activeGlobalUA;
 
 
-    /*
-     * Beri sedikit waktu agar WebView
-     * selesai membuat tampilan.
-     */
     setTimeout(() => {
 
         try {
@@ -1646,13 +1647,6 @@ function pilihKategori(
         data
     );
 
-
-    /*
-     * Kalau memilih kategori,
-     * jangan otomatis mengganti channel
-     * yang sedang diputar.
-     */
-
 }
 
 
@@ -1965,16 +1959,9 @@ function simpanPengaturan() {
 
     toggleModal();
 
-
-    /*
-     * Setelah playlist berubah,
-     * izinkan autoplay lagi.
-     */
     sudahAutoPlay = false;
 
-
     muatDataTV();
-
 
     showToast(
         "Disimpan!"
@@ -2020,12 +2007,9 @@ function resetKeUtama() {
 
     toggleModal();
 
-
     sudahAutoPlay = false;
 
-
     muatDataTV();
-
 
     showToast(
         "Di-reset!"
@@ -2097,12 +2081,9 @@ function terimaFileM3U(isiM3U) {
 
         toggleModal();
 
-
         sudahAutoPlay = false;
 
-
         muatDataTV();
-
 
         showToast(
             "File Tersimpan!"
