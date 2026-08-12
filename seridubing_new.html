@@ -11,7 +11,30 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         
-        .navbar { padding: 20px; text-align: center; background: #111; position: relative; z-index: 10; }
+        /* Layout Navbar dibuat Flexbox agar logo dan pencarian sejajar sempurna */
+        .navbar { 
+            padding: 20px; 
+            background: #111; 
+            position: relative; 
+            z-index: 10; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        /* Logo di samping kanan pencarian menggunakan pseudo-element ::after */
+        .navbar::after {
+            content: "";
+            display: block;
+            width: 120px;
+            height: 40px;
+            background-image: url('https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center left;
+        }
+
         .search-container { position: relative; display: inline-block; width: 80%; max-width: 400px; }
         
         .search-bar-wrapper { 
@@ -23,8 +46,16 @@
             display: flex; 
             align-items: center; 
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .search-bar-wrapper:focus { border-color: #ffffff; outline: none; }
+
+        /* Efek Fokus: Ring / Glow Cahaya Putih Redup saat di-Fokus */
+        .search-bar-wrapper:focus-within,
+        .search-bar-wrapper:focus { 
+            border-color: #ffffff; 
+            outline: none; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); 
+        }
         
         #search { 
             width: 100%; 
