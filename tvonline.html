@@ -423,6 +423,14 @@ let sudahAutoPlay = false;
 
 // Variabel untuk menyimpan indeks poster aktif
 let lastActiveIndex = null;
+let lastActivePosterElement = null;
+
+// Lacak setiap kali fokus berpindah di halaman web (Pelacak Otomatis Remote STB)
+document.addEventListener('focusin', function(e) {
+    if (e.target && e.target.classList && e.target.classList.contains('item')) {
+        lastActivePosterElement = e.target;
+    }
+}, true);
 
 function aktifkanKeyboard(elem) {
     elem.removeAttribute("readonly");
@@ -670,12 +678,20 @@ function tampilkanTVTanpaFokus(data) {
 // DARI PEMUTAR KEMBALI KE POSTER AKTIF
 // =====================================================
 function pulihkanFokusSTB() {
-    let targetIndex = lastActiveIndex;
-    if (targetIndex === null || targetIndex === undefined) {
-        targetIndex = ambilDataStorage("lastFocusedIndex");
-    }
-
     setTimeout(() => {
+        // Prioritas 1: Kembalikan fokus ke elemen fisik yang direkam listener
+        if (lastActivePosterElement && typeof lastActivePosterElement.focus === "function" && document.body.contains(lastActivePosterElement)) {
+            lastActivePosterElement.focus();
+            lastActivePosterElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        // Prioritas 2: Cari berdasarkan indeks poster terakhir
+        let targetIndex = lastActiveIndex;
+        if (targetIndex === null || targetIndex === undefined) {
+            targetIndex = ambilDataStorage("lastFocusedIndex");
+        }
+
         if (targetIndex !== null && targetIndex !== "" && targetIndex !== undefined) {
             let targetItem = document.getElementById(`item-${targetIndex}`);
             if (targetItem) {
@@ -684,6 +700,8 @@ function pulihkanFokusSTB() {
                 return;
             }
         }
+
+        // Fallback: Jika tidak ada yang tersimpan, fokuskan ke poster pertama
         let firstItem = document.getElementById("item-0");
         if (firstItem) firstItem.focus();
     }, 100);
@@ -781,6 +799,7 @@ function cariChannel() {
 function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     // Simpan poster aktif yang dipilih
     lastActiveIndex = index;
+    lastActivePosterElement = document.getElementById(`item-${index}`);
     simpanDataStorage("lastFocusedIndex", index);
     simpanDataStorage("lastCategory", kategoriAktif);
 
