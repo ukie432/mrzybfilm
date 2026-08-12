@@ -61,30 +61,43 @@
   </div>
 
   <script>
-    const CORRECT_PASSWORD = "Raihan96";
+    // ============================================================
+    // PENGATURAN PASSWORD & VERSI (Ubah bagian ini jika ganti pass)
+    // ============================================================
+    const CORRECT_PASSWORD = "Raihan96"; // 1. Masukkan password baru Anda
+    const PASS_VERSION = "v2";               // 2. Wajib ubah versi (misal: v2, v3, v4) setiap ganti pass
+    
     const HOME_URL = "https://mrzybtv-api.ukielaki88.workers.dev/app/homemrzyb";
 
     const input = document.getElementById("passInput");
     const btnSubmit = document.getElementById("btnSubmit");
     const errorMsg = document.getElementById("passError");
 
-    // 1. CEK DULU: Jika sudah pernah login di browser ini, langsung lempar ke Home
-    if (localStorage.getItem("isLoggedIn") === "true") {
+    // CEK SESI LOGIN & VERSI PASSWORD
+    const savedLogin = localStorage.getItem("isLoggedIn");
+    const savedVersion = localStorage.getItem("passVersion");
+
+    // Jika sudah login DAN versinya masih sama dengan yang ada di server/kode, langsung masuk
+    if (savedLogin === "true" && savedVersion === PASS_VERSION) {
       window.location.href = HOME_URL;
+    } else {
+      // Jika versi password di kode sudah berubah (berbeda), hapus sesi lama agar user wajib login ulang
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("passVersion");
     }
 
-    // 2. FUNGSI VERIFIKASI PASSWORD
+    // FUNGSI VERIFIKASI PASSWORD
     window.checkPassword = function() {
       const userPass = input.value.trim();
 
       if (userPass === CORRECT_PASSWORD) {
-        // Simpan status di browser/app
+        // Simpan status login DAN versi password ke perangkat user
         localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("passVersion", PASS_VERSION);
 
         btnSubmit.innerText = "Membuka...";
         btnSubmit.disabled = true;
 
-        // Buka URL Home
         setTimeout(function() {
           window.location.href = HOME_URL;
         }, 100);
