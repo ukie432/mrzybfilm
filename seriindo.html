@@ -11,7 +11,7 @@
     <style>
         body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
         
-        /* Layout Navbar dibuat Flexbox agar logo dan pencarian sejajar sempurna */
+        /* Layout Navbar Flexbox */
         .navbar { 
             padding: 20px; 
             background: #111; 
@@ -23,7 +23,6 @@
             gap: 15px;
         }
         
-        /* Logo di samping kanan pencarian menggunakan pseudo-element ::after */
         .navbar::after {
             content: "";
             display: block;
@@ -49,7 +48,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Efek Fokus: Ring / Glow Cahaya Putih Redup saat di-Fokus */
         .search-bar-wrapper:focus-within,
         .search-bar-wrapper:focus { 
             border-color: #ffffff; 
@@ -77,14 +75,40 @@
         }
         .clear-search:focus { background: red; outline: none; }
 
-        /* Grid & Poster */
+        /* Judul Section */
+        .section-title { 
+            font-size: 16px; 
+            font-weight: 700; 
+            margin: 20px 20px 10px 20px; 
+            color: #E50914; 
+            border-left: 4px solid #E50914; 
+            padding-left: 10px; 
+            display: none; 
+        }
+
+        /* Container Lanjutkan Menonton & Grid Utama */
+        .container-continue { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; 
+            padding: 20px; 
+        }
+
         .grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
             gap: 20px; 
             padding: 20px; 
         }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
+
+        .poster { 
+            cursor: pointer; 
+            border: 3px solid #333; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            background: #111; 
+            position: relative; 
+        }
         .poster:focus { transform: scale(1.05); border-color: #ffffff; outline: none; }
         
         .poster img { 
@@ -94,8 +118,59 @@
             display: block; 
         }
         
-        .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .poster-title { 
+            padding: 8px; 
+            font-size: 14px; 
+            text-align: center; 
+            font-weight: bold; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            color: #fff; 
+        }
         .poster:focus .poster-title { color: #ffffff; }
+
+        /* Indicator Progress Bar Red */
+        .progress-container { 
+            width: 100%; 
+            height: 4px; 
+            background-color: rgba(255, 255, 255, 0.25); 
+            position: absolute; 
+            bottom: 30px; 
+            left: 0; 
+        }
+        .progress-bar-red { 
+            height: 100%; 
+            background-color: #E50914; 
+            width: 0%; 
+            box-shadow: 0 0 4px #E50914; 
+        }
+        .time-badge { 
+            position: absolute; 
+            top: 6px; 
+            right: 6px; 
+            background: rgba(0,0,0,0.8); 
+            color: #fff;
+            font-size: 11px; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-weight: bold;
+        }
+
+        /* Indicator Progress Bar Mini di Daftar Episode Popup */
+        .eps-progress-bg {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+            margin-top: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .eps-progress-fill {
+            height: 100%;
+            background: #E50914;
+            width: 0%;
+        }
         
         /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
@@ -103,8 +178,9 @@
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
         .close-x:focus { outline: 3px solid #ffffff; transform: scale(1.1); }
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
-        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; }
+        .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 5px; box-sizing: border-box; }
         .eps-btn:focus { background:#ffffff; color:black; outline: none; }
+        .eps-btn:focus .eps-progress-fill { background: #E50914; }
     </style>
 </head>
 <body>
@@ -118,6 +194,12 @@
         </div>
     </div>
 
+    <!-- LANJUTKAN MENONTON SECTION -->
+    <div class="section-title" id="continueTitle">LANJUTKAN MENONTON</div>
+    <div class="container-continue" id="containerContinue"></div>
+
+    <!-- SEMUA SERIES SECTION -->
+    <div class="section-title" style="display: block;">SEMUA SERIES</div>
     <div class="grid" id="grid"></div>
 
     <div id="popup">
@@ -136,10 +218,13 @@
     // ========================================================
     const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/series_indo.m3u"; 
 
+    let allData = [];
+    let loaded = 0;
+    const LOAD_SIZE = 40;
+
     // ========================================================
-    // LOGIKA PENYELARASAN NATIVE
+    // LOGIKA PENYELARASAN NATIVE & KEYBOARD
     // ========================================================
-    
     window.tutupPopUpPoster = function(){
         window.closePopup();
     };
@@ -160,12 +245,15 @@
         
         if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
             e.preventDefault();
-            openModal(Number(document.activeElement.dataset.index));
+            const index = Number(document.activeElement.dataset.index);
+            if (!isNaN(index)) {
+                openModal(index);
+            }
             return false;
         }
 
         if (e.keyCode == 38 && $(activeEl).hasClass('poster')) {
-            const index = $('.grid .poster').index(activeEl);
+            const index = $('.grid .poster, .container-continue .poster').index(activeEl);
             if (index < 5) {
                 e.preventDefault();
                 document.getElementById("search-box").focus();
@@ -276,9 +364,62 @@
         }, 200);
     });
 
-    let allData = [];
-    let loaded = 0;
-    const LOAD_SIZE = 40;
+    // ========================================================
+    // RENDER LANJUTKAN MENONTON (SERIES)
+    // ========================================================
+    function renderContinueWatching() {
+        const container = $("#containerContinue");
+        container.empty();
+        let adaData = false;
+
+        allData.forEach((series, seriesIndex) => {
+            series.episodes.forEach((ep, epIndex) => {
+                // Generate Film ID Unik: JudulSeries_Episode
+                const uniqueId = series.title + "_" + ep.ep;
+                
+                if (typeof Android !== "undefined" && Android.getProgressVideo) {
+                    try {
+                        const dataStr = Android.getProgressVideo(uniqueId);
+                        if (dataStr) {
+                            const dataData = JSON.parse(dataStr);
+                            if (dataData && dataData.durasi > 0) {
+                                const persentase = (dataData.posisi / dataData.durasi) * 100;
+                                
+                                // Jika ditonton antara 1% sampai 95%
+                                if (persentase > 1 && persentase < 95) {
+                                    adaData = true;
+                                    const barWidth = persentase.toFixed(1) + "%";
+                                    
+                                    const card = $(`
+                                        <div class="poster" tabindex="0" data-title="${series.title}">
+                                            <img src="${series.poster}" loading="lazy">
+                                            <span class="time-badge">${ep.ep}</span>
+                                            <div class="progress-container">
+                                                <div class="progress-bar-red" style="width: ${barWidth}"></div>
+                                            </div>
+                                            <div class="poster-title">${series.title}</div>
+                                        </div>
+                                    `);
+
+                                    card.on('click', function() {
+                                        playAndSave(ep.url, epIndex, series.title, ep.ep);
+                                    });
+
+                                    container.append(card);
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                }
+            });
+        });
+
+        if (adaData) { 
+            $("#continueTitle").show(); 
+        } else { 
+            $("#continueTitle").hide(); 
+        }
+    }
 
     // ========================================================
     // PARSER PINTAR: HAPUS TITIK PADA JUDUL & AUTO-SORT EPISODE
@@ -304,10 +445,7 @@
                 const commaIndex = line.lastIndexOf(',');
                 let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
 
-                // JIKA CUMA ADA GROUP "Film" / "Series" ATAU TIDAK ADA GROUP BERSIH:
                 if (!groupName || groupName.toLowerCase() === "film" || groupName.toLowerCase() === "series") {
-                    
-                    // Deteksi pola S01E01, S1E1, E01, Episode 01, dll.
                     const seasonEpRegex = /(S\d+E\d+|S\d+\s*E\d+|E\d+|Episode\s*\d+)/i;
                     const match = rawTitle.match(seasonEpRegex);
 
@@ -329,9 +467,6 @@
                     currentEpName = rawTitle;
                 }
 
-                // ========================================================
-                // PEMBERSIH TITIK: Ubah titik (.) pada judul menjadi spasi
-                // ========================================================
                 currentTitle = currentTitle.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
             }
             else if (line.startsWith("http")) { 
@@ -357,7 +492,6 @@
             }
         }
         
-        // AUTO SORT EPISODE (Urut dari S01E01, S01E02, S01E03, dst)
         const result = Array.from(seriesMap.values());
         result.forEach(item => {
             item.episodes.sort((a, b) => {
@@ -385,6 +519,7 @@
         allData = parseM3U(text); 
 
         loadMore();
+        renderContinueWatching();
         
         document.getElementById("grid").addEventListener("click", function(e){
             const poster = e.target.closest(".poster");
@@ -392,30 +527,21 @@
             openModal(Number(poster.dataset.index));
         });
         
-        function checkLoadMore() {
-            const posters = document.querySelectorAll(".poster");
-            if (!posters.length) return;
-            const index = [...posters].indexOf(document.activeElement);
-            if (index >= loaded - 10 && loaded < allData.length) {
-                loadMore();
-            }
-        }
-        
         setTimeout(() => {
             const popupElement = document.getElementById("popup");
             if (popupElement && window.getComputedStyle(popupElement).display === "none") {
                 document.querySelector(".poster")?.focus();
             }
-        },600);
+        }, 600);
 
         checkLastSession();
     });
 
     function loadMore(){
-        const fragment=document.createDocumentFragment();
-        const end=Math.min(loaded+LOAD_SIZE,allData.length);
+        const fragment = document.createDocumentFragment();
+        const end = Math.min(loaded + LOAD_SIZE, allData.length);
 
-        for(let i=loaded;i<end;i++){
+        for(let i = loaded; i < end; i++){
             const item = allData[i];
             const div = document.createElement("div");
             div.className = "poster";
@@ -430,7 +556,7 @@
             fragment.appendChild(div);
         }
         document.getElementById("grid").appendChild(fragment);
-        loaded=end;
+        loaded = end;
     }    
        
     window.addEventListener("scroll", () => {
@@ -451,9 +577,11 @@
         
     function openModal(index) {
         const item = allData[index];
-        localStorage.setItem(pageTitle + "_judul_film", item.title);
+        if (!item) return;
+
         const title = item.title;
         const eps = item.episodes;
+        
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title);
         localStorage.setItem(pageTitle + "_judul_film", title);
@@ -472,10 +600,30 @@
             btn.className = "eps-btn";
             btn.tabIndex = 0;
             btn.dataset.index = epIndex;
-            btn.textContent = e.ep;
+            
+            // Hitung Progres Mini Per-Episode
+            const uniqueId = title + "_" + e.ep;
+            let barHtml = "";
+            
+            if (typeof Android !== "undefined" && Android.getProgressVideo) {
+                try {
+                    const dataStr = Android.getProgressVideo(uniqueId);
+                    if (dataStr) {
+                        const dataData = JSON.parse(dataStr);
+                        if (dataData && dataData.durasi > 0) {
+                            const p = Math.min(100, Math.max(0, (dataData.posisi / dataData.durasi) * 100));
+                            if (p > 1) {
+                                barHtml = `<div class="eps-progress-bg"><div class="eps-progress-fill" style="width:${p.toFixed(1)}%"></div></div>`;
+                            }
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            btn.innerHTML = `<div>${e.ep}</div>${barHtml}`;
 
             btn.onclick = function() {
-                playAndSave(e.url, epIndex, title);
+                playAndSave(e.url, epIndex, title, e.ep);
             };
 
             epsListContainer.appendChild(btn);
@@ -487,9 +635,15 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    function playAndSave(url, index, title) {
+    function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
-        if (typeof Android !== "undefined" && Android.playVideo) {
+        
+        // Buat ID unik berdasarkan Judul Series + Episode
+        const filmId = title + "_" + (epName || "Eps" + (index + 1));
+
+        if (typeof Android !== "undefined" && Android.playVideoWithId) {
+            Android.playVideoWithId(url, filmId);
+        } else if (typeof Android !== "undefined" && Android.playVideo) {
             Android.playVideo(url);
         } else {
             window.open(url, "_blank");
@@ -513,6 +667,9 @@
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
+
+        // Refresh section Lanjutkan Menonton saat popup ditutup
+        renderContinueWatching();
     };
 
     function checkLastSession() {
