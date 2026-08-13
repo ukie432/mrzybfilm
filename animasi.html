@@ -73,6 +73,25 @@
     .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
+    /* STYLING KHUSUS BANNER LANJUTKAN MENONTON */
+    #continueSectionTitle {
+        color: #E50914;
+    }
+
+    .time-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        font-size: 8px;
+        font-weight: bold;
+        padding: 3px 6px;
+        border-radius: 4px;
+        z-index: 5;
+        border: 1px solid rgba(229, 9, 20, 0.6);
+    }
+
     .container-film {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
@@ -174,9 +193,15 @@
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
+<!-- SECTION LANJUTKAN MENONTON (WETV / NETFLIX STYLE) -->
+<div class="section-title" id="continueSectionTitle">LANJUTKAN MENONTON</div>
+<div class="container-film" id="containerContinue"></div>
+
+<!-- SECTION FAVORIT -->
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
+<!-- SECTION UTAMA -->
 <div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM ANIMASI</div>
 <div class="container-film" id="containerUtama"></div>
 
@@ -190,6 +215,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerUtama = document.getElementById('containerUtama');
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
+    
+    // VARIABEL UNTUK BANNER LANJUTKAN MENONTON
+    const containerContinue = document.getElementById('containerContinue');
+    const continueSectionTitle = document.getElementById('continueSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('animasi_favorit')) || [];
 
@@ -207,6 +236,15 @@ document.addEventListener("DOMContentLoaded", function() {
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
+    // FUNGSI FORMAT MILIDETIK KE MENIT:DETIK
+    function formatTime(ms) {
+        if (!ms || ms <= 0) return "00:00";
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
     /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
         if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
@@ -221,6 +259,62 @@ document.addEventListener("DOMContentLoaded", function() {
             } catch(e){}
         }
         return "";
+    }
+
+    /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
+    function updateTampilanLanjutkanMenonton() {
+        containerContinue.innerHTML = "";
+        if (typeof Android === "undefined" || !Android.getProgressVideo) {
+            continueSectionTitle.style.display = "none";
+            containerContinue.style.display = "none";
+            return;
+        }
+
+        let adaVideoLanjut = false;
+
+        semuaFilm.forEach(film => {
+            try {
+                const dataData = JSON.parse(Android.getProgressVideo(film.id));
+                if (dataData && dataData.durasi > 0) {
+                    const persentase = (dataData.posisi / dataData.durasi) * 100;
+
+                    // Tampilkan di Banner jika ditonton > 1% dan belum tamat (< 95%)
+                    if (persentase > 1 && persentase < 95) {
+                        adaVideoLanjut = true;
+                        const optimizedImg = getOptimizedImg(film.img);
+                        const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                        const posisiMenit = formatTime(dataData.posisi);
+
+                        containerContinue.insertAdjacentHTML("beforeend", `
+                            <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
+                                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                                    <div class="poster-wrapper">
+                                        <span class="time-badge">Lanjut ${posisiMenit}</span>
+                                        <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                        ${progressBarHtml}
+                                    </div>
+                                </a>
+                                <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                                    <span>☆</span> Favorit
+                                </button>
+                                <div class="film-title">${film.title}</div>
+                            </div>
+                        `);
+                    }
+                }
+            } catch (e) {}
+        });
+
+        if (adaVideoLanjut) {
+            continueSectionTitle.style.display = "block";
+            continueSectionTitle.style.borderLeft = "4px solid #E50914";
+            containerContinue.style.display = "grid";
+        } else {
+            continueSectionTitle.style.display = "none";
+            containerContinue.style.display = "none";
+        }
+
+        perbaruiStatusTombolBintang();
     }
 
     window.addEventListener("keydown", function(e) {
@@ -335,7 +429,6 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault();
             const card = play.closest(".card-film");
             
-            // Ambil ID film murni dari data-id (misal "1"), jika tidak ada baru ambil ID Card
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
             const cardElementId = card ? card.id : "";
 
@@ -345,16 +438,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const videoUrl = play.getAttribute("href") || play.href;
 
             if(typeof Android !== "undefined"){
-                // Cek method playVideoWithId dulu
                 if (typeof Android.playVideoWithId === "function") {
                     Android.playVideoWithId(videoUrl, filmId);
                 } 
-                // Jika tidak ada, gunakan method playVideo biasa
                 else if (typeof Android.playVideo === "function") {
                     Android.playVideo(videoUrl);
                 }
             } else {
-                // Untuk testing di Browser biasa
                 window.location.href = videoUrl;
             }
             return;
@@ -480,6 +570,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             renderNext();
             updateTampilanFavorit();
+            updateTampilanLanjutkanMenonton(); // <-- FITUR BANNER DIJALANKAN DI SINI
             
             containerUtama.addEventListener("focusin", function(e){
                 const card = e.target.closest(".card-film");
@@ -521,7 +612,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     }
                 }
-                const firstPoster = document.querySelector("#containerUtama .play-link");
+                
+                // Prioritas Fokus Pertama: Poster di Banner Lanjutkan, lalu Favorit, lalu Utama
+                const firstPoster = document.querySelector("#containerContinue .play-link") || 
+                                    document.querySelector("#containerFav .play-link") || 
+                                    document.querySelector("#containerUtama .play-link");
                 if (firstPoster) {
                     firstPoster.focus();
                 }
