@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
-    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPREFERENCES ANDROID */
+    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
         if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
             try {
@@ -328,22 +328,34 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
+    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI (SAFE FALLBACK) */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
             e.preventDefault();
             const card = play.closest(".card-film");
+            
+            // Ambil ID film murni dari data-id (misal "1"), jika tidak ada baru ambil ID Card
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
+            const cardElementId = card ? card.id : "";
 
-            localStorage.setItem("animasi_idPosterTerakhir", card.id);
+            localStorage.setItem("animasi_idPosterTerakhir", cardElementId);
             localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
 
+            const videoUrl = play.getAttribute("href") || play.href;
+
             if(typeof Android !== "undefined"){
-                if (Android.playVideoWithId) {
-                    Android.playVideoWithId(play.href, filmId); // Mengirim URL & Film ID Ke ExoPlayer
-                } else if (Android.playVideo) {
-                    Android.playVideo(play.href); // Fallback jika versi app belum ter-update
+                // Cek method playVideoWithId dulu
+                if (typeof Android.playVideoWithId === "function") {
+                    Android.playVideoWithId(videoUrl, filmId);
+                } 
+                // Jika tidak ada, gunakan method playVideo biasa
+                else if (typeof Android.playVideo === "function") {
+                    Android.playVideo(videoUrl);
                 }
+            } else {
+                // Untuk testing di Browser biasa
+                window.location.href = videoUrl;
             }
             return;
         }
@@ -363,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.addEventListener("keydown", function(e){
-        if(e.key !== "Enter") return;
+        if(e.key !== "Enter" && e.keyCode !== 13) return;
         const play = e.target.closest(".play-link");
         if(play){
             e.preventDefault();
