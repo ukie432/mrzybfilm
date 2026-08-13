@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
           z-index: 9999;
         }
 
-        /* FIX FOCUS HAMBURGER (BORDER PUTIH) */
+        /* FIX FOCUS HAMBURGER (BETA BORDER PUTIH - TANPA KUNING) */
         .navbar {
           position: fixed;
           height: 60px;
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
 
-        /* SLIDESHOW / BANNER (TANPA FOKUS REMOTE) */
+        /* FIX FOCUS SLIDESHOW / BANNER (BORDER PUTIH - TANPA KUNING) */
         .slideshow-container {
           max-width: 1000px;
           position: relative;
@@ -333,6 +333,11 @@ document.addEventListener("DOMContentLoaded", function () {
           outline: none !important;
           border-radius: 10px;
           box-sizing: border-box;
+        }
+
+        .slideshow-container:focus {
+          outline: none !important;
+          border: 2px solid #ffffff !important;
         }
 
         .mySlides {display: none;}
@@ -428,8 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </head>
 <body>
 
-<!-- BANNER UTAMA (tabindex="0" telah dihapus agar dilompati remote) -->
-<div class="slideshow-container">
+<div class="slideshow-container" tabindex="0">
     <div class="mySlides fade">
         <img src="https://iptv-posterku.pages.dev/poster/film_indonesia/Mrzybtv.webp" style="width: 100%">
     </div>
@@ -743,6 +747,25 @@ window.addEventListener("load", function(){
     if(firstMenu){
         firstMenu.closest('li').classList.add("active");
         firstMenu.focus();
+    }
+});
+</script>
+
+<script>
+document.addEventListener('keydown', function(e) {
+    if (e.keyCode === 38) {
+        const activeEl = document.activeElement;
+        if (activeEl && activeEl.closest('.force-5')) {
+            const allPosters = Array.from(document.querySelectorAll('.force-5 a'));
+            const currentIndex = allPosters.indexOf(activeEl);
+            if (currentIndex >= 0 && currentIndex < 5) {
+                const banner = document.querySelector('.slideshow-container'); 
+                if (banner) {
+                    e.preventDefault();
+                    banner.focus();
+                }
+            }
+        }
     }
 });
 </script>
