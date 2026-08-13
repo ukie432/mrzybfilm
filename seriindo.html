@@ -635,12 +635,36 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
+    // ========================================================
+    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS
+    // ========================================================
     function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         
-        // Buat ID unik berdasarkan Judul Series + Episode
-        const filmId = title + "_" + (epName || "Eps" + (index + 1));
+        // Cari data series yang sedang dibuka
+        const currentSeries = allData.find(item => item.title === title);
 
+        if (currentSeries && currentSeries.episodes && currentSeries.episodes.length > 0) {
+            // Gabungkan seluruh URL episode dengan pembatas titik koma (;)
+            const allUrls = currentSeries.episodes.map(e => e.url).join(";");
+            
+            // Gabungkan seluruh ID episode dengan pembatas titik koma (;)
+            const allIds = currentSeries.episodes.map(e => title + "_" + e.ep).join(";");
+
+            // Panggil interface Android untuk Playlist Series
+            if (typeof Android !== "undefined" && Android.playSeriesPlaylist) {
+                Android.playSeriesPlaylist(
+                    allUrls, // Seluruh URL episode
+                    allIds,  // Seluruh ID episode
+                    index,   // Urutan episode yang diklik
+                    "", "", "", "", ""
+                );
+                return;
+            }
+        }
+
+        // Fallback jika tidak menggunakan playlist
+        const filmId = title + "_" + (epName || "Eps" + (index + 1));
         if (typeof Android !== "undefined" && Android.playVideoWithId) {
             Android.playVideoWithId(url, filmId);
         } else if (typeof Android !== "undefined" && Android.playVideo) {
