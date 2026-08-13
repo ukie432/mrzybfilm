@@ -99,6 +99,24 @@
     }
     .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 
+    /* CSS PROGRESS BAR GARIS MERAH NETFLIX */
+    .progress-container {
+        width: 100%;
+        height: 4px;
+        background-color: rgba(255, 255, 255, 0.25);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 6;
+    }
+
+    .progress-bar-red {
+        height: 100%;
+        background-color: #E50914;
+        width: 0%;
+        box-shadow: 0 0 4px #E50914;
+    }
+
     .btn-fav { 
         width: 100%; 
         padding: 2px 0 !important; 
@@ -189,6 +207,22 @@ document.addEventListener("DOMContentLoaded", function() {
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
+    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPREFERENCES ANDROID */
+    function getProgressBarHtml(filmId) {
+        if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
+            try {
+                const dataData = JSON.parse(Android.getProgressVideo(filmId));
+                if (dataData && dataData.durasi > 0) {
+                    const persentase = (dataData.posisi / dataData.durasi) * 100;
+                    if (persentase > 1 && persentase < 95) {
+                        return `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                    }
+                }
+            } catch(e){}
+        }
+        return "";
+    }
+
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
             if (typeof Android !== "undefined" && Android.exitApp) {
@@ -231,12 +265,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(!film) return;
 
                 const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = getProgressBarHtml(film.id);
 
                 containerFav.insertAdjacentHTML("beforeend", `
                     <div class="card-film" data-id="${film.id}" id="fav-${film.id}">
                         <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                             <div class="poster-wrapper">
                                 <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                ${progressBarHtml}
                             </div>
                         </a>
                         <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -269,11 +305,13 @@ document.addEventListener("DOMContentLoaded", function() {
             .slice(currentIndex, currentIndex + PER_PAGE)
             .map(film => {
                 const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = getProgressBarHtml(film.id);
                 return `
                 <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                     <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                         <div class="poster-wrapper">
                             <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                            ${progressBarHtml}
                         </div>
                     </a>
                     <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -295,10 +333,17 @@ document.addEventListener("DOMContentLoaded", function() {
         if(play){
             e.preventDefault();
             const card = play.closest(".card-film");
+            const filmId = card ? (card.getAttribute("data-id") || "") : "";
+
             localStorage.setItem("animasi_idPosterTerakhir", card.id);
             localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
-            if(typeof Android !== "undefined" && Android.playVideo){
-                Android.playVideo(play.href);
+
+            if(typeof Android !== "undefined"){
+                if (Android.playVideoWithId) {
+                    Android.playVideoWithId(play.href, filmId); // Mengirim URL & Film ID Ke ExoPlayer
+                } else if (Android.playVideo) {
+                    Android.playVideo(play.href); // Fallback jika versi app belum ter-update
+                }
             }
             return;
         }
