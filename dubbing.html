@@ -73,6 +73,25 @@
     .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
+    /* STYLING KHUSUS BANNER LANJUTKAN MENONTON */
+    #continueSectionTitle {
+        color: #E50914;
+    }
+
+    .time-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        font-size: 8px;
+        font-weight: bold;
+        padding: 3px 6px;
+        border-radius: 4px;
+        z-index: 5;
+        border: 1px solid rgba(229, 9, 20, 0.6);
+    }
+
     .container-film {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
@@ -98,6 +117,24 @@
         background-color: #2a2a2a; 
     }
     .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+
+    /* CSS PROGRESS BAR GARIS MERAH NETFLIX */
+    .progress-container {
+        width: 100%;
+        height: 4px;
+        background-color: rgba(255, 255, 255, 0.25);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 6;
+    }
+
+    .progress-bar-red {
+        height: 100%;
+        background-color: #E50914;
+        width: 0%;
+        box-shadow: 0 0 4px #E50914;
+    }
 
     .btn-fav { 
         width: 100%; 
@@ -128,18 +165,8 @@
         color: #fff; 
         direction: ltr;
     }
-.btn-fav:focus {
-    /* Angka 0.8 berarti tingkat kepekatannya 80% (20% transparan) */
-    background-color: rgba(255, 255, 255, 0.8); 
-    color: #E50914; /* Teks dan ikon bintang tetap merah */
-}
 
-/* Memastikan ikon di dalam tombol ikut berwarna merah saat fokus */
-.btn-fav:focus i,
-.btn-fav:focus svg {
-    color: #E50914;
-}
-
+    .btn-fav:focus { background-color: #ffffff; color: #E50914; }
     .btn-fav.active { color: #ffcc00; }
     .btn-fav span { font-size: 8px; }
     #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
@@ -166,9 +193,15 @@
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
+<!-- SECTION LANJUTKAN MENONTON (WETV / NETFLIX STYLE) -->
+<div class="section-title" id="continueSectionTitle">LANJUTKAN MENONTON</div>
+<div class="container-film" id="containerContinue"></div>
+
+<!-- SECTION FAVORIT -->
 <div class="section-title" id="favSectionTitle">FAVORIT SAYA</div>
 <div class="container-film" id="containerFav"></div>
 
+<!-- SECTION UTAMA -->
 <div class="section-title" id="utamaSectionTitle" style="display: block;">SEMUA FILM DUBBING</div>
 <div class="container-film" id="containerUtama"></div>
 
@@ -182,6 +215,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerUtama = document.getElementById('containerUtama');
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
+    
+    // VARIABEL UNTUK BANNER LANJUTKAN MENONTON
+    const containerContinue = document.getElementById('containerContinue');
+    const continueSectionTitle = document.getElementById('continueSectionTitle');
 
     let listFavorit = JSON.parse(localStorage.getItem('dubbing_favorit')) || [];
 
@@ -197,6 +234,87 @@ document.addEventListener("DOMContentLoaded", function() {
             return 'https://via.placeholder.com/400x225?text=No+Image';
         }
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
+    }
+
+    // FUNGSI FORMAT MILIDETIK KE MENIT:DETIK
+    function formatTime(ms) {
+        if (!ms || ms <= 0) return "00:00";
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
+    function getProgressBarHtml(filmId) {
+        if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
+            try {
+                const dataData = JSON.parse(Android.getProgressVideo(filmId));
+                if (dataData && dataData.durasi > 0) {
+                    const persentase = (dataData.posisi / dataData.durasi) * 100;
+                    if (persentase > 1 && persentase < 95) {
+                        return `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                    }
+                }
+            } catch(e){}
+        }
+        return "";
+    }
+
+    /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
+    function updateTampilanLanjutkanMenonton() {
+        containerContinue.innerHTML = "";
+        if (typeof Android === "undefined" || !Android.getProgressVideo) {
+            continueSectionTitle.style.display = "none";
+            containerContinue.style.display = "none";
+            return;
+        }
+
+        let adaVideoLanjut = false;
+
+        semuaFilm.forEach(film => {
+            try {
+                const dataData = JSON.parse(Android.getProgressVideo(film.id));
+                if (dataData && dataData.durasi > 0) {
+                    const persentase = (dataData.posisi / dataData.durasi) * 100;
+
+                    // Tampilkan di Banner jika ditonton > 1% dan belum tamat (< 95%)
+                    if (persentase > 1 && persentase < 95) {
+                        adaVideoLanjut = true;
+                        const optimizedImg = getOptimizedImg(film.img);
+                        const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                        const posisiMenit = formatTime(dataData.posisi);
+
+                        containerContinue.insertAdjacentHTML("beforeend", `
+                            <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
+                                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                                    <div class="poster-wrapper">
+                                        <span class="time-badge">Lanjut ${posisiMenit}</span>
+                                        <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                        ${progressBarHtml}
+                                    </div>
+                                </a>
+                                <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                                    <span>☆</span> Favorit
+                                </button>
+                                <div class="film-title">${film.title}</div>
+                            </div>
+                        `);
+                    }
+                }
+            } catch (e) {}
+        });
+
+        if (adaVideoLanjut) {
+            continueSectionTitle.style.display = "block";
+            continueSectionTitle.style.borderLeft = "4px solid #E50914";
+            containerContinue.style.display = "grid";
+        } else {
+            continueSectionTitle.style.display = "none";
+            containerContinue.style.display = "none";
+        }
+
+        perbaruiStatusTombolBintang();
     }
 
     window.addEventListener("keydown", function(e) {
@@ -241,12 +359,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(!film) return;
 
                 const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = getProgressBarHtml(film.id);
 
                 containerFav.insertAdjacentHTML("beforeend", `
                     <div class="card-film" data-id="${film.id}" id="fav-${film.id}">
                         <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                             <div class="poster-wrapper">
                                 <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                ${progressBarHtml}
                             </div>
                         </a>
                         <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -279,11 +399,13 @@ document.addEventListener("DOMContentLoaded", function() {
             .slice(currentIndex, currentIndex + PER_PAGE)
             .map(film => {
                 const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = getProgressBarHtml(film.id);
                 return `
                 <div class="card-film" data-id="${film.id}" id="utama-${film.id}">
                     <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
                         <div class="poster-wrapper">
                             <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                            ${progressBarHtml}
                         </div>
                     </a>
                     <button class="btn-fav" tabindex="0" data-target="${film.id}">
@@ -300,15 +422,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
+    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI (SAFE FALLBACK) */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
             e.preventDefault();
             const card = play.closest(".card-film");
-            localStorage.setItem("dubbing_idPosterTerakhir", card.id);
+            
+            const filmId = card ? (card.getAttribute("data-id") || "") : "";
+            const cardElementId = card ? card.id : "";
+
+            localStorage.setItem("dubbing_idPosterTerakhir", cardElementId);
             localStorage.setItem("dubbing_sedangNontonVideoSTB", "ya");
-            if(typeof Android !== "undefined" && Android.playVideo){
-                Android.playVideo(play.href);
+
+            const videoUrl = play.getAttribute("href") || play.href;
+
+            if(typeof Android !== "undefined"){
+                if (typeof Android.playVideoWithId === "function") {
+                    Android.playVideoWithId(videoUrl, filmId);
+                } 
+                else if (typeof Android.playVideo === "function") {
+                    Android.playVideo(videoUrl);
+                }
+            } else {
+                window.location.href = videoUrl;
             }
             return;
         }
@@ -328,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.addEventListener("keydown", function(e){
-        if(e.key !== "Enter") return;
+        if(e.key !== "Enter" && e.keyCode !== 13) return;
         const play = e.target.closest(".play-link");
         if(play){
             e.preventDefault();
@@ -433,6 +570,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             renderNext();
             updateTampilanFavorit();
+            updateTampilanLanjutkanMenonton(); // <-- FITUR BANNER DIJALANKAN DI SINI
             
             containerUtama.addEventListener("focusin", function(e){
                 const card = e.target.closest(".card-film");
@@ -474,7 +612,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     }
                 }
-                const firstPoster = document.querySelector("#containerUtama .play-link");
+                
+                // Prioritas Fokus Pertama: Poster di Banner Lanjutkan, lalu Favorit, lalu Utama
+                const firstPoster = document.querySelector("#containerContinue .play-link") || 
+                                    document.querySelector("#containerFav .play-link") || 
+                                    document.querySelector("#containerUtama .play-link");
                 if (firstPoster) {
                     firstPoster.focus();
                 }
