@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-
-    <title>MRZYB TV - Koleksi Film Animasi</title>
+.
+    <title>MRZYB TV - Koleksi Film animasi</title>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -187,7 +187,7 @@
 
 <div class="header-container">
     <div class="search-wrapper">
-        <input type="text" id="searchBox" class="search-box" placeholder="Cari film animasi..." tabindex="0" readonly>
+        <input type="text" id="searchBox" class="search-box" placeholder="Cari alur cerita film..." tabindex="0" readonly>
         <button id="btnClear" class="btn-clear">&times;</button>
     </div>
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
@@ -228,6 +228,18 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const PER_PAGE = 16; 
     let searchTimer;
+
+    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM (Mencegah Bentrok Antar Playlist)
+    function generateUniqueId(str) {
+        let hash = 0;
+        if (!str || str.length === 0) return "film_0";
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return "film_" + Math.abs(hash);
+    }
 
     function getOptimizedImg(originalUrl) {
         if (!originalUrl || originalUrl.includes('placeholder.com')) {
@@ -422,7 +434,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
-    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI (SAFE FALLBACK) */
+    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -527,12 +539,12 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
+    // PARSER M3U BERSIH: ID dibuat Unik Menggunakan Hash kombinasi URL Stream dan Judul
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
         let currentTitle = '';
         let currentImg = '';
-        let idCounter = 1;
 
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
@@ -547,8 +559,10 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (line && !line.startsWith('#')) {
                 const cleanUrl = line.trim();
                 if (currentTitle && cleanUrl) {
+                    // ID UNIK DIGENERATE DARI ISI DATA FILM, BUKAN NOMOR URUT
+                    const uniqueId = generateUniqueId(cleanUrl + currentTitle);
                     listFilm.push({
-                        id: String(idCounter++),
+                        id: uniqueId,
                         title: currentTitle,
                         url: cleanUrl,
                         img: currentImg || 'https://via.placeholder.com/400x225?text=No+Image'
@@ -570,7 +584,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             renderNext();
             updateTampilanFavorit();
-            updateTampilanLanjutkanMenonton(); // <-- FITUR BANNER DIJALANKAN DI SINI
+            updateTampilanLanjutkanMenonton();
             
             containerUtama.addEventListener("focusin", function(e){
                 const card = e.target.closest(".card-film");
