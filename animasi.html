@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-.
+
     <title>MRZYB TV - Koleksi Film animasi</title>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM (Mencegah Bentrok Antar Playlist)
+    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM
     function generateUniqueId(str) {
         let hash = 0;
         if (!str || str.length === 0) return "film_0";
@@ -290,7 +290,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (dataData && dataData.durasi > 0) {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
 
-                    // Tampilkan di Banner jika ditonton > 1% dan belum tamat (< 95%)
                     if (persentase > 1 && persentase < 95) {
                         adaVideoLanjut = true;
                         const optimizedImg = getOptimizedImg(film.img);
@@ -434,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
-    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI */
+    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -444,11 +443,33 @@ document.addEventListener("DOMContentLoaded", function() {
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
             const cardElementId = card ? card.id : "";
 
+            // Ambil Judul dan Gambar Poster dari Elemen Kartu Film
+            const filmTitle = card ? (card.querySelector(".film-title")?.innerText || "Film MRZYB TV") : "Film MRZYB TV";
+            const filmImg = card ? (card.querySelector(".poster-wrapper img")?.src || "") : "";
+
             localStorage.setItem("animasi_idPosterTerakhir", cardElementId);
             localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
 
             const videoUrl = play.getAttribute("href") || play.href;
 
+            // 1. KIRIM DATA FILM KE HOME SCREEN CHANNEL ANDROID TV
+            if (typeof AndroidInterface !== "undefined" && AndroidInterface.kirimFilmKeHomeScreen) {
+                AndroidInterface.kirimFilmKeHomeScreen(
+                    filmTitle,
+                    "Diputar dari MRZYB TV",
+                    filmImg,
+                    videoUrl
+                );
+            } else if (typeof Android !== "undefined" && Android.kirimFilmKeHomeScreen) {
+                Android.kirimFilmKeHomeScreen(
+                    filmTitle,
+                    "Diputar dari MRZYB TV",
+                    filmImg,
+                    videoUrl
+                );
+            }
+
+            // 2. BUKA PLAYER VIDEO
             if(typeof Android !== "undefined"){
                 if (typeof Android.playVideoWithId === "function") {
                     Android.playVideoWithId(videoUrl, filmId);
@@ -539,7 +560,7 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // PARSER M3U BERSIH: ID dibuat Unik Menggunakan Hash kombinasi URL Stream dan Judul
+    // PARSER M3U BERSIH
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -559,7 +580,6 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (line && !line.startsWith('#')) {
                 const cleanUrl = line.trim();
                 if (currentTitle && cleanUrl) {
-                    // ID UNIK DIGENERATE DARI ISI DATA FILM, BUKAN NOMOR URUT
                     const uniqueId = generateUniqueId(cleanUrl + currentTitle);
                     listFilm.push({
                         id: uniqueId,
@@ -627,7 +647,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
                 
-                // Prioritas Fokus Pertama: Poster di Banner Lanjutkan, lalu Favorit, lalu Utama
                 const firstPoster = document.querySelector("#containerContinue .play-link") || 
                                     document.querySelector("#containerFav .play-link") || 
                                     document.querySelector("#containerUtama .play-link");
