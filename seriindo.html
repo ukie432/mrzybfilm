@@ -636,7 +636,7 @@
     }
 
     // ========================================================
-    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS
+    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS + HOME SCREEN TRIGGER
     // ========================================================
     function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
@@ -644,6 +644,19 @@
         // Cari data series yang sedang dibuka
         const currentSeries = allData.find(item => item.title === title);
 
+        // Siapkan informasi lengkap untuk dikirimkan ke Android TV Home Screen
+        const fullTitle = epName ? (title + " - " + epName) : title;
+        const posterUrl = currentSeries ? currentSeries.poster : "";
+        const description = "Diputar dari MRZYB TV Series";
+
+        // 1. KIRIM DATA KE HOME SCREEN ANDROID TV (PREVIEW PROGRAM)
+        if (typeof AndroidInterface !== "undefined" && AndroidInterface.kirimFilmKeHomeScreen) {
+            AndroidInterface.kirimFilmKeHomeScreen(fullTitle, description, posterUrl, url);
+        } else if (typeof Android !== "undefined" && Android.kirimFilmKeHomeScreen) {
+            Android.kirimFilmKeHomeScreen(fullTitle, description, posterUrl, url);
+        }
+
+        // 2. PEMUTARAN PLAYLIST / VIDEO
         if (currentSeries && currentSeries.episodes && currentSeries.episodes.length > 0) {
             // Gabungkan seluruh URL episode dengan pembatas titik koma (;)
             const allUrls = currentSeries.episodes.map(e => e.url).join(";");
