@@ -222,6 +222,13 @@
     let loaded = 0;
     const LOAD_SIZE = 40;
 
+    // Helper untuk deteksi Android Interface
+    function getNativeAndroid() {
+        if (typeof AndroidInterface !== "undefined") return AndroidInterface;
+        if (typeof Android !== "undefined") return Android;
+        return null;
+    }
+
     // ========================================================
     // LOGIKA PENYELARASAN NATIVE & KEYBOARD
     // ========================================================
@@ -371,15 +378,16 @@
         const container = $("#containerContinue");
         container.empty();
         let adaData = false;
+        const nativeAndroid = getNativeAndroid();
 
         allData.forEach((series, seriesIndex) => {
             series.episodes.forEach((ep, epIndex) => {
                 // Generate Film ID Unik: JudulSeries_Episode
                 const uniqueId = series.title + "_" + ep.ep;
                 
-                if (typeof Android !== "undefined" && Android.getProgressVideo) {
+                if (nativeAndroid && nativeAndroid.getProgressVideo) {
                     try {
-                        const dataStr = Android.getProgressVideo(uniqueId);
+                        const dataStr = nativeAndroid.getProgressVideo(uniqueId);
                         if (dataStr) {
                             const dataData = JSON.parse(dataStr);
                             if (dataData && dataData.durasi > 0) {
@@ -581,13 +589,14 @@
 
         const title = item.title;
         const eps = item.episodes;
+        const nativeAndroid = getNativeAndroid();
         
         localStorage.setItem(pageTitle + "_status_popup", "open");
         localStorage.setItem(pageTitle + "_last_poster_title", title);
         localStorage.setItem(pageTitle + "_judul_film", title);
         
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(true);
+        if (nativeAndroid && nativeAndroid.setPopUpStatus) {
+            nativeAndroid.setPopUpStatus(true);
         }
         
         $("#modal-title").text(title);
@@ -605,9 +614,9 @@
             const uniqueId = title + "_" + e.ep;
             let barHtml = "";
             
-            if (typeof Android !== "undefined" && Android.getProgressVideo) {
+            if (nativeAndroid && nativeAndroid.getProgressVideo) {
                 try {
-                    const dataStr = Android.getProgressVideo(uniqueId);
+                    const dataStr = nativeAndroid.getProgressVideo(uniqueId);
                     if (dataStr) {
                         const dataData = JSON.parse(dataStr);
                         if (dataData && dataData.durasi > 0) {
@@ -636,7 +645,7 @@
     }
 
     // ========================================================
-    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS + HOME SCREEN TRIGGER
+    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS + HOME SCREEN TRIGGER + KIRIM JUDUL
     // ========================================================
     function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
@@ -644,16 +653,16 @@
         // Cari data series yang sedang dibuka
         const currentSeries = allData.find(item => item.title === title);
 
-        // Siapkan informasi lengkap untuk dikirimkan ke Android TV Home Screen
+        // Siapkan informasi lengkap untuk dikirimkan ke Android TV Home Screen & Player
         const fullTitle = epName ? (title + " - " + epName) : title;
         const posterUrl = currentSeries ? currentSeries.poster : "";
         const description = "Diputar dari MRZYB TV Series";
 
+        const nativeAndroid = getNativeAndroid();
+
         // 1. KIRIM DATA KE HOME SCREEN ANDROID TV (PREVIEW PROGRAM)
-        if (typeof AndroidInterface !== "undefined" && AndroidInterface.kirimFilmKeHomeScreen) {
-            AndroidInterface.kirimFilmKeHomeScreen(fullTitle, description, posterUrl, url);
-        } else if (typeof Android !== "undefined" && Android.kirimFilmKeHomeScreen) {
-            Android.kirimFilmKeHomeScreen(fullTitle, description, posterUrl, url);
+        if (nativeAndroid && typeof nativeAndroid.kirimFilmKeHomeScreen === "function") {
+            nativeAndroid.kirimFilmKeHomeScreen(fullTitle, description, posterUrl, url);
         }
 
         // 2. PEMUTARAN PLAYLIST / VIDEO
@@ -665,8 +674,8 @@
             const allIds = currentSeries.episodes.map(e => title + "_" + e.ep).join(";");
 
             // Panggil interface Android untuk Playlist Series
-            if (typeof Android !== "undefined" && Android.playSeriesPlaylist) {
-                Android.playSeriesPlaylist(
+            if (nativeAndroid && typeof nativeAndroid.playSeriesPlaylist === "function") {
+                nativeAndroid.playSeriesPlaylist(
                     allUrls, // Seluruh URL episode
                     allIds,  // Seluruh ID episode
                     index,   // Urutan episode yang diklik
@@ -676,12 +685,16 @@
             }
         }
 
-        // Fallback jika tidak menggunakan playlist
+        // Fallback jika tidak menggunakan playlist (meneruskan parameter Judul Film ke Player)
         const filmId = title + "_" + (epName || "Eps" + (index + 1));
-        if (typeof Android !== "undefined" && Android.playVideoWithId) {
-            Android.playVideoWithId(url, filmId);
-        } else if (typeof Android !== "undefined" && Android.playVideo) {
-            Android.playVideo(url);
+        if (nativeAndroid) {
+            if (typeof nativeAndroid.playVideoWithTitle === "function") {
+                nativeAndroid.playVideoWithTitle(url, filmId, fullTitle);
+            } else if (typeof nativeAndroid.playVideoWithId === "function") {
+                nativeAndroid.playVideoWithId(url, filmId);
+            } else if (typeof nativeAndroid.playVideo === "function") {
+                nativeAndroid.playVideo(url);
+            }
         } else {
             window.open(url, "_blank");
         }
@@ -701,8 +714,9 @@
             }, 150);
         }
 
-        if (typeof Android !== "undefined" && Android.setPopUpStatus) {
-            Android.setPopUpStatus(false);
+        const nativeAndroid = getNativeAndroid();
+        if (nativeAndroid && nativeAndroid.setPopUpStatus) {
+            nativeAndroid.setPopUpStatus(false);
         }
 
         // Refresh section Lanjutkan Menonton saat popup ditutup
