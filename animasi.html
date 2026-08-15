@@ -259,9 +259,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
-        if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
+        const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+        if (nativeAndroid && nativeAndroid.getProgressVideo && filmId) {
             try {
-                const dataData = JSON.parse(Android.getProgressVideo(filmId));
+                const dataData = JSON.parse(nativeAndroid.getProgressVideo(filmId));
                 if (dataData && dataData.durasi > 0) {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
                     if (persentase > 1 && persentase < 95) {
@@ -276,7 +277,9 @@ document.addEventListener("DOMContentLoaded", function() {
     /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
     function updateTampilanLanjutkanMenonton() {
         containerContinue.innerHTML = "";
-        if (typeof Android === "undefined" || !Android.getProgressVideo) {
+        const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+        
+        if (!nativeAndroid || !nativeAndroid.getProgressVideo) {
             continueSectionTitle.style.display = "none";
             containerContinue.style.display = "none";
             return;
@@ -286,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         semuaFilm.forEach(film => {
             try {
-                const dataData = JSON.parse(Android.getProgressVideo(film.id));
+                const dataData = JSON.parse(nativeAndroid.getProgressVideo(film.id));
                 if (dataData && dataData.durasi > 0) {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
 
@@ -330,9 +333,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
-            if (typeof Android !== "undefined" && Android.exitApp) {
+            const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+            if (nativeAndroid && nativeAndroid.exitApp) {
                 e.preventDefault();
-                Android.exitApp(); 
+                nativeAndroid.exitApp(); 
             }
         }
     });
@@ -433,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
-    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV */
+    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV & TERUSKAN JUDUL FILM */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -452,16 +456,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const videoUrl = play.getAttribute("href") || play.href;
 
+            // DETEKSI INTERFACE ANDROID (AndroidInterface atau Android)
+            const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+
             // 1. KIRIM DATA FILM KE HOME SCREEN CHANNEL ANDROID TV
-            if (typeof AndroidInterface !== "undefined" && AndroidInterface.kirimFilmKeHomeScreen) {
-                AndroidInterface.kirimFilmKeHomeScreen(
-                    filmTitle,
-                    "Diputar dari MRZYB TV",
-                    filmImg,
-                    videoUrl
-                );
-            } else if (typeof Android !== "undefined" && Android.kirimFilmKeHomeScreen) {
-                Android.kirimFilmKeHomeScreen(
+            if (nativeAndroid && typeof nativeAndroid.kirimFilmKeHomeScreen === "function") {
+                nativeAndroid.kirimFilmKeHomeScreen(
                     filmTitle,
                     "Diputar dari MRZYB TV",
                     filmImg,
@@ -469,13 +469,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
             }
 
-            // 2. BUKA PLAYER VIDEO
-            if(typeof Android !== "undefined"){
-                if (typeof Android.playVideoWithId === "function") {
-                    Android.playVideoWithId(videoUrl, filmId);
-                } 
-                else if (typeof Android.playVideo === "function") {
-                    Android.playVideo(videoUrl);
+            // 2. BUKA PLAYER VIDEO DENGAN MENGIRIM JUDUL FILM KE JAVA
+            if (nativeAndroid) {
+                if (typeof nativeAndroid.playVideoWithTitle === "function") {
+                    nativeAndroid.playVideoWithTitle(videoUrl, filmId, filmTitle);
+                } else if (typeof nativeAndroid.playVideoWithId === "function") {
+                    nativeAndroid.playVideoWithId(videoUrl, filmId);
+                } else if (typeof nativeAndroid.playVideo === "function") {
+                    nativeAndroid.playVideo(videoUrl);
                 }
             } else {
                 window.location.href = videoUrl;
