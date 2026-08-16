@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' name='viewport'/>
-.
-    <title>MRZYB TV - Koleksi Film Lawas</title>
+
+    <title>MRZYB TV - Koleksi Film lawas</title>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -187,7 +187,7 @@
 
 <div class="header-container">
     <div class="search-wrapper">
-        <input type="text" id="searchBox" class="search-box" placeholder="Cari alur cerita film..." tabindex="0" readonly>
+        <input type="text" id="searchBox" class="search-box" placeholder="Cari film lawas..." tabindex="0" readonly>
         <button id="btnClear" class="btn-clear">&times;</button>
     </div>
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM (Mencegah Bentrok Antar Playlist)
+    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM
     function generateUniqueId(str) {
         let hash = 0;
         if (!str || str.length === 0) return "film_0";
@@ -259,9 +259,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
-        if (typeof Android !== "undefined" && Android.getProgressVideo && filmId) {
+        const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+        if (nativeAndroid && nativeAndroid.getProgressVideo && filmId) {
             try {
-                const dataData = JSON.parse(Android.getProgressVideo(filmId));
+                const dataData = JSON.parse(nativeAndroid.getProgressVideo(filmId));
                 if (dataData && dataData.durasi > 0) {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
                     if (persentase > 1 && persentase < 95) {
@@ -276,7 +277,9 @@ document.addEventListener("DOMContentLoaded", function() {
     /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
     function updateTampilanLanjutkanMenonton() {
         containerContinue.innerHTML = "";
-        if (typeof Android === "undefined" || !Android.getProgressVideo) {
+        const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+        
+        if (!nativeAndroid || !nativeAndroid.getProgressVideo) {
             continueSectionTitle.style.display = "none";
             containerContinue.style.display = "none";
             return;
@@ -286,11 +289,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         semuaFilm.forEach(film => {
             try {
-                const dataData = JSON.parse(Android.getProgressVideo(film.id));
+                const dataData = JSON.parse(nativeAndroid.getProgressVideo(film.id));
                 if (dataData && dataData.durasi > 0) {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
 
-                    // Tampilkan di Banner jika ditonton > 1% dan belum tamat (< 95%)
                     if (persentase > 1 && persentase < 95) {
                         adaVideoLanjut = true;
                         const optimizedImg = getOptimizedImg(film.img);
@@ -331,9 +333,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.key === "Back" || e.keyCode === 4) { 
-            if (typeof Android !== "undefined" && Android.exitApp) {
+            const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+            if (nativeAndroid && nativeAndroid.exitApp) {
                 e.preventDefault();
-                Android.exitApp(); 
+                nativeAndroid.exitApp(); 
             }
         }
     });
@@ -434,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function pasangEventAksi() {}
 
-    /* FUNGSI KLIK/PEMUTARAN YANG SUDAH DIPERBAIKI */
+    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV & TERUSKAN JUDUL FILM */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -444,17 +447,36 @@ document.addEventListener("DOMContentLoaded", function() {
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
             const cardElementId = card ? card.id : "";
 
+            // Ambil Judul dan Gambar Poster dari Elemen Kartu Film
+            const filmTitle = card ? (card.querySelector(".film-title")?.innerText || "Film MRZYB TV") : "Film MRZYB TV";
+            const filmImg = card ? (card.querySelector(".poster-wrapper img")?.src || "") : "";
+
             localStorage.setItem("lawas_idPosterTerakhir", cardElementId);
             localStorage.setItem("lawas_sedangNontonVideoSTB", "ya");
 
             const videoUrl = play.getAttribute("href") || play.href;
 
-            if(typeof Android !== "undefined"){
-                if (typeof Android.playVideoWithId === "function") {
-                    Android.playVideoWithId(videoUrl, filmId);
-                } 
-                else if (typeof Android.playVideo === "function") {
-                    Android.playVideo(videoUrl);
+            // DETEKSI INTERFACE ANDROID (AndroidInterface atau Android)
+            const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
+
+            // 1. KIRIM DATA FILM KE HOME SCREEN CHANNEL ANDROID TV
+            if (nativeAndroid && typeof nativeAndroid.kirimFilmKeHomeScreen === "function") {
+                nativeAndroid.kirimFilmKeHomeScreen(
+                    filmTitle,
+                    "Diputar dari MRZYB TV",
+                    filmImg,
+                    videoUrl
+                );
+            }
+
+            // 2. BUKA PLAYER VIDEO DENGAN MENGIRIM JUDUL FILM KE JAVA
+            if (nativeAndroid) {
+                if (typeof nativeAndroid.playVideoWithTitle === "function") {
+                    nativeAndroid.playVideoWithTitle(videoUrl, filmId, filmTitle);
+                } else if (typeof nativeAndroid.playVideoWithId === "function") {
+                    nativeAndroid.playVideoWithId(videoUrl, filmId);
+                } else if (typeof nativeAndroid.playVideo === "function") {
+                    nativeAndroid.playVideo(videoUrl);
                 }
             } else {
                 window.location.href = videoUrl;
@@ -539,7 +561,7 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // PARSER M3U BERSIH: ID dibuat Unik Menggunakan Hash kombinasi URL Stream dan Judul
+    // PARSER M3U BERSIH
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -559,7 +581,6 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (line && !line.startsWith('#')) {
                 const cleanUrl = line.trim();
                 if (currentTitle && cleanUrl) {
-                    // ID UNIK DIGENERATE DARI ISI DATA FILM, BUKAN NOMOR URUT
                     const uniqueId = generateUniqueId(cleanUrl + currentTitle);
                     listFilm.push({
                         id: uniqueId,
@@ -627,7 +648,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
                 
-                // Prioritas Fokus Pertama: Poster di Banner Lanjutkan, lalu Favorit, lalu Utama
                 const firstPoster = document.querySelector("#containerContinue .play-link") || 
                                     document.querySelector("#containerFav .play-link") || 
                                     document.querySelector("#containerUtama .play-link");
