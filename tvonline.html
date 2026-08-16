@@ -614,9 +614,6 @@ function autoPlayChannelPertama(data) {
     let activeGlobalUA = ambilUserAgentAktif();
     let finalUA = (tv.userAgent && tv.userAgent.trim() !== "") ? tv.userAgent : activeGlobalUA;
 
-    // Kirim informasi TV Pertama ke Android TV Home Screen
-    kirimKeHomeScreen(tv.name, "Live TV - " + (tv.group || "Umum"), tv.logo, tv.url);
-
     setTimeout(() => {
         try {
             window.Android.playTv(
@@ -634,9 +631,6 @@ function formatGambarOptimized(url) {
 }
 
 function buatElemenHTMLTV(tv, index) {
-    let safeName = (tv.name || "").replace(/'/g, "\\'");
-    let safeGroup = (tv.group || "Umum").replace(/'/g, "\\'");
-    let safeLogo = (tv.logo || "").replace(/'/g, "\\'");
     let safeUrl = (tv.url || "").replace(/'/g, "\\'");
     let safeUA = (tv.userAgent || "").replace(/'/g, "\\'");
     let safeRef = (tv.referer || "").replace(/'/g, "\\'");
@@ -651,9 +645,6 @@ function buatElemenHTMLTV(tv, index) {
              onkeydown="handleItemKey(event, ${index})"
              onclick="pilihDanPlay(
                  ${index},
-                 '${safeName}',
-                 '${safeGroup}',
-                 '${safeLogo}',
                  '${safeUrl}',
                  '${safeUA}',
                  '${safeRef}',
@@ -805,19 +796,7 @@ function cariChannel() {
     tampilkanTVTanpaFokus(data);
 }
 
-// =====================================================
-// FUNGSI UTAMA UNTUK MENGIRIM DATA KE HOME SCREEN
-// =====================================================
-function kirimKeHomeScreen(judul, subJudul, logoUrl, videoUrl) {
-    let description = "Live Stream " + (subJudul || "TV Online");
-    if (typeof AndroidInterface !== "undefined" && AndroidInterface.kirimFilmKeHomeScreen) {
-        AndroidInterface.kirimFilmKeHomeScreen(judul, description, logoUrl, videoUrl);
-    } else if (typeof Android !== "undefined" && Android.kirimFilmKeHomeScreen) {
-        Android.kirimFilmKeHomeScreen(judul, description, logoUrl, videoUrl);
-    }
-}
-
-function pilihDanPlay(index, name, group, logo, url, userAgent, referer, drm, licenseKey, licenseUrl) {
+function pilihDanPlay(index, url, userAgent, referer, drm, licenseKey, licenseUrl) {
     // Simpan poster aktif yang dipilih
     lastActiveIndex = index;
     lastActivePosterElement = document.getElementById(`item-${index}`);
@@ -826,9 +805,6 @@ function pilihDanPlay(index, name, group, logo, url, userAgent, referer, drm, li
 
     let activeGlobalUA = ambilUserAgentAktif();
     let finalUA = (userAgent && userAgent.trim() !== "") ? userAgent : activeGlobalUA;
-
-    // Kirim Informasi Channel Aktif ke Home Screen Android TV
-    kirimKeHomeScreen(name, group, logo, url);
 
     if (window.Android && typeof window.Android.playTv === "function") {
         window.Android.playTv(url, finalUA, referer, drm, licenseKey, licenseUrl);
