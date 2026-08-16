@@ -216,7 +216,7 @@
     // ========================================================
     // LINK PLAYLIST M3U
     // ========================================================
-    const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/seri_animasi.m3u"; 
+    const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/seriesdubbing.m3u"; 
 
     let allData = [];
     let loaded = 0;
@@ -230,11 +230,6 @@
     };
 
     window.addEventListener('keydown', function(event) {
-        // Notifikasi ke Android jika tombol remote apa saja dipencet
-        if (typeof Android !== "undefined" && Android.onRemoteKeyPress) {
-            Android.onRemoteKeyPress(event.keyCode);
-        }
-
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const popupElement = document.getElementById("popup");
             if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
@@ -247,16 +242,6 @@
 
     $(document).on('keydown', function(e) {
         const activeEl = document.activeElement;
-
-        // Auto re-focus ke poster jika fokus terlepas saat menekan remote
-        if (!activeEl || activeEl === document.body) {
-            const popup = document.getElementById("popup");
-            if (popup && window.getComputedStyle(popup).display !== "none") {
-                document.querySelector(".eps-btn")?.focus() || document.querySelector(".close-x")?.focus();
-            } else {
-                document.querySelector(".poster")?.focus();
-            }
-        }
         
         if (e.keyCode == 13 && $(document.activeElement).hasClass("poster")) {
             e.preventDefault();
@@ -389,6 +374,7 @@
 
         allData.forEach((series, seriesIndex) => {
             series.episodes.forEach((ep, epIndex) => {
+                // Generate Film ID Unik: JudulSeries_Episode
                 const uniqueId = series.title + "_" + ep.ep;
                 
                 if (typeof Android !== "undefined" && Android.getProgressVideo) {
@@ -399,6 +385,7 @@
                             if (dataData && dataData.durasi > 0) {
                                 const persentase = (dataData.posisi / dataData.durasi) * 100;
                                 
+                                // Jika ditonton antara 1% sampai 95%
                                 if (persentase > 1 && persentase < 95) {
                                     adaData = true;
                                     const barWidth = persentase.toFixed(1) + "%";
@@ -614,6 +601,7 @@
             btn.tabIndex = 0;
             btn.dataset.index = epIndex;
             
+            // Hitung Progres Mini Per-Episode
             const uniqueId = title + "_" + e.ep;
             let barHtml = "";
             
@@ -648,33 +636,34 @@
     }
 
     // ========================================================
-    // PLAYLIST NEXT & PREVIOUS + RELEASE FOCUS KE EXOPLAYER
+    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS
     // ========================================================
     function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         
-        // Lepaskan fokus dari WebView agar remote langsung berpindah penuh ke ExoPlayer Native
-        if (document.activeElement) {
-            document.activeElement.blur();
-        }
-
+        // Cari data series yang sedang dibuka
         const currentSeries = allData.find(item => item.title === title);
 
         if (currentSeries && currentSeries.episodes && currentSeries.episodes.length > 0) {
+            // Gabungkan seluruh URL episode dengan pembatas titik koma (;)
             const allUrls = currentSeries.episodes.map(e => e.url).join(";");
+            
+            // Gabungkan seluruh ID episode dengan pembatas titik koma (;)
             const allIds = currentSeries.episodes.map(e => title + "_" + e.ep).join(";");
 
+            // Panggil interface Android untuk Playlist Series
             if (typeof Android !== "undefined" && Android.playSeriesPlaylist) {
                 Android.playSeriesPlaylist(
-                    allUrls, 
-                    allIds,  
-                    index,   
+                    allUrls, // Seluruh URL episode
+                    allIds,  // Seluruh ID episode
+                    index,   // Urutan episode yang diklik
                     "", "", "", "", ""
                 );
                 return;
             }
         }
 
+        // Fallback jika tidak menggunakan playlist
         const filmId = title + "_" + (epName || "Eps" + (index + 1));
         if (typeof Android !== "undefined" && Android.playVideoWithId) {
             Android.playVideoWithId(url, filmId);
@@ -703,6 +692,7 @@
             Android.setPopUpStatus(false);
         }
 
+        // Refresh section Lanjutkan Menonton saat popup ditutup
         renderContinueWatching();
     };
 
