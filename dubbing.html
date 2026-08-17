@@ -216,7 +216,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
     
-    // VARIABEL UNTUK BANNER LANJUTKAN MENONTON
     const containerContinue = document.getElementById('containerContinue');
     const continueSectionTitle = document.getElementById('continueSectionTitle');
 
@@ -229,7 +228,38 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM
+    // ==========================================
+    // WATCHDOG SYSTEM FOR STB ANDROID TV
+    // ==========================================
+
+    // 1. WATCHDOG FOKUS REMOTE: Mencegah kursor hilang/stuck saat dikendalikan D-Pad
+    function startFocusWatchdog() {
+        setInterval(() => {
+            const activeEl = document.activeElement;
+            if (!activeEl || activeEl === document.body) {
+                const targetFokus = document.querySelector("#containerContinue .play-link") || 
+                                    document.querySelector("#containerFav .play-link") || 
+                                    document.querySelector("#containerUtama .play-link");
+                if (targetFokus) {
+                    targetFokus.focus();
+                }
+            }
+        }, 1500);
+    }
+
+    // 2. WATCHDOG PROGRESS: Mengisi ulang UI progress bar dari Player Native
+    function startProgressWatchdog() {
+        setInterval(() => {
+            if (semuaFilm.length > 0) {
+                updateTampilanLanjutkanMenonton();
+            }
+        }, 4000);
+    }
+
+    // ==========================================
+    // FUNGSI UTAMA & UTILITIES
+    // ==========================================
+
     function generateUniqueId(str) {
         let hash = 0;
         if (!str || str.length === 0) return "film_0";
@@ -248,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
-    // FUNGSI FORMAT MILIDETIK KE MENIT:DETIK
     function formatTime(ms) {
         if (!ms || ms <= 0) return "00:00";
         const totalSeconds = Math.floor(ms / 1000);
@@ -257,7 +286,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
         const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
         if (nativeAndroid && nativeAndroid.getProgressVideo && filmId) {
@@ -274,9 +302,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return "";
     }
 
-    /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
     function updateTampilanLanjutkanMenonton() {
-        containerContinue.innerHTML = "";
         const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
         
         if (!nativeAndroid || !nativeAndroid.getProgressVideo) {
@@ -285,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        let adaVideoLanjut = false;
+        let filmLanjut = [];
 
         semuaFilm.forEach(film => {
             try {
@@ -294,32 +320,36 @@ document.addEventListener("DOMContentLoaded", function() {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
 
                     if (persentase > 1 && persentase < 95) {
-                        adaVideoLanjut = true;
-                        const optimizedImg = getOptimizedImg(film.img);
-                        const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
-                        const posisiMenit = formatTime(dataData.posisi);
-
-                        containerContinue.insertAdjacentHTML("beforeend", `
-                            <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
-                                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
-                                    <div class="poster-wrapper">
-                                        <span class="time-badge">Lanjut ${posisiMenit}</span>
-                                        <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
-                                        ${progressBarHtml}
-                                    </div>
-                                </a>
-                                <button class="btn-fav" tabindex="0" data-target="${film.id}">
-                                    <span>☆</span> Favorit
-                                </button>
-                                <div class="film-title">${film.title}</div>
-                            </div>
-                        `);
+                        filmLanjut.push({ film, dataData, persentase });
                     }
                 }
             } catch (e) {}
         });
 
-        if (adaVideoLanjut) {
+        if (filmLanjut.length > 0) {
+            containerContinue.innerHTML = "";
+            filmLanjut.forEach(({ film, dataData, persentase }) => {
+                const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                const posisiMenit = formatTime(dataData.posisi);
+
+                containerContinue.insertAdjacentHTML("beforeend", `
+                    <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
+                        <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                            <div class="poster-wrapper">
+                                <span class="time-badge">Lanjut ${posisiMenit}</span>
+                                <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                ${progressBarHtml}
+                            </div>
+                        </a>
+                        <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                            <span>☆</span> Favorit
+                        </button>
+                        <div class="film-title">${film.title}</div>
+                    </div>
+                `);
+            });
+
             continueSectionTitle.style.display = "block";
             continueSectionTitle.style.borderLeft = "4px solid #E50914";
             containerContinue.style.display = "grid";
@@ -392,7 +422,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 `);
             });
         }
-        pasangEventAksi();
         perbaruiStatusTombolBintang();
     }
 
@@ -435,9 +464,6 @@ document.addEventListener("DOMContentLoaded", function() {
         perbaruiStatusTombolBintang();
     }
 
-    function pasangEventAksi() {}
-
-    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV & TERUSKAN JUDUL FILM */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -447,7 +473,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
             const cardElementId = card ? card.id : "";
 
-            // Ambil Judul dan Gambar Poster dari Elemen Kartu Film
             const filmTitle = card ? (card.querySelector(".film-title")?.innerText || "Film MRZYB TV") : "Film MRZYB TV";
             const filmImg = card ? (card.querySelector(".poster-wrapper img")?.src || "") : "";
 
@@ -455,11 +480,8 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem("dubbing_sedangNontonVideoSTB", "ya");
 
             const videoUrl = play.getAttribute("href") || play.href;
-
-            // DETEKSI INTERFACE ANDROID (AndroidInterface atau Android)
             const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
 
-            // 1. KIRIM DATA FILM KE HOME SCREEN CHANNEL ANDROID TV
             if (nativeAndroid && typeof nativeAndroid.kirimFilmKeHomeScreen === "function") {
                 nativeAndroid.kirimFilmKeHomeScreen(
                     filmTitle,
@@ -469,7 +491,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
             }
 
-            // 2. BUKA PLAYER VIDEO DENGAN MENGIRIM JUDUL FILM KE JAVA
             if (nativeAndroid) {
                 if (typeof nativeAndroid.playVideoWithTitle === "function") {
                     nativeAndroid.playVideoWithTitle(videoUrl, filmId, filmTitle);
@@ -513,7 +534,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // EVENT DETEKSI FOKUS UNTUK UBAH BACKGROUND
     document.addEventListener("focusin", function(e) {
         const card = e.target.closest(".card-film");
         if (card) {
@@ -561,7 +581,6 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // PARSER M3U BERSIH
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -607,6 +626,10 @@ document.addEventListener("DOMContentLoaded", function() {
             updateTampilanFavorit();
             updateTampilanLanjutkanMenonton();
             
+            // EXECUTE WATCHDOG
+            startFocusWatchdog();
+            startProgressWatchdog();
+
             containerUtama.addEventListener("focusin", function(e){
                 const card = e.target.closest(".card-film");
                 if(!card) return;
