@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>MRZYBlenong - Audio Player TV</title>
@@ -305,6 +303,67 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const repeatBtn = document.getElementById('repeat-btn');
 
+        // --- SISTEM AUDIO WATCHDOG (LEBIH SABAR & RAMAH JARINGAN) ---
+        let lastPlayTime = -1;
+        let stuckCounter = 0;
+        let isBuffering = false;
+        const MAX_STUCK_TOLERANCE = 8; // Toleransi 8 detik untuk jaringan lambat
+
+        function startAudioWatchdog() {
+            setInterval(() => {
+                if (!audio.paused && audio.src) {
+                    if (audio.currentTime === lastPlayTime) {
+                        stuckCounter++;
+                        // Hanya melakukan pemulihan jika macet melebihi 8 detik DAN BUKAN karena buffering normal
+                        if (stuckCounter >= MAX_STUCK_TOLERANCE && !isBuffering) {
+                            console.warn("Audio benar-benar macet. Memulai pemulihan...");
+                            recoverStuckAudio();
+                            stuckCounter = 0;
+                        }
+                    } else {
+                        // Reset counter saat audio berjalan normal
+                        lastPlayTime = audio.currentTime;
+                        stuckCounter = 0;
+                        isBuffering = false;
+                    }
+                }
+            }, 1000);
+        }
+
+        function recoverStuckAudio() {
+            if (!audio.src) return;
+            const currentPos = audio.currentTime;
+            audio.pause();
+            
+            // Jeda 1 detik untuk menyambung ulang koneksi stream tanpa langsung loncat lagu
+            setTimeout(() => {
+                audio.load();
+                audio.currentTime = currentPos;
+                audio.play().catch(err => {
+                    console.error("Recovery gagal, pindah ke lagu berikutnya:", err);
+                    playNext();
+                });
+            }, 1000);
+        }
+
+        // Handling event buffering dari HTML5 Media Element
+        audio.addEventListener('waiting', () => {
+            isBuffering = true;
+            playerTitle.innerText = "Buffering... Mohon tunggu";
+        });
+
+        audio.addEventListener('playing', () => {
+            isBuffering = false;
+            stuckCounter = 0;
+            if (tracks[currentTrackIndex]) {
+                playerTitle.innerText = tracks[currentTrackIndex].title;
+            }
+        });
+
+        audio.addEventListener('stalled', () => {
+            isBuffering = true;
+        });
+
         // FITUR PRELOADER GANDA: Mempercepat loading cover
         function preloadCoverImages(trackList) {
             trackList.forEach(track => {
@@ -534,10 +593,36 @@
         window.onload = async () => {
             await fetchPlaylistData();
             initVirtualSpectrum(); 
+            startAudioWatchdog(); // Jalankan watchdog pemantau audio
             
             const firstItem = playlistContainer.querySelector('.playlist-item');
             if (firstItem) firstItem.focus();
         };
+
+        // --- WATCHDOG FOCUS REMOTE STB (Pencegah Kursor Hilang) ---
+        setInterval(function() {
+            const active = document.activeElement;
+            const isFocusable = active && (
+                active.classList.contains('btn-control') ||
+                active.classList.contains('playlist-item') ||
+                active.classList.contains('progress-container')
+            );
+
+            if (!isFocusable || active === document.body) {
+                const activeItem = document.querySelector('.playlist-item.active');
+                if (activeItem) {
+                    activeItem.focus();
+                } else {
+                    const firstItem = document.querySelector('.playlist-item');
+                    if (firstItem) {
+                        firstItem.focus();
+                    } else {
+                        const playBtn = document.getElementById('play-btn');
+                        if (playBtn) playBtn.focus();
+                    }
+                }
+            }
+        }, 2000);
     </script>
 </body>
 </html>
