@@ -179,10 +179,8 @@
 
     <div class="top"> 
       <div class="search-container">
-        <!-- WRAPPER SEARCH UNTUK NAVIGASI SPATIAL -->
         <div class="search-box focusable" tabindex="0" id="searchBoxContainer">
           <i class="material-icons">search</i>
-          <!-- INPUT DIKUNCI (READONLY) DEFAULT AGAR TIDAK MUNCUL KEYBOARD SAAT DISOROT -->
           <input type="text" id="searchInput" class="search-input" placeholder="Cari album, artis, atau lagu..." oninput="filterSongs()" readonly>
         </div>
       </div>
@@ -273,27 +271,18 @@
     var audioUnlocked = false;
     var lastTimeCheck = 0;
 
-    // ========================================================
-    // LOGIKA PENANGANAN KEYBOARD SEARCH (OK DULU BARU BUKA POPUP)
-    // ========================================================
-
-    // A. Penanganan pada Wrapper (#searchBoxContainer)
+    // LOGIKA SEARCH KEYBOARD
     $("#searchBoxContainer").on("keydown click touchstart", function(e) {
         const inputElement = document.getElementById("searchInput");
-
-        // Jika diklik atau ditekan OK (13) dari remote
         if (e.type === "click" || e.type === "touchstart" || e.keyCode === 13) {
             e.preventDefault();
-            // Lepas readonly agar Android TV mengizinkan keyboard virtual muncul
             inputElement.removeAttribute("readonly");
-            
             setTimeout(function() {
                 inputElement.focus();
             }, 50);
             return false;
         }
 
-        // Jika ditekan DPAD Bawah saat fokus di wrapper -> Pindah ke album pertama
         if (e.keyCode === 40) {
             e.preventDefault();
             const firstCard = document.querySelector('.card.focusable');
@@ -302,18 +291,15 @@
         }
     });
 
-    // B. Penanganan pada Input Teks (#searchInput)
     $("#searchInput").on("keydown", function(e) {
         const code = e.keyCode || e.which;
         const inputElement = this;
 
-        // Fungsi pembantu untuk mengunci input dan melepaskan keyboard TV
         function closeKeyboardAndLock() {
             inputElement.setAttribute("readonly", "true");
             inputElement.blur();
         }
 
-        // 1. Tekan OK / Enter (13) -> Tutup keyboard, kembalikan fokus ke wrapper
         if (code === 13) {
             e.preventDefault();
             closeKeyboardAndLock();
@@ -321,7 +307,6 @@
             return false;
         }
 
-        // 2. Tekan DPAD Bawah (40) -> Tutup keyboard, pindah ke album pertama
         if (code === 40) {
             e.preventDefault();
             closeKeyboardAndLock();
@@ -332,7 +317,6 @@
             return false;
         }
 
-        // 3. Tekan Back / Escape (27, 8, 10009) -> Tutup keyboard dan kunci kembali
         if (code === 27 || code === 8 || code === 10009) {
             e.preventDefault();
             closeKeyboardAndLock();
@@ -341,7 +325,6 @@
         }
     });
 
-    // Kunci kembali input secara otomatis apabila kehilangan fokus
     $("#searchInput").on("blur", function() {
         this.setAttribute("readonly", "true");
     });
@@ -373,16 +356,17 @@
       } catch (e) {}
     }
 
+    // WATCHDOG AUDIO PERBAIKAN: Lebih toleran pada buffering jaringan
     function startAudioWatchdog() {
       stopAudioWatchdog();
       audioStuckCount = 0;
       if (mediaPlayer) lastTimeCheck = mediaPlayer.currentTime;
       
       audioWatchdogTimer = setInterval(() => {
-        if (isPlaying && mediaPlayer) {
-          if (mediaPlayer.currentTime === lastTimeCheck && !mediaPlayer.paused) {
+        if (isPlaying && mediaPlayer && !mediaPlayer.paused && !mediaPlayer.seeking) {
+          if (mediaPlayer.currentTime === lastTimeCheck) {
             audioStuckCount++;
-            if (audioStuckCount >= 3) {
+            if (audioStuckCount >= 8) { // Diperpanjang ke 8 detik agar tidak gampang mereset saat lag
               audioStuckCount = 0;
               recoverStuckAudio();
             }
@@ -410,10 +394,7 @@
       
       var p = mediaPlayer.play();
       if (p !== undefined) {
-        p.catch(() => {
-          mediaPlayer.currentTime = currentPos + 1;
-          mediaPlayer.play();
-        });
+        p.catch(() => {});
       }
     }
 
@@ -568,7 +549,6 @@
       const code = e.keyCode || e.which;
       if (code === 4 || code === 27 || code === 10009 || e.key === "Backspace") return;
 
-      // CEK APAKAH USER SEDANG DALAM PROSES MENGETIK DI SEARCH INPUT
       const isInputActive = document.activeElement && document.activeElement.id === "searchInput" && !document.activeElement.hasAttribute("readonly");
 
       switch(e.key) {
@@ -890,6 +870,7 @@
       return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
+    // FUNGSI PLAYSONG PERBAIKAN: Menghapus panggilan auto-skip jika playback tertunda
     function playSong(index) {
       if (activeSongsList.length === 0) return;
       currentIndex = index;
@@ -919,6 +900,7 @@
             updateMediaSessionInfo(song);
             startAudioWatchdog();
           }).catch(error => {
+            // Menanganinya dengan mencoba un-mute tanpa pindah lagu otomatis
             isPlaying = false;
             mediaPlayer.muted = true;
             mediaPlayer.play().then(() => {
@@ -928,9 +910,10 @@
               $("#drawerPlay").text("pause");
               startAudioWatchdog();
             }).catch(() => {
-              setTimeout(function() {
-                nextSong();
-              }, 1500);
+              // Jika pemutaran masih tertahan, jangan auto-skip! Pilihan aman adalah menunggu tindakan user.
+              stopAudioWatchdog();
+              document.getElementById("playBtn").innerText = "play_arrow";
+              $("#drawerPlay").text("play_arrow");
             });
           });
         }
@@ -1052,25 +1035,21 @@
       setupMediaSession();
       loadM3UPlaylist();
 
+      // MEMPERBAIKI PENANGGANAN EVENT HANDLER MEDIA PLAYER:
       mediaPlayer.addEventListener("stalled", function() {
-        if (isPlaying) recoverStuckAudio();
+        // Biarkan browser memulihkan koneksi secara alami tanpa mereset pemutar
       });
 
       mediaPlayer.addEventListener("waiting", function() {
-        if (isPlaying) {
-          setTimeout(() => {
-            if (mediaPlayer.readyState < 3 && isPlaying) {
-              recoverStuckAudio();
-            }
-          }, 2000);
-        }
+        // Biarkan player melakukan buffering alih-alih mereset paksa
       });
 
       mediaPlayer.addEventListener("error", function() {
+        // Stop watchdog dan hentikan status play jika error mendalam, TANPA loncat ke nextSong()
         stopAudioWatchdog();
-        setTimeout(function() {
-          if (activeSongsList.length > 0) nextSong();
-        }, 1000);
+        isPlaying = false;
+        document.getElementById("playBtn").innerText = "play_arrow";
+        $("#drawerPlay").text("play_arrow");
       });
 
       mediaPlayer.addEventListener("ended", function() {
