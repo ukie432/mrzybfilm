@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    
-
     <link rel="preconnect" href="https://posterfilm.pages.dev">
-<link rel="preconnect" href="https://iptv-posterku.pages.dev">
-
+    <link rel="preconnect" href="https://iptv-posterku.pages.dev">
 
     <meta charset="UTF-8">
     <title>MRZYBtv Series - Comic Edition</title>
@@ -63,13 +60,84 @@
         }
         .clear-search:focus { background: red; outline: none; }
 
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; }
-        .poster { cursor: pointer; border: 3px solid #333; border-radius: 8px; overflow: hidden; background: #111; }
-        .poster:focus { transform: scale(1.1); border-color: #4a90e2; outline: none; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
+        
+        /* Efek Hitam Putih & Transisi Poster */
+        .poster { 
+            cursor: pointer; 
+            border: 3px solid #333; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            background: #111; 
+            filter: grayscale(100%); 
+            transition: filter 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Berwarna saat Fokus / Hover / Ditap Aktif */
+        .poster:focus, 
+        .poster:hover,
+        .poster.active-tap { 
+            transform: scale(1.08); 
+            border-color: #4a90e2; 
+            outline: none; 
+            filter: grayscale(0%);
+            z-index: 5;
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.5);
+        }
+
         .poster img { width: 100%; height: 200px; object-fit: cover; pointer-events: none; }
         
         .poster-title { padding: 8px; font-size: 14px; text-align: center; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .poster:focus .poster-title { color: #4a90e2; }
+        .poster:focus .poster-title,
+        .poster:hover .poster-title,
+        .poster.active-tap .poster-title { color: #4a90e2; }
+
+        /* Label Indikator Read / Buka Komik Saat Ditap 1x */
+        .read-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 30px;
+            background: rgba(0, 0, 0, 0.65);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .read-badge span {
+            background: #4a90e2;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border: 1px solid #fff;
+            animation: pulse-badge 1.2s infinite alternate;
+        }
+
+        @keyframes pulse-badge {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* Tampilkan badge hanya saat poster dalam kondisi aktif */
+        .poster.active-tap .read-badge {
+            opacity: 1;
+        }
         
         /* ================= POPUP MODAL PILIHAN EDISI ================= */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
@@ -108,7 +176,7 @@
         <div class="navbar">
             <div class="search-container">
                 <div class="search-bar-wrapper" id="search-box" tabindex="0">
-                    <input type="text" id="search" disabled placeholder="Cari (Tekan OK/Enter di remote untuk mulai)...">
+                    <input type="text" id="search" placeholder="Cari komik...">
                 </div>
                 <button id="clear-btn" class="clear-search" tabindex="-1">X</button>
             </div>
@@ -142,41 +210,32 @@
     const jsonUrl = "https://mrzybtv-api.ukielaki88.workers.dev/api/komik";
     let swiperInstance = null;
 
-    // ========================================================
-    // LOGIKA ANTI-MENTAL NATIVE BERTINGKAT (READER & POPUP)
-    // ========================================================
-    
-    // Fungsi jembatan wajib dari Tombol Back Android Native App kamu
+    // LOGIKA ANTI-MENTAL NATIVE BERTINGKAT
     window.tutupPopUpPoster = function() {
         const readerElement = document.getElementById("reader-view");
         const popupElement = document.getElementById("popup");
 
-        // TINGKAT 1: Jika Pembaca Komik sedang terbuka, tekan Back akan menutup reader & balik ke Popup
         if (readerElement && window.getComputedStyle(readerElement).display === "block") {
-            $("#exitReaderBtn").click(); // Trigger fungsi keluar reader resmi
+            $("#exitReaderBtn").click();
         } 
-        // TINGKAT 2: Jika Reader sudah tutup tapi Popup Edisi masih buka, tekan Back akan menutup popup ke katalog
         else if (popupElement && window.getComputedStyle(popupElement).display !== "none") {
             window.closePopup();
         }
     };
 
-    // Deteksi Keydown Event Global Tombol Back Remote (4, 27, 10009)
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 4 || event.keyCode === 27 || event.keyCode === 10009) {
             const readerElement = document.getElementById("reader-view");
             const popupElement = document.getElementById("popup");
 
-            // Jika salah satu tampilan overlay sedang aktif di layar
             if ((readerElement && window.getComputedStyle(readerElement).display === "block") || 
                 (popupElement && window.getComputedStyle(popupElement).display !== "none")) {
                 event.preventDefault();
-                window.tutupPopUpPoster(); // Jalankan urutan penutupan
+                window.tutupPopUpPoster();
                 return;
             }
         }
     }, true);
-
 
     // 1. Logika Navigasi Utama Remote TV D-PAD
     $(document).on('keydown', function(e) {
@@ -191,7 +250,6 @@
             }
         }
 
-        // Navigasi Khusus Pop-up Pilihan Edisi
         if (e.keyCode == 39 && activeEl && activeEl.classList.contains('eps-btn')) {
             e.preventDefault();
             $('.close-x').focus();
@@ -201,13 +259,21 @@
             const lastIdx = localStorage.getItem("last_eps_" + currentTitle) || 0;
             $(`.eps-btn[data-index="${lastIdx}"]`).focus();
         }
+        
+        // Buka Popup untuk STB Remote dengan tombol OK/Enter (13)
+        if (e.keyCode == 13 && activeEl && activeEl.classList.contains('poster')) {
+            e.preventDefault();
+            const title = $(activeEl).data('title');
+            const edisiEncoded = $(activeEl).data('edisi');
+            openModal(title, edisiEncoded);
+        }
     });
 
     // 2. Logika Khusus di Bar Pencarian Utama
     $("#search-box").on('keydown', function(e) {
         if (e.keyCode == 13) {
             e.preventDefault();
-            $("#search").removeAttr("disabled").focus();
+            $("#search").focus();
             return false;
         }
         else if (e.keyCode == 40) {
@@ -220,10 +286,9 @@
         }
     });
 
-    // 3. Logika Saat Mengetik di Dalam Input Asli
+    // 3. Logika Mengetik & Clear
     $("#search").on('keydown', function(e) {
         if (e.keyCode == 40 || e.keyCode == 13) {
-            $(this).attr("disabled", "disabled");
             $("#search-box").focus();
         }
     });
@@ -259,7 +324,7 @@
         });
     });
 
-    // 4. Proses Ambil Data JSON Murni & Gambar Grid Poster
+    // 4. Proses Ambil Data JSON & Gambar Grid Poster
     fetch(jsonUrl)
         .then(response => response.json())
         .then(data => {
@@ -267,8 +332,9 @@
             catalogList.forEach(item => {
                 const edDataEncoded = encodeURIComponent(JSON.stringify(item.edisi));
                 $("#grid").append(`
-                    <div class="poster" tabindex="0" data-title="${item.title}" data-watermark="${item.watermark || 'mrzyb'}" onclick='openModal("${item.title}", "${edDataEncoded}")'>
+                    <div class="poster" tabindex="0" data-title="${item.title}" data-watermark="${item.watermark || 'mrzyb'}" data-edisi="${edDataEncoded}">
                         <img src="${item.poster}">
+                        <div class="read-badge"><span>Read Now</span></div>
                         <div class="poster-title">${item.title}</div>
                     </div>
                 `);
@@ -282,6 +348,38 @@
             checkLastSession();
         });
 
+    // ========================================================
+    // LOGIKA SAKLAR DUA STEP (DENGAN INDIKATOR BACA)
+    // ========================================================
+    $(document).on('click touchend', '.poster', function(e) {
+        if (e.type === 'touchend') {
+            e.preventDefault();
+        }
+
+        const currentPoster = $(this);
+        const isAlreadyActive = currentPoster.hasClass('active-tap');
+
+        // Reset semua poster lain agar kembali ke Hitam Putih & hilangkan label read
+        $('.poster').not(currentPoster).removeClass('active-tap');
+
+        if (!isAlreadyActive) {
+            // TAP 1: Berwarna + Munculkan tombol/tulisan "READ"
+            currentPoster.addClass('active-tap').focus();
+        } else {
+            // TAP 2: Buka Modal Episode
+            const title = currentPoster.data('title');
+            const edisiEncoded = currentPoster.data('edisi');
+            openModal(title, edisiEncoded);
+        }
+    });
+
+    // Kembalikan ke Hitam-Putih jika men-tap area kosong di luar poster
+    $(document).on('click touchend', function(e) {
+        if (!$(e.target).closest('.poster').length) {
+            $('.poster').removeClass('active-tap');
+        }
+    });
+
     // 5. Fungsi Membuka Popup Modal
     function openModal(title, edisiEncoded) {
         localStorage.setItem("status_popup", "open");
@@ -289,7 +387,6 @@
         localStorage.setItem("judul_film", title);
         localStorage.setItem("eps_data", edisiEncoded);
         
-        // Aktifkan gembok Android Native Back
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(true);
         }
@@ -390,7 +487,7 @@
         document.getElementById('tvPageTxt').innerText = `Slide ${current} / ${total}`;
     }
 
-    // 7. Tombol Keluar dari Player Pembaca Komik
+    // 7. Tombol Keluar dari Player
     $("#exitReaderBtn").on('click', function() {
         $("#reader-view").hide();
         $("#home-view").show();
@@ -399,7 +496,6 @@
         const title = localStorage.getItem("judul_film");
         const eps = localStorage.getItem("eps_data");
         
-        // Munculkan popup edisi kembali secara aman
         if(title && eps) {
             openModal(title, eps);
         }
@@ -417,7 +513,6 @@
             }, 150);
         }
 
-        // Matikan gembok Android Native Back secara instan (Karna sudah kembali ke katalog utama)
         if (typeof Android !== "undefined" && Android.setPopUpStatus) {
             Android.setPopUpStatus(false);
         }
@@ -431,7 +526,6 @@
         }
     }
 
-    // Navigasi Otomatis Mengunci Fokus ke Tombol Kembali Saat Atas/Bawah Ditekan di Player
     document.addEventListener('keydown', (e) => {
         const code = e.keyCode || e.which;
         const readerElement = document.getElementById('reader-view');
@@ -445,12 +539,12 @@
 </script>
 
 <script>
-    // Efek Suara Navigasi Remote
+    // Efek Suara Navigasi Remote / Sentuhan
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     function playSound() {
         soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+        soundClick.play().catch(e => console.log("Menunggu interaksi pengguna..."));
     }
 
     document.addEventListener('focus', function(e) {
