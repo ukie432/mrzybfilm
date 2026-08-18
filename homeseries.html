@@ -111,6 +111,27 @@
             transition: opacity 0.3s;
         }
 
+        /* KOTAK MERAH "WATCH NOW" */
+        .btn-open {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff2a2a;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap; /* Teks dipaksa tetap 1 baris */
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
         /* POSISI 1: KIRI */
         .item.pos-left {
             transform: translateX(-220px) translateZ(-50px) rotateY(30deg) scale(0.85);
@@ -130,6 +151,11 @@
         .item.pos-center .label {
             opacity: 1;
             color: #ffffff;
+        }
+
+        /* TAMPILKAN TOMBOL MERAH HANYA PADA POSTER TENGAH */
+        .item.pos-center .btn-open {
+            opacity: 1;
         }
 
         /* POSISI 3: KANAN */
@@ -154,7 +180,7 @@
             color: #fff;
         }
 
-        /* === TOMBOL NAVIGASI KANAN DAN KIRI === */
+        /* TOMBOL NAVIGASI PANAH */
         .nav-btn {
             position: absolute;
             top: 50%;
@@ -190,7 +216,7 @@
         .nav-btn.prev { left: 40px; }
         .nav-btn.next { right: 40px; }
 
-        /* TAMPILAN RESPOSIF UNTUK HP */
+        /* RESPONDIF HP */
         @media (max-width: 600px) {
             .brand-logo { top: 15px; left: 20px; }
             .brand-logo img { height: 45px; }
@@ -200,6 +226,8 @@
             .item.pos-left { transform: translateX(-120px) translateZ(-30px) rotateY(25deg) scale(0.8); }
             .item.pos-right { transform: translateX(120px) translateZ(-30px) rotateY(-25deg) scale(0.8); }
             .label { font-size: 12px; bottom: -28px; }
+
+            .btn-open { font-size: 9px; padding: 4px 10px; bottom: 8px; white-space: nowrap; }
 
             .nav-btn { width: 35px; height: 35px; font-size: 18px; }
             .nav-btn.prev { left: 10px; }
@@ -220,7 +248,6 @@
     <div id="digital-clock">00:00:00</div>
 
     <div class="thumbnail-container" id="touch-area">
-        <!-- TOMBOL NAVIGASI -->
         <button class="nav-btn prev" id="btn-prev" aria-label="Sebelumnya">&lt;</button>
         <button class="nav-btn next" id="btn-next" aria-label="Berikutnya">&gt;</button>
 
@@ -228,18 +255,21 @@
             <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_dubbing" class="item" data-id="p1" 
                data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing2.webp" tabindex="0">
                 <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Dubbing2.webp" width="240" height="135"> 
+                <div class="btn-open">Watch Now</div>
                 <div class="label">Series Dubbing</div>
             </a>    
 
             <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_indo" class="item" data-id="p2" 
                data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo2.webp" tabindex="0">
                 <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Indo2.webp" width="240" height="135"> 
+                <div class="btn-open">Watch Now</div>
                 <div class="label">Series Indo</div>
             </a>    
 
             <a href="https://mrzybtv-api.ukielaki88.workers.dev/app/seri_animasi" class="item" data-id="p3" 
                data-bg="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime2.webp" tabindex="0">
                 <img src="https://iptv-posterku.pages.dev/poster/film_dubbing/Anime2.webp" width="240" height="135">
+                <div class="btn-open">Watch Now</div>
                 <div class="label">Series Animasi</div>
             </a>    
         </div>
@@ -287,7 +317,6 @@
             soundClick.play().catch(() => {});
         }
 
-        // === EVENT CLICK TOMBOL PANAH ===
         document.getElementById('btn-prev').addEventListener('click', (e) => {
             e.stopPropagation();
             rotateRight();
@@ -298,7 +327,6 @@
             rotateLeft();
         });
 
-        // === FITUR REMOTE STB (Keyboard / D-Pad Remote) ===
         document.addEventListener('keydown', (e) => {
             if (e.key === "ArrowRight") {
                 e.preventDefault();
@@ -309,7 +337,6 @@
             }
         });
 
-        // === FITUR SENTUHAN HP (Touch Swipe) ===
         let touchStartX = 0;
         let touchEndX = 0;
         const touchArea = document.getElementById('touch-area');
@@ -332,7 +359,6 @@
             }
         }
 
-        // === FITUR KLIK POSTER ===
         items.forEach(item => {
             item.addEventListener('click', (e) => {
                 if (item.classList.contains('pos-left')) {
