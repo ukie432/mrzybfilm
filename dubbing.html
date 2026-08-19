@@ -69,7 +69,10 @@
     }
 
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
-    .search-box:focus { border-color: #ffffff; }
+    
+    /* FOKUS SEARCH BOX JADI HIJAU */
+    .search-box:focus { border-color: #00FF66; }
+    
     .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
@@ -166,19 +169,21 @@
         direction: ltr;
     }
 
-    .btn-fav:focus { background-color: #ffffff; color: #E50914; }
+    /* FOKUS TOMBOL FAVORIT JADI HIJAU */
+    .btn-fav:focus { background-color: #00FF66; color: #000000; }
     .btn-fav.active { color: #ffcc00; }
     .btn-fav span { font-size: 8px; }
     #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
+    /* FOKUS POSTER/KARTU FILM JADI HIJAU */
     .play-link:focus {
-        outline: 3px solid #ffffff !important;
+        outline: 3px solid #00FF66 !important;
         outline-offset: 2px;
     }
 
     .card-film:focus-within {
         transform: scale(1.05);
-        box-shadow: 0 0 12px #ffffff;
+        box-shadow: 0 0 14px #00FF66;
         z-index: 10;
     }
     </style>
@@ -232,9 +237,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // WATCHDOG SYSTEM FOR STB ANDROID TV
     // ==========================================
 
+    let focusWatchdogInterval = null;
+    let progressWatchdogInterval = null;
+
     // 1. WATCHDOG FOKUS REMOTE (AMAN DARIPADA SCROLL LOMPAT)
     function startFocusWatchdog() {
-        setInterval(() => {
+        if (focusWatchdogInterval) clearInterval(focusWatchdogInterval);
+
+        focusWatchdogInterval = setInterval(() => {
             const activeEl = document.activeElement;
 
             // Jika fokus terlepas (aktif di body/null)
@@ -268,12 +278,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 2. WATCHDOG PROGRESS: Mengisi ulang UI progress bar dari Player Native
     function startProgressWatchdog() {
-        setInterval(() => {
+        if (progressWatchdogInterval) clearInterval(progressWatchdogInterval);
+
+        progressWatchdogInterval = setInterval(() => {
             if (semuaFilm.length > 0) {
                 updateTampilanLanjutkanMenonton();
             }
         }, 4000);
     }
+
+    // FUNGSI PEMBERHENTIAN WATCHDOG SAAT HALAMAN DITUTUP / BERPINDAH
+    function stopAllWatchdogs() {
+        if (focusWatchdogInterval) {
+            clearInterval(focusWatchdogInterval);
+            focusWatchdogInterval = null;
+        }
+        if (progressWatchdogInterval) {
+            clearInterval(progressWatchdogInterval);
+            progressWatchdogInterval = null;
+        }
+    }
+
+    window.addEventListener("beforeunload", stopAllWatchdogs);
+    window.addEventListener("pagehide", stopAllWatchdogs);
 
     // ==========================================
     // FUNGSI UTAMA & UTILITIES
