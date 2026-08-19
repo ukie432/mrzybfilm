@@ -78,10 +78,11 @@
             object-fit: cover; 
         }
 
-        /* Efek saat fokus */
+        /* Efek saat fokus diubah ke HIJAU */
         .main-item:focus,
         .footer-button:focus {
-            border: 3px solid #fff;
+            border: 3px solid #00FF66;
+            box-shadow: 0 0 12px rgba(0, 255, 102, 0.7);
             outline: none;
         }
 
@@ -89,7 +90,7 @@
         .item2 { grid-column: span 2; grid-row: span 2; }
 
         .footer { display: flex; justify-content: space-around; padding: 10px; background: #1c1c1c; }
-        .footer-button { border: none; padding: 15px 30px; color: #fff; cursor: pointer; border-radius: 5px; font-size: 14px; }
+        .footer-button { border: 3px solid transparent; padding: 15px 30px; color: #fff; cursor: pointer; border-radius: 5px; font-size: 14px; }
         .footer-button1 { background-color: #8B0000; }
         .footer-button2 { background-color: #008000; }
         .footer-button3 { background-color: #0000FF; }
@@ -108,8 +109,7 @@
 
         <main class="main">
             <div class="main-item item1" id="p1" tabindex="0" onclick="go('p1', 'https://mrzybtv-api.ukielaki88.workers.dev/app/tv_online')">
-                <img src="https://posterfilm.pages.dev/poster/film_lawas/Tvkumrzyb.webp
-" width="640" height="360" fetchpriority="high"  alt="Yaiba">
+                <img src="https://posterfilm.pages.dev/poster/film_lawas/Tvkumrzyb.webp" width="640" height="360" fetchpriority="high"  alt="Yaiba">
             </div>
 
             <div class="main-item item2" id="p2" tabindex="0" onclick="go('p2', 'https://mrzybtv-api.ukielaki88.workers.dev/app/youtube')">
