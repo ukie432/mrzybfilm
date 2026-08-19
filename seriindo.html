@@ -48,11 +48,12 @@
             transition: all 0.3s ease;
         }
 
+        /* FOKUS SEARCH BOX JADI HIJAU */
         .search-bar-wrapper:focus-within,
         .search-bar-wrapper:focus { 
-            border-color: #ffffff; 
+            border-color: #00FF66; 
             outline: none; 
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); 
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.6); 
         }
         
         #search { 
@@ -109,8 +110,16 @@
             background: #111; 
             position: relative; 
             content-visibility: auto;
+            contain-intrinsic-size: 1px 200px;
         }
-        .poster:focus { transform: scale(1.05); border-color: #ffffff; outline: none; }
+        
+        /* FOKUS POSTER JADI HIJAU */
+        .poster:focus { 
+            transform: scale(1.05); 
+            border-color: #00FF66; 
+            box-shadow: 0 0 14px #00FF66;
+            outline: none; 
+        }
         
         .poster img { 
             width: 100%; 
@@ -129,7 +138,7 @@
             text-overflow: ellipsis; 
             color: #fff; 
         }
-        .poster:focus .poster-title { color: #ffffff; }
+        .poster:focus .poster-title { color: #00FF66; }
 
         /* Indicator Progress Bar Red */
         .progress-container { 
@@ -175,12 +184,18 @@
         
         /* Popup */
         #popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:100; justify-content:center; align-items:center; }
-        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #ffffff; position: relative; }
+        
+        /* FOKUS POPUP CONTENT JADI HIJAU */
+        .popup-content { background:#1a1a1a; padding:25px; border-radius:15px; width:80%; max-width:500px; border:2px solid #00FF66; position: relative; }
         .close-x { position: absolute; top: -15px; right: -15px; width: 45px; height: 45px; background: red; color: white; border-radius: 50%; border: 3px solid white; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 101; }
-        .close-x:focus { outline: 3px solid #ffffff; transform: scale(1.1); }
+        
+        /* FOKUS TOMBOL CLOSE JADI HIJAU */
+        .close-x:focus { outline: 3px solid #00FF66; transform: scale(1.1); }
         #eps-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
         .eps-btn { display:block; width:100%; padding:10px; margin:5px 0; background:#333; border:none; color:white; text-align: left; border-radius: 5px; box-sizing: border-box; }
-        .eps-btn:focus { background:#ffffff; color:black; outline: none; }
+        
+        /* FOKUS TOMBOL EPISODE JADI HIJAU */
+        .eps-btn:focus { background:#00FF66; color:black; font-weight: bold; outline: none; }
         .eps-btn:focus .eps-progress-fill { background: #E50914; }
     </style>
 </head>
@@ -214,18 +229,21 @@
 <script>
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
     
-    // ========================================================
+    // FUNCTION PROXY GAMBAR AGAR MEMORI STB TIDAK PENUH
+    function getOptimizedImg(originalUrl) {
+        if (!originalUrl || originalUrl.includes('placeholder.com')) {
+            return 'https://via.placeholder.com/300x400?text=No+Poster';
+        }
+        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=600&output=webp&q=80`;
+    }
+
     // LINK PLAYLIST M3U
-    // ========================================================
     const playlistUrl = "https://raw.githubusercontent.com/ukie432/mrzybfilm/refs/heads/main/series_indo.m3u"; 
 
     let allData = [];
     let loaded = 0;
     const LOAD_SIZE = 40;
 
-    // ========================================================
-    // LOGIKA PENYELARASAN NATIVE & KEYBOARD
-    // ========================================================
     window.tutupPopUpPoster = function(){
         window.closePopup();
     };
@@ -355,7 +373,7 @@
                     div.dataset.index = allData.indexOf(item);
                     div.dataset.title = item.title;
                     div.innerHTML = `
-                        <img src="${item.poster}" loading="lazy" decoding="async">
+                        <img src="${getOptimizedImg(item.poster)}" loading="lazy" decoding="async">
                         <div class="poster-title">${item.title}</div>
                     `;
                     fragment.appendChild(div);
@@ -365,9 +383,6 @@
         }, 200);
     });
 
-    // ========================================================
-    // RENDER LANJUTKAN MENONTON (SERIES)
-    // ========================================================
     function renderContinueWatching() {
         const container = $("#containerContinue");
         container.empty();
@@ -391,7 +406,7 @@
                                     
                                     const card = $(`
                                         <div class="poster" tabindex="0" data-title="${series.title}">
-                                            <img src="${series.poster}" loading="lazy">
+                                            <img src="${getOptimizedImg(series.poster)}" loading="lazy">
                                             <span class="time-badge">${ep.ep}</span>
                                             <div class="progress-container">
                                                 <div class="progress-bar-red" style="width: ${barWidth}"></div>
@@ -420,9 +435,6 @@
         }
     }
 
-    // ========================================================
-    // PARSER PINTAR: HAPUS TITIK PADA JUDUL & AUTO-SORT EPISODE
-    // ========================================================
     function parseM3U(text) {
         const lines = text.split('\n');
         const seriesMap = new Map();
@@ -508,9 +520,6 @@
         return result;
     }
 
-    // ========================================================
-    // FETCH M3U DATA
-    // ========================================================
     fetch(playlistUrl)
     .then(response => response.text()) 
     .then(text => {
@@ -549,7 +558,7 @@
             div.dataset.index = i;
             div.dataset.pos = i;
             div.innerHTML = `
-                <img src="${item.poster}" loading="lazy" decoding="async">
+                <img src="${getOptimizedImg(item.poster)}" loading="lazy" decoding="async">
                 <div class="poster-title">${item.title}</div>
             `;
             fragment.appendChild(div);
@@ -633,9 +642,6 @@
         setTimeout(() => { $(`.eps-btn[data-index="${lastIdx}"]`).focus(); }, 150);
     }
 
-    // ========================================================
-    // PERBAIKAN: AKTIFKAN FITUR PLAYLIST NEXT & PREVIOUS
-    // ========================================================
     function playAndSave(url, index, title, epName = "") {
         localStorage.setItem(pageTitle + "_last_eps_" + title, index);
         
@@ -699,11 +705,12 @@
 </script>
 
 <script>
+    // EFFISIENSI SUARA KLIK REMOTE
     const soundClick = new Audio('https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav'); 
 
     function playSound() {
         soundClick.currentTime = 0;
-        soundClick.play().catch(e => console.log("Menunggu interaksi remote..."));
+        soundClick.play().catch(e => {});
     }
 
     document.addEventListener('focus', function(e) {
@@ -713,11 +720,8 @@
     }, true);
 </script>
 
-<!-- ======================================================== -->
-<!-- MODUL WATCHDOG UNTUK TV (FOCUS & PROGRESS AUTO-REFRESH)  -->
-<!-- ======================================================== -->
 <script>
-    // 1. WATCHDOG FOKUS: Mencegah Hilangnya Kursor Remote di TV
+    // WATCHDOG FOKUS REMOTE & PROGRESS AUTO-REFRESH
     setInterval(function() {
         const active = document.activeElement;
         const isFocusable = active && (
@@ -747,7 +751,6 @@
         }
     }, 2000);
 
-    // 2. WATCHDOG PROGRESS: Refresh Progres Tontonan Otomatis Saat Kembali dari Pemutar Video
     window.addEventListener("focus", function() {
         if (typeof renderContinueWatching === "function") {
             renderContinueWatching();
