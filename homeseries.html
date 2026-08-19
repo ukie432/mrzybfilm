@@ -139,18 +139,18 @@
             opacity: 0.7;
         }
 
-        /* POSISI 2: TENGAH (AKTIF) */
+        /* POSISI 2: TENGAH (AKTIF/FOKUS HIJAU NEON) */
         .item.pos-center {
             transform: translateX(0px) translateZ(50px) rotateY(0deg) scale(1.05);
             z-index: 100;
             opacity: 1;
-            border-color: #ffffff !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 15px 30px rgba(0,0,0,0.9);
+            border-color: #00FF66 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.7), 0 15px 30px rgba(0,0,0,0.9);
         }
 
         .item.pos-center .label {
             opacity: 1;
-            color: #ffffff;
+            color: #00FF66;
         }
 
         /* TAMPILKAN TOMBOL MERAH HANYA PADA POSTER TENGAH */
@@ -203,10 +203,12 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.8);
+        .nav-btn:hover,
+        .nav-btn:focus {
+            background: rgba(0, 255, 102, 0.8);
             color: #000;
-            border-color: #fff;
+            border-color: #00FF66;
+            outline: none;
         }
 
         .nav-btn:active {
@@ -277,9 +279,6 @@
 
     <script>
         const bgImage = document.getElementById('main-bg');
-        const soundClick = new Audio();
-        soundClick.preload = "none";
-        soundClick.src = "https://github.com/ukie432/mrzybfilm/raw/refs/heads/main/click.wav";
 
         const items = Array.from(document.querySelectorAll('.item'));
         const classes = ['pos-left', 'pos-center', 'pos-right'];
@@ -303,18 +302,11 @@
         function rotateRight() {
             classes.unshift(classes.pop());
             updatePositions();
-            playSound();
         }
 
         function rotateLeft() {
             classes.push(classes.shift());
             updatePositions();
-            playSound();
-        }
-
-        function playSound() {
-            soundClick.currentTime = 0;
-            soundClick.play().catch(() => {});
         }
 
         document.getElementById('btn-prev').addEventListener('click', (e) => {
