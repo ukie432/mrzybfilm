@@ -69,13 +69,13 @@
     }
 
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
-    .search-box:focus { border-color: #ffffff; }
+    .search-box:focus { border-color: #2ecc71; }
     .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
-    .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #2ecc71; padding-left: 10px; display: none; }
 
     /* STYLING KHUSUS BANNER LANJUTKAN MENONTON */
     #continueSectionTitle {
-        color: #E50914;
+        color: #2ecc71;
     }
 
     .time-badge {
@@ -89,7 +89,7 @@
         padding: 3px 6px;
         border-radius: 4px;
         z-index: 5;
-        border: 1px solid rgba(229, 9, 20, 0.6);
+        border: 1px solid rgba(46, 204, 113, 0.6);
     }
 
     .container-film {
@@ -131,9 +131,9 @@
 
     .progress-bar-red {
         height: 100%;
-        background-color: #E50914;
+        background-color: #2ecc71;
         width: 0%;
-        box-shadow: 0 0 4px #E50914;
+        box-shadow: 0 0 4px #2ecc71;
     }
 
     .btn-fav { 
@@ -166,19 +166,19 @@
         direction: ltr;
     }
 
-    .btn-fav:focus { background-color: #ffffff; color: #E50914; }
+    .btn-fav:focus { background-color: #2ecc71; color: #000000; }
     .btn-fav.active { color: #ffcc00; }
     .btn-fav span { font-size: 8px; }
     #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
     .play-link:focus {
-        outline: 3px solid #ffffff !important;
+        outline: 3px solid #2ecc71 !important;
         outline-offset: 2px;
     }
 
     .card-film:focus-within {
         transform: scale(1.05);
-        box-shadow: 0 0 12px #ffffff;
+        box-shadow: 0 0 12px #2ecc71;
         z-index: 10;
     }
     </style>
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (adaVideoLanjut) {
             continueSectionTitle.style.display = "block";
-            continueSectionTitle.style.borderLeft = "4px solid #E50914";
+            continueSectionTitle.style.borderLeft = "4px solid #2ecc71";
             containerContinue.style.display = "grid";
         } else {
             continueSectionTitle.style.display = "none";
