@@ -69,7 +69,10 @@
     }
 
     .search-box { width: 100%; padding: 12px 45px 12px 15px; font-size: 16px; border: 2px solid #333; border-radius: 8px; background-color: #141414; color: #fff; outline: none; }
-    .search-box:focus { border-color: #ffffff; }
+    
+    /* FOKUS SEARCH BOX JADI HIJAU */
+    .search-box:focus { border-color: #00FF66; }
+    
     .btn-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; }
     .section-title { font-size: 16px; font-weight: 700; margin: 15px 20px 10px 20px; color: #fff; border-left: 4px solid #E50914; padding-left: 10px; display: none; }
 
@@ -166,19 +169,21 @@
         direction: ltr;
     }
 
-    .btn-fav:focus { background-color: #ffffff; color: #E50914; }
+    /* FOKUS TOMBOL FAVORIT JADI HIJAU */
+    .btn-fav:focus { background-color: #00FF66; color: #000000; }
     .btn-fav.active { color: #ffcc00; }
     .btn-fav span { font-size: 8px; }
     #noResultsText { text-align: center; font-size: 18px; color: #aaa; margin-top: 40px; display: none; width: 100%; }
 
+    /* FOKUS POSTER/KARTU FILM JADI HIJAU */
     .play-link:focus {
-        outline: 3px solid #ffffff !important;
+        outline: 3px solid #00FF66 !important;
         outline-offset: 2px;
     }
 
     .card-film:focus-within {
         transform: scale(1.05);
-        box-shadow: 0 0 12px #ffffff;
+        box-shadow: 0 0 14px #00FF66;
         z-index: 10;
     }
     </style>
@@ -193,7 +198,7 @@
     <img src="https://posterfilm.pages.dev/poster/film_lawas/logoputihmrzyb.webp" alt="MRZYB TV Logo" class="header-logo">
 </div>
 
-<!-- SECTION LANJUTKAN MENONTON (WETV / NETFLIX STYLE) -->
+<!-- SECTION LANJUTKAN MENONTON -->
 <div class="section-title" id="continueSectionTitle">LANJUTKAN MENONTON</div>
 <div class="container-film" id="containerContinue"></div>
 
@@ -216,7 +221,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerFav = document.getElementById('containerFav');
     const favSectionTitle = document.getElementById('favSectionTitle');
     
-    // VARIABEL UNTUK BANNER LANJUTKAN MENONTON
     const containerContinue = document.getElementById('containerContinue');
     const continueSectionTitle = document.getElementById('continueSectionTitle');
 
@@ -229,7 +233,79 @@ document.addEventListener("DOMContentLoaded", function() {
     const PER_PAGE = 16; 
     let searchTimer;
 
-    // FUNGSI KUNCI: BUAT ID UNIK BERDASARKAN URL STREAM & JUDUL FILM
+    // ==========================================
+    // WATCHDOG SYSTEM FOR STB ANDROID TV
+    // ==========================================
+
+    let focusWatchdogInterval = null;
+    let progressWatchdogInterval = null;
+
+    // 1. WATCHDOG FOKUS REMOTE (AMAN DARIPADA SCROLL LOMPAT)
+    function startFocusWatchdog() {
+        if (focusWatchdogInterval) clearInterval(focusWatchdogInterval);
+
+        focusWatchdogInterval = setInterval(() => {
+            const activeEl = document.activeElement;
+
+            // Jika fokus terlepas (aktif di body/null)
+            if (!activeEl || activeEl === document.body) {
+                const allPlayLinks = document.querySelectorAll(".play-link");
+                let targetInView = null;
+
+                // Cari elemen film yang sedang tampak di layar (viewport)
+                for (let el of allPlayLinks) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)) {
+                        targetInView = el;
+                        break;
+                    }
+                }
+
+                // Fokuskan ke elemen di area pandang saat ini (preventScroll mencegah lompat ke atas)
+                if (targetInView) {
+                    targetInView.focus({ preventScroll: true }); 
+                } else {
+                    const firstPoster = document.querySelector("#containerContinue .play-link") || 
+                                        document.querySelector("#containerFav .play-link") || 
+                                        document.querySelector("#containerUtama .play-link");
+                    if (firstPoster) {
+                        firstPoster.focus({ preventScroll: true });
+                    }
+                }
+            }
+        }, 2000);
+    }
+
+    // 2. WATCHDOG PROGRESS: Mengisi ulang UI progress bar dari Player Native
+    function startProgressWatchdog() {
+        if (progressWatchdogInterval) clearInterval(progressWatchdogInterval);
+
+        progressWatchdogInterval = setInterval(() => {
+            if (semuaFilm.length > 0) {
+                updateTampilanLanjutkanMenonton();
+            }
+        }, 4000);
+    }
+
+    // FUNGSI PEMBERHENTIAN WATCHDOG SAAT HALAMAN DITUTUP / BERPINDAH
+    function stopAllWatchdogs() {
+        if (focusWatchdogInterval) {
+            clearInterval(focusWatchdogInterval);
+            focusWatchdogInterval = null;
+        }
+        if (progressWatchdogInterval) {
+            clearInterval(progressWatchdogInterval);
+            progressWatchdogInterval = null;
+        }
+    }
+
+    window.addEventListener("beforeunload", stopAllWatchdogs);
+    window.addEventListener("pagehide", stopAllWatchdogs);
+
+    // ==========================================
+    // FUNGSI UTAMA & UTILITIES
+    // ==========================================
+
     function generateUniqueId(str) {
         let hash = 0;
         if (!str || str.length === 0) return "film_0";
@@ -248,7 +324,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=1280&output=webp&q=80`;
     }
 
-    // FUNGSI FORMAT MILIDETIK KE MENIT:DETIK
     function formatTime(ms) {
         if (!ms || ms <= 0) return "00:00";
         const totalSeconds = Math.floor(ms / 1000);
@@ -257,7 +332,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    /* FUNGSI GENERATE HTML GARIS MERAH DARI SHAREDPFERENCES ANDROID */
     function getProgressBarHtml(filmId) {
         const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
         if (nativeAndroid && nativeAndroid.getProgressVideo && filmId) {
@@ -274,9 +348,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return "";
     }
 
-    /* FUNGSI UNTUK MERENDER BARIS LANJUTKAN MENONTON */
     function updateTampilanLanjutkanMenonton() {
-        containerContinue.innerHTML = "";
         const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
         
         if (!nativeAndroid || !nativeAndroid.getProgressVideo) {
@@ -285,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        let adaVideoLanjut = false;
+        let filmLanjut = [];
 
         semuaFilm.forEach(film => {
             try {
@@ -294,32 +366,36 @@ document.addEventListener("DOMContentLoaded", function() {
                     const persentase = (dataData.posisi / dataData.durasi) * 100;
 
                     if (persentase > 1 && persentase < 95) {
-                        adaVideoLanjut = true;
-                        const optimizedImg = getOptimizedImg(film.img);
-                        const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
-                        const posisiMenit = formatTime(dataData.posisi);
-
-                        containerContinue.insertAdjacentHTML("beforeend", `
-                            <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
-                                <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
-                                    <div class="poster-wrapper">
-                                        <span class="time-badge">Lanjut ${posisiMenit}</span>
-                                        <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
-                                        ${progressBarHtml}
-                                    </div>
-                                </a>
-                                <button class="btn-fav" tabindex="0" data-target="${film.id}">
-                                    <span>☆</span> Favorit
-                                </button>
-                                <div class="film-title">${film.title}</div>
-                            </div>
-                        `);
+                        filmLanjut.push({ film, dataData, persentase });
                     }
                 }
             } catch (e) {}
         });
 
-        if (adaVideoLanjut) {
+        if (filmLanjut.length > 0) {
+            containerContinue.innerHTML = "";
+            filmLanjut.forEach(({ film, dataData, persentase }) => {
+                const optimizedImg = getOptimizedImg(film.img);
+                const progressBarHtml = `<div class="progress-container"><div class="progress-bar-red" style="width: ${persentase.toFixed(1)}%"></div></div>`;
+                const posisiMenit = formatTime(dataData.posisi);
+
+                containerContinue.insertAdjacentHTML("beforeend", `
+                    <div class="card-film" data-id="${film.id}" id="continue-${film.id}">
+                        <a tabindex="0" class="play-link" href="${film.url}" data-title="${film.title.toLowerCase()}">
+                            <div class="poster-wrapper">
+                                <span class="time-badge">Lanjut ${posisiMenit}</span>
+                                <img src="${optimizedImg}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x225?text=No+Image';">
+                                ${progressBarHtml}
+                            </div>
+                        </a>
+                        <button class="btn-fav" tabindex="0" data-target="${film.id}">
+                            <span>☆</span> Favorit
+                        </button>
+                        <div class="film-title">${film.title}</div>
+                    </div>
+                `);
+            });
+
             continueSectionTitle.style.display = "block";
             continueSectionTitle.style.borderLeft = "4px solid #E50914";
             containerContinue.style.display = "grid";
@@ -392,7 +468,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 `);
             });
         }
-        pasangEventAksi();
         perbaruiStatusTombolBintang();
     }
 
@@ -435,9 +510,6 @@ document.addEventListener("DOMContentLoaded", function() {
         perbaruiStatusTombolBintang();
     }
 
-    function pasangEventAksi() {}
-
-    /* FUNGSI KLIK PEMUTARAN BERSIH TERHUBUNG KE HOME SCREEN TV & TERUSKAN JUDUL FILM */
     document.addEventListener("click", function(e){
         const play = e.target.closest(".play-link");
         if(play){
@@ -447,7 +519,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const filmId = card ? (card.getAttribute("data-id") || "") : "";
             const cardElementId = card ? card.id : "";
 
-            // Ambil Judul dan Gambar Poster dari Elemen Kartu Film
             const filmTitle = card ? (card.querySelector(".film-title")?.innerText || "Film MRZYB TV") : "Film MRZYB TV";
             const filmImg = card ? (card.querySelector(".poster-wrapper img")?.src || "") : "";
 
@@ -455,11 +526,8 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem("animasi_sedangNontonVideoSTB", "ya");
 
             const videoUrl = play.getAttribute("href") || play.href;
-
-            // DETEKSI INTERFACE ANDROID (AndroidInterface atau Android)
             const nativeAndroid = (typeof AndroidInterface !== "undefined") ? AndroidInterface : ((typeof Android !== "undefined") ? Android : null);
 
-            // 1. KIRIM DATA FILM KE HOME SCREEN CHANNEL ANDROID TV
             if (nativeAndroid && typeof nativeAndroid.kirimFilmKeHomeScreen === "function") {
                 nativeAndroid.kirimFilmKeHomeScreen(
                     filmTitle,
@@ -469,7 +537,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
             }
 
-            // 2. BUKA PLAYER VIDEO DENGAN MENGIRIM JUDUL FILM KE JAVA
             if (nativeAndroid) {
                 if (typeof nativeAndroid.playVideoWithTitle === "function") {
                     nativeAndroid.playVideoWithTitle(videoUrl, filmId, filmTitle);
@@ -513,7 +580,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // EVENT DETEKSI FOKUS UNTUK UBAH BACKGROUND
     document.addEventListener("focusin", function(e) {
         const card = e.target.closest(".card-film");
         if (card) {
@@ -561,7 +627,6 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBox.focus();
     });
 
-    // PARSER M3U BERSIH
     function parseM3U(m3uText) {
         const lines = m3uText.split('\n');
         const listFilm = [];
@@ -607,6 +672,10 @@ document.addEventListener("DOMContentLoaded", function() {
             updateTampilanFavorit();
             updateTampilanLanjutkanMenonton();
             
+            // MENJALANKAN SYSTEM WATCHDOG
+            startFocusWatchdog();
+            startProgressWatchdog();
+
             containerUtama.addEventListener("focusin", function(e){
                 const card = e.target.closest(".card-film");
                 if(!card) return;
