@@ -229,12 +229,12 @@
 <script>
     const pageTitle = document.title.replace(/\s+/g, '_').toLowerCase(); 
     
-    // FUNCTION PROXY GAMBAR AGAR MEMORI STB TIDAK PENUH
+    // FUNCTION PERBAIKAN URL GAMBAR
     function getOptimizedImg(originalUrl) {
         if (!originalUrl || originalUrl.includes('placeholder.com')) {
             return 'https://via.placeholder.com/300x400?text=No+Poster';
         }
-        return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=600&output=webp&q=80`;
+        return originalUrl;
     }
 
     // LINK PLAYLIST M3U
@@ -373,7 +373,7 @@
                     div.dataset.index = allData.indexOf(item);
                     div.dataset.title = item.title;
                     div.innerHTML = `
-                        <img src="${getOptimizedImg(item.poster)}" loading="lazy" decoding="async">
+                        <img src="${getOptimizedImg(item.poster)}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Poster'" loading="lazy" decoding="async">
                         <div class="poster-title">${item.title}</div>
                     `;
                     fragment.appendChild(div);
@@ -406,7 +406,7 @@
                                     
                                     const card = $(`
                                         <div class="poster" tabindex="0" data-title="${series.title}">
-                                            <img src="${getOptimizedImg(series.poster)}" loading="lazy">
+                                            <img src="${getOptimizedImg(series.poster)}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Poster'" loading="lazy">
                                             <span class="time-badge">${ep.ep}</span>
                                             <div class="progress-container">
                                                 <div class="progress-bar-red" style="width: ${barWidth}"></div>
@@ -435,71 +435,81 @@
         }
     }
 
+    // FUNCTION PARSE M3U DIPERBAIKI
     function parseM3U(text) {
         const lines = text.split('\n');
         const seriesMap = new Map();
 
-        let currentPoster = "";
-        let currentTitle = "";
-        let currentEpName = "";
+        let currentItem = null;
 
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
+            if (!line) continue;
 
             if (line.startsWith("#EXTINF")) {
-                const logoMatch = line.match(/tvg-logo=["']([^"']+)["']/);
-                currentPoster = logoMatch ? logoMatch[1] : "";
+                const logoMatch = line.match(/tvg-logo=["']([^"']+)["']/i);
+                const posterUrl = logoMatch ? logoMatch[1].trim() : "";
 
-                const groupMatch = line.match(/group-title=["']([^"']+)["']/);
+                const groupMatch = line.match(/group-title=["']([^"']+)["']/i);
                 const groupName = groupMatch ? groupMatch[1].trim() : "";
 
                 const commaIndex = line.lastIndexOf(',');
                 let rawTitle = commaIndex > -1 ? line.substring(commaIndex + 1).trim() : "Unknown Title";
+
+                let title = "";
+                let epName = "";
 
                 if (!groupName || groupName.toLowerCase() === "film" || groupName.toLowerCase() === "series") {
                     const seasonEpRegex = /(S\d+E\d+|S\d+\s*E\d+|E\d+|Episode\s*\d+)/i;
                     const match = rawTitle.match(seasonEpRegex);
 
                     if (match) {
-                        const splitIndex = match.index;
-                        currentTitle = rawTitle.substring(0, splitIndex).trim();
-                        currentEpName = match[0].toUpperCase();
+                        title = rawTitle.substring(0, match.index).trim();
+                        epName = match[0].toUpperCase();
                     } else if (rawTitle.includes("-")) {
                         let parts = rawTitle.split("-");
-                        currentTitle = parts[0].trim();
-                        currentEpName = parts.slice(1).join("-").trim();
+                        title = parts[0].trim();
+                        epName = parts.slice(1).join("-").trim();
                     } else {
-                        currentTitle = rawTitle.trim();
-                        currentEpName = "Play";
+                        title = rawTitle.trim();
+                        epName = "Play";
                     }
-
                 } else {
-                    currentTitle = groupName;
-                    currentEpName = rawTitle;
+                    title = groupName;
+                    epName = rawTitle;
                 }
 
-                currentTitle = currentTitle.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
+                title = title.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
+
+                currentItem = {
+                    title: title,
+                    poster: posterUrl,
+                    epName: epName
+                };
             }
-            else if (line.startsWith("http")) { 
+            else if (line.startsWith("http") && currentItem) { 
                 const fallbackPoster = "https://via.placeholder.com/300x400?text=No+Poster";
-                
-                if (!seriesMap.has(currentTitle)) {
-                    seriesMap.set(currentTitle, {
-                        title: currentTitle,
-                        poster: currentPoster || fallbackPoster,
+                const finalPoster = currentItem.poster || fallbackPoster;
+
+                if (!seriesMap.has(currentItem.title)) {
+                    seriesMap.set(currentItem.title, {
+                        title: currentItem.title,
+                        poster: finalPoster,
                         episodes: []
                     });
                 } else {
-                    let existing = seriesMap.get(currentTitle);
-                    if ((!existing.poster || existing.poster === fallbackPoster) && currentPoster) {
-                        existing.poster = currentPoster;
+                    let existing = seriesMap.get(currentItem.title);
+                    if ((!existing.poster || existing.poster === fallbackPoster) && currentItem.poster) {
+                        existing.poster = currentItem.poster;
                     }
                 }
                 
-                seriesMap.get(currentTitle).episodes.push({
-                    ep: currentEpName,
+                seriesMap.get(currentItem.title).episodes.push({
+                    ep: currentItem.epName,
                     url: line
                 });
+
+                currentItem = null;
             }
         }
         
@@ -558,7 +568,7 @@
             div.dataset.index = i;
             div.dataset.pos = i;
             div.innerHTML = `
-                <img src="${getOptimizedImg(item.poster)}" loading="lazy" decoding="async">
+                <img src="${getOptimizedImg(item.poster)}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Poster'" loading="lazy" decoding="async">
                 <div class="poster-title">${item.title}</div>
             `;
             fragment.appendChild(div);
