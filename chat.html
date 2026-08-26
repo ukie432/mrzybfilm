@@ -3,182 +3,1587 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MRZYB-HT CHAT (STB LANDSCAPE)</title>
+  <title>MRZYB-HT BLACK EDITION</title>
   <style>
+    /* --- SYSTEM VARIABLES FOR THEMES --- */
     :root {
       --bg-main: #000000;
       --ht-bg: #121212;
+      --ht-border: #ffffff;
       --ht-neon: #a3e635;
       --text-color: #a3e635;
       --screen-bg: #050505;
+      --screen-border: #ffffff;
+      --panel-bg: #080808;
+      --btn-bg: #222222;
+      --btn-border: #ffffff;
+      --slider-thumb: #a3e635;
+      
+      --fs-bg: #0b141a;
+      --fs-bg-pattern: #182229;
+      --fs-header-bg: #1f2c34;
+      --fs-header-border: #ffffff;
+      --fs-text: #ffffff;
+      --fs-accent: #a3e635;
+      --fs-input-bg: #2a3942;
+      --fs-bubble-bg: #1f2c34;
+      --fs-bubble-border: #ffffff;
+      --wa-green: #00a884;
     }
 
-    *, *:before, *:after { box-sizing: border-box; }
+    .theme-green { 
+      --ht-bg: #1b2612; 
+      --ht-border: #ffffff; 
+      --ht-neon: #4ade80; 
+      --text-color: #86efac;
+      --screen-bg: #1a3300;
+      --screen-border: #ffffff;
+      --panel-bg: #142900;
+      --btn-bg: #142900;
+      --btn-border: #ffffff;
+      --slider-thumb: #86efac;
+
+      --fs-bg: #0c1a09;
+      --fs-bg-pattern: #132b10;
+      --fs-header-bg: #163312;
+      --fs-header-border: #ffffff;
+      --fs-text: #ffffff;
+      --fs-accent: #4ade80;
+      --fs-input-bg: #1f421a;
+      --fs-bubble-bg: #163312;
+      --fs-bubble-border: #ffffff;
+      --wa-green: #22c55e;
+    }
+
+    .theme-pink { 
+      --ht-bg: #2a0818; 
+      --ht-border: #ffffff; 
+      --ht-neon: #f472b6; 
+      --text-color: #f472b6;
+      --screen-bg: #3b0724;
+      --screen-border: #ffffff;
+      --panel-bg: #1f0412;
+      --btn-bg: #4c052e;
+      --btn-border: #ffffff;
+      --slider-thumb: #f472b6;
+
+      --fs-bg: #1a0410;
+      --fs-bg-pattern: #2b081c;
+      --fs-header-bg: #380b25;
+      --fs-header-border: #ffffff;
+      --fs-text: #ffffff;
+      --fs-accent: #f472b6;
+      --fs-input-bg: #4d1033;
+      --fs-bubble-bg: #380b25;
+      --fs-bubble-border: #ffffff;
+      --wa-green: #ec4899;
+    }
+
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
 
     body { 
       background-color: var(--bg-main); 
       color: var(--text-color); 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
       margin: 0; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      min-height: 100dvh;
       padding: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
     }
     
-    .ht-body-landscape { 
+    .ht-body { 
       background: var(--ht-bg); 
-      border: 2px solid #ffffff; 
-      border-radius: 12px; 
-      padding: 12px; 
-      width: 100%;
-      max-width: 900px;
-      height: 95vh;
-      display: flex;
-      gap: 12px;
-      box-shadow: 0 0 10px var(--ht-neon); 
+      border: 3px solid #ffffff; 
+      border-radius: 20px; 
+      padding: 15px; 
+      width: 100%; 
+      max-width: 420px; 
+      max-height: 96vh;
+      max-height: 96dvh;
+      overflow-y: auto;
+      box-shadow: 0 0 15px var(--ht-neon), inset 0 0 10px var(--ht-neon); 
+      position: relative; 
+      transition: all 0.3s; 
     }
 
-    .left-panel {
-      flex: 1;
+    .main-grid {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .right-panel {
-      flex: 1.8;
+    /* --- DUKUNGAN LAYAR LANDSCAPE / TV (2 KOLOM) --- */
+    @media screen and (orientation: landscape) and (min-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      .ht-body {
+        max-width: 95vw !important; /* Memenuhi layar TV/Landscape */
+        width: 1000px;
+        max-height: 94vh !important;
+      }
+      .main-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+      .chat-box {
+        height: 32vh !important;
+        max-height: none !important;
+      }
+    }
+
+    /* --- EFEK SOROTAN NAVIGASI REMOTE TV --- */
+    button:focus, input:focus, select:focus, .ptt-btn:focus {
+      outline: 3px solid #ffffff !important;
+      box-shadow: 0 0 15px var(--ht-neon) !important;
+      transform: scale(1.03);
+    }
+
+    .ht-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .ht-body::-webkit-scrollbar-thumb {
+      background: #ffffff;
+      border-radius: 4px;
+    }
+
+    .ptt-container { text-align: center; margin-top: 10px; }
+    .ptt-btn { 
+      background: var(--wa-green) !important; 
+      color: #ffffff !important; 
+      border: 2px solid #ffffff !important;
+      border-radius: 50% !important;
+      width: 85px; 
+      height: 85px; 
+      margin: 0 auto; 
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-weight: bold; 
+      font-family: inherit; 
+      cursor: pointer; 
+      user-select: none; 
+      touch-action: manipulation;
+      box-shadow: 0 0 12px var(--ht-neon) !important;
+      transition: all 0.2s;
+    }
+    .ptt-btn:active {
+      transform: scale(1.08);
+      background: #b91c1c !important;
+      box-shadow: 0 0 20px rgba(185, 28, 28, 0.8) !important;
+    }
+    .ptt-btn svg {
+      width: 30px;
+      height: 30px;
+      fill: currentColor;
+    }
+    
+    .ptt-btn.locked {
+      background: #ef4444 !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.8) !important;
+      animation: pulse-red 1.5s infinite;
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .lock-btn {
+      margin-top: 8px;
+      font-size: 10px;
+      padding: 6px 10px;
+      background: #181818;
+      color: #f59e0b !important;
+      border: 1px solid #ffffff;
+      box-shadow: 0 0 5px var(--ht-neon);
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
     }
 
     .screen { 
       background: var(--screen-bg); 
-      border: 1px solid #ffffff; 
-      box-shadow: 0 0 5px var(--ht-neon);
-      padding: 12px; 
-      border-radius: 6px; 
+      border: 2px solid #ffffff; 
+      box-shadow: 0 0 8px var(--ht-neon);
+      padding: 10px; 
+      border-radius: 8px; 
+      margin-bottom: 10px; 
       text-align: center; 
+      position: relative; 
+      color: var(--text-color); 
     }
-    .freq { font-size: 32px; font-weight: bold; }
+    .status-bar { display: flex; justify-content: space-between; font-size: 9px; color: #aaa; margin-bottom: 4px; }
+    .signal-meter { font-weight: bold; letter-spacing: 1px; }
+    .freq { font-size: 24px; font-weight: bold; line-height: 1.1; word-break: break-all; }
 
     .user-list { 
-      flex: 1;
       border: 1px solid #ffffff; 
-      background: #080808; 
+      box-shadow: 0 0 6px var(--ht-neon);
+      background: var(--panel-bg); 
       padding: 8px; 
       border-radius: 5px; 
-      font-size: 12px; 
-      overflow-y: auto;
+      margin-bottom: 10px; 
+      font-size: 11px; 
+      color: var(--text-color); 
     }
-    .user-names { color: #aaa; font-size: 11px; margin-top: 4px; line-height: 1.4; }
+    .user-count { font-weight: bold; }
+    .user-names { color: #aaa; font-size: 10px; margin-top: 4px; word-break: break-all; }
+
+    .chat-box, 
+    .fs-chat-body,
+    #msgInput,
+    #fsMsgInput { 
+      color: #ffffff !important; 
+      font-size: 14.5px !important; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      line-height: 1.4;
+    }
+
+    .chat-box div, 
+    .fs-chat-body div {
+      color: #ffffff !important;
+    }
 
     .chat-box { 
-      flex: 1;
       background: var(--screen-bg); 
+      height: 16vh;
+      min-height: 90px;
+      max-height: 160px;
       overflow-y: auto; 
       border: 1px solid #ffffff; 
-      padding: 10px; 
+      box-shadow: inset 0 0 6px var(--ht-neon);
+      padding: 8px; 
+      margin-bottom: 8px; 
       border-radius: 5px; 
       word-wrap: break-word; 
-      font-size: 13px;
-      color: #ffffff;
     }
-
-    .input-group { display: flex; gap: 6px; }
-    input { 
+    .chat-box a, .fs-chat-body a { color: #38bdf8 !important; text-decoration: underline; font-weight: bold; word-break: break-all; }
+    .chat-img-thumb { max-width: 100%; max-height: 120px; border-radius: 5px; border: 1px solid #ffffff; margin-top: 4px; cursor: pointer; display: block; transition: transform 0.2s; }
+    .chat-img-thumb:hover { transform: scale(1.02); }
+    
+    .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
+    input, select { 
       flex: 1; 
       background: var(--screen-bg); 
       border: 1px solid #ffffff; 
-      color: #ffffff; 
+      box-shadow: 0 0 4px var(--ht-neon);
+      color: #ffffff !important; 
       padding: 8px; 
-      border-radius: 4px; 
-      font-size: 12px; 
+      border-radius: 3px; 
+      font-size: 13px; 
     }
-    
-    input:focus, button:focus {
-      outline: 2px solid var(--ht-neon);
-      background: #1e293b;
-    }
-
     button { 
-      background: #222222; 
+      background: var(--btn-bg); 
       color: var(--text-color); 
       border: 1px solid #ffffff; 
-      padding: 8px 14px; 
+      box-shadow: 0 0 5px var(--ht-neon);
+      padding: 8px 12px; 
       cursor: pointer; 
-      border-radius: 4px; 
-      font-size: 12px;
-      font-weight: bold;
-    }
-    button:hover { background: #333; }
-    
-    .btn-clear {
-      background: #7f1d1d;
-      color: #fca5a5;
-      font-size: 10px;
-      padding: 4px 8px;
+      border-radius: 3px; 
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
     
-    .btn-notif {
-      background: #0284c7;
-      color: #ffffff;
-      font-size: 10px;
-      padding: 4px 8px;
+    .error-msg { color: #ef4444 !important; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
+    .status { text-align: center; font-size: 11px; margin-top: 5px; color: #aaa; }
+    .private-badge { font-size: 10px; color: #f59e0b !important; margin-top: 2px; }
+    
+    .svg-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .svg-check {
+      width: 13px;
+      height: 13px;
+      fill: var(--fs-accent);
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    .time-stamp { color: #8696a0 !important; font-size: 11px !important; margin-right: 5px; }
+
+    .extra-tools { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 4px; 
+      margin-bottom: 10px; 
+      font-size: 10px; 
+      background: var(--panel-bg); 
+      padding: 6px; 
+      border-radius: 5px; 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 6px var(--ht-neon);
+      color: var(--text-color); 
+    }
+    .extra-tools button { padding: 6px 2px; font-size: 9px; text-align: center; }
+
+    .modal-overlay { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.85); 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 10000;
+    }
+    .modal-box { 
+      background: var(--ht-bg); 
+      border: 2px solid #ffffff; 
+      box-shadow: 0 0 20px var(--ht-neon);
+      padding: 20px; 
+      border-radius: 10px; 
+      width: 85%; 
+      max-width: 300px; 
+      text-align: center; 
+      position: relative; 
+    }
+    .modal-text { color: #ccc !important; font-size: 12px; margin-bottom: 15px; line-height: 1.4; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn-ok { background: #b91c1c; color: #fff !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+    .modal-btn-cancel { background: #222; color: #888 !important; border: 1px solid #ffffff; padding: 6px 15px; font-size: 11px; cursor: pointer; }
+
+    .fullscreen-chat-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: var(--fs-bg);
+      z-index: 9999;
+      flex-direction: column;
+      transition: background 0.3s;
+    }
+    
+    .fullscreen-chat-overlay.active { display: flex; }
+    .fs-header { background: var(--fs-header-bg); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffffff; color: #ffffff; }
+    .fs-header-title { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; color: #ffffff !important; }
+    .fs-header-title span { color: var(--fs-accent) !important; }
+    .fs-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: var(--fs-bg); background-image: radial-gradient(var(--fs-bg-pattern) 1px, transparent 1px); background-size: 16px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+    .fs-chat-footer { background: var(--fs-header-bg); padding: 10px 12px; display: flex; gap: 6px; align-items: center; border-top: 1px solid #ffffff; }
+    .fs-chat-footer input { background: var(--fs-input-bg); border: 1px solid #ffffff; padding: 10px 12px; border-radius: 20px; outline: none; }
+    .fs-chat-footer button { background: var(--fs-accent); color: #000 !important; border: 1px solid #ffffff; border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; font-weight: bold; box-shadow: 0 0 8px var(--ht-neon); }
+    
+    .fs-ptt-btn { 
+      background: var(--wa-green) !important; 
+      color: #fff !important; 
+      border: 1px solid #ffffff; 
+      border-radius: 50%; 
+      width: 38px; 
+      height: 38px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      user-select: none; 
+      touch-action: manipulation; 
+      box-shadow: 0 0 8px var(--ht-neon); 
+      transition: all 0.2s; 
+    }
+    .fs-ptt-btn:active { background: #b91c1c !important; transform: scale(1.15); }
+    .fs-ptt-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .vn-player-bubble { display: inline-flex; align-items: center; gap: 8px; background: var(--fs-bubble-bg); border: 1px solid #ffffff; padding: 4px 10px; border-radius: 12px; margin-top: 4px; margin-bottom: 2px; }
+    .vn-play-btn { background: var(--fs-accent) !important; color: #000 !important; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-weight: bold; }
+    .vn-play-btn svg { width: 12px; height: 12px; fill: currentColor; margin-left: 1px; }
+    .vn-label { font-size: 10px; color: var(--fs-accent) !important; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+    .vn-label svg { width: 14px; height: 14px; fill: currentColor; }
+
+    #imagePreviewModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 100000;
     }
   </style>
 </head>
 <body>
 
-<div class="ht-body-landscape">
-  <div class="left-panel">
-    <div class="screen">
-      <div style="font-size: 10px; color: #aaa;">FREKUENSI HT (TETAP)</div>
-      <div class="freq" id="freqDisplay">999.999</div>
-    </div>
+<input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="handleGalleryUpload(event)">
 
-    <div class="input-group">
-      <input type="text" id="nickInput" placeholder="Nama/Callsign (Klik/OK)">
-    </div>
-
-    <div class="input-group">
-      <input type="password" id="passInput" placeholder="PIN Akses (Klik/OK)">
-      <button onclick="changeFreq()">MASUK</button>
-    </div>
-
-    <div class="user-list">
-      <span>Online (<span id="onlineCount">0</span>):</span>
-      <div class="user-names" id="namesList">Memuat...</div>
-    </div>
-
-    <button class="btn-notif" onclick="requestNotificationPermission()">AKTIFKAN NOTIFIKASI</button>
-    <button class="btn-clear" onclick="clearChatHistory()">HAPUS RIWAYAT CHAT</button>
+<div class="ht-body" id="htContainer">
+  <div style="text-align: center; margin-bottom: 8px;">
+    <img src="logo.png" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; border: 1px solid #ffffff;" onerror="this.style.display='none'">
   </div>
+  <h2 style="text-align: center; margin-top: 0; font-size: 16px; letter-spacing: 2px; margin-bottom: 10px; color: var(--text-color);">MRZYB-HT</h2>
 
-  <div class="right-panel">
-    <div class="chat-box" id="chatBox"></div>
-    <div class="input-group">
-      <input type="text" id="msgInput" placeholder="Ketik pesan (Klik/OK)..." onkeypress="handleKeyPress(event)">
-      <button onclick="sendText()">KIRIM</button>
+  <div class="main-grid">
+    <!-- PANEL KIRI -->
+    <div class="left-panel">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="signal-meter" id="rssiMeter">SIG: ▂▄▆█</span>
+          <span id="batDisplay">BAT: --% 🔋</span>
+        </div>
+        <div class="freq" id="freqDisplay">888.888</div>
+        <div id="privateBadge" class="private-badge"></div>
+      </div>
+
+      <div class="extra-tools">
+        <button onclick="triggerCamera()" style="background: #0284c7; color: #fff !important;">📷 FOTO</button>
+        <button onclick="triggerGallery()" style="background: #059669; color: #fff !important;">🖼️ GALERI</button>
+        <button onclick="sendGPSLocation()">📍 GPS</button>
+        <button onclick="toggleTheme()">🎨 TEMA</button>
+        <button onclick="openSosConfirm()" style="background: #991b1b; color: #fff !important; font-weight: bold; grid-column: span 2;">🚨 SOS</button>
+      </div>
+
+      <div id="errorAlert" class="error-msg"></div>
+
+      <div class="user-list">
+        <span>Online: </span><span class="user-count" id="onlineCount">0</span>
+        <div class="user-names" id="namesList">Belum ada user</div>
+      </div>
+
+      <div class="ptt-container">
+        <button class="ptt-btn" id="pttBtn" tabindex="0">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+          <span style="font-size: 9px;" id="pttLabel">PUSH TO TALK</span>
+        </button>
+        <button class="lock-btn" id="lockPttBtn" onclick="togglePttLock()">🔓 KUNCI PTT (HANDS-FREE)</button>
+      </div>
+      <div class="status" id="micStatus">Mikrofon Siap</div>
+    </div>
+
+    <!-- PANEL KANAN -->
+    <div class="right-panel">
+      <div class="input-group">
+        <input type="text" id="nickInput" placeholder="Callsign/Nama...">
+      </div>
+
+      <div class="input-group">
+        <select id="groupSelect" onchange="switchGroupFromDropdown()">
+          <option value="888.888||">mrzyb aplikasi (888.888)</option>
+          <option value="111.111||">mrzyb family (111.111)</option>
+          <option value="999.999||">mrzyb random (999.999)</option>
+        </select>
+        <button onclick="openCreateGroupModal()" style="font-size: 10px; background: #065f46; color: #fff !important;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> GRUP
+        </button>
+        <button onclick="deleteSelectedGroup()" style="font-size: 10px; background: #991b1b; color: #fff !important;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> HAPUS
+        </button>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="freqInput" placeholder="Freq/Grup ID" readonly style="background: #181818; color: #888 !important; cursor: not-allowed;">
+      </div>
+      <div class="input-group">
+        <input type="password" id="passInput" placeholder="Password PIN Akses">
+        <button onclick="changeFreq()">MASUK</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span style="font-size: 10px; color: #aaa;">RIWAYAT CHAT:</span>
+        <div style="display: flex; gap: 4px;">
+          <button onclick="openFullscreenChat()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #60a5fa !important;">⛶ FULLSCREEN</button>
+          <button onclick="openClearModal()" style="font-size: 9px; padding: 2px 6px; background: #181818; color: #ef4444 !important;">HAPUS CHAT</button>
+        </div>
+      </div>
+
+      <div class="chat-box" id="chatBox"></div>
+
+      <div class="input-group">
+        <input type="text" id="msgInput" placeholder="Ketik pesan..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendText()">KIRIM</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- SDK Firebase Client Compat -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
+<div class="fullscreen-chat-overlay" id="fullscreenChat">
+  <div class="fs-header">
+    <div class="fs-header-title">
+      <button onclick="closeFullscreenChat()" style="background:transparent; border:none; font-size:18px; padding:0; cursor:pointer; color:#fff;">←</button>
+      <span>💬 Chat Frekuensi <span id="fsFreqTitle">888.888</span></span>
+    </div>
+    <button onclick="closeFullscreenChat()" style="font-size:11px; padding:5px 10px; border-radius:4px;">TUTUP</button>
+  </div>
+
+  <div class="fs-chat-body" id="fsChatBox"></div>
+
+  <div class="fs-chat-footer">
+    <button onclick="triggerCamera()" style="background:#0284c7; color:#fff !important; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">📷</button>
+    <button onclick="triggerGallery()" style="background:#059669; color:#fff !important; border-radius:50%; width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">🖼️</button>
+    <input type="text" id="fsMsgInput" placeholder="Ketik pesan..." onkeypress="handleFsKeyPress(event)">
+    <button onclick="sendFsText()">➤</button>
+    
+    <button class="fs-ptt-btn" id="fsPttBtn" title="Tahan untuk Rekam Suara">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div id="cameraModal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 320px; padding: 12px;">
+    <div style="color: #0284c7 !important; font-weight: bold; font-size: 13px; margin-bottom: 8px;">📷 AMBIL FOTO </div>
+    <video id="webcamVideo" autoplay playsinline style="width: 100%; border-radius: 8px; background: #000; height: 200px; object-fit: cover; border: 1px solid #ffffff;"></video>
+    <div class="modal-btns" style="margin-top: 10px;">
+      <button class="modal-btn-cancel" onclick="closeDirectCamera()">BATAL</button>
+      <button class="modal-btn-ok" style="background: #0284c7;" onclick="takeDirectPhoto()">AMBIL & KIRIM</button>
+    </div>
+  </div>
+</div>
+
+<div id="customModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-text" id="modalText">Pemberitahuan</div>
+    <div class="modal-btns" id="modalBtns">
+      <button class="modal-btn-ok" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="createGroupModal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="color: #10b981 !important; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
+    <input type="text" id="newGroupName" placeholder="Nama Grup (misal: SQUAD-ALPHA)" style="width: 90%; margin-bottom: 8px;">
+    <input type="text" id="newGroupFreq" placeholder="ID/Frekuensi Grup (misal: 888.500)" style="width: 90%; margin-bottom: 8px;">
+    <input type="password" id="newGroupPass" placeholder="PIN/Password (Kosongkan jika Publik)" style="width: 90%; margin-bottom: 12px;">
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeCreateGroupModal()">BATAL</button>
+      <button class="modal-btn-ok" style="background: #065f46;" onclick="confirmCreateGroup()">SIMPAN & JOIN</button>
+    </div>
+  </div>
+</div>
+
+<div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
+  <span style="position: absolute; top: 15px; right: 20px; color: #fff; font-size: 30px; font-weight: bold; cursor: pointer; z-index: 100000;">✕</span>
+  <img id="previewImgContent" style="max-width: 90%; max-height: 85vh; border-radius: 8px; border: 2px solid #ffffff; box-shadow: 0 0 25px var(--ht-neon); object-fit: contain;" src="">
+</div>
 
 <script>
-  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
-  let ws = null;
-  const currentFreq = "999.999";
-  const REQUIRED_PIN = "230887";
+  const PASS_BUAT_GRUP = "ADMIN0809";   
+  const PASS_HAPUS_GRUP = "SUPERADMIN0905"; 
 
-  // Inisialisasi Firebase
+  function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+  }
+
+  const DB_NAME = 'MRZYB_HT_DB';
+  const DB_VERSION = 1;
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('chats')) {
+          const chatStore = db.createObjectStore('chats', { keyPath: 'id' });
+          chatStore.createIndex('freq', 'freq', { unique: false });
+        }
+        if (!db.objectStoreNames.contains('groups')) {
+          db.createObjectStore('groups', { keyPath: 'freq' });
+        }
+      };
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  async function dbSaveMessage(freq, msgData) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('chats', 'readwrite');
+      tx.objectStore('chats').put({
+        id: `${freq}_${msgData.msgId}`,
+        freq: freq,
+        msgId: msgData.msgId,
+        sender: msgData.sender,
+        message: msgData.message,
+        timestamp: Date.now()
+      });
+    } catch (e) { console.error("IndexedDB Save Error:", e); }
+  }
+
+  async function dbGetChatHistory(freq) {
+    try {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('chats', 'readonly');
+        const index = tx.objectStore('chats').index('freq');
+        const request = index.getAll(freq);
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (e) { return []; }
+  }
+
+  async function dbClearChatHistory(freq) {
+    try {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('chats', 'readwrite');
+        const store = tx.objectStore('chats');
+        const index = store.index('freq');
+        const request = index.openCursor(IDBKeyRange.only(freq));
+        request.onsuccess = (e) => {
+          const cursor = e.target.result;
+          if (cursor) { store.delete(cursor.primaryKey); cursor.continue(); } else { resolve(); }
+        };
+        request.onerror = () => reject(request.error);
+      });
+    } catch (e) {}
+  }
+
+  async function dbSaveGroup(group) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('groups', 'readwrite');
+      tx.objectStore('groups').put(group);
+    } catch (e) {}
+  }
+
+  async function dbDeleteGroup(freq) {
+    try {
+      const db = await openDB();
+      const tx = db.transaction('groups', 'readwrite');
+      tx.objectStore('groups').delete(freq);
+    } catch (e) {}
+  }
+
+  async function dbGetAllGroups() {
+    try {
+      const db = await openDB();
+      return new Promise((resolve) => {
+        const tx = db.transaction('groups', 'readonly');
+        const request = tx.objectStore('groups').getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+      });
+    } catch (e) { return []; }
+  }
+
+  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
+  const HTTP_WORKER_URL = "https://my-ht-project.ukielaki8387.workers.dev";
+
+  let ws = null;
+  let wsReconnectTimer = null;
+  let reconnectDelay = 8000;
+  
+  let currentFreq = "888.888";
+  window.currentFreq = currentFreq;
+  window.myFcmToken = "";
+
+  let lastRegisteredFcmKey = ""; 
+  let fcmDebounceTimer = null;
+
+  let mediaRecorder;
+  let audioChunks = [];
+  let micStream = null;
+  let activePttSource = 'main';
+  let pttMaxTimer = null;
+
+  let isPttLocked = false;
+  let audioCtx;
+
+  const renderedMsgIds = new Set();
+
+  const PRIVATE_CHANNELS = {
+    "888.888": "031283",
+    "111.111": "150307",
+    "999.999": "230887"
+  };
+
+  const themes = ['default', 'theme-green', 'theme-pink'];
+  let currentThemeIndex = 0;
+
+  function isCurrentChannelAuthenticated() {
+    if (PRIVATE_CHANNELS[currentFreq]) {
+      const inputPass = document.getElementById('passInput').value.trim();
+      const savedPass = localStorage.getItem('ht_pass');
+      return (inputPass === PRIVATE_CHANNELS[currentFreq] || savedPass === PRIVATE_CHANNELS[currentFreq]);
+    }
+    return true; 
+  }
+
+  function toggleTheme() {
+    const body = document.body;
+    const container = document.getElementById('htContainer');
+    container.classList.remove('theme-green', 'theme-pink');
+    body.classList.remove('theme-green', 'theme-pink');
+    
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const selectedTheme = themes[currentThemeIndex];
+    if (selectedTheme !== 'default') {
+      container.classList.add(selectedTheme);
+      body.classList.add(selectedTheme);
+    }
+  }
+
+  function triggerGallery() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    document.getElementById('galleryInput').click();
+  }
+
+  function handleGalleryUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      const maxDim = 450;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
+      sendPhotoMessage(compressedBase64);
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    img.src = objectUrl;
+    event.target.value = '';
+  }
+
+  let localCamStream = null;
+
+  async function triggerCamera() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    const modal = document.getElementById('cameraModal');
+    const video = document.getElementById('webcamVideo');
+
+    try {
+      localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
+      video.srcObject = localCamStream;
+      modal.style.display = 'flex';
+    } catch (err) {
+      try {
+        localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        video.srcObject = localCamStream;
+        modal.style.display = 'flex';
+      } catch (err2) { alert("Gagal membuka kamera direct: " + err2.message); }
+    }
+  }
+
+  function closeDirectCamera() {
+    document.getElementById('cameraModal').style.display = 'none';
+    if (localCamStream) {
+      localCamStream.getTracks().forEach(track => track.stop());
+      localCamStream = null;
+    }
+  }
+
+  function takeDirectPhoto() {
+    const video = document.getElementById('webcamVideo');
+    const canvas = document.createElement('canvas');
+    const maxDim = 450;
+    let width = video.videoWidth || 640;
+    let height = video.videoHeight || 480;
+
+    if (width > maxDim || height > maxDim) {
+      if (width > height) { height = Math.round((height * maxDim) / width); width = maxDim; }
+      else { width = Math.round((width * maxDim) / height); height = maxDim; }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.35);
+    sendPhotoMessage(compressedBase64);
+    closeDirectCamera();
+  }
+
+  function sendPhotoMessage(base64Image) {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Akses Ditolak!");
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      ws.send(JSON.stringify({
+        type: 'text', freq: currentFreq, sender: nick, message: `img-data:${base64Image}`, msgId: msgId
+      }));
+    }
+  }
+
+  function openImagePreview(src) {
+    initAudioContext();
+    const modal = document.getElementById('imagePreviewModal');
+    document.getElementById('previewImgContent').src = src;
+    modal.style.display = 'flex';
+  }
+  window.openImagePreview = openImagePreview;
+
+  function closeImagePreview() {
+    document.getElementById('imagePreviewModal').style.display = 'none';
+    document.getElementById('previewImgContent').src = '';
+  }
+
+  function setFcmToken(token) {
+    if (!token) return;
+    window.myFcmToken = token;
+    kirimTokenKeWorker(currentFreq);
+  }
+  window.setFcmToken = setFcmToken;
+
+  function kirimTokenKeWorker(freq) {
+    if (!window.myFcmToken) return;
+    const currentCallsign = localStorage.getItem('ht_nick') || "Anonim";
+    const requestKey = `${window.myFcmToken}_${freq}_${currentCallsign}`;
+    if (lastRegisteredFcmKey === requestKey) return;
+
+    fetch(`${HTTP_WORKER_URL}/register-fcm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ freq: freq, token: window.myFcmToken, callsign: currentCallsign })
+    })
+    .then(res => res.json())
+    .then(() => { lastRegisteredFcmKey = requestKey; })
+    .catch(err => console.error("Gagal kirim FCM token:", err));
+  }
+  window.kirimTokenKeWorker = kirimTokenKeWorker;
+
+  function initAudioContext() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playNotificationSound() {
+    try {
+      initAudioContext();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.35);
+    } catch(e) {}
+  }
+
+  function playSosSound() {
+    try {
+      initAudioContext();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.5);
+      
+      gainNode.gain.setValueAtTime(3.5, audioCtx.currentTime); 
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
+
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 2.5);
+
+      document.body.style.backgroundColor = "#991b1b";
+      setTimeout(() => { document.body.style.backgroundColor = "#000000"; }, 2500);
+    } catch(e) {}
+  }
+  window.playSosSound = playSosSound;
+
+  function showBannerNotification(sender, message) {
+    if (message.includes("SOS DARURAT")) {
+      playSosSound();
+    } else {
+      playNotificationSound();
+    }
+
+    if ("Notification" in window && Notification.permission === "granted") {
+      try {
+        let msgBody = message;
+        if (message.includes("audio-vn-data")) msgBody = "🎙️ Pesan Suara (VN)";
+        else if (message.includes("img-data:")) msgBody = "📷 Mengirimkan Foto";
+
+        new Notification(`Pesan HT [${currentFreq}] dari ${sender}`, {
+          body: msgBody, icon: 'logo.png', vibrate: [200, 100, 200]
+        });
+      } catch(e) {}
+    }
+  }
+  window.showBannerNotification = showBannerNotification;
+
+  function playSquelchNoise(duration = 0.15) {
+    try {
+      initAudioContext();
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = buffer;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      whiteNoise.connect(gain);
+      gain.connect(audioCtx.destination);
+      whiteNoise.start();
+    } catch(e) {}
+  }
+
+  function playRogerBeep() {
+    try {
+      initAudioContext();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+      setTimeout(() => playSquelchNoise(0.1), 80);
+    } catch(e) {}
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    document.body.addEventListener('touchstart', initAudioContext, { once: true });
+    document.body.addEventListener('click', initAudioContext, { once: true });
+
+    // Dukungan Tombol OK / Enter Remote TV untuk PTT
+    document.addEventListener('keydown', (e) => {
+      if (document.activeElement.id === 'pttBtn' && (e.key === 'Enter' || e.keyCode === 13)) {
+        e.preventDefault();
+        togglePttLock();
+      }
+    });
+
+    setInterval(() => {
+      const bars = ["SIG: ▂", "SIG: ▂▄", "SIG: ▂▄▆", "SIG: ▂▄▆█"];
+      document.getElementById('rssiMeter').innerText = bars[Math.floor(Math.random() * bars.length)];
+    }, 3000);
+
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(battery => {
+        const updateBatteryUI = () => {
+          document.getElementById('batDisplay').innerText = `BAT: ${Math.round(battery.level * 100)}% ${battery.charging ? "⚡" : "🔋"}`;
+        };
+        updateBatteryUI();
+        battery.addEventListener('levelchange', updateBatteryUI);
+        battery.addEventListener('chargingchange', updateBatteryUI);
+      });
+    } else {
+      document.getElementById('batDisplay').innerText = "BAT: 100% 🔋";
+    }
+
+    const savedNick = localStorage.getItem('ht_nick');
+    const savedFreq = localStorage.getItem('ht_freq') || "888.888";
+    const savedPass = localStorage.getItem('ht_pass') || "";
+
+    if (savedNick) document.getElementById('nickInput').value = savedNick;
+    if (savedFreq) {
+      document.getElementById('freqInput').value = savedFreq;
+      currentFreq = savedFreq;
+      window.currentFreq = currentFreq;
+    }
+    if (savedPass) document.getElementById('passInput').value = savedPass;
+
+    document.getElementById('nickInput').addEventListener('input', (e) => {
+      localStorage.setItem('ht_nick', e.target.value.trim());
+      if (fcmDebounceTimer) clearTimeout(fcmDebounceTimer);
+      fcmDebounceTimer = setTimeout(() => kirimTokenKeWorker(currentFreq), 1500);
+    });
+
+    await loadSavedGroupsUI();
+    
+    const groupSelect = document.getElementById('groupSelect');
+    for (let opt of groupSelect.options) {
+      if (opt.value.startsWith(currentFreq + '||')) {
+        groupSelect.value = opt.value;
+        break;
+      }
+    }
+
+    await loadLocalHistory(currentFreq);
+    connect();
+    setupPTT();
+  });
+
+  async function loadSavedGroupsUI() {
+    const groupSelect = document.getElementById('groupSelect');
+    groupSelect.innerHTML = `
+      <option value="888.888||">mrzyb aplikasi (888.888)</option>
+      <option value="111.111||">mrzyb family (111.111)</option>
+      <option value="999.999||">mrzyb random (999.999)</option>
+    `;
+    const savedGroups = await dbGetAllGroups();
+    savedGroups.forEach(g => {
+      const option = document.createElement('option');
+      option.value = `${g.freq}||${g.pass || ''}`;
+      option.innerText = `👥 ${escapeHTML(g.name)} (${escapeHTML(g.freq)})`;
+      groupSelect.appendChild(option);
+    });
+  }
+
+  function openCreateGroupModal() {
+    initAudioContext();
+    const inputPass = prompt("Masukkan Password untuk BUAT GRUP baru:");
+    if (inputPass === null) return;
+    if (inputPass !== PASS_BUAT_GRUP) {
+      showAlert("Password Buat Grup Salah!");
+      return;
+    }
+    document.getElementById('createGroupModal').style.display = 'flex';
+  }
+
+  function closeCreateGroupModal() { document.getElementById('createGroupModal').style.display = 'none'; }
+
+  async function confirmCreateGroup() {
+    initAudioContext();
+    const name = document.getElementById('newGroupName').value.trim();
+    const freq = document.getElementById('newGroupFreq').value.trim();
+    const pass = document.getElementById('newGroupPass').value.trim();
+
+    if (!name || !freq) {
+      showAlert("Nama dan ID/Frekuensi Grup wajib diisi!");
+      return;
+    }
+
+    if (["888.888", "111.111", "999.999"].includes(freq)) {
+      showAlert("ID Frekuensi ini dilindungi sistem bawaan!");
+      return;
+    }
+
+    await dbSaveGroup({ name, freq, pass });
+    document.getElementById('freqInput').value = freq;
+    document.getElementById('passInput').value = pass;
+    closeCreateGroupModal();
+    await loadSavedGroupsUI();
+
+    document.getElementById('groupSelect').value = `${freq}||${pass}`;
+    joinFrequency(freq, pass);
+
+    document.getElementById('newGroupName').value = '';
+    document.getElementById('newGroupFreq').value = '';
+    document.getElementById('newGroupPass').value = '';
+  }
+
+  async function deleteSelectedGroup() {
+    initAudioContext();
+    const select = document.getElementById('groupSelect');
+    const selectedFreq = select.value.split('||')[0];
+
+    if (["888.888", "111.111", "999.999"].includes(selectedFreq)) {
+      showAlert("Grup bawaan sistem tidak dapat dihapus!");
+      return;
+    }
+
+    const inputPass = prompt(`Masukkan Password untuk HAPUS GRUP (${selectedFreq}):`);
+    if (inputPass === null) return;
+    if (inputPass !== PASS_HAPUS_GRUP) {
+      showAlert("Password Hapus Grup Salah!");
+      return;
+    }
+
+    if (confirm(`Hapus grup frekuensi ${selectedFreq}?`)) {
+      await dbDeleteGroup(selectedFreq);
+      await loadSavedGroupsUI();
+      document.getElementById('groupSelect').value = "888.888||";
+      switchGroupFromDropdown();
+      showAlert("Grup berhasil dihapus.");
+    }
+  }
+
+  function switchGroupFromDropdown() {
+    initAudioContext();
+    const parts = document.getElementById('groupSelect').value.split('||');
+    document.getElementById('freqInput').value = parts[0];
+    document.getElementById('passInput').value = parts[1] || '';
+    joinFrequency(parts[0], parts[1] || '');
+  }
+
+  function connect() {
+    if (wsReconnectTimer) { clearTimeout(wsReconnectTimer); wsReconnectTimer = null; }
+    if (ws) { ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null; ws.close(); ws = null; }
+
+    ws = new WebSocket(WORKER_URL);
+    ws.onopen = () => {
+      reconnectDelay = 8000;
+      const savedPass = localStorage.getItem('ht_pass') || '';
+      const savedNick = localStorage.getItem('ht_nick') || 'Anonim';
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
+        kirimTokenKeWorker(currentFreq);
+      }
+    };
+
+    ws.onmessage = async (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (PRIVATE_CHANNELS[currentFreq] && !isCurrentChannelAuthenticated()) {
+          if (data.type === 'text' || data.type === 'audio' || data.type === 'history') return;
+        }
+
+        if (data.type === 'history') {
+          if (data.messages && data.messages.length > 0) {
+            document.getElementById('chatBox').innerHTML = ''; 
+            addSystemMsg(`Terhubung ke frekuensi ${currentFreq}`);
+            renderedMsgIds.clear();
+            const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${currentFreq}`) || "0", 10);
+            const filteredMessages = data.messages.filter(msg => {
+              let msgTime = msg.msgId && msg.msgId.includes('_') ? parseInt(msg.msgId.split('_')[0], 10) || 0 : 0;
+              return msgTime > clearTimestamp;
+            });
+            for (const msg of filteredMessages) {
+              if (msg.msgId) renderedMsgIds.add(msg.msgId);
+              appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+              await dbSaveMessage(currentFreq, msg);
+            }
+          }
+        }
+        else if (data.type === 'join_success') {
+          hideError();
+          document.getElementById('freqDisplay').innerText = data.freq;
+          document.getElementById('fsFreqTitle').innerText = data.freq;
+          document.getElementById('privateBadge').innerText = PRIVATE_CHANNELS[data.freq] ? "🔒 TERKUNCI PASSWORD" : "";
+        }
+        else if (data.type === 'presence') {
+          const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
+          document.getElementById('onlineCount').innerText = uniqueUsers.length;
+          document.getElementById('namesList').innerText = uniqueUsers.length > 0 ? uniqueUsers.map(u => escapeHTML(u)).join(', ') : '-';
+        } 
+        else if (data.type === 'text') {
+          if (data.msgId && renderedMsgIds.has(data.msgId)) return;
+          if (data.msgId) renderedMsgIds.add(data.msgId);
+          const myNick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          
+          if (data.sender !== myNick) {
+            if (data.message.includes("SOS DARURAT")) {
+              playSosSound();
+            } else {
+              showBannerNotification(data.sender, data.message);
+              playRogerBeep();
+            }
+          }
+          await saveAndAddSingleChat(data.msgId, data.sender, data.message);
+        } 
+        else if (data.type === 'audio') {
+          playAudio(data.audio);
+        }
+      } catch (e) {}
+    };
+
+    ws.onclose = () => {
+      wsReconnectTimer = setTimeout(() => {
+        connect();
+        reconnectDelay = Math.min(reconnectDelay * 1.5, 30000);
+      }, reconnectDelay);
+    };
+    ws.onerror = () => { if (ws) ws.close(); };
+  }
+
+  async function joinFrequency(freq, password = '') {
+    if (PRIVATE_CHANNELS[freq] && password !== PRIVATE_CHANNELS[freq]) {
+      showError("🔒 Akses Terkunci! Masukkan Password untuk Frekuensi Ini.");
+      document.getElementById('chatBox').innerHTML = '<div style="color:#ef4444; font-size:12px; text-align:center; padding:10px;">🔒 Masukkan Password PIN terlebih dahulu untuk membuka akses.</div>';
+      return;
+    }
+    
+    currentFreq = freq;
+    window.currentFreq = currentFreq;
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    localStorage.setItem('ht_nick', nick);
+    localStorage.setItem('ht_freq', freq);
+    localStorage.setItem('ht_pass', password);
+    await loadLocalHistory(freq);
+    kirimTokenKeWorker(freq);
+
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'join', freq: freq, sender: nick, password: password }));
+    } else { connect(); }
+  }
+
+  function changeFreq() {
+    initAudioContext();
+    const selectFreq = document.getElementById('freqInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+    if (selectFreq) joinFrequency(selectFreq, pass);
+  }
+
+  function sendText() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    const input = document.getElementById('msgInput');
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const msgText = input.value.trim();
+    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
+      const msgId = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: msgText, msgId: msgId }));
+      input.value = '';
+    }
+  }
+
+  function sendGPSLocation() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    if (!navigator.geolocation) return showAlert("Fitur GPS tidak didukung.");
+    addSystemMsg("Mencari koordinat GPS...");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const gpsMsg = `📍 POSISI GPS: https://maps.google.com/?q=${position.coords.latitude.toFixed(5)},${position.coords.longitude.toFixed(5)}`;
+        const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'text', freq: currentFreq, sender: nick, message: gpsMsg, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5)
+          }));
+        }
+      },
+      () => showAlert("Gagal mengambil lokasi."),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  function openSosConfirm() {
+    initAudioContext();
+    document.getElementById('modalText').innerText = "⚠️ PERINGATAN! Anda akan mengirim sinyal bahaya SOS ke frekuensi ini. Apakah Anda yakin?";
+    document.getElementById('modalBtns').innerHTML = `
+      <button class="modal-btn-cancel" onclick="closeModal()">TIDAK</button>
+      <button class="modal-btn-ok" style="background: #991b1b;" onclick="executeSosAction()">YA, KIRIM SOS</button>
+    `;
+    document.getElementById('customModal').style.display = 'flex';
+  }
+
+  function executeSosAction() {
+    closeModal(); 
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar!");
+    if (!navigator.geolocation) return showAlert("GPS tidak didukung.");
+
+    addSystemMsg("Mengirim koordinat SOS...");
+    playSosSound();
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(5);
+        const lon = position.coords.longitude.toFixed(5);
+        const sosMsg = `🚨 SOS DARURAT! Posisi saya: https://maps.google.com/?q=${lat},${lon}`;
+        const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'text', 
+            freq: currentFreq, 
+            sender: nick, 
+            message: sosMsg, 
+            msgId: Date.now() + '_SOS'
+          }));
+        }
+      },
+      () => showAlert("Gagal mengambil lokasi SOS."),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
+
+  async function saveAndAddSingleChat(msgId, sender, message) {
+    appendChatToBox(`[${sender}]: ${message}`);
+    await dbSaveMessage(currentFreq, { msgId, sender, message });
+  }
+
+  async function loadLocalHistory(freq) {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+    addSystemMsg(`Frekuensi: ${freq}`);
+    renderedMsgIds.clear();
+
+    if (PRIVATE_CHANNELS[freq] && !isCurrentChannelAuthenticated()) {
+      chatBox.innerHTML = '<div style="color:#ef4444; font-size:12px; text-align:center; padding:10px;">🔒 Masukkan Password PIN terlebih dahulu untuk membuka riwayat & akses.</div>';
+      return;
+    }
+
+    const clearTimestamp = parseInt(localStorage.getItem(`clear_time_${freq}`) || "0", 10);
+    const localMsgs = await dbGetChatHistory(freq);
+    localMsgs.forEach(msg => {
+      let msgTime = msg.msgId && msg.msgId.includes('_') ? parseInt(msg.msgId.split('_')[0], 10) || 0 : 0;
+      if (msgTime > clearTimestamp) {
+        if (msg.msgId) renderedMsgIds.add(msg.msgId);
+        appendChatToBox(`[${msg.sender}]: ${msg.message}`);
+      }
+    });
+  }
+
+  function showAlert(msg) {
+    document.getElementById('modalText').innerText = msg;
+    document.getElementById('modalBtns').innerHTML = `<button class="modal-btn-ok" onclick="closeModal()">OK</button>`;
+    document.getElementById('customModal').style.display = 'flex';
+  }
+
+  function openClearModal() {
+    initAudioContext();
+    document.getElementById('modalText').innerText = `Hapus riwayat chat frekuensi ${currentFreq}?`;
+    document.getElementById('modalBtns').innerHTML = `
+      <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
+      <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
+    `;
+    document.getElementById('customModal').style.display = 'flex';
+  }
+
+  function closeModal() { document.getElementById('customModal').style.display = 'none'; }
+
+  async function confirmClearChat() {
+    document.getElementById('chatBox').innerHTML = '';
+    if (document.getElementById('fsChatBox')) document.getElementById('fsChatBox').innerHTML = '';
+    renderedMsgIds.clear();
+    await dbClearChatHistory(currentFreq);
+    localStorage.setItem(`clear_time_${currentFreq}`, Date.now().toString());
+    addSystemMsg(`Riwayat chat frekuensi ${currentFreq} dibersihkan.`);
+    closeModal();
+  }
+
+  function playVNFromData(base64Data) { playAudio(base64Data); }
+  window.playVNFromData = playVNFromData;
+
+  function appendChatToBox(msg) {
+    const box = document.getElementById('chatBox');
+    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    let formattedMsg = "";
+    
+    const checkSvg = `<svg class="svg-check" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.41 11.93l-1.41 1.41 5.66 5.66 12-12-1.42-1.41zM0 13.34l5.66 5.66 1.41-1.41L1.41 11.93 0 13.34z"/></svg>`;
+
+    if (msg.includes("audio-vn-data:")) {
+      const splitIdx = msg.indexOf("audio-vn-data:");
+      formattedMsg = `${escapeHTML(msg.substring(0, splitIdx))}<br>
+        <div class="vn-player-bubble">
+          <button class="vn-play-btn" onclick="playVNFromData('${escapeHTML(msg.substring(splitIdx + 14))}')">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <span class="vn-label">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            Voice Note
+          </span>
+        </div>`;
+    } 
+    else if (msg.includes("img-data:")) {
+      const splitIdx = msg.indexOf("img-data:");
+      const imgBase64 = msg.substring(splitIdx + 9);
+      formattedMsg = `${escapeHTML(msg.substring(0, splitIdx))}<br>
+        <img src="${imgBase64}" class="chat-img-thumb" alt="Foto Kiriman" onclick="window.openImagePreview('${imgBase64}')">`;
+    } 
+    else {
+      formattedMsg = escapeHTML(msg).replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+    }
+
+    const content = `<div><span class="time-stamp">[${time}]</span>${formattedMsg} ${checkSvg}</div>`;
+    box.insertAdjacentHTML('beforeend', content);
+    box.scrollTop = box.scrollHeight;
+
+    const fsBox = document.getElementById('fsChatBox');
+    if (fsBox) {
+      fsBox.insertAdjacentHTML('beforeend', content);
+      fsBox.scrollTop = fsBox.scrollHeight;
+    }
+  }
+
+  function addSystemMsg(msg) { appendChatToBox(`[SYS] ${msg}`); }
+
+  function openFullscreenChat() {
+    initAudioContext();
+    document.getElementById('fsFreqTitle').innerText = currentFreq;
+    const fsBox = document.getElementById('fsChatBox');
+    fsBox.innerHTML = document.getElementById('chatBox').innerHTML;
+    document.getElementById('fullscreenChat').classList.add('active');
+    fsBox.scrollTop = fsBox.scrollHeight;
+  }
+
+  function closeFullscreenChat() { document.getElementById('fullscreenChat').classList.remove('active'); }
+
+  function sendFsText() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    const input = document.getElementById('fsMsgInput');
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const msgText = input.value.trim();
+    if (msgText && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: msgText, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5) }));
+      input.value = '';
+    }
+  }
+
+  function handleFsKeyPress(e) { if (e.key === 'Enter') sendFsText(); }
+
+  async function startRecordingAudio(source = 'main') {
+    if (!isCurrentChannelAuthenticated()) {
+      showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+      return;
+    }
+    initAudioContext();
+    activePttSource = source;
+    if (mediaRecorder && mediaRecorder.state === "recording") return;
+
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(micStream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        if (pttMaxTimer) { clearTimeout(pttMaxTimer); pttMaxTimer = null; }
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        audioChunks = [];
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            if (activePttSource === 'fullscreen') {
+              ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: `audio-vn-data:${reader.result}`, msgId: Date.now() + '_' + Math.random().toString(36).substr(2, 5) }));
+            } else {
+              ws.send(JSON.stringify({ type: 'audio', freq: currentFreq, audio: reader.result }));
+            }
+          }
+        };
+        if (micStream) { micStream.getTracks().forEach(track => track.stop()); micStream = null; }
+      };
+
+      playSquelchNoise(0.1);
+      mediaRecorder.start();
+      document.getElementById('micStatus').innerText = "🎙️ MEREKAM (TRANSMIT)...";
+
+      pttMaxTimer = setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          if (isPttLocked) togglePttLock();
+          else stopRecordingAudio();
+        }
+      }, 30000);
+
+    } catch (err) {
+      document.getElementById('micStatus').innerText = "Akses mikrofon ditolak/gagal";
+      if (isPttLocked) togglePttLock(); 
+    }
+  }
+
+  function stopRecordingAudio() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      playRogerBeep();
+      document.getElementById('micStatus').innerText = "Mikrofon Siap";
+    }
+  }
+
+  function setupPTT() {
+    const pttBtn = document.getElementById('pttBtn');
+    const fsPttBtn = document.getElementById('fsPttBtn');
+
+    pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
+    pttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+    pttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+    pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPttLocked) startRecordingAudio('main'); });
+    pttBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (!isPttLocked) stopRecordingAudio(); });
+
+    if (fsPttBtn) {
+      fsPttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      fsPttBtn.addEventListener('mouseup', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      fsPttBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); stopRecordingAudio(); });
+      fsPttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecordingAudio('fullscreen'); });
+      fsPttBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecordingAudio(); });
+    }
+  }
+
+  function togglePttLock() {
+    if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar untuk frekuensi ini!");
+    initAudioContext();
+    const pttBtn = document.getElementById('pttBtn');
+    const lockBtn = document.getElementById('lockPttBtn');
+    const pttLabel = document.getElementById('pttLabel');
+
+    isPttLocked = !isPttLocked;
+
+    if (isPttLocked) {
+      pttBtn.classList.add('locked');
+      if (pttLabel) pttLabel.innerText = "LOCK ON";
+      lockBtn.innerText = "🔒 BUKA KUNCI PTT";
+      lockBtn.style.background = "#ef4444";
+      lockBtn.style.color = "#fff";
+      startRecordingAudio('main');
+    } else {
+      pttBtn.classList.remove('locked');
+      if (pttLabel) pttLabel.innerText = "PUSH TO TALK";
+      lockBtn.innerText = "🔓 KUNCI PTT (HANDS-FREE)";
+      lockBtn.style.background = "#181818";
+      lockBtn.style.color = "#f59e0b";
+      stopRecordingAudio();
+    }
+  }
+
+  function playAudio(base64Data) {
+    initAudioContext();
+    playSquelchNoise(0.1);
+
+    const audio = new Audio(base64Data);
+    audio.play();
+
+    audio.onended = () => { playRogerBeep(); };
+    audio.onerror = () => {};
+  }
+
+  function showError(msg) {
+    const alert = document.getElementById('errorAlert');
+    alert.innerText = msg;
+    alert.style.display = 'block';
+  }
+
+  function hideError() { document.getElementById('errorAlert').style.display = 'none'; }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
     authDomain: "mrzyb-ht.firebaseapp.com",
@@ -187,184 +1592,33 @@
     appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
   };
 
-  firebase.initializeApp(firebaseConfig);
-  const messaging = firebase.messaging();
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
 
-  // Pendaftaran dan Inisialisasi Service Worker FCM
-  let swRegistration = null;
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((reg) => {
-        swRegistration = reg;
-        console.log('SW Firebase Aktif:', reg.scope);
-      })
-      .catch((err) => console.error('Gagal Registrasi SW:', err));
+    navigator.serviceWorker.register('./firebase-messaging-sw.js').catch(() => {});
   }
 
-  async function requestNotificationPermission() {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        // Pastikan Service Worker terdaftar sebelum meminta Token
-        if (!swRegistration) {
-          swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        }
-
-        const token = await messaging.getToken({ serviceWorkerRegistration: swRegistration });
-        if (token) {
-          localStorage.setItem('fcm_token', token);
-          alert('Notifikasi Berhasil Diaktifkan!');
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-            const pass = document.getElementById('passInput').value.trim();
-            ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: token }));
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      getToken(messaging, { vapidKey: 'BAfJA1rsdLKg7edUjiuKnOjogJpp9pOJ72xJy62oMs9HAJc1bAGuSakesAkYUNLclGpum40OJY9fE5mxewH2dzo' })
+        .then((currentToken) => {
+          if (currentToken) {
+            window.myFcmToken = currentToken;
+            if (typeof window.kirimTokenKeWorker === 'function') {
+              window.kirimTokenKeWorker(window.currentFreq || "888.888");
+            }
           }
-        } else {
-          alert('Tidak dapat membuat token FCM.');
-        }
-      } else {
-        alert('Izin notifikasi ditolak.');
-      }
-    } catch (err) {
-      alert('Gagal mendapatkan token FCM: ' + err.message);
-    }
-  }
-
-  // Terima pesan langsung di UI saat aplikasi sedang dibuka (Foreground)
-  messaging.onMessage((payload) => {
-    if (payload.notification) {
-      appendChat(`[${payload.notification.title}]: ${payload.notification.body}`, true);
+        });
     }
   });
 
-  /* FITUR KONTROL NAVIGASI REMOTE STB */
-  document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && this.id !== 'msgInput') this.blur();
-    });
-    input.addEventListener('click', function() { this.focus(); });
+  onMessage(messaging, (payload) => {
+    if (payload.notification && typeof window.showBannerNotification === 'function') {
+      window.showBannerNotification(payload.notification.title, payload.notification.body);
+    }
   });
-
-  function isCurrentChannelAuthenticated() {
-    const inputPass = document.getElementById('passInput').value.trim();
-    const savedPass = localStorage.getItem('ht_pass');
-    return (inputPass === REQUIRED_PIN || savedPass === REQUIRED_PIN);
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedNick = localStorage.getItem('ht_nick');
-    const savedPass = localStorage.getItem('ht_pass') || "";
-
-    if (savedNick) document.getElementById('nickInput').value = savedNick;
-    if (savedPass) document.getElementById('passInput').value = savedPass;
-
-    loadSavedChatHistory();
-    connect();
-  });
-
-  function connect() {
-    if (ws) { ws.close(); ws = null; }
-    ws = new WebSocket(WORKER_URL);
-
-    ws.onopen = () => {
-      const savedPass = localStorage.getItem('ht_pass') || '';
-      const savedNick = document.getElementById('nickInput').value.trim() || 'Anonim';
-      const fcmToken = localStorage.getItem('fcm_token') || '';
-      ws.send(JSON.stringify({ 
-        type: 'join', 
-        freq: currentFreq, 
-        sender: savedNick, 
-        password: savedPass,
-        fcmToken: fcmToken
-      }));
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (!isCurrentChannelAuthenticated()) return;
-
-        if (data.type === 'join_success') {
-          document.getElementById('freqDisplay').innerText = data.freq;
-        } else if (data.type === 'presence') {
-          const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
-          document.getElementById('onlineCount').innerText = uniqueUsers.length;
-          document.getElementById('namesList').innerHTML = uniqueUsers.join('<br>') || '-';
-        } else if (data.type === 'text') {
-          appendChat(`[${data.sender}]: ${data.message}`, true);
-        }
-      } catch (e) {}
-    };
-
-    ws.onclose = () => setTimeout(connect, 5000);
-  }
-
-  function changeFreq() {
-    const pass = document.getElementById('passInput').value.trim();
-    if (pass !== REQUIRED_PIN) {
-      alert("PIN Akses Salah");
-      return;
-    }
-    
-    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-    const fcmToken = localStorage.getItem('fcm_token') || '';
-    localStorage.setItem('ht_nick', nick);
-    localStorage.setItem('ht_pass', pass);
-    
-    appendChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`, true);
-
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: fcmToken }));
-    } else { connect(); }
-  }
-
-  function sendText() {
-    if (!isCurrentChannelAuthenticated()) {
-      alert("PIN Akses Salah");
-      return;
-    }
-    const input = document.getElementById('msgInput');
-    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-    const text = input.value.trim();
-
-    if (text && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: text, msgId: Date.now() }));
-      input.value = '';
-    }
-  }
-
-  function handleKeyPress(e) { 
-    if (e.key === 'Enter') sendText();
-  }
-
-  function appendChat(msg, saveToStorage = false) {
-    const box = document.getElementById('chatBox');
-    box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
-    box.scrollTop = box.scrollHeight;
-
-    if (saveToStorage) {
-      let history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
-      history.push(msg);
-      if (history.length > 100) history.shift();
-      localStorage.setItem('ht_chat_history', JSON.stringify(history));
-    }
-  }
-
-  function loadSavedChatHistory() {
-    const box = document.getElementById('chatBox');
-    const history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
-    history.forEach(msg => {
-      box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
-    });
-    box.scrollTop = box.scrollHeight;
-  }
-
-  function clearChatHistory() {
-    if (confirm("Hapus seluruh riwayat percakapan dari perangkat ini?")) {
-      localStorage.removeItem('ht_chat_history');
-      document.getElementById('chatBox').innerHTML = '';
-    }
-  }
 </script>
+
 </body>
 </html>
