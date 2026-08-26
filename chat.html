@@ -135,7 +135,6 @@
 <body>
 
 <div class="ht-body-landscape">
-  
   <div class="left-panel">
     <div class="screen">
       <div style="font-size: 10px; color: #aaa;">FREKUENSI HT (TETAP)</div>
@@ -167,8 +166,11 @@
       <button onclick="sendText()">KIRIM</button>
     </div>
   </div>
-
 </div>
+
+<!-- SDK Firebase Client Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
 
 <script>
   const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
@@ -176,68 +178,59 @@
   const currentFreq = "999.999";
   const REQUIRED_PIN = "230887";
 
-  /* REGISTRASI SERVICE WORKER */
+  // Inisialisasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3tTtYP4_Mf01TE7lGHSRayCkxqlCmvW8",
+    authDomain: "mrzyb-ht.firebaseapp.com",
+    projectId: "mrzyb-ht",
+    messagingSenderId: "86202931423",
+    appId: "1:86202931423:web:c5aeef07c46cf9bf52316a"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+
+  // Registrasi Service Worker Firebase
   if ('serviceWorker' in navigator) {
-    const swCode = `
-      self.addEventListener('install', (e) => self.skipWaiting());
-      self.addEventListener('activate', (e) => self.clients.claim());
-      self.addEventListener('push', (e) => {
-        const data = e.data ? e.data.json() : { title: 'Pesan HT Baru', body: 'Ada pesan masuk!' };
-        e.waitUntil(
-          self.registration.showNotification(data.title, {
-            body: data.body,
-            icon: 'https://cdn-icons-png.flaticon.com/512/3615/3615962.png',
-            vibrate: [200, 100, 200]
-          })
-        );
-      });
-    `;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    
-    navigator.serviceWorker.register(swUrl).catch(err => console.log('SW Error:', err));
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((reg) => console.log('SW Firebase Aktif:', reg.scope))
+      .catch((err) => console.error('Gagal Registrasi SW:', err));
   }
 
   function requestNotificationPermission() {
-    if ('Notification' in window) {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          alert('Notifikasi Latar Belakang Diaktifkan!');
-        } else {
-          alert('Izin notifikasi ditolak.');
-        }
-      });
-    } else {
-      alert('Browser/Perangkat tidak mendukung Notifikasi.');
-    }
-  }
-
-  function showLocalNotification(sender, message) {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      if (document.hidden) {
-        navigator.serviceWorker.ready.then(registration => {
-          registration.showNotification(`[HT] Pesan dari ${sender}`, {
-            body: message,
-            tag: 'ht-message',
-            renotify: true
-          });
-        });
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        // Mendapatkan token FCM
+        messaging.getToken().then((token) => {
+          if (token) {
+            localStorage.setItem('fcm_token', token);
+            alert('Notifikasi Berhasil Diaktifkan!');
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+              const pass = document.getElementById('passInput').value.trim();
+              ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: token }));
+            }
+          }
+        }).catch(err => alert('Gagal mendapatkan token FCM: ' + err.message));
+      } else {
+        alert('Izin notifikasi ditolak.');
       }
-    }
+    });
   }
 
-  /* KONTROL KEYBOARD VIRTUAL PADA STB */
-  // Paksa pemanggilan keyboard saat elemen mendapat fokus atau diklik via tombol remote OK
+  // Terima pesan langsung di UI saat aplikasi sedang dibuka (Foreground)
+  messaging.onMessage((payload) => {
+    if (payload.notification) {
+      appendChat(`[${payload.notification.title}]: ${payload.notification.body}`, true);
+    }
+  });
+
+  /* FITUR KONTROL NAVIGASI REMOTE STB */
   document.querySelectorAll('input').forEach(input => {
     input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && this.id !== 'msgInput') {
-        this.blur(); // Tutup keyboard saat tekan enter selain kolom chat
-      }
+      if (e.key === 'Enter' && this.id !== 'msgInput') this.blur();
     });
-    
-    input.addEventListener('click', function() {
-      this.focus();
-    });
+    input.addEventListener('click', function() { this.focus(); });
   });
 
   function isCurrentChannelAuthenticated() {
@@ -264,7 +257,14 @@
     ws.onopen = () => {
       const savedPass = localStorage.getItem('ht_pass') || '';
       const savedNick = document.getElementById('nickInput').value.trim() || 'Anonim';
-      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
+      const fcmToken = localStorage.getItem('fcm_token') || '';
+      ws.send(JSON.stringify({ 
+        type: 'join', 
+        freq: currentFreq, 
+        sender: savedNick, 
+        password: savedPass,
+        fcmToken: fcmToken
+      }));
     };
 
     ws.onmessage = (event) => {
@@ -280,10 +280,6 @@
           document.getElementById('namesList').innerHTML = uniqueUsers.join('<br>') || '-';
         } else if (data.type === 'text') {
           appendChat(`[${data.sender}]: ${data.message}`, true);
-          const myNick = document.getElementById('nickInput').value.trim();
-          if (data.sender !== myNick) {
-            showLocalNotification(data.sender, data.message);
-          }
         }
       } catch (e) {}
     };
@@ -294,24 +290,25 @@
   function changeFreq() {
     const pass = document.getElementById('passInput').value.trim();
     if (pass !== REQUIRED_PIN) {
-      alert("PIN Akses Salah!");
+      alert("PIN Akses Salah");
       return;
     }
     
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const fcmToken = localStorage.getItem('fcm_token') || '';
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_pass', pass);
     
     appendChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`, true);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass }));
+      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: fcmToken }));
     } else { connect(); }
   }
 
   function sendText() {
     if (!isCurrentChannelAuthenticated()) {
-      alert("PIN Akses Salah!");
+      alert("PIN Akses Salah");
       return;
     }
     const input = document.getElementById('msgInput');
@@ -325,9 +322,7 @@
   }
 
   function handleKeyPress(e) { 
-    if (e.key === 'Enter') {
-      sendText();
-    }
+    if (e.key === 'Enter') sendText();
   }
 
   function appendChat(msg, saveToStorage = false) {
@@ -359,6 +354,5 @@
     }
   }
 </script>
-
 </body>
 </html>
