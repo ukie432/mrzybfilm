@@ -190,32 +190,44 @@
   firebase.initializeApp(firebaseConfig);
   const messaging = firebase.messaging();
 
-  // Registrasi Service Worker Firebase
+  // Pendaftaran dan Inisialisasi Service Worker FCM
+  let swRegistration = null;
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((reg) => console.log('SW Firebase Aktif:', reg.scope))
+      .then((reg) => {
+        swRegistration = reg;
+        console.log('SW Firebase Aktif:', reg.scope);
+      })
       .catch((err) => console.error('Gagal Registrasi SW:', err));
   }
 
-  function requestNotificationPermission() {
-    Notification.requestPermission().then((permission) => {
+  async function requestNotificationPermission() {
+    try {
+      const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        // Mendapatkan token FCM
-        messaging.getToken().then((token) => {
-          if (token) {
-            localStorage.setItem('fcm_token', token);
-            alert('Notifikasi Berhasil Diaktifkan!');
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
-              const pass = document.getElementById('passInput').value.trim();
-              ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: token }));
-            }
+        // Pastikan Service Worker terdaftar sebelum meminta Token
+        if (!swRegistration) {
+          swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        }
+
+        const token = await messaging.getToken({ serviceWorkerRegistration: swRegistration });
+        if (token) {
+          localStorage.setItem('fcm_token', token);
+          alert('Notifikasi Berhasil Diaktifkan!');
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+            const pass = document.getElementById('passInput').value.trim();
+            ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass, fcmToken: token }));
           }
-        }).catch(err => alert('Gagal mendapatkan token FCM: ' + err.message));
+        } else {
+          alert('Tidak dapat membuat token FCM.');
+        }
       } else {
         alert('Izin notifikasi ditolak.');
       }
-    });
+    } catch (err) {
+      alert('Gagal mendapatkan token FCM: ' + err.message);
+    }
   }
 
   // Terima pesan langsung di UI saat aplikasi sedang dibuka (Foreground)
