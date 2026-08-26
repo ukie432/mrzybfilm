@@ -225,7 +225,10 @@
   }
 
   function sendText() {
-    if (!isCurrentChannelAuthenticated()) return alert("PIN Akses Salah!");
+    if (!isCurrentChannelAuthenticated()) {
+      alert("PIN Akses Salah!");
+      return;
+    }
     const input = document.getElementById('msgInput');
     const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
     const text = input.value.trim();
