@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MRZYB-HT CHAT (LANDSCAPE)</title>
+  <title>MRZYB-HT CHAT (STB LANDSCAPE)</title>
   <style>
     :root {
       --bg-main: #000000;
@@ -29,7 +29,7 @@
       overflow: hidden;
     }
     
-    /* Layout Utama Landscape (2 Kolom) */
+    /* Layout Utama Landscape */
     .ht-body-landscape { 
       background: var(--ht-bg); 
       border: 2px solid #ffffff; 
@@ -43,7 +43,6 @@
       box-shadow: 0 0 10px var(--ht-neon); 
     }
 
-    /* Kolom Kiri: Frekuensi & User */
     .left-panel {
       flex: 1;
       display: flex;
@@ -51,7 +50,6 @@
       gap: 10px;
     }
 
-    /* Kolom Kanan: Area Chat */
     .right-panel {
       flex: 1.8;
       display: flex;
@@ -102,6 +100,13 @@
       border-radius: 4px; 
       font-size: 12px; 
     }
+    
+    /* Efek visual saat navigasi tombol remote STB */
+    input:focus, button:focus {
+      outline: 2px solid var(--ht-neon);
+      background: #1e293b;
+    }
+
     button { 
       background: #222222; 
       color: var(--text-color); 
@@ -120,13 +125,20 @@
       font-size: 10px;
       padding: 4px 8px;
     }
+    
+    .btn-notif {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 10px;
+      padding: 4px 8px;
+    }
   </style>
 </head>
 <body>
 
 <div class="ht-body-landscape">
   
-  <!-- PANEL KIRI: Frekuensi & Daftar Pengguna Online -->
+  <!-- PANEL KIRI -->
   <div class="left-panel">
     <div class="screen">
       <div style="font-size: 10px; color: #aaa;">FREKUENSI HT (TETAP)</div>
@@ -134,11 +146,13 @@
     </div>
 
     <div class="input-group">
-      <input type="text" id="nickInput" placeholder="Nama/Callsign">
+      <!-- Diberi readonly agar keyboard tidak muncul saat hanya dilewati/fokus -->
+      <input type="text" id="nickInput" placeholder="Nama/Callsign (Klik/OK)" readonly onclick="enableInput(this)" onblur="disableInput(this)">
     </div>
 
     <div class="input-group">
-      <input type="password" id="passInput" placeholder="PIN/Password Akses">
+      <!-- Diberi readonly agar keyboard tidak muncul saat hanya dilewati/fokus -->
+      <input type="password" id="passInput" placeholder="PIN Akses (Klik/OK)" readonly onclick="enableInput(this)" onblur="disableInput(this)">
       <button onclick="changeFreq()">MASUK</button>
     </div>
 
@@ -147,14 +161,16 @@
       <div class="user-names" id="namesList">Memuat...</div>
     </div>
 
+    <button class="btn-notif" onclick="requestNotificationPermission()">AKTIFKAN NOTIFIKASI</button>
     <button class="btn-clear" onclick="clearChatHistory()">HAPUS RIWAYAT CHAT</button>
   </div>
 
-  <!-- PANEL KANAN: Chat Teks -->
+  <!-- PANEL KANAN -->
   <div class="right-panel">
     <div class="chat-box" id="chatBox"></div>
     <div class="input-group">
-      <input type="text" id="msgInput" placeholder="Ketik pesan teks..." onkeypress="handleKeyPress(event)">
+      <!-- Diberi readonly agar keyboard tidak muncul saat hanya dilewati/fokus -->
+      <input type="text" id="msgInput" placeholder="Ketik pesan (Klik/OK)..." readonly onclick="enableInput(this)" onblur="disableInput(this)" onkeypress="handleKeyPress(event)">
       <button onclick="sendText()">KIRIM</button>
     </div>
   </div>
@@ -167,6 +183,68 @@
   let ws = null;
   const currentFreq = "999.999";
   const REQUIRED_PIN = "230887";
+
+  /* REGISTRASI SERVICE WORKER UNTUK LATAR BELAKANG & NOTIFIKASI */
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      self.addEventListener('install', (e) => self.skipWaiting());
+      self.addEventListener('activate', (e) => self.clients.claim());
+      self.addEventListener('push', (e) => {
+        const data = e.data ? e.data.json() : { title: 'Pesan HT Baru', body: 'Ada pesan masuk!' };
+        e.waitUntil(
+          self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/3615/3615962.png',
+            vibrate: [200, 100, 200]
+          })
+        );
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    
+    navigator.serviceWorker.register(swUrl).then(() => {
+      console.log('Service Worker Latar Belakang Aktif');
+    }).catch(err => console.log('SW Error:', err));
+  }
+
+  function requestNotificationPermission() {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          alert('Notifikasi Latar Belakang Diaktifkan!');
+        } else {
+          alert('Izin notifikasi ditolak.');
+        }
+      });
+    } else {
+      alert('Browser/Perangkat tidak mendukung Notifikasi.');
+    }
+  }
+
+  function showLocalNotification(sender, message) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      if (document.hidden) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(`[HT] Pesan dari ${sender}`, {
+            body: message,
+            tag: 'ht-message',
+            renotify: true
+          });
+        });
+      }
+    }
+  }
+
+  /* FUNGSI KEYBOARD KHUSUS STB */
+  function enableInput(el) {
+    el.removeAttribute('readonly');
+    el.focus();
+  }
+
+  function disableInput(el) {
+    el.setAttribute('readonly', 'readonly');
+  }
 
   function isCurrentChannelAuthenticated() {
     const inputPass = document.getElementById('passInput').value.trim();
@@ -181,9 +259,7 @@
     if (savedNick) document.getElementById('nickInput').value = savedNick;
     if (savedPass) document.getElementById('passInput').value = savedPass;
 
-    // Muat riwayat pesan terdahulu dari LocalStorage
     loadSavedChatHistory();
-
     connect();
   });
 
@@ -210,6 +286,10 @@
           document.getElementById('namesList').innerHTML = uniqueUsers.join('<br>') || '-';
         } else if (data.type === 'text') {
           appendChat(`[${data.sender}]: ${data.message}`, true);
+          const myNick = document.getElementById('nickInput').value.trim();
+          if (data.sender !== myNick) {
+            showLocalNotification(data.sender, data.message);
+          }
         }
       } catch (e) {}
     };
@@ -247,12 +327,16 @@
     if (text && ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: text, msgId: Date.now() }));
       input.value = '';
+      disableInput(input);
     }
   }
 
-  function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
+  function handleKeyPress(e) { 
+    if (e.key === 'Enter') {
+      sendText();
+    }
+  }
 
-  // Fungsi menambah dan menyimpan pesan ke LocalStorage
   function appendChat(msg, saveToStorage = false) {
     const box = document.getElementById('chatBox');
     box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
@@ -261,13 +345,11 @@
     if (saveToStorage) {
       let history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
       history.push(msg);
-      // Batasi simpanan maks 100 pesan terakhir
       if (history.length > 100) history.shift();
       localStorage.setItem('ht_chat_history', JSON.stringify(history));
     }
   }
 
-  // Fungsi memuat riwayat saat aplikasi dibuka kembali
   function loadSavedChatHistory() {
     const box = document.getElementById('chatBox');
     const history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
@@ -277,7 +359,6 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  // Fungsi manual jika ingin membersihkan riwayat
   function clearChatHistory() {
     if (confirm("Hapus seluruh riwayat percakapan dari perangkat ini?")) {
       localStorage.removeItem('ht_chat_history');
