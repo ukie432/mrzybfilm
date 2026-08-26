@@ -113,6 +113,13 @@
       font-weight: bold;
     }
     button:hover { background: #333; }
+    
+    .btn-clear {
+      background: #7f1d1d;
+      color: #fca5a5;
+      font-size: 10px;
+      padding: 4px 8px;
+    }
   </style>
 </head>
 <body>
@@ -139,6 +146,8 @@
       <span>Online (<span id="onlineCount">0</span>):</span>
       <div class="user-names" id="namesList">Memuat...</div>
     </div>
+
+    <button class="btn-clear" onclick="clearChatHistory()">HAPUS RIWAYAT CHAT</button>
   </div>
 
   <!-- PANEL KANAN: Chat Teks -->
@@ -172,6 +181,9 @@
     if (savedNick) document.getElementById('nickInput').value = savedNick;
     if (savedPass) document.getElementById('passInput').value = savedPass;
 
+    // Muat riwayat pesan terdahulu dari LocalStorage
+    loadSavedChatHistory();
+
     connect();
   });
 
@@ -197,7 +209,7 @@
           document.getElementById('onlineCount').innerText = uniqueUsers.length;
           document.getElementById('namesList').innerHTML = uniqueUsers.join('<br>') || '-';
         } else if (data.type === 'text') {
-          appendChat(`[${data.sender}]: ${data.message}`);
+          appendChat(`[${data.sender}]: ${data.message}`, true);
         }
       } catch (e) {}
     };
@@ -216,8 +228,7 @@
     localStorage.setItem('ht_nick', nick);
     localStorage.setItem('ht_pass', pass);
     
-    document.getElementById('chatBox').innerHTML = '';
-    appendChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`);
+    appendChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`, true);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass }));
@@ -241,10 +252,37 @@
 
   function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
 
-  function appendChat(msg) {
+  // Fungsi menambah dan menyimpan pesan ke LocalStorage
+  function appendChat(msg, saveToStorage = false) {
     const box = document.getElementById('chatBox');
     box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
     box.scrollTop = box.scrollHeight;
+
+    if (saveToStorage) {
+      let history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
+      history.push(msg);
+      // Batasi simpanan maks 100 pesan terakhir
+      if (history.length > 100) history.shift();
+      localStorage.setItem('ht_chat_history', JSON.stringify(history));
+    }
+  }
+
+  // Fungsi memuat riwayat saat aplikasi dibuka kembali
+  function loadSavedChatHistory() {
+    const box = document.getElementById('chatBox');
+    const history = JSON.parse(localStorage.getItem('ht_chat_history') || '[]');
+    history.forEach(msg => {
+      box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
+    });
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // Fungsi manual jika ingin membersihkan riwayat
+  function clearChatHistory() {
+    if (confirm("Hapus seluruh riwayat percakapan dari perangkat ini?")) {
+      localStorage.removeItem('ht_chat_history');
+      document.getElementById('chatBox').innerHTML = '';
+    }
   }
 </script>
 
