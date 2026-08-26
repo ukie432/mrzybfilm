@@ -567,6 +567,29 @@
   </div>
 </div>
 
+<!-- MODAL INPUT PROMPT KUSTOM (Pengganti prompt bawaan browser) -->
+<div id="promptModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-text" id="promptText">Masukkan Password:</div>
+    <input type="password" id="promptInputValue" placeholder="Password..." style="width: 90%; margin-bottom: 12px; font-size: 13px;">
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closePromptModal(false)">BATAL</button>
+      <button class="modal-btn-ok" style="background: #065f46;" onclick="closePromptModal(true)">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI KUSTOM (Pengganti confirm bawaan browser) -->
+<div id="confirmModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-text" id="confirmText">Apakah Anda yakin?</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeConfirmModal(false)">BATAL</button>
+      <button class="modal-btn-ok" style="background: #991b1b;" onclick="closeConfirmModal(true)">YA</button>
+    </div>
+  </div>
+</div>
+
 <div id="createGroupModal" class="modal-overlay">
   <div class="modal-box">
     <div style="color: #10b981 !important; font-weight: bold; font-size: 14px; margin-bottom: 10px;">👥 BUAT / GABUNG GRUP</div>
@@ -595,6 +618,48 @@
       tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
     );
   }
+
+  /* --- MODAL DIALOG KUSTOM PENGGANTI PROMPT/CONFIRM/ALERT --- */
+  let promptCallback = null;
+  function customPrompt(text, callback) {
+    document.getElementById('promptText').innerText = text;
+    document.getElementById('promptInputValue').value = '';
+    document.getElementById('promptModal').style.display = 'flex';
+    document.getElementById('promptInputValue').focus();
+    promptCallback = callback;
+  }
+
+  function closePromptModal(isConfirm) {
+    document.getElementById('promptModal').style.display = 'none';
+    if (isConfirm) {
+      const val = document.getElementById('promptInputValue').value;
+      if (promptCallback) promptCallback(val);
+    } else {
+      if (promptCallback) promptCallback(null);
+    }
+    promptCallback = null;
+  }
+
+  let confirmCallback = null;
+  function customConfirm(text, callback) {
+    document.getElementById('confirmText').innerText = text;
+    document.getElementById('confirmModal').style.display = 'flex';
+    confirmCallback = callback;
+  }
+
+  function closeConfirmModal(isConfirm) {
+    document.getElementById('confirmModal').style.display = 'none';
+    if (confirmCallback) confirmCallback(isConfirm);
+    confirmCallback = null;
+  }
+
+  function showAlert(msg) {
+    document.getElementById('modalText').innerText = msg;
+    document.getElementById('modalBtns').innerHTML = `<button class="modal-btn-ok" onclick="closeModal()">OK</button>`;
+    document.getElementById('customModal').style.display = 'flex';
+  }
+
+  function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
   const DB_NAME = 'MRZYB_HT_DB';
   const DB_VERSION = 1;
@@ -1074,13 +1139,14 @@
 
   function openCreateGroupModal() {
     initAudioContext();
-    const inputPass = prompt("Masukkan Password untuk BUAT GRUP baru:");
-    if (inputPass === null) return;
-    if (inputPass !== PASS_BUAT_GRUP) {
-      showAlert("Password Buat Grup Salah!");
-      return;
-    }
-    document.getElementById('createGroupModal').style.display = 'flex';
+    customPrompt("Masukkan Password untuk BUAT GRUP baru:", function(inputPass) {
+      if (inputPass === null) return;
+      if (inputPass !== PASS_BUAT_GRUP) {
+        showAlert("Password Buat Grup Salah!");
+        return;
+      }
+      document.getElementById('createGroupModal').style.display = 'flex';
+    });
   }
 
   function closeCreateGroupModal() { document.getElementById('createGroupModal').style.display = 'none'; }
@@ -1125,20 +1191,23 @@
       return;
     }
 
-    const inputPass = prompt(`Masukkan Password untuk HAPUS GRUP (${selectedFreq}):`);
-    if (inputPass === null) return;
-    if (inputPass !== PASS_HAPUS_GRUP) {
-      showAlert("Password Hapus Grup Salah!");
-      return;
-    }
+    customPrompt(`Masukkan Password untuk HAPUS GRUP (${selectedFreq}):`, function(inputPass) {
+      if (inputPass === null) return;
+      if (inputPass !== PASS_HAPUS_GRUP) {
+        showAlert("Password Hapus Grup Salah!");
+        return;
+      }
 
-    if (confirm(`Hapus grup frekuensi ${selectedFreq}?`)) {
-      await dbDeleteGroup(selectedFreq);
-      await loadSavedGroupsUI();
-      document.getElementById('groupSelect').value = "888.888||";
-      switchGroupFromDropdown();
-      showAlert("Grup berhasil dihapus.");
-    }
+      customConfirm(`Hapus grup frekuensi ${selectedFreq}?`, async function(isConfirmed) {
+        if (isConfirmed) {
+          await dbDeleteGroup(selectedFreq);
+          await loadSavedGroupsUI();
+          document.getElementById('groupSelect').value = "888.888||";
+          switchGroupFromDropdown();
+          showAlert("Grup berhasil dihapus.");
+        }
+      });
+    });
   }
 
   function switchGroupFromDropdown() {
@@ -1293,16 +1362,14 @@
 
   function openSosConfirm() {
     initAudioContext();
-    document.getElementById('modalText').innerText = "⚠️ PERINGATAN! Anda akan mengirim sinyal bahaya SOS ke frekuensi ini. Apakah Anda yakin?";
-    document.getElementById('modalBtns').innerHTML = `
-      <button class="modal-btn-cancel" onclick="closeModal()">TIDAK</button>
-      <button class="modal-btn-ok" style="background: #991b1b;" onclick="executeSosAction()">YA, KIRIM SOS</button>
-    `;
-    document.getElementById('customModal').style.display = 'flex';
+    customConfirm("⚠️ PERINGATAN! Anda akan mengirim sinyal bahaya SOS ke frekuensi ini. Apakah Anda yakin?", function(isConfirmed) {
+      if (isConfirmed) {
+        executeSosAction();
+      }
+    });
   }
 
   function executeSosAction() {
-    closeModal(); 
     if (!isCurrentChannelAuthenticated()) return showAlert("🔒 Masukkan password terdaftar!");
     if (!navigator.geolocation) return showAlert("GPS tidak didukung.");
 
@@ -1360,23 +1427,14 @@
     });
   }
 
-  function showAlert(msg) {
-    document.getElementById('modalText').innerText = msg;
-    document.getElementById('modalBtns').innerHTML = `<button class="modal-btn-ok" onclick="closeModal()">OK</button>`;
-    document.getElementById('customModal').style.display = 'flex';
-  }
-
   function openClearModal() {
     initAudioContext();
-    document.getElementById('modalText').innerText = `Hapus riwayat chat frekuensi ${currentFreq}?`;
-    document.getElementById('modalBtns').innerHTML = `
-      <button class="modal-btn-cancel" onclick="closeModal()">BATAL</button>
-      <button class="modal-btn-ok" onclick="confirmClearChat()">HAPUS</button>
-    `;
-    document.getElementById('customModal').style.display = 'flex';
+    customConfirm(`Hapus riwayat chat frekuensi ${currentFreq}?`, async function(isConfirmed) {
+      if (isConfirmed) {
+        await confirmClearChat();
+      }
+    });
   }
-
-  function closeModal() { document.getElementById('customModal').style.display = 'none'; }
 
   async function confirmClearChat() {
     document.getElementById('chatBox').innerHTML = '';
@@ -1385,7 +1443,6 @@
     await dbClearChatHistory(currentFreq);
     localStorage.setItem(`clear_time_${currentFreq}`, Date.now().toString());
     addSystemMsg(`Riwayat chat frekuensi ${currentFreq} dibersihkan.`);
-    closeModal();
   }
 
   function playVNFromData(base64Data) { playAudio(base64Data); }
