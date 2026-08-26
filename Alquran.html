@@ -3,127 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital - Fokus Per Kotak Ayat</title>
+    <title>Al-Qur'an Digital - TV & STB Ready</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121212;
             color: #e0e0e0;
             margin: 0;
-            padding: 20px;
-            padding-bottom: 80px; /* Space agar tidak tertutup floating button */
+            padding: 15px;
+            overflow-x: hidden;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 12px;
         }
         h1 {
             text-align: center;
             color: #81c784;
-            margin-bottom: 20px;
+            margin: 0 0 10px 0;
+            font-size: 24px;
         }
         select {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             font-size: 18px;
             border: 2px solid #444;
             border-radius: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             background-color: #2a2a2a;
             color: #fff;
             outline: none;
-            transition: all 0.2s ease;
         }
         
-        /* Gaya saat Dropdown aktif/difokuskan remote */
         select:focus {
-            border: 3px solid #ff9800 !important;
+            border: 4px solid #ff9800 !important;
             background-color: #332b22 !important;
-            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.8);
         }
 
+        /* Kunci utama: Buat tinggi kartu tepat 100% viewport minus margin */
         .ayat-card {
             border: 2px solid #333;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             background-color: #1a1a1a;
-            transition: all 0.2s ease;
-            outline: none; /* Hilangkan garis bawaan browser */
+            outline: none;
+            
+            /* Mengunci ukuran agar pas 1 layar TV */
+            height: calc(100vh - 120px); 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden; /* Mencegah scrollbar di dalam kotak */
         }
 
-        /* Gaya SANGAT JELAS saat Kotak Ayat sedang difokuskan oleh Remote */
         .ayat-card:focus {
-            border: 4px solid #4caf50 !important; /* Border hijau terang */
-            background-color: #1b3022 !important;  /* Latar belakang sedikit kehijauan */
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.6); /* Efek cahaya/glow */
-            transform: scale(1.02); /* Sedikit memperbesar kotak yang aktif */
+            border: 4px solid #4caf50 !important;
+            background-color: #1b3022 !important;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+            transform: scale(1.01);
         }
 
+        .header-ayat {
+            flex-shrink: 0;
+            margin-bottom: 10px;
+        }
+        
         .nomor-ayat {
             display: inline-block;
             background-color: #2e7d32;
             color: #fff;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
-        .teks-arab {
-            font-size: 32px;
-            text-align: right;
-            direction: rtl;
-            line-height: 2.2;
-            margin: 15px 0;
-            color: #ffffff;
-        }
-        .arti {
-            font-size: 16px;
-            color: #b0bec5;
-            line-height: 1.6;
+
+        /* Container fleksibel untuk menampung teks */
+        .content-box {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        /* Styling Tombol Melayang (Floating Button) */
+        .teks-arab {
+            font-size: 36px; /* Font awal (akan mengecil otomatis jika panjang) */
+            text-align: right;
+            direction: rtl;
+            line-height: 1.8;
+            color: #ffffff;
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+
+        .arti {
+            font-size: 18px; /* Font awal (akan mengecil otomatis jika panjang) */
+            color: #b0bec5;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
         .floating-btn {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 55px;
-            height: 55px;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
             background-color: #2e7d32;
             color: white;
             border-radius: 50%;
             border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             outline: none;
-            transition: all 0.2s ease;
         }
 
-        .floating-btn svg {
-            width: 28px;
-            height: 28px;
-            fill: currentColor;
-        }
-
-        .floating-btn:hover {
-            background-color: #388e3c;
-            transform: scale(1.08);
-        }
-
-        /* Efek Sorot Fokus Remote STB pada Floating Button */
         .floating-btn:focus {
-            border: 3px solid #ff9800 !important;
+            border: 4px solid #ff9800 !important;
             background-color: #e65100 !important;
             box-shadow: 0 0 15px rgba(255, 152, 0, 0.9);
-            transform: scale(1.15);
         }
     </style>
 </head>
@@ -132,7 +139,6 @@
 <div class="container">
     <h1>Al-Qur'an Digital</h1>
     
-    <!-- Select Surat -->
     <select id="select-surat" tabindex="1" onchange="loadAyat(this.value)">
         <option value="">-- Loading Surat... --</option>
     </select>
@@ -140,10 +146,8 @@
     <div id="konten-ayat"></div>
 </div>
 
-<!-- Tombol Melayang (Icon Pencarian / Kembali ke Atas) -->
-<button id="btn-floating" class="floating-btn" tabindex="0" onclick="resetFocusToSearch()" title="Kembali ke Menu Pencarian">
-    <!-- Icon Kaca Pembesar (Search) -->
-    <svg viewBox="0 0 24 24">
+<button id="btn-floating" class="floating-btn" tabindex="0" onclick="resetFocusToSearch()" title="Kembali ke Menu Utama">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
     </svg>
 </button>
@@ -152,7 +156,6 @@
     const apiBase = 'https://equran.id/api/v2';
     let focusedAyatIndex = -1;
 
-    // Helper untuk mengembalikan fokus langsung ke dropdown pencarian
     function resetFocusToSearch() {
         const selectSurat = document.getElementById('select-surat');
         selectSurat.focus();
@@ -160,14 +163,11 @@
         focusedAyatIndex = -1;
     }
 
-    // Helper untuk memindahkan fokus ke Tombol Melayang (khusus Klik Kanan STB)
     function focusFloatingButton() {
         const btnFloating = document.getElementById('btn-floating');
         btnFloating.focus();
-        btnFloating.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // 1. Ambil daftar surat
     async function loadSurat() {
         try {
             const res = await fetch(`${apiBase}/surat`);
@@ -187,7 +187,6 @@
         }
     }
 
-    // 2. Ambil isi ayat
     async function loadAyat(nomorSurat) {
         if (!nomorSurat) return;
         const container = document.getElementById('konten-ayat');
@@ -202,26 +201,56 @@
             data.data.ayat.forEach((ayat, idx) => {
                 html += `
                     <div class="ayat-card" tabindex="0" data-index="${idx}">
-                        <span class="nomor-ayat">Ayat ${ayat.nomorAyat}</span>
-                        <div class="teks-arab">${ayat.teksArab}</div>
-                        <div class="arti">${ayat.teksIndonesia}</div>
+                        <div class="header-ayat">
+                            <span class="nomor-ayat">Ayat ${ayat.nomorAyat}</span>
+                        </div>
+                        <div class="content-box">
+                            <div class="teks-arab">${ayat.teksArab}</div>
+                            <div class="arti">${ayat.teksIndonesia}</div>
+                        </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+
+            // Panggil fungsi penyesuaian font otomatis setelah HTML dirender
+            adjustFontSize();
+
         } catch (err) {
             container.innerHTML = '<p style="color:red; text-align:center;">Gagal memuat ayat.</p>';
         }
     }
 
-    // 3. Logika Navigasi Tombol Remote / Keyboard Per Kotak Ayat
+    // Fungsi otomatis untuk mengecilkan ukuran font jika teks meluap dari kotak
+    function adjustFontSize() {
+        const cards = document.querySelectorAll('.ayat-card');
+        
+        cards.forEach(card => {
+            const contentBox = card.querySelector('.content-box');
+            const teksArab = card.querySelector('.teks-arab');
+            const arti = card.querySelector('.arti');
+
+            let arabSize = 36; // Ukuran dasar font Arab
+            let artiSize = 18; // Ukuran dasar font Arti
+
+            // Turunkan ukuran font secara bertahap jika tinggi konten melebihi batas wadah
+            while (contentBox.scrollHeight > contentBox.clientHeight && arabSize > 18) {
+                arabSize -= 1.5;
+                artiSize -= 0.8;
+                teksArab.style.fontSize = arabSize + 'px';
+                arti.style.fontSize = artiSize + 'px';
+            }
+        });
+    }
+
+    // Navigasi Remote STB
     document.addEventListener('keydown', function(e) {
         const cards = document.querySelectorAll('.ayat-card');
         const selectSurat = document.getElementById('select-surat');
         const btnFloating = document.getElementById('btn-floating');
 
         switch(e.key) {
-            case 'ArrowDown': // Tombol Bawah
+            case 'ArrowDown':
                 if (document.activeElement === selectSurat && cards.length > 0) {
                     focusedAyatIndex = 0;
                     cards[0].focus();
@@ -234,7 +263,7 @@
                 e.preventDefault();
                 break;
 
-            case 'ArrowUp': // Tombol Atas
+            case 'ArrowUp':
                 if (document.activeElement === btnFloating && cards.length > 0) {
                     focusedAyatIndex = cards.length - 1;
                     cards[focusedAyatIndex].focus();
@@ -249,7 +278,7 @@
                 e.preventDefault();
                 break;
 
-            case 'Backspace': // Tombol Kembali / Back
+            case 'Backspace':
             case 'Escape':
                 resetFocusToSearch();
                 e.preventDefault();
@@ -257,10 +286,9 @@
         }
     });
 
-    // 4. Klik kanan pada STB/Mouse: Memindahkan fokus ke tombol melayang
     document.addEventListener('contextmenu', function(e) {
-        e.preventDefault(); // Mencegah popup menu browser
-        focusFloatingButton(); // Sorot ikon mengambang di pojok kanan bawah
+        e.preventDefault();
+        focusFloatingButton();
     });
 
     loadSurat();
