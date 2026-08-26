@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MRZYB-HT BLACK EDITION</title>
@@ -808,7 +807,9 @@
         localCamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
         video.srcObject = localCamStream;
         modal.style.display = 'flex';
-      } catch (err2) { alert("Gagal membuka kamera direct: " + err2.message); }
+      } catch (err2) { 
+        showAlert("Gagal membuka kamera direct: " + err2.message); 
+      }
     }
   }
 
