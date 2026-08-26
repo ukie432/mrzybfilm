@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MRZYB-HT CHAT (LANDSCAPE)</title>
+  <style>
+    :root {
+      --bg-main: #000000;
+      --ht-bg: #121212;
+      --ht-neon: #a3e635;
+      --text-color: #a3e635;
+      --screen-bg: #050505;
+    }
+
+    *, *:before, *:after { box-sizing: border-box; }
+
+    body { 
+      background-color: var(--bg-main); 
+      color: var(--text-color); 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      margin: 0; 
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    
+    /* Layout Utama Landscape (2 Kolom) */
+    .ht-body-landscape { 
+      background: var(--ht-bg); 
+      border: 2px solid #ffffff; 
+      border-radius: 12px; 
+      padding: 12px; 
+      width: 100%;
+      max-width: 900px;
+      height: 95vh;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 0 10px var(--ht-neon); 
+    }
+
+    /* Kolom Kiri: Frekuensi & User */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Kolom Kanan: Area Chat */
+    .right-panel {
+      flex: 1.8;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screen { 
+      background: var(--screen-bg); 
+      border: 1px solid #ffffff; 
+      box-shadow: 0 0 5px var(--ht-neon);
+      padding: 12px; 
+      border-radius: 6px; 
+      text-align: center; 
+    }
+    .freq { font-size: 32px; font-weight: bold; }
+
+    .user-list { 
+      flex: 1;
+      border: 1px solid #ffffff; 
+      background: #080808; 
+      padding: 8px; 
+      border-radius: 5px; 
+      font-size: 12px; 
+      overflow-y: auto;
+    }
+    .user-names { color: #aaa; font-size: 11px; margin-top: 4px; line-height: 1.4; }
+
+    .chat-box { 
+      flex: 1;
+      background: var(--screen-bg); 
+      overflow-y: auto; 
+      border: 1px solid #ffffff; 
+      padding: 10px; 
+      border-radius: 5px; 
+      word-wrap: break-word; 
+      font-size: 13px;
+      color: #ffffff;
+    }
+
+    .input-group { display: flex; gap: 6px; }
+    input { 
+      flex: 1; 
+      background: var(--screen-bg); 
+      border: 1px solid #ffffff; 
+      color: #ffffff; 
+      padding: 8px; 
+      border-radius: 4px; 
+      font-size: 12px; 
+    }
+    button { 
+      background: #222222; 
+      color: var(--text-color); 
+      border: 1px solid #ffffff; 
+      padding: 8px 14px; 
+      cursor: pointer; 
+      border-radius: 4px; 
+      font-size: 12px;
+      font-weight: bold;
+    }
+    button:hover { background: #333; }
+  </style>
+</head>
+<body>
+
+<div class="ht-body-landscape">
+  
+  <!-- PANEL KIRI: Frekuensi & Daftar Pengguna Online -->
+  <div class="left-panel">
+    <div class="screen">
+      <div style="font-size: 10px; color: #aaa;">FREKUENSI HT (TETAP)</div>
+      <div class="freq" id="freqDisplay">999.999</div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="nickInput" placeholder="Nama/Callsign">
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="passInput" placeholder="PIN/Password Akses">
+      <button onclick="changeFreq()">MASUK</button>
+    </div>
+
+    <div class="user-list">
+      <span>Online (<span id="onlineCount">0</span>):</span>
+      <div class="user-names" id="namesList">Memuat...</div>
+    </div>
+  </div>
+
+  <!-- PANEL KANAN: Chat Teks -->
+  <div class="right-panel">
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-group">
+      <input type="text" id="msgInput" placeholder="Ketik pesan teks..." onkeypress="handleKeyPress(event)">
+      <button onclick="sendText()">KIRIM</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const WORKER_URL = "wss://my-ht-project.ukielaki8387.workers.dev";
+
+  let ws = null;
+  const currentFreq = "999.999";
+  const REQUIRED_PIN = "230887";
+
+  function isCurrentChannelAuthenticated() {
+    const inputPass = document.getElementById('passInput').value.trim();
+    const savedPass = localStorage.getItem('ht_pass');
+    return (inputPass === REQUIRED_PIN || savedPass === REQUIRED_PIN);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedNick = localStorage.getItem('ht_nick');
+    const savedPass = localStorage.getItem('ht_pass') || "";
+
+    if (savedNick) document.getElementById('nickInput').value = savedNick;
+    if (savedPass) document.getElementById('passInput').value = savedPass;
+
+    connect();
+  });
+
+  function connect() {
+    if (ws) { ws.close(); ws = null; }
+    ws = new WebSocket(WORKER_URL);
+
+    ws.onopen = () => {
+      const savedPass = localStorage.getItem('ht_pass') || '';
+      const savedNick = document.getElementById('nickInput').value.trim() || 'Anonim';
+      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: savedNick, password: savedPass }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (!isCurrentChannelAuthenticated()) return;
+
+        if (data.type === 'join_success') {
+          document.getElementById('freqDisplay').innerText = data.freq;
+        } else if (data.type === 'presence') {
+          const uniqueUsers = [...new Set((data.users || []).filter(u => u && u.trim() !== ''))];
+          document.getElementById('onlineCount').innerText = uniqueUsers.length;
+          document.getElementById('namesList').innerHTML = uniqueUsers.join('<br>') || '-';
+        } else if (data.type === 'text') {
+          appendChat(`[${data.sender}]: ${data.message}`);
+        }
+      } catch (e) {}
+    };
+
+    ws.onclose = () => setTimeout(connect, 5000);
+  }
+
+  function changeFreq() {
+    const pass = document.getElementById('passInput').value.trim();
+    if (pass !== REQUIRED_PIN) {
+      alert("PIN Akses Salah!");
+      return;
+    }
+    
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    localStorage.setItem('ht_nick', nick);
+    localStorage.setItem('ht_pass', pass);
+    
+    document.getElementById('chatBox').innerHTML = '';
+    appendChat(`[SYS] Terhubung ke frekuensi ${currentFreq}`);
+
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'join', freq: currentFreq, sender: nick, password: pass }));
+    } else { connect(); }
+  }
+
+  function sendText() {
+    if (!isCurrentChannelAuthenticated()) return alert("PIN Akses Salah!");
+    const input = document.getElementById('msgInput');
+    const nick = document.getElementById('nickInput').value.trim() || 'Anonim';
+    const text = input.value.trim();
+
+    if (text && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'text', freq: currentFreq, sender: nick, message: text, msgId: Date.now() }));
+      input.value = '';
+    }
+  }
+
+  function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
+
+  function appendChat(msg) {
+    const box = document.getElementById('chatBox');
+    box.insertAdjacentHTML('beforeend', `<div>${msg}</div>`);
+    box.scrollTop = box.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
