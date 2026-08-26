@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MRZYB-HT BLACK EDITION</title>
@@ -124,7 +123,7 @@
         padding: 15px;
       }
       .ht-body {
-        max-width: 95vw !important; /* Memenuhi layar TV/Landscape */
+        max-width: 95vw !important;
         width: 1000px;
         max-height: 94vh !important;
       }
@@ -568,7 +567,7 @@
   </div>
 </div>
 
-<!-- MODAL INPUT PROMPT KUSTOM (Pengganti prompt bawaan browser) -->
+<!-- MODAL INPUT PROMPT KUSTOM -->
 <div id="promptModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="promptText">Masukkan Password:</div>
@@ -580,7 +579,7 @@
   </div>
 </div>
 
-<!-- MODAL KONFIRMASI KUSTOM (Pengganti confirm bawaan browser) -->
+<!-- MODAL KONFIRMASI KUSTOM -->
 <div id="confirmModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-text" id="confirmText">Apakah Anda yakin?</div>
@@ -610,6 +609,18 @@
 </div>
 
 <script>
+  /* --- 1. BRIDGE PENAMPUANG NATIVE ANDROID --- */
+  window.antreanPesanHT = window.antreanPesanHT || [];
+
+  window.terimaPesanHT = function(sender, message, msgId) {
+    const idPesan = msgId || (Date.now() + '_' + Math.random().toString(36).substr(2, 5));
+    if (typeof window.saveAndAddSingleChat === 'function' && document.getElementById('chatBox')) {
+      window.saveAndAddSingleChat(idPesan, sender, message);
+    } else {
+      window.antreanPesanHT.push({ sender: sender, message: message, msgId: idPesan });
+    }
+  };
+
   const PASS_BUAT_GRUP = "ADMIN0809";   
   const PASS_HAPUS_GRUP = "SUPERADMIN0905"; 
 
@@ -620,7 +631,7 @@
     );
   }
 
-  /* --- MODAL DIALOG KUSTOM PENGGANTI PROMPT/CONFIRM/ALERT --- */
+  /* --- MODAL DIALOG KUSTOM --- */
   let promptCallback = null;
   function customPrompt(text, callback) {
     document.getElementById('promptText').innerText = text;
@@ -1063,7 +1074,6 @@
     document.body.addEventListener('touchstart', initAudioContext, { once: true });
     document.body.addEventListener('click', initAudioContext, { once: true });
 
-    // Dukungan Tombol OK / Enter Remote TV untuk PTT
     document.addEventListener('keydown', (e) => {
       if (document.activeElement.id === 'pttBtn' && (e.key === 'Enter' || e.keyCode === 13)) {
         e.preventDefault();
@@ -1120,6 +1130,16 @@
     await loadLocalHistory(currentFreq);
     connect();
     setupPTT();
+
+    /* --- 2. EKSEKUSI ANTREAN PESAN DARI NATIVE NATIVE --- */
+    setTimeout(() => {
+      if (window.antreanPesanHT && window.antreanPesanHT.length > 0) {
+        window.antreanPesanHT.forEach(item => {
+          window.saveAndAddSingleChat(item.msgId, item.sender, item.message);
+        });
+        window.antreanPesanHT = [];
+      }
+    }, 500);
   });
 
   async function loadSavedGroupsUI() {
@@ -1401,10 +1421,12 @@
 
   function handleKeyPress(e) { if (e.key === 'Enter') sendText(); }
 
+  /* --- 3. FUNGSI UNTUK MENAMPILKAN DAN MENYIMPAN CHAT --- */
   async function saveAndAddSingleChat(msgId, sender, message) {
     appendChatToBox(`[${sender}]: ${message}`);
     await dbSaveMessage(currentFreq, { msgId, sender, message });
   }
+  window.saveAndAddSingleChat = saveAndAddSingleChat;
 
   async function loadLocalHistory(freq) {
     const chatBox = document.getElementById('chatBox');
