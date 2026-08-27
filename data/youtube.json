@@ -1,8 +1,71 @@
 [
+
+
+  {
+
+         "title": "ThePaduka",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Paduka.webp",
+    "categories": [
+      { "ep": "Tidak semua luka harus diceritakan", "url": "Bix1R1A0434" },
+      { "ep": "Sisa doa", "url": "KZwhPXBV18s" },
+      { "ep": "Belajar kalah dalam diam", "url": "BnocZ8OPbEM" },
+            { "ep": "Cukup Allah yang tahu", "url": "https://www.youtube.com/watch?v=iueoYdKYIhU" },
+      { "ep": "Lemas dalam ridho", "url": "4SXTlD_Dxfk" },
+      { "ep": "Tak berpijak", "url": "PS-2D0eVnyA" },
+      { "ep": "Orbit luka", "url": "OCEVtQawm-E" },
+      { "ep": "Satu lagi sujud", "url": "MAJj91R8aDg" },
+      { "ep": "Siapa", "url": "geJLYfi7ymk" },
+      { "ep": "Yang tak terlihat", "url": "3xZL6OD_MU0" },
+      { "ep": "Raja tanpa mahkota", "url": "axkIvC8uB5Q" },
+      { "ep": "Antara lepas dan bertahan", "url": "X8x4v5UWlqI" },
+      { "ep": "Menang dalam senyap", "url": "iEp3XyPlccY" },
+      { "ep": "Sang munafik", "url": "ETLheLJ1Y1I" },
+      { "ep": "Bodoh bertingkat", "url": "kSZhd4Kw1BM" },
+      { "ep": "Diploma penghianatan", "url": "f1OwJDM7MUU" },
+      { "ep": "Takhta derita", "url": "RxyOXjipZVQ" },
+      { "ep": "Dibalik percaya", "url": "FDSe8eQIPQs" },
+      { "ep": "Belas tanpa balas", "url": "aVYeU6Drvbg" },
+      { "ep": "Dunia tanpa nama", "url": "97sEO3AtRbc" },
+      { "ep": "Bayang suara", "url": "FokuNnowHV4" }
+
+    ]
+  },
+
+  {
+
+         "title": "Rizky riplay",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Rizky.webp",
+    "categories": [
+      { "ep": "Azab tukang ngutang gak mau bayar", "url": "1KxoPvDByRY" },
+      { "ep": "Keluarga berkelakuan syetan", "url": "6C8oVL-IiWU" },
+      { "ep": "Tetangga rewang lacknut", "url": "EgRUOjsHrPk" },
+      { "ep": "Suamiku mokondo", "url": "fkOL9jSJIqs" },
+      { "ep": "Owner spbu bahlul", "url": "i0wFRHWCHQE" },
+      { "ep": "Pelayan rasis", "url": "QutOcc1JZ5E" },
+      { "ep": "Bisnis catering busuk", "url": "Q48halz70-g" },
+      { "ep": "Azab angkot ugal - ugalan", "url": "onTjWBdjQJI" },
+      { "ep": "Azab kades korup", "url": "KaYMhxeXcos" },
+      { "ep": "Kisah babi ngepet", "url": "heL53FIi7ew" },
+      { "ep": "Pocong penjaga kamar mayat", "url": "iiN1RrStbQI" },
+      { "ep": "Ketagihan oplas sampai alam baka", "url": "zKbBcRBPxss" },
+      { "ep": "Akibat judol", "url": "riQMdj-ed6A" },
+      { "ep": "Terima kasih papa", "url": "8EbFPKBNtSo" },
+      { "ep": "Pesugihan buat kaya", "url": "EhQdTT-E17E" },
+      { "ep": "Azab kurir hobby bukain paket", "url": "ung-_h8eh0g" },
+      { "ep": "Misteri Gita", "url": "-AOGjPW589o" },
+      { "ep": "Bisnis skincare abal - abal", "url": "F1gthZVLPXQ" },
+      { "ep": "Lembur malam di kantor setan", "url": "PdowvV_qits" },
+      { "ep": "Misteri wanita di perpustakaan", "url": "AQocKnyiiu0" }
+
+    ]
+  },
+
+
+
   {
 
          "title": "Nadia Omara",
-    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Nadia_Omara.webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Omara.webp",
     "categories": [
       { "ep": "Bekas restoran", "url": "RMJ4kvEf-ws" },
       { "ep": "Nasib punya Pacar curigaan", "url": "gJZ_ZRQRXZE" },
@@ -29,7 +92,7 @@
   },
   {
     "title": "Dhot Design",
-    "poster": "https://posterfilm.pages.dev/poster/film_animasi/Dhot_disend.webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Dhot.webp",
     "categories": [
       { "ep": "Tuan rungkad", "url": "hiCI6XAQW8c" },
       { "ep": "Tour bareng keluarga tiffany", "url": "KRaGqi_8SzY" },
@@ -70,7 +133,7 @@
     
     
     "title": "Tekotok",
-    "poster": "https://posterfilm.pages.dev/poster/film_animasi/Tekotok.webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Tekotok.webp",
     "categories": [
       { "ep": "Rendi si ojek online", "url": "rmZeGwBxk8A" },
       { "ep": "Mendadak berduit", "url": "DKD1VpMIkE4" },
@@ -96,7 +159,7 @@
   },
   {
     "title": "Gue punya cerita",
-    "poster": "https://posterfilm.pages.dev/poster/film_animasi/Gue_punya_cerita.webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Punyacerita.webp",
     "categories": [
       { "ep": "Terror mencekam dikamar loteng", "url": "0LRNMaK25MY" },
       { "ep": "Hamil diluar nikah", "url": "pAQacwAPr0U" },
@@ -114,18 +177,19 @@
   
 {
     "title": "DoracimIn",
-    "poster": "https://posterfilm.pages.dev/poster/film_animasi/Doracimin%20(1).webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Cimin.webp",
     "categories": [
       { "ep": "Kompilasi Konten viral toktok", "url": "49r7lrQaEA0" },
       { "ep": "Kompilasi 10 ribu ditangan istri yg tepat", "url": "YWsBcIGsfpo" },
       { "ep": "Kompilasi kehidupan 2026", "url": "AdIKKupIHj4" },
       { "ep": "Kompilasi selingkuh", "url": "tP03-Kyrcg4" },
+            { "ep": "Kehidupan setelah sukses", "url": "sa6VbFbtfTM" },
       { "ep": "Kompilasi aku ingin sukses", "url": "PEjJRtI7hvc" }
     ]
   },
   {
     "title": "Dalang pelo",
-    "poster": "https://posterfilm.pages.dev/poster/film_animasi/Dalangpelo.webp",
+    "poster": "https://posterfilm.pages.dev/poster/film_indonesia/Pelo.webp",
     "categories": [
       { "ep": "Reinkarnasi", "url": "x36Vt3J7fcM" },
       { "ep": "Awal masalah", "url": "GUF7SnJ8DNo" },
