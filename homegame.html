@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Center STB</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Layout Grid 4 Game */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Kartu Game & Kontrol Remot */
+        .game-card {
+            display: block;
+            background-color: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            color: white;
+            outline: none;
+            border: 4px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .game-title {
+            padding: 16px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #1e293b;
+        }
+
+        /* Efek saat dipilih pakai Remot (Focus) / Mouse (Hover) */
+        .game-card:focus,
+        .game-card:hover {
+            transform: scale(1.08);
+            border-color: #38bdf8;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+            cursor: pointer;
+        }
+
+        /* Responsif untuk layar lebih kecil */
+        @media (max-width: 900px) {
+            .game-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PILIH PERMAINAN</h1>
+
+    <div class="game-grid">
+        <a href="https://ukie4321.github.io/index.html/pacman.html" class="game-card" tabindex="1">
+            <img src="https://posterfilm.pages.dev/poster/film_dubbing/game 1.webp" alt="Game 1">
+            <div class="game-title">Game 1</div>
+        </a>
+
+        <a href="https://ukie4321.github.io/index.html/runbunny.html" class="game-card" tabindex="2">
+            <img src="https://posterfilm.pages.dev/poster/film_dubbing/game 2.webp" alt="Game 2">
+            <div class="game-title">Game 2</div>
+        </a>
+
+        <a href="https://ukie4321.github.io/index.html/sameemoji.html" class="game-card" tabindex="3">
+            <img src="https://posterfilm.pages.dev/poster/film_dubbing/game 3.webp" alt="Game 3">
+            <div class="game-title">Game 3</div>
+        </a>
+
+        <a href="https://ukie4321.github.io/index.html/susunbalok.html" class="game-card" tabindex="4">
+            <img src="https://posterfilm.pages.dev/poster/film_dubbing/game 4.webp" alt="Game 4">
+            <div class="game-title">Game 4</div>
+        </a>
+    </div>
+
+</body>
+</html>
